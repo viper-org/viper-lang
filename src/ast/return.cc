@@ -22,7 +22,7 @@ expr_type return_stmt::get_type() const
 llvm::Value* return_stmt::codegen(std::shared_ptr<scope> env) const
 {
     llvm::Value* ret_val = value->codegen(env);
-    if(ret_val->getType() != type.llvm_getter(ctx))
-        ret_val = builder.CreateSExtOrTrunc(ret_val, type.llvm_getter(ctx));
+    if(ret_val->getType() != type.llvm_info.getter(ctx))
+        ret_val = type_info::convert(ret_val, type.llvm_info.getter(ctx));
     return builder.CreateRet(ret_val);
 }

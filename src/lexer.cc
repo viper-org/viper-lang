@@ -1,11 +1,11 @@
-#include "token.hh"
 #include <lexer.hh>
 #include <iostream>
 #include <unordered_set>
 
 static const std::unordered_set<std::string_view> keywords = {
+    "extern",
     "return", "if", "else", "for", "do", "while", "break", "goto", 
-    "i8", "i16", "i32", "i64", "bool", "void"
+    "i8", "i16", "i32", "i64", "bool", "char", "void"
 };
 
 std::string_view lexer::text;
@@ -169,17 +169,17 @@ std::optional<token> lexer::next_token()
     else if (c == '\'')
     {
         next();
-        std::string value = "'";
-        value += next();
+        std::string value(1, next());
+        if(value == "\\")
+            value += next();
+        if(next() != '\'')
+            throw;
         return token(token_type::character, value + "'", line);
     }
-    else if(c == '"')
+    /*else if(c == '"')
     {
-        std::string value;
-        while(current() != '"')
-            value += next();
         return token(token_type::string, value, line);
-    }
+    }*/
     else if(c == '\n' || c == '\r')
         line++;
     return std::nullopt;

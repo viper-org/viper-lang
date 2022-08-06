@@ -108,7 +108,7 @@ llvm::Value* bin_op_expr::codegen(std::shared_ptr<scope> env) const
 
 
         if(value->getType() != alloca->getAllocatedType())
-            value = builder.CreateSExtOrTrunc(value, alloca->getAllocatedType());
+            value = type_info::convert(value, alloca->getAllocatedType());
         
         return builder.CreateStore(value, alloca);
     }
@@ -120,7 +120,7 @@ llvm::Value* bin_op_expr::codegen(std::shared_ptr<scope> env) const
         llvm::AllocaInst* alloca = find_named_value(left->get_name(), env);
 
         if(value->getType() != alloca->getAllocatedType())
-            value = builder.CreateSExtOrTrunc(value, alloca->getAllocatedType());
+            value = type_info::convert(value, alloca->getAllocatedType());
         
         llvm::LoadInst* load = builder.CreateLoad(alloca->getAllocatedType(), alloca, left->get_name().data());
 

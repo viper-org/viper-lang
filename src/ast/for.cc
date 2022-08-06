@@ -39,7 +39,7 @@ llvm::Value* for_expr::codegen(std::shared_ptr<scope>) const
     builder.SetInsertPoint(cond_bb);
 
     llvm::Value* cond_value = cond->codegen(env);
-    cond_value = builder.CreateTrunc(cond_value, llvm::Type::getInt1Ty(ctx));
+    cond_value = type_info::convert(cond_value, llvm::Type::getInt1Ty(ctx));
     builder.CreateCondBr(cond_value, body_bb, end_bb);
 
     cond_bb = builder.GetInsertBlock();

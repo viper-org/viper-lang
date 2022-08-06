@@ -21,5 +21,10 @@ clean:
 test: $(TARGET)
 	./$(TARGET) example.qrk
 
+testbuild: $(TARGET)
+	./$(TARGET) example.qrk || true
+	gcc example.qrk.s std/lib.c -o example
+	./example
+
 debug: $(TARGET)
 	gdb --args ./${TARGET} example.qrk

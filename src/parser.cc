@@ -1,4 +1,5 @@
 #include "ast/compound.hh"
+#include "ast/extern_func.hh"
 #include "token.hh"
 #include <cctype>
 #include <memory>
@@ -28,13 +29,10 @@ token parser::peek(int offset)
     return tokens[position + offset];
 }
 
-int parser::get_token_precedence(token tok)
+int parser::get_bin_op_precedence(token tok)
 {
     switch(tok.type)
     {
-        case token_type::increment:
-        case token_type::decrement:
-            return 45;
         case token_type::star:
         case token_type::slash:
             return 40;
@@ -58,6 +56,18 @@ int parser::get_token_precedence(token tok)
     }
 }
 
+int parser::get_un_op_precedence(token tok)
+{
+    switch(tok.type)
+    {
+        case token_type::plus:
+        case token_type::minus:
+            return 50;
+        default:
+            return 0;
+    }
+}
+
 void parser::expect_token(token_type T)
 {
     if (current().type != T)
@@ -68,20 +78,26 @@ void parser::expect_token(token_type T)
     }
 }
 
-std::vector<std::unique_ptr<function_ast>> parser::parse(std::string_view file)
+program parser::parse(std::string_view file)
 {
-    std::vector<std::unique_ptr<function_ast>> result;
+    std::vector<function_ast> functions;
+    std::vector<extern_func> externs;
     tokens = lexer().lex(file);
     while(current().type != token_type::eof)
     {
-        result.push_back(parse_func());
+        if(current().type == token_type::asperand)
+            functions.push_back(parse_func());
+        else if(current().text == "extern")
+            externs.push_back(parse_extern());
     }
-    return result;
+    program p;
+    p.functions = std::move(functions);
+    p.externs = std::move(externs);
+    return p;
 }
 
-std::unique_ptr<function_ast> parser::parse_func()
+function_ast parser::parse_func()
 {
-    expect_token(token_type::asperand);
     consume();
 
     std::string name = consume().text;
@@ -92,7 +108,7 @@ std::unique_ptr<function_ast> parser::parse_func()
     std::vector<std::pair<type_info, std::string>> args;
     while(current().type != token_type::rparen)
     {
-        type_info T = types.at(consume().text);
+        type_info T = parse_type();
         args.push_back(std::make_pair(T, consume().text));
         if(current().type == token_type::rparen)
             break;
@@ -104,7 +120,7 @@ std::unique_ptr<function_ast> parser::parse_func()
     expect_token(token_type::right_arrow);
     consume();
 
-    type_info type = types.at(consume().text);
+    type_info type = parse_type();
     current_return_type = type;
 
     expect_token(token_type::lbracket);
@@ -119,25 +135,96 @@ std::unique_ptr<function_ast> parser::parse_func()
         body.push_back(parse_expr());
     }
     consume();
-    return std::make_unique<function_ast>(name, type, std::move(body), args, env);
+    return function_ast(name, type, std::move(body), args, env);
 }
 
-std::unique_ptr<ast_expr> parser::parse_expr()
+extern_func parser::parse_extern()
 {
-    std::unique_ptr<ast_expr> lhs = parse_primary();
-    return parse_bin_op(1, std::move(lhs));
+    consume();
+    expect_token(token_type::asperand);
+    consume();
+
+    std::string name = consume().text;
+
+    expect_token(token_type::lparen);
+    consume();
+    std::vector<std::pair<type_info, std::string>> args;
+    while(current().type != token_type::rparen)
+    {
+        type_info T = parse_type();
+        args.push_back(std::make_pair(T, consume().text));
+        if(current().type == token_type::rparen)
+            break;
+        expect_token(token_type::comma);
+        consume();
+    }
+    consume();
+
+    expect_token(token_type::right_arrow);
+    consume();
+
+    type_info type = parse_type();
+    current_return_type = type;
+
+    return extern_func(name, type, args);
+}
+
+type_info parser::parse_type()
+{
+    type_info T = types.at(consume().text);
+    if(current().type == token_type::star)
+    {
+        consume();
+        T.ptr = true;
+    }
+    
+    return T;
+}
+
+std::unique_ptr<ast_expr> parser::parse_expr(int expr_precedence)
+{
+    std::unique_ptr<ast_expr> lhs;
+    int unary_operator_precedence = get_un_op_precedence(current());
+    if(unary_operator_precedence != 0 && unary_operator_precedence >= expr_precedence)
+    {
+        token operator_tok = consume();
+        std::unique_ptr<ast_expr> operand = parse_expr(unary_operator_precedence);
+        lhs = std::make_unique<un_op_expr>(operator_tok, std::move(operand));
+    }
+    else
+    {
+        lhs = std::move(parse_primary());
+    }
+    while(true)
+    {
+        int bin_op_precedence = get_bin_op_precedence(current());
+        if(bin_op_precedence < expr_precedence)
+            break;
+        
+        token operator_tok = consume();
+        std::unique_ptr<ast_expr> rhs = parse_expr(bin_op_precedence);
+        lhs = std::make_unique<bin_op_expr>(operator_tok, std::move(lhs), std::move(rhs));
+    }
+    return lhs;
 }
 
 std::unique_ptr<ast_expr> parser::parse_int_expr()
 {
-    int sign = 1;
-    if(current().type == token_type::minus)
+    return std::make_unique<integer_expr>(std::stoi(consume().text));
+}
+
+std::unique_ptr<ast_expr> parser::parse_char_expr()
+{
+    if(current().text[0] == '\\')
+        ;//TODO: Parse escaped characters
+    else
     {
-        consume();
-        sign = -1;
+        char c = consume().text[0];
+        std::unique_ptr<ast_expr> expr = std::make_unique<integer_expr>((int)c);
+        expr->type = types.at("char");
+        return expr;
     }
-    expect_token(token_type::integer);
-    return std::make_unique<integer_expr>(std::stoi(consume().text) * sign);
+    return nullptr;
 }
 
 std::unique_ptr<ast_expr> parser::parse_identifier_expr()
@@ -185,7 +272,7 @@ std::unique_ptr<ast_expr> parser::parse_var_expr()
 
 std::unique_ptr<ast_expr> parser::parse_var_assign()
 {
-    type_info T = types.at(consume().text);
+    type_info T = parse_type();
 
     std::string name = consume().text;
 
@@ -372,9 +459,10 @@ std::unique_ptr<ast_expr> parser::parse_primary()
 {
     switch(current().type)
     {
-        case token_type::minus:
         case token_type::integer:
             return parse_int_expr();
+        case token_type::character:
+            return parse_char_expr();
         case token_type::lparen:
             return parse_paren_expr();
         case token_type::lbracket:
@@ -386,27 +474,7 @@ std::unique_ptr<ast_expr> parser::parse_primary()
         case token_type::keyword:
             return parse_keyword_expr();
         default:
-            std::cerr << "\u001b[31mUnexpected token: " << current() << ". Expected an expression\u001b[0m" << std::endl;
+            std::cerr << "\u001b[31mUnexpected token: " << current() << ". Expected primary expression\u001b[0m" << std::endl;
             std::exit(1);
-    }
-}
-
-std::unique_ptr<ast_expr> parser::parse_bin_op(int expr_precedence, std::unique_ptr<ast_expr> lhs)
-{
-    while(true)
-    {
-        int token_precedence = get_token_precedence(current());
-        if(token_precedence < expr_precedence)
-            return lhs;
-        
-        token operand = consume();
-
-        std::unique_ptr<ast_expr> rhs = parse_primary();
-
-        int next_precedence = get_token_precedence(current());
-        if(token_precedence < next_precedence)
-            rhs = parse_bin_op(token_precedence + 1, std::move(rhs));
-
-        lhs = std::make_unique<bin_op_expr>(operand, std::move(lhs), std::move(rhs));
     }
 }

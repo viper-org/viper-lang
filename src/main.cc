@@ -1,3 +1,4 @@
+#include "ast/extern_func.hh"
 #include <iostream>
 #include <fstream>
 #include <llvm/ADT/Optional.h>
@@ -46,25 +47,35 @@ int main(int argc, char* argv[])
 
         std::ifstream file(argv[1]);
         std::ofstream out_file(std::string(argv[1]) + ".s");
-        std::string out_file_name = std::string(argv[1]) + ".o";
+        std::string out_file_name = std::string(argv[1]) + ".s";
         std::stringstream buf;
         buf << file.rdbuf();
         type_info::init_default_types();
         auto ast = parser::parse(buf.str());
 
-        for(std::unique_ptr<function_ast>& node : ast)
+        for(extern_func& node : ast.externs)
         {
-            std::string buffer;
+            /*std::string buffer;
             llvm::raw_string_ostream stream(buffer);
-            node->codegen()->print(stream);
-            out_file << buffer;
+            node.codegen()->print(stream);
+            out_file << buffer;*/
+            node.codegen();
+        }
+        
+        for(function_ast& node : ast.functions)
+        {
+            /*std::string buffer;
+            llvm::raw_string_ostream stream(buffer);
+            node.codegen()->print(stream);
+            out_file << buffer;*/
 
-            /*node->codegen();
-            std::error_code error_code;
+            node.codegen();
+        }
+        std::error_code error_code;
             llvm::raw_fd_ostream dest(llvm::StringRef(out_file_name), error_code);
 
             llvm::legacy::PassManager pass;
-            llvm::CodeGenFileType file_type = llvm::CGFT_ObjectFile;
+            llvm::CodeGenFileType file_type = llvm::CGFT_AssemblyFile;
 
             if(target_machine->addPassesToEmitFile(pass, dest, nullptr, file_type))
             {
@@ -73,8 +84,7 @@ int main(int argc, char* argv[])
             }
 
             pass.run(module);
-            dest.flush();*/
-        }
+            dest.flush();
         return 0;
     }
     return 1;

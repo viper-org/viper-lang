@@ -14,19 +14,24 @@ struct parser
     static token consume();
     static token peek(int);
 
-    static int get_token_precedence(token);
+    static int get_bin_op_precedence(token);
+    static int get_un_op_precedence(token);
 
     static void expect_token(token_type);
 
-    static std::vector<std::unique_ptr<function_ast>> parse(std::string_view);
+    static program parse(std::string_view);
 
-    static std::unique_ptr<function_ast> parse_func();
+    static function_ast parse_func();
+    static extern_func parse_extern();
 
-    static std::unique_ptr<ast_expr> parse_expr();
+    static type_info parse_type();
+
+    static std::unique_ptr<ast_expr> parse_expr(int = 1);
 
     static std::unique_ptr<ast_expr> parse_unary();
 
     static std::unique_ptr<ast_expr> parse_int_expr();
+    static std::unique_ptr<ast_expr> parse_char_expr();
     
     static std::unique_ptr<ast_expr> parse_identifier_expr();
     static std::unique_ptr<ast_expr> parse_var_expr();

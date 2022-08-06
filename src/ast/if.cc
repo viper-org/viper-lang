@@ -27,7 +27,7 @@ llvm::Value* if_expr::codegen(std::shared_ptr<scope>) const
     bool has_else = (else_body != nullptr);
     llvm::Value* condition_value = condition->codegen(env);
 
-    condition_value = builder.CreateTrunc(condition_value, llvm::Type::getInt1Ty(ctx), "trunctmp");
+    condition_value = type_info::convert(condition_value, llvm::Type::getInt1Ty(ctx));
 
     llvm::Function* func = builder.GetInsertBlock()->getParent();
 

@@ -1,9 +1,9 @@
+extern @puti(i32* i)  -> void
+extern @putch(char c) -> void
+extern @newline()     -> void
+
 @main() -> i32
 {
-    i32 i = 0
-    test:
-    i += 1
-    if(i < 11)
-        goto test
-    return i
+    i32 x = -+-+-1
+    return x
 }

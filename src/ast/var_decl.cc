@@ -8,7 +8,7 @@
 llvm::AllocaInst* create_alloca(llvm::Function* func, llvm::StringRef name, type_info type)
 {
     llvm::IRBuilder<> tmp_builder(&func->getEntryBlock(), func->getEntryBlock().begin());
-    return tmp_builder.CreateAlloca(type.llvm_getter(ctx), nullptr, name);
+    return tmp_builder.CreateAlloca(type.llvm_info.getter(ctx), nullptr, name);
 }
 
 var_decl::var_decl(type_info type, std::string name, std::unique_ptr<ast_expr> value)
@@ -37,8 +37,8 @@ llvm::Value* var_decl::codegen(std::shared_ptr<scope> env) const
 
     llvm::AllocaInst* alloca = create_alloca(func, name, type);
 
-    if(init_val->getType() != type.llvm_getter(ctx))
-            init_val = builder.CreateSExtOrTrunc(init_val, type.llvm_getter(ctx));
+    if(init_val->getType() != type.llvm_info.getter(ctx))
+            init_val = type_info::convert(init_val, type.llvm_info.getter(ctx));
 
     builder.CreateStore(init_val, alloca);
 
