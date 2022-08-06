@@ -3,10 +3,13 @@ Quark
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]() [![GitHub Issues](https://img.shields.io/github/issues/solar-mist/quark.svg)](https://github.com/solar-mist/quark/issues) [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/solar-mist/quark.svg)](https://github.com/solar-mist/quark/pulls)
 </h1>
+
 ---
+
 <p align="center">
   Quark is a compiled C-like programming language written in C++.
 </p>
+
 ##About
 Quark is a C like programming language that uses the LLVM backend.
 It aims to provide a high level standard library while allowing users to write low level code when required.
