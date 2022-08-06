@@ -31,6 +31,10 @@ std::string token::get_type()
             return "CHARACTER";
         case token_type::asperand:
             return "ASPERAND";
+        case token_type::ampersand:
+            return "AMPERSAND";
+        case token_type::hash:
+            return "HASH";
         case token_type::right_arrow:
             return "RIGHT_ARROW";
         case token_type::semicolon:

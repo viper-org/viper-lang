@@ -64,12 +64,12 @@ int main(int argc, char* argv[])
         
         for(function_ast& node : ast.functions)
         {
-            /*std::string buffer;
+            std::string buffer;
             llvm::raw_string_ostream stream(buffer);
             node.codegen()->print(stream);
-            out_file << buffer;*/
+            out_file << buffer;
 
-            node.codegen();
+            //node.codegen();
         }
         std::error_code error_code;
             llvm::raw_fd_ostream dest(llvm::StringRef(out_file_name), error_code);

@@ -1,9 +1,6 @@
-extern @puti(i32* i)  -> void
-extern @putch(char c) -> void
-extern @newline()     -> void
-
 @main() -> i32
 {
-    i32 x = -+-+-1
-    return x
+    i32 x = 1
+    i32* y = #x
+    return *y
 }

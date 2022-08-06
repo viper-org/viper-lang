@@ -125,6 +125,10 @@ std::optional<token> lexer::next_token()
         return token(token_type::rbracket, "}", line);
     else if(c == '@')
         return token(token_type::asperand, "@", line);
+    else if(c == '&')
+        return token(token_type::ampersand, "&", line);
+    else if(c == '#')
+        return token(token_type::hash, "#", line);
     else if(c == ';')
         return token(token_type::semicolon, ";", line);
     else if(c == ',')

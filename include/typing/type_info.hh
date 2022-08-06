@@ -19,6 +19,9 @@ struct type_info
     unsigned int size;
     bool ptr;
 
+    llvm::Type* get_llvm_type() const;
+    unsigned int get_size();
+
     static llvm::Value* convert(llvm::Value*, llvm::Type*, llvm::Twine = "");
     static void init_default_types();
 };

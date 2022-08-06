@@ -17,9 +17,9 @@ llvm::Function* function_ast::codegen()
 {
     std::vector<llvm::Type*> arg_types;
     for(std::pair<type_info, std::string> arg : args)
-        arg_types.push_back(arg.first.llvm_info.getter(ctx));
+        arg_types.push_back(arg.first.get_llvm_type());
     
-    llvm::FunctionType* func_type = llvm::FunctionType::get(type.llvm_info.getter(ctx), arg_types, false);
+    llvm::FunctionType* func_type = llvm::FunctionType::get(type.get_llvm_type(), arg_types, false);
     llvm::Function* func = llvm::Function::Create(func_type, llvm::Function::ExternalLinkage, std::string(name.data()), module);
 
     unsigned int i = 0;
@@ -48,6 +48,6 @@ llvm::Function* function_ast::codegen()
         else
             expr->codegen(env);
     }
-    builder.CreateRet(llvm::ConstantInt::get(type.llvm_info.getter(ctx), 0));
+    builder.CreateRet(llvm::ConstantInt::get(type.get_llvm_type(), 0));
     return func;
 }

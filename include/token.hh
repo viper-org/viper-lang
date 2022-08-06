@@ -20,7 +20,7 @@ enum class token_type
 
     integer, character, string,
 
-    asperand, right_arrow,
+    asperand, ampersand, hash, right_arrow,
 
     semicolon, comma, colon,
 

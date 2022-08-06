@@ -5,7 +5,9 @@
 
 enum class unary_operand
 {
-    NEGATION, UNARY_PLUS
+    NEGATION, UNARY_PLUS,
+
+    ADDRESSOF, DEREFERENCE
 };
 
 class un_op_expr : public ast_expr

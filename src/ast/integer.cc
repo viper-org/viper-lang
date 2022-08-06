@@ -23,5 +23,5 @@ expr_type integer_expr::get_type() const
 
 llvm::Value* integer_expr::codegen(std::shared_ptr<scope>) const
 {
-    return llvm::ConstantInt::get(type.llvm_info.getter(ctx), value);
+    return llvm::ConstantInt::get(type.get_llvm_type(), value);
 }

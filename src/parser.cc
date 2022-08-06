@@ -62,6 +62,8 @@ int parser::get_un_op_precedence(token tok)
     {
         case token_type::plus:
         case token_type::minus:
+        case token_type::hash:
+        case token_type::star:
             return 50;
         default:
             return 0;

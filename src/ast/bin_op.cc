@@ -106,9 +106,16 @@ llvm::Value* bin_op_expr::codegen(std::shared_ptr<scope> env) const
 
         llvm::AllocaInst* alloca = find_named_value(left->get_name(), env);
 
-
-        if(value->getType() != alloca->getAllocatedType())
-            value = type_info::convert(value, alloca->getAllocatedType());
+        if(type.ptr)
+        {
+            if(value->getType() != alloca->getType())
+                value = type_info::convert(value, alloca->getType());
+        }
+        else
+        {
+            if(value->getType() != alloca->getAllocatedType())
+                value = type_info::convert(value, alloca->getAllocatedType());
+        }
         
         return builder.CreateStore(value, alloca);
     }
@@ -138,9 +145,9 @@ llvm::Value* bin_op_expr::codegen(std::shared_ptr<scope> env) const
     if (left->getType() != right->getType())
     {
         if(left->getType()->getPrimitiveSizeInBits() > right->getType()->getPrimitiveSizeInBits())
-            right = builder.CreateSExt(right, left->getType());
+            right = type_info::convert(right, left->getType());
         else
-            left = builder.CreateSExt(left, right->getType());
+            left = type_info::convert(left, right->getType());
     }
 
     switch(operand)

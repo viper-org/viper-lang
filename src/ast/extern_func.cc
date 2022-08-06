@@ -11,9 +11,9 @@ llvm::Function* extern_func::codegen() const
 {
     std::vector<llvm::Type*> arg_types;
     for(std::pair<type_info, std::string> arg : args)
-        arg_types.push_back(arg.first.llvm_info.getter(ctx));
+        arg_types.push_back(arg.first.get_llvm_type());
     
-    llvm::FunctionType* func_type = llvm::FunctionType::get(type.llvm_info.getter(ctx), arg_types, false);
+    llvm::FunctionType* func_type = llvm::FunctionType::get(type.get_llvm_type(), arg_types, false);
 
     llvm::Function* func = llvm::Function::Create(func_type, llvm::Function::ExternalLinkage, name, module);
 

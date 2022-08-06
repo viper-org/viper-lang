@@ -20,6 +20,22 @@ type_info::type_info(std::function<llvm::Type*(llvm::LLVMContext&)> llvm_getter,
     llvm_info.name = llvm_name;
 }
 
+llvm::Type* type_info::get_llvm_type() const
+{
+    if(ptr)
+        return llvm_info.ptr_getter(ctx, 0);
+    else
+        return llvm_info.getter(ctx);
+}
+
+unsigned int type_info::get_size()
+{
+    if(ptr)
+        return 8;
+    else
+        return size;
+}
+
 llvm::Value* type_info::convert(llvm::Value* value, llvm::Type* type, llvm::Twine twine)
 {
     if(type->isIntegerTy() && value->getType()->isIntegerTy())
