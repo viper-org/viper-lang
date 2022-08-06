@@ -1,8 +1,8 @@
 CXXC=g++
 LD=g++
 
-DEBUGCXXFLAGS=-fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=gnu++20 -Wall -Wextra -Wpedantic -lLLVM
-RELEASECXXFLAGS=-O3 -Iinclude -std=gnu++20 -Wall -Wextra -Wpedantic -lLLVM
+DEBUGCXXFLAGS=-fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM
+RELEASECXXFLAGS=-O3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM
 
 DEBUGLDFLAGS=-fsanitize=address,undefined -lLLVM
 RELEASELDFLAGS=-lLLVM
