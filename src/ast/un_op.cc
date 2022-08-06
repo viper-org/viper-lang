@@ -90,7 +90,7 @@ llvm::Value* un_op_expr::codegen(std::shared_ptr<scope> env) const
             }
             else
             {
-                return builder.CreateLoad(value_codegen->getType(), value_codegen, "abc");
+                return builder.CreateLoad(value_codegen->getType()->getNonOpaquePointerElementType(), value_codegen, "abc");
             }
         }
         default:

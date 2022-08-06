@@ -1,13 +1,29 @@
-CXXC=/usr/bin/g++
-LD=/usr/bin/g++
-CXXFLAGS=-fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM
-LDFLAGS=-fsanitize=address,undefined -lLLVM
+CXXC=g++
+LD=g++
+
+DEBUGCXXFLAGS=-fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=gnu++20 -Wall -Wextra -Wpedantic -lLLVM
+RELEASECXXFLAGS=-O3 -Iinclude -std=gnu++20 -Wall -Wextra -Wpedantic -lLLVM
+
+DEBUGLDFLAGS=-fsanitize=address,undefined -lLLVM
+RELEASELDFLAGS=-lLLVM
+
+release: CXXFLAGS=$(RELEASECXXFLAGS)
+release: LDFLAGS=$(RELEASELDFLAGS)
+
+debug: CXXFLAGS=$(DEBUGCXXFLAGS)
+debug: LDFLAGS=$(DEBUGLDFLAGS)
 
 CXXSOURCES:=$(shell find src -name '*.cc')
 OBJS:=${CXXSOURCES:.cc=.o}
 TARGET=qrk
 
 all: $(TARGET)
+
+release: $(OBJS)
+	$(LD) $(LDFLAGS) $^ -o $(TARGET)
+
+debug: $(OBJS)
+	$(LD) $(LDFLAGS) $^ -o $(TARGET)
 
 %.o: %.cc
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
@@ -18,13 +34,5 @@ $(TARGET): $(OBJS)
 clean:
 	rm -rf $(OBJS) $(TARGET)
 
-test: $(TARGET)
+example: $(TARGET)
 	./$(TARGET) example.qrk
-
-testbuild: $(TARGET)
-	./$(TARGET) example.qrk || true
-	gcc example.qrk.s std/lib.c -o example
-	./example
-
-debug: $(TARGET)
-	gdb --args ./${TARGET} example.qrk
