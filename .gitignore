@@ -1,0 +1,4 @@
+*.json
+.cache/*
+*.o
+qrk
