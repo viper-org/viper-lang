@@ -1,7 +1,7 @@
-#include "ast/extern_func.hh"
 #include <iostream>
 #include <fstream>
 #include <llvm/ADT/Optional.h>
+#include <llvm/IR/DerivedTypes.h>
 #include <llvm/Support/CodeGen.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/Host.h>
@@ -12,14 +12,13 @@
 #include <llvm/IR/LegacyPassManager.h>
 #include <sstream>
 #include <parser.hh>
-#include <typing/types.hh>
 #include <llvm/IR/Function.h>
 
 int main(int argc, char* argv[])
 {
     if (argc > 1)
     {
-        std::string target_triple = llvm::sys::getDefaultTargetTriple();
+        /*std::string target_triple = llvm::sys::getDefaultTargetTriple();
         llvm::InitializeAllTargetInfos();
         llvm::InitializeAllTargets();
         llvm::InitializeAllTargetMCs();
@@ -43,23 +42,21 @@ int main(int argc, char* argv[])
         llvm::TargetMachine* target_machine = target->createTargetMachine(target_triple, cpu, features, opt, rm);
 
         module.setDataLayout(target_machine->createDataLayout());
-        module.setTargetTriple(target_triple);
+        module.setTargetTriple(target_triple);*/
 
         std::ifstream file(argv[1]);
         std::ofstream out_file(std::string(argv[1]) + ".s");
-        std::string out_file_name = std::string(argv[1]) + ".s";
         std::stringstream buf;
         buf << file.rdbuf();
-        type_info::init_default_types();
+        quark_type::init_default_types();
         auto ast = parser::parse(buf.str());
 
         for(extern_func& node : ast.externs)
         {
-            /*std::string buffer;
+            std::string buffer;
             llvm::raw_string_ostream stream(buffer);
             node.codegen()->print(stream);
-            out_file << buffer;*/
-            node.codegen();
+            out_file << buffer;
         }
         
         for(function_ast& node : ast.functions)
@@ -69,9 +66,8 @@ int main(int argc, char* argv[])
             node.codegen()->print(stream);
             out_file << buffer;
 
-            //node.codegen();
         }
-        std::error_code error_code;
+        /*std::error_code error_code;
             llvm::raw_fd_ostream dest(llvm::StringRef(out_file_name), error_code);
 
             llvm::legacy::PassManager pass;
@@ -84,7 +80,7 @@ int main(int argc, char* argv[])
             }
 
             pass.run(module);
-            dest.flush();
+            dest.flush();*/
         return 0;
     }
     return 1;

@@ -8,7 +8,7 @@
 #include <llvm/IR/Function.h>
 #include <llvm/IR/Instructions.h>
 
-function_ast::function_ast(std::string name, type_info type, std::vector<std::unique_ptr<ast_expr>> body, std::vector<std::pair<type_info, std::string>> args, std::shared_ptr<scope> env)
+function_ast::function_ast(std::string name, std::shared_ptr<quark_type> type, std::vector<std::unique_ptr<ast_expr>> body, std::vector<std::pair<std::shared_ptr<quark_type>, std::string>> args, std::shared_ptr<scope> env)
     :name(name), type(type), body(std::move(body)), args(args), env(env)
 {
 }
@@ -16,10 +16,10 @@ function_ast::function_ast(std::string name, type_info type, std::vector<std::un
 llvm::Function* function_ast::codegen()
 {
     std::vector<llvm::Type*> arg_types;
-    for(std::pair<type_info, std::string> arg : args)
-        arg_types.push_back(arg.first.get_llvm_type());
+    for(std::pair<std::shared_ptr<quark_type>, std::string> arg : args)
+        arg_types.push_back(arg.first->get_type());
     
-    llvm::FunctionType* func_type = llvm::FunctionType::get(type.get_llvm_type(), arg_types, false);
+    llvm::FunctionType* func_type = llvm::FunctionType::get(type->get_type(), arg_types, false);
     llvm::Function* func = llvm::Function::Create(func_type, llvm::Function::ExternalLinkage, std::string(name.data()), module);
 
     unsigned int i = 0;
@@ -48,6 +48,6 @@ llvm::Function* function_ast::codegen()
         else
             expr->codegen(env);
     }
-    builder.CreateRet(llvm::ConstantInt::get(type.get_llvm_type(), 0));
+    builder.CreateRet(llvm::ConstantInt::get(type->get_type(), 0));
     return func;
 }

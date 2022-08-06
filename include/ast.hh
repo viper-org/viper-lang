@@ -12,6 +12,7 @@
 #include <ast/var.hh>
 #include <ast/call.hh>
 #include <ast/if.hh>
+#include <ast/compound.hh>
 #include <ast/for.hh>
 #include <ast/while.hh>
 #include <ast/break.hh>

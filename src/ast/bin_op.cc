@@ -1,3 +1,4 @@
+#include "typing/type.hh"
 #include <ast/bin_op.hh>
 #include <ast/var.hh>
 #include <globals.hh>
@@ -106,15 +107,15 @@ llvm::Value* bin_op_expr::codegen(std::shared_ptr<scope> env) const
 
         llvm::AllocaInst* alloca = find_named_value(left->get_name(), env);
 
-        if(type.ptr)
+        if(type->T == type_type::pointer)
         {
             if(value->getType() != alloca->getType())
-                value = type_info::convert(value, alloca->getType());
+                value = quark_type::convert(value, alloca->getType());
         }
         else
         {
             if(value->getType() != alloca->getAllocatedType())
-                value = type_info::convert(value, alloca->getAllocatedType());
+                value = quark_type::convert(value, alloca->getAllocatedType());
         }
         
         return builder.CreateStore(value, alloca);
@@ -127,7 +128,7 @@ llvm::Value* bin_op_expr::codegen(std::shared_ptr<scope> env) const
         llvm::AllocaInst* alloca = find_named_value(left->get_name(), env);
 
         if(value->getType() != alloca->getAllocatedType())
-            value = type_info::convert(value, alloca->getAllocatedType());
+            value = quark_type::convert(value, alloca->getAllocatedType());
         
         llvm::LoadInst* load = builder.CreateLoad(alloca->getAllocatedType(), alloca, left->get_name().data());
 
@@ -145,9 +146,9 @@ llvm::Value* bin_op_expr::codegen(std::shared_ptr<scope> env) const
     if (left->getType() != right->getType())
     {
         if(left->getType()->getPrimitiveSizeInBits() > right->getType()->getPrimitiveSizeInBits())
-            right = type_info::convert(right, left->getType());
+            right = quark_type::convert(right, left->getType());
         else
-            left = type_info::convert(left, right->getType());
+            left = quark_type::convert(left, right->getType());
     }
 
     switch(operand)

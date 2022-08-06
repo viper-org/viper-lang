@@ -5,14 +5,14 @@
 #include <llvm/IR/Function.h>
 #include <llvm/IR/Instructions.h>
 
-llvm::AllocaInst* create_alloca(llvm::Function*, llvm::StringRef, type_info);
+llvm::AllocaInst* create_alloca(llvm::Function*, llvm::StringRef, std::shared_ptr<quark_type>, llvm::Value* = nullptr);
 
 class var_decl : public ast_expr
 {
     std::string name;
     std::unique_ptr<ast_expr> value;
 public:
-    var_decl(type_info, std::string, std::unique_ptr<ast_expr>);
+    var_decl(std::shared_ptr<quark_type>, std::string, std::unique_ptr<ast_expr>);
 
     void print(std::ostream&) const override;
     expr_type get_type() const override;

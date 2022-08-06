@@ -1,6 +1,6 @@
 #ifndef QRK_AST_EXPR_HH
 #define QRK_AST_EXPR_HH
-#include <typing/types.hh>
+#include <typing/type.hh>
 #include <globals.hh>
 #include <llvm/IR/Value.h>
 #include <ostream>
@@ -35,7 +35,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream&, ast_expr&);
 
-    type_info type = types.at("void");
+    std::shared_ptr<quark_type> type = quark_type::void_t;
 };
 
 #endif

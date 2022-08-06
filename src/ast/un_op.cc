@@ -68,20 +68,30 @@ llvm::Value* un_op_expr::codegen(std::shared_ptr<scope> env) const
             return value_codegen;
         case unary_operand::ADDRESSOF:
         {
-            var_expr* var = static_cast<var_expr*>(value.get());
-            return find_named_value(var->get_name(), env);
+            if(value->get_type() == expr_type::VARIABLE)
+            {
+                var_expr* var = static_cast<var_expr*>(value.get());
+                return find_named_value(var->get_name(), env);
+            }
+            else
+            {
+                throw; // TODO: Error properly
+            }
         }
         case unary_operand::DEREFERENCE:
         {
-            var_expr* var = static_cast<var_expr*>(value.get());
+            if(value->get_type() == expr_type::VARIABLE)
+            {
+                var_expr* var = static_cast<var_expr*>(value.get());
 
-            llvm::AllocaInst* alloca = find_named_value(var->get_name(), env);
+                llvm::AllocaInst* alloca = find_named_value(var->get_name(), env);
 
-            llvm::outs() << *alloca->getAllocatedType() << "\n" << *alloca->getType() << "\n";
-
-            llvm::LoadInst* load = builder.CreateLoad(alloca->getAllocatedType(), alloca, "dereftmp");
-
-            return builder.CreateLoad(alloca->getAllocatedType(), load, "dereftmp");
+                return builder.CreateLoad(value_codegen->getType()->getNonOpaquePointerElementType(), value_codegen, "jkl");
+            }
+            else
+            {
+                return builder.CreateLoad(value_codegen->getType(), value_codegen, "abc");
+            }
         }
         default:
             break;

@@ -1,6 +1,7 @@
 @main() -> i32
 {
-    i32 x = 1
-    i32* y = #x
+    i32   x = 1
+    i32*  y = #x
+    i32** z = #y
     return *y
 }

@@ -1,18 +1,16 @@
-#include "ast/compound.hh"
-#include "ast/extern_func.hh"
-#include "token.hh"
+#include "typing/ptr_type.hh"
+#include "typing/type.hh"
 #include <cctype>
 #include <memory>
 #include <parser.hh>
 #include <lexer.hh>
-#include <typing/types.hh>
 #include <iostream>
 
 std::vector<token> parser::tokens;
 unsigned int       parser::position = 0;
 
-static type_info              current_return_type;
-static std::shared_ptr<scope> current_env;
+static std::shared_ptr<quark_type> current_return_type;
+static std::shared_ptr<scope>      current_env;
 
 token parser::current()
 {
@@ -107,10 +105,10 @@ function_ast parser::parse_func()
     expect_token(token_type::lparen);
     consume();
     
-    std::vector<std::pair<type_info, std::string>> args;
+    std::vector<std::pair<std::shared_ptr<quark_type>, std::string>> args;
     while(current().type != token_type::rparen)
     {
-        type_info T = parse_type();
+        std::shared_ptr<quark_type> T = parse_type();
         args.push_back(std::make_pair(T, consume().text));
         if(current().type == token_type::rparen)
             break;
@@ -122,7 +120,7 @@ function_ast parser::parse_func()
     expect_token(token_type::right_arrow);
     consume();
 
-    type_info type = parse_type();
+    std::shared_ptr<quark_type> type = parse_type();
     current_return_type = type;
 
     expect_token(token_type::lbracket);
@@ -150,10 +148,10 @@ extern_func parser::parse_extern()
 
     expect_token(token_type::lparen);
     consume();
-    std::vector<std::pair<type_info, std::string>> args;
+    std::vector<std::pair<std::shared_ptr<quark_type>, std::string>> args;
     while(current().type != token_type::rparen)
     {
-        type_info T = parse_type();
+        std::shared_ptr<quark_type> T = parse_type();
         args.push_back(std::make_pair(T, consume().text));
         if(current().type == token_type::rparen)
             break;
@@ -165,22 +163,24 @@ extern_func parser::parse_extern()
     expect_token(token_type::right_arrow);
     consume();
 
-    type_info type = parse_type();
+    std::shared_ptr<quark_type> type = parse_type();
     current_return_type = type;
 
     return extern_func(name, type, args);
 }
 
-type_info parser::parse_type()
+std::shared_ptr<quark_type> parser::parse_type()
 {
-    type_info T = types.at(consume().text);
-    if(current().type == token_type::star)
+    std::string text = consume().text;
+    std::shared_ptr<quark_type> type = types.at(text);
+    while(current().type == token_type::star)
     {
         consume();
-        T.ptr = true;
+        type = std::make_shared<quark_ptr_type>(type);
+        type->T = type_type::pointer;
     }
-    
-    return T;
+
+    return type;
 }
 
 std::unique_ptr<ast_expr> parser::parse_expr(int expr_precedence)
@@ -223,7 +223,7 @@ std::unique_ptr<ast_expr> parser::parse_char_expr()
     {
         char c = consume().text[0];
         std::unique_ptr<ast_expr> expr = std::make_unique<integer_expr>((int)c);
-        expr->type = types.at("char");
+        expr->type = quark_type::char_t;
         return expr;
     }
     return nullptr;
@@ -274,7 +274,7 @@ std::unique_ptr<ast_expr> parser::parse_var_expr()
 
 std::unique_ptr<ast_expr> parser::parse_var_assign()
 {
-    type_info T = parse_type();
+    std::shared_ptr<quark_type> T = parse_type();
 
     std::string name = consume().text;
 
@@ -450,11 +450,7 @@ std::unique_ptr<ast_expr> parser::parse_keyword_expr()
 
         return std::make_unique<goto_expr>(consume().text);
     }
-    else if(types.find(current().text) != types.end())
-    {
-        return parse_var_assign();
-    }
-    return nullptr;
+    return parse_var_assign();
 }
 
 std::unique_ptr<ast_expr> parser::parse_primary()

@@ -24,7 +24,7 @@ struct parser
     static function_ast parse_func();
     static extern_func parse_extern();
 
-    static type_info parse_type();
+    static std::shared_ptr<quark_type> parse_type();
 
     static std::unique_ptr<ast_expr> parse_expr(int = 1);
 

@@ -1,9 +1,7 @@
-#ifndef QRK_TYPES_HXX
-#define QRK_TYPES_HXX
-#include <typing/type_info.hh>
-#include <unordered_map>
-#include <string_view>
+#ifndef QRK_TYPES_HH
+#define QRK_TYPES_HH
 
-extern std::unordered_map<std::string_view, type_info> types;
+#include <typing/type.hh>
+#include <typing/ptr_type.hh>
 
 #endif

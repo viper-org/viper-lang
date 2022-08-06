@@ -5,13 +5,13 @@
 #include <llvm/IR/Instructions.h>
 #include <llvm/Support/raw_ostream.h>
 
-llvm::AllocaInst* create_alloca(llvm::Function* func, llvm::StringRef name, type_info type)
+llvm::AllocaInst* create_alloca(llvm::Function* func, llvm::StringRef name, std::shared_ptr<quark_type> T, llvm::Value* array_size)
 {
     llvm::IRBuilder<> tmp_builder(&func->getEntryBlock(), func->getEntryBlock().begin());
-    return tmp_builder.CreateAlloca(type.get_llvm_type(), nullptr, name);
+    return tmp_builder.CreateAlloca(T->get_type(), array_size, name);
 }
 
-var_decl::var_decl(type_info type, std::string name, std::unique_ptr<ast_expr> value)
+var_decl::var_decl(std::shared_ptr<quark_type> type, std::string name, std::unique_ptr<ast_expr> value)
     :name(name), value(std::move(value))
 {
     this->type = type;
@@ -19,7 +19,7 @@ var_decl::var_decl(type_info type, std::string name, std::unique_ptr<ast_expr> v
 
 void var_decl::print(std::ostream& stream) const
 {
-    stream << "<variable-decl>:\ntype:" << type.name << "\nvalue:";
+    stream << "<variable-decl>:\ntype:" << type->get_name() << "\nvalue:";
     value->print(stream);
 }
 
@@ -37,8 +37,8 @@ llvm::Value* var_decl::codegen(std::shared_ptr<scope> env) const
 
     llvm::AllocaInst* alloca = create_alloca(func, name, type);
 
-    if(init_val->getType() != type.get_llvm_type())
-            init_val = type_info::convert(init_val, type.get_llvm_type());
+    if(init_val->getType() != type->get_type())
+            init_val = quark_type::convert(init_val, type->get_type());
 
     builder.CreateStore(init_val, alloca);
 

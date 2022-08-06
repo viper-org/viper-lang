@@ -1,14 +1,18 @@
 #ifndef QRK_AST_EXTERN_FUNC_HH
 #define QRK_AST_EXTERN_FUNC_HH
 #include <ast/expr.hh>
+#include <globals.hh>
+#include <typing/type.hh>
+#include <memory>
+#include <vector>
 
 class extern_func
 {
     std::string name;
-    type_info type;
-    std::vector<std::pair<type_info, std::string>> args;
+    std::shared_ptr<quark_type> type;
+    std::vector<std::pair<std::shared_ptr<quark_type>, std::string>> args;
 public:
-    extern_func(std::string, type_info, std::vector<std::pair<type_info, std::string>>);
+    extern_func(std::string, std::shared_ptr<quark_type>, std::vector<std::pair<std::shared_ptr<quark_type>, std::string>>);
 
     llvm::Function* codegen() const;
 };

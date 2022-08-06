@@ -22,7 +22,7 @@ expr_type return_stmt::get_type() const
 llvm::Value* return_stmt::codegen(std::shared_ptr<scope> env) const
 {
     llvm::Value* ret_val = value->codegen(env);
-    if(ret_val->getType() != type.get_llvm_type())
-        ret_val = type_info::convert(ret_val, type.get_llvm_type());
+    if(ret_val->getType() != type->get_type())
+        ret_val = quark_type::convert(ret_val, type->get_type());
     return builder.CreateRet(ret_val);
 }

@@ -31,7 +31,7 @@ llvm::Value* call_expr::codegen(std::shared_ptr<scope> env) const
     {
         std::vector<llvm::Type*> arg_types;
         for(const std::unique_ptr<ast_expr>& arg : args)
-            arg_types.push_back(arg->type.get_llvm_type());
+            arg_types.push_back(arg->type->get_type());
         llvm::FunctionType* func_type = llvm::FunctionType::get(llvm::Type::getVoidTy(ctx), arg_types, false);
 
         callee_func = llvm::Function::Create(func_type, llvm::Function::ExternalLinkage, callee, module);
@@ -46,7 +46,7 @@ llvm::Value* call_expr::codegen(std::shared_ptr<scope> env) const
     {
         llvm::Value* value = args[i]->codegen(env);
         if(value->getType() != (callee_func->args().begin()+i)->getType())
-            value = type_info::convert(value, (callee_func->args().begin()+i)->getType());
+            value = quark_type::convert(value, (callee_func->args().begin()+i)->getType());
         
         arg_values.push_back(value);
     }

@@ -2,7 +2,6 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/Instructions.h>
 #include <llvm/IR/Value.h>
-#include <typing/types.hh>
 
 if_expr::if_expr(std::unique_ptr<ast_expr> condition, std::unique_ptr<ast_expr> body, std::unique_ptr<ast_expr> else_body, std::shared_ptr<scope> env, std::shared_ptr<scope> else_env)
     :condition(std::move(condition)), body(std::move(body)), else_body(std::move(else_body)), env(env), else_env(else_env)
@@ -27,7 +26,7 @@ llvm::Value* if_expr::codegen(std::shared_ptr<scope>) const
     bool has_else = (else_body != nullptr);
     llvm::Value* condition_value = condition->codegen(env);
 
-    condition_value = type_info::convert(condition_value, llvm::Type::getInt1Ty(ctx));
+    condition_value = quark_type::convert(condition_value, llvm::Type::getInt1Ty(ctx));
 
     llvm::Function* func = builder.GetInsertBlock()->getParent();
 
