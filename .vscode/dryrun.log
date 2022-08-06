@@ -1,0 +1,6 @@
+make --dry-run --keep-going --print-directory
+make: Entering directory '/home/master/src/quark'
+ 
+make: Nothing to be done for 'all'.
+make: Leaving directory '/home/master/src/quark'
+ 

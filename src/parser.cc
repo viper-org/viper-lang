@@ -1,5 +1,3 @@
-#include "typing/ptr_type.hh"
-#include "typing/type.hh"
 #include <cctype>
 #include <memory>
 #include <parser.hh>

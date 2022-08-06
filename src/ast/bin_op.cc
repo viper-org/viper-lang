@@ -1,4 +1,3 @@
-#include "typing/type.hh"
 #include <ast/bin_op.hh>
 #include <ast/var.hh>
 #include <globals.hh>
