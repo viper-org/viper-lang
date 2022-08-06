@@ -1,6 +1,6 @@
 #ifndef QRK_AST_EXPR_HH
 #define QRK_AST_EXPR_HH
-#include <typing/type.hh>
+#include <typing/types.hh>
 #include <globals.hh>
 #include <llvm/IR/Value.h>
 #include <ostream>

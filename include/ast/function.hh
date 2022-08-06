@@ -2,7 +2,7 @@
 #define QRK_AST_FUNCTION_HH
 #include <ast/expr.hh>
 #include <globals.hh>
-#include <typing/type.hh>
+#include <typing/types.hh>
 #include <memory>
 #include <vector>
 

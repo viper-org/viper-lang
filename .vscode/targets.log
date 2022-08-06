@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sat Aug  6 22:59:12 2022
+# Make data base, printed on Sat Aug  6 23:39:08 2022
 
 # Variables
 
@@ -40,6 +40,7 @@ VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 PWD = /home/master/src/quark
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
+ 
 # environment
 MAIL = /var/spool/mail/master
 # environment
@@ -71,7 +72,7 @@ MAKEFLAGS = pqrR
 # makefile
 CURDIR := /home/master/src/quark
 # makefile (from 'Makefile', line 4)
-DEBUGCXXFLAGS = -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=gnu++20 -Wall -Wextra -Wpedantic -lLLVM
+DEBUGCXXFLAGS = -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM
 # environment
 APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
 # automatic
@@ -143,7 +144,7 @@ MOTD_SHOWN = pam
 # environment
 INVOCATION_ID = 8b911a46382142a4b3eb456042548849
 # makefile (from 'Makefile', line 5)
-RELEASECXXFLAGS = -O3 -Iinclude -std=gnu++20 -Wall -Wextra -Wpedantic -lLLVM
+RELEASECXXFLAGS = -O3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM
 # automatic
 ?F = $(notdir $?)
 # environment
@@ -252,11 +253,11 @@ KDE_FULL_SESSION = true
 # Directories
 
 # src (device 66308, inode 14699910): 13 files, no impossibilities so far.
-# . (device 66308, inode 14422016): 14 files, no impossibilities.
+# . (device 66308, inode 14422016): 17 files, no impossibilities.
 # src/ast (device 66308, inode 14700419): 35 files, no impossibilities so far.
 # src/typing (device 66308, inode 14699936): 3 files, no impossibilities so far.
 
-# 65 files, no impossibilities in 4 directories.
+# 68 files, no impossibilities in 4 directories.
 
 # Implicit Rules
 
@@ -270,7 +271,6 @@ KDE_FULL_SESSION = true
 src/ast/var.o: src/ast/var.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/var'
- 
 #  Last modified 2022-08-06 22:58:53.495711282
 #  File has been updated.
 #  Successfully updated.
@@ -350,7 +350,7 @@ src/ast/integer.o: src/ast/integer.cc
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-06 22:57:04.939041801
+#  Last modified 2022-08-06 23:05:33.332388312
 #  File has been updated.
 #  Successfully updated.
 
@@ -358,6 +358,7 @@ Makefile:
 src/ast/var_decl.cc:
 #  Implicit rule search has been done.
 #  Last modified 2022-08-06 18:26:29.565285962
+ 
 #  File has been updated.
 #  Successfully updated.
 
@@ -466,6 +467,7 @@ src/ast/label.o: src/ast/label.cc
 #  Last modified 2022-08-06 22:58:53.412377946
 #  File has been updated.
 #  Successfully updated.
+ 
 #  recipe to execute (from 'Makefile', line 29):
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
 
@@ -542,6 +544,7 @@ src/parser.cc:
 #  File has been updated.
 #  Successfully updated.
 
+ 
 src/ast/goto.o: src/ast/goto.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/goto'
@@ -556,7 +559,6 @@ src/ast/goto.o: src/ast/goto.cc
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 
 src/token.o: src/token.cc
 #  Implicit rule search has been done.
@@ -605,6 +607,7 @@ src/typing/ptr_type.o: src/typing/ptr_type.cc
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
+ 
 
 src/ast/break.o: src/ast/break.cc
 #  Implicit rule search has been done.
@@ -692,6 +695,7 @@ src/typing/type.o: src/typing/type.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/typing/type'
 #  Last modified 2022-08-06 22:58:39.259044246
+ 
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -729,12 +733,12 @@ qrk: src/typing/type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o sr
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 146 / storage = 1763 B / avg = 12 B
-# current buf: size = 8162 B / used = 1763 B / count = 146 / avg = 12 B
+# strcache buffers: 1 (0) / strings = 149 / storage = 1800 B / avg = 12 B
+# current buf: size = 8162 B / used = 1800 B / count = 149 / avg = 12 B
 
-# strcache performance: lookups = 243 / hit rate = 39%
+# strcache performance: lookups = 246 / hit rate = 39%
 # hash-table stats:
-# Load=146/8192=2%, Rehash=0, Collisions=6/243=2%
-# Finished Make data base on Sat Aug  6 22:59:12 2022
+# Load=149/8192=2%, Rehash=0, Collisions=6/246=2%
+# Finished Make data base on Sat Aug  6 23:39:08 2022
 
  
