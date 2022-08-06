@@ -22,7 +22,7 @@ To build quark, you will need:
 * Any g++ version with c++17
 * GNU Make
 ### Downloading the code
-To download the code, clone the github repository`git clone https://github.com/solar-mist/quark`
+To download the code, clone the github repository `git clone https://github.com/solar-mist/quark`
 ### Building
 To build the code, simply run `make release`
 If the build is taking a long time, you can use make's `-j` flag to speed up the build
