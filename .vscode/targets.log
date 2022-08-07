@@ -6,7 +6,8 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sat Aug  6 23:39:08 2022
+ 
+# Make data base, printed on Sun Aug  7 00:10:12 2022
 
 # Variables
 
@@ -40,7 +41,6 @@ VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 PWD = /home/master/src/quark
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
- 
 # environment
 MAIL = /var/spool/mail/master
 # environment
@@ -118,7 +118,7 @@ VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupp
 # default
 MAKE_HOST := x86_64-pc-linux-gnu
 # makefile (from 'Makefile', line 17)
-OBJS := src/typing/type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o src/ast/expr.o src/ast/call.o src/ast/for.o src/ast/function.o src/ast/un_op.o src/ast/label.o src/ast/var.o src/ast/extern_func.o src/ast/compound.o src/ast/goto.o src/ast/break.o src/ast/if.o src/ast/var_decl.o src/ast/bin_op.o src/ast/integer.o src/globals.o src/token.o src/lexer.o src/parser.o src/main.o
+OBJS := src/typing/type.o src/typing/arr_type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o src/ast/expr.o src/ast/call.o src/ast/for.o src/ast/function.o src/ast/un_op.o src/ast/label.o src/ast/var.o src/ast/extern_func.o src/ast/compound.o src/ast/goto.o src/ast/break.o src/ast/if.o src/ast/var_decl.o src/ast/bin_op.o src/ast/integer.o src/globals.o src/token.o src/lexer.o src/parser.o src/main.o
 # makefile
 SHELL = /bin/sh
 # default
@@ -126,6 +126,7 @@ MAKECMDGOALS := all
 # environment
 SHLVL = 2
 # environment
+ 
 PROFILEHOME = 
 # environment
 MAKELEVEL := 0
@@ -157,6 +158,7 @@ XDG_CURRENT_DESKTOP = KDE
 +F = $(notdir $+)
 # environment
 XDG_SEAT_PATH = /org/freedesktop/DisplayManager/Seat0
+ 
 # environment
 DESKTOP_SESSION = plasma
 # environment
@@ -192,7 +194,8 @@ KONSOLE_DBUS_SESSION = /Sessions/1
 # environment
 MANAGERPID = 736
 # makefile (from 'Makefile', line 16)
-CXXSOURCES := src/typing/type.cc src/typing/ptr_type.cc src/ast/return.cc src/ast/while.cc src/ast/expr.cc src/ast/call.cc src/ast/for.cc src/ast/function.cc src/ast/un_op.cc src/ast/label.cc src/ast/var.cc src/ast/extern_func.cc src/ast/compound.cc src/ast/goto.cc src/ast/break.cc src/ast/if.cc src/ast/var_decl.cc src/ast/bin_op.cc src/ast/integer.cc src/globals.cc src/token.cc src/lexer.cc src/parser.cc src/main.cc
+ 
+CXXSOURCES := src/typing/type.cc src/typing/arr_type.cc src/typing/ptr_type.cc src/ast/return.cc src/ast/while.cc src/ast/expr.cc src/ast/call.cc src/ast/for.cc src/ast/function.cc src/ast/un_op.cc src/ast/label.cc src/ast/var.cc src/ast/extern_func.cc src/ast/compound.cc src/ast/goto.cc src/ast/break.cc src/ast/if.cc src/ast/var_decl.cc src/ast/bin_op.cc src/ast/integer.cc src/globals.cc src/token.cc src/lexer.cc src/parser.cc src/main.cc
 # environment
 _ = /usr/bin/make
 # environment
@@ -212,6 +215,7 @@ HOME = /home/master
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
+ 
 VSCODE_IPC_HOOK = /run/user/1000/vscode-41268c26-1.70.0-main.sock
 # environment
 TERM = xterm-256color
@@ -234,6 +238,7 @@ QT_AUTO_SCREEN_SCALE_FACTOR = 0
 # environment
 VSCODE_CLI = 1
 # environment
+ 
 ELECTRON_NO_ATTACH_CONSOLE = 1
 # environment
 SHELL_SESSION_ID = d33ec70241d447cd82dc9ca11e226a3e
@@ -244,7 +249,7 @@ KDE_SESSION_VERSION = 5
 # environment
 KDE_FULL_SESSION = true
 # variable set hash-table stats:
-# Load=116/1024=11%, Rehash=0, Collisions=10/160=6%
+# Load=116/1024=11%, Rehash=0, Collisions=9/163=6%
 
 # Pattern-specific Variable Values
 
@@ -252,12 +257,13 @@ KDE_FULL_SESSION = true
 
 # Directories
 
+ 
 # src (device 66308, inode 14699910): 13 files, no impossibilities so far.
-# . (device 66308, inode 14422016): 17 files, no impossibilities.
+# . (device 66308, inode 14422016): 21 files, no impossibilities.
 # src/ast (device 66308, inode 14700419): 35 files, no impossibilities so far.
-# src/typing (device 66308, inode 14699936): 3 files, no impossibilities so far.
+# src/typing (device 66308, inode 14699936): 5 files, no impossibilities so far.
 
-# 68 files, no impossibilities in 4 directories.
+# 74 files, no impossibilities in 4 directories.
 
 # Implicit Rules
 
@@ -267,11 +273,12 @@ KDE_FULL_SESSION = true
 
 # 1 implicit rules, 0 (0.0%) terminal.
 # Files
+ 
 
 src/ast/var.o: src/ast/var.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/var'
-#  Last modified 2022-08-06 22:58:53.495711282
+#  Last modified 2022-08-07 00:09:23.539154264
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -280,6 +287,7 @@ src/ast/var.o: src/ast/var.cc
 # Not a target:
 src/globals.cc:
 #  Implicit rule search has been done.
+ 
 #  Last modified 2022-08-06 22:14:20.948975346
 #  File has been updated.
 #  Successfully updated.
@@ -294,7 +302,8 @@ src/ast/while.cc:
 src/ast/function.o: src/ast/function.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/function'
-#  Last modified 2022-08-06 22:58:53.415711278
+ 
+#  Last modified 2022-08-07 00:09:24.13915428
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -303,7 +312,7 @@ src/ast/function.o: src/ast/function.cc
 src/globals.o: src/globals.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/globals'
-#  Last modified 2022-08-06 22:58:53.472377947
+#  Last modified 2022-08-07 00:09:23.275820925
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -312,6 +321,7 @@ src/globals.o: src/globals.cc
 # Not a target:
 src/token.cc:
 #  Implicit rule search has been done.
+ 
 #  Last modified 2022-08-06 15:05:23.204973187
 #  File has been updated.
 #  Successfully updated.
@@ -319,7 +329,7 @@ src/token.cc:
 src/ast/compound.o: src/ast/compound.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/compound'
-#  Last modified 2022-08-06 22:58:53.545711283
+#  Last modified 2022-08-07 00:09:23.039154251
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -329,19 +339,40 @@ src/ast/compound.o: src/ast/compound.cc
 debug: CXXFLAGS = $(DEBUGCXXFLAGS)
 # makefile (from 'Makefile', line 14)
 debug: LDFLAGS = $(DEBUGLDFLAGS)
-debug: src/typing/type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o src/ast/expr.o src/ast/call.o src/ast/for.o src/ast/function.o src/ast/un_op.o src/ast/label.o src/ast/var.o src/ast/extern_func.o src/ast/compound.o src/ast/goto.o src/ast/break.o src/ast/if.o src/ast/var_decl.o src/ast/bin_op.o src/ast/integer.o src/globals.o src/token.o src/lexer.o src/parser.o src/main.o
+ 
+debug: src/typing/type.o src/typing/arr_type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o src/ast/expr.o src/ast/call.o src/ast/for.o src/ast/function.o src/ast/un_op.o src/ast/label.o src/ast/var.o src/ast/extern_func.o src/ast/compound.o src/ast/goto.o src/ast/break.o src/ast/if.o src/ast/var_decl.o src/ast/bin_op.o src/ast/integer.o src/globals.o src/token.o src/lexer.o src/parser.o src/main.o
 #  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
+#  Implicit/static pattern stem: ''
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := debug
+# automatic
+# * := 
+# automatic
+# < := src/typing/type.o
+# automatic
+ 
+# + := src/typing/type.o src/typing/arr_type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o src/ast/expr.o src/ast/call.o src/ast/for.o src/ast/function.o src/ast/un_op.o src/ast/label.o src/ast/var.o src/ast/extern_func.o src/ast/compound.o src/ast/goto.o src/ast/break.o src/ast/if.o src/ast/var_decl.o src/ast/bin_op.o src/ast/integer.o src/globals.o src/token.o src/lexer.o src/parser.o src/main.o
+# automatic
+# % := 
+# automatic
+# ^ := src/typing/type.o src/typing/arr_type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o src/ast/expr.o src/ast/call.o src/ast/for.o src/ast/function.o src/ast/un_op.o src/ast/label.o src/ast/var.o src/ast/extern_func.o src/ast/compound.o src/ast/goto.o src/ast/break.o src/ast/if.o src/ast/var_decl.o src/ast/bin_op.o src/ast/integer.o src/globals.o src/token.o src/lexer.o src/parser.o src/main.o
+# automatic
+# ? := src/typing/type.o src/typing/arr_type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o src/ast/expr.o src/ast/call.o src/ast/for.o src/ast/function.o src/ast/un_op.o src/ast/label.o src/ast/var.o src/ast/extern_func.o src/ast/compound.o src/ast/goto.o src/ast/break.o src/ast/if.o src/ast/var_decl.o src/ast/bin_op.o src/ast/integer.o src/globals.o src/token.o src/lexer.o src/parser.o src/main.o
+# automatic
+# | := 
 # variable set hash-table stats:
-# Load=2/32=6%, Rehash=0, Collisions=0/3=0%
+# Load=10/32=31%, Rehash=0, Collisions=2/19=11%
 #  recipe to execute (from 'Makefile', line 26):
+ 
 	$(LD) $(LDFLAGS) $^ -o $(TARGET)
 
 src/ast/integer.o: src/ast/integer.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/integer'
-#  Last modified 2022-08-06 22:58:52.915711265
+#  Last modified 2022-08-07 00:09:22.999154252
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -350,22 +381,22 @@ src/ast/integer.o: src/ast/integer.cc
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-06 23:05:33.332388312
+#  Last modified 2022-08-07 00:09:08.445820541
+ 
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
 src/ast/var_decl.cc:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-06 18:26:29.565285962
- 
+#  Last modified 2022-08-07 00:05:39.669148463
 #  File has been updated.
 #  Successfully updated.
 
 src/ast/un_op.o: src/ast/un_op.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/un_op'
-#  Last modified 2022-08-06 22:58:53.379044612
+#  Last modified 2022-08-07 00:09:23.77915427
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -374,6 +405,7 @@ src/ast/un_op.o: src/ast/un_op.cc
 # Not a target:
 src/ast/break.cc:
 #  Implicit rule search has been done.
+ 
 #  Last modified 2022-08-06 01:07:24.906739689
 #  File has been updated.
 #  Successfully updated.
@@ -381,7 +413,7 @@ src/ast/break.cc:
 # Not a target:
 src/ast/bin_op.cc:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-06 18:26:07.518618723
+#  Last modified 2022-08-06 23:53:18.999129261
 #  File has been updated.
 #  Successfully updated.
 
@@ -395,6 +427,7 @@ src/ast/extern_func.cc:
 # Not a target:
 src/ast/for.cc:
 #  Implicit rule search has been done.
+ 
 #  Last modified 2022-08-06 18:27:52.17195477
 #  File has been updated.
 #  Successfully updated.
@@ -402,7 +435,7 @@ src/ast/for.cc:
 src/ast/var_decl.o: src/ast/var_decl.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/var_decl'
-#  Last modified 2022-08-06 22:58:53.65904462
+#  Last modified 2022-08-07 00:09:24.10915428
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -412,9 +445,10 @@ clean:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 35):
+#  recipe to execute (from 'Makefile', line 32):
 	rm -rf $(OBJS) $(TARGET)
 
+ 
 # Not a target:
 src/ast/if.cc:
 #  Implicit rule search has been done.
@@ -425,12 +459,13 @@ src/ast/if.cc:
 # Not a target:
 src/lexer.cc:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-06 15:05:07.614972782
+#  Last modified 2022-08-07 00:06:30.152483104
 #  File has been updated.
 #  Successfully updated.
 
 # Not a target:
 src/ast/integer.cc:
+ 
 #  Implicit rule search has been done.
 #  Last modified 2022-08-06 18:27:05.908620237
 #  File has been updated.
@@ -439,7 +474,7 @@ src/ast/integer.cc:
 src/ast/while.o: src/ast/while.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/while'
-#  Last modified 2022-08-06 22:58:45.602377744
+#  Last modified 2022-08-07 00:09:23.469154264
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -447,6 +482,7 @@ src/ast/while.o: src/ast/while.cc
 
 # Not a target:
 src/ast/function.cc:
+ 
 #  Implicit rule search has been done.
 #  Last modified 2022-08-06 18:50:33.311990053
 #  File has been updated.
@@ -455,29 +491,30 @@ src/ast/function.cc:
 src/ast/bin_op.o: src/ast/bin_op.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/bin_op'
-#  Last modified 2022-08-06 22:58:53.725711287
+#  Last modified 2022-08-07 00:09:24.009154278
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
 
 src/ast/label.o: src/ast/label.cc
+ 
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/label'
-#  Last modified 2022-08-06 22:58:53.412377946
+#  Last modified 2022-08-07 00:09:23.425820929
 #  File has been updated.
 #  Successfully updated.
- 
 #  recipe to execute (from 'Makefile', line 29):
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
 
 src/lexer.o: src/lexer.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/lexer'
-#  Last modified 2022-08-06 22:58:51.032377885
+#  Last modified 2022-08-07 00:09:21.099154202
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
+ 
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
 
 # Not a target:
@@ -490,9 +527,10 @@ src/ast/return.cc:
 src/ast/expr.o: src/ast/expr.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/expr'
-#  Last modified 2022-08-06 22:58:47.63571113
+#  Last modified 2022-08-07 00:09:23.199154256
 #  File has been updated.
 #  Successfully updated.
+ 
 #  recipe to execute (from 'Makefile', line 29):
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
 
@@ -506,16 +544,17 @@ src/typing/ptr_type.cc:
 src/ast/for.o: src/ast/for.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/for'
-#  Last modified 2022-08-06 22:58:53.035711268
+#  Last modified 2022-08-07 00:09:23.545820932
 #  File has been updated.
 #  Successfully updated.
+ 
 #  recipe to execute (from 'Makefile', line 29):
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
 
 src/ast/extern_func.o: src/ast/extern_func.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/extern_func'
-#  Last modified 2022-08-06 22:58:53.065711269
+#  Last modified 2022-08-07 00:09:23.359154261
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -525,13 +564,14 @@ src/ast/extern_func.o: src/ast/extern_func.cc
 src/typing/type.cc:
 #  Implicit rule search has been done.
 #  Last modified 2022-08-06 19:09:14.355352446
+ 
 #  File has been updated.
 #  Successfully updated.
 
 src/main.o: src/main.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/main'
-#  Last modified 2022-08-06 22:58:53.95237796
+#  Last modified 2022-08-07 00:09:24.179154282
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -540,15 +580,15 @@ src/main.o: src/main.cc
 # Not a target:
 src/parser.cc:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-06 19:16:36.755363914
+#  Last modified 2022-08-07 00:08:22.065819337
 #  File has been updated.
+ 
 #  Successfully updated.
 
- 
 src/ast/goto.o: src/ast/goto.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/goto'
-#  Last modified 2022-08-06 22:58:53.089044605
+#  Last modified 2022-08-07 00:09:23.102487588
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -562,8 +602,9 @@ src/ast/goto.o: src/ast/goto.cc
 
 src/token.o: src/token.cc
 #  Implicit rule search has been done.
+ 
 #  Implicit/static pattern stem: 'src/token'
-#  Last modified 2022-08-06 22:58:50.59904454
+#  Last modified 2022-08-07 00:09:19.069154148
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -572,56 +613,68 @@ src/token.o: src/token.cc
 src/parser.o: src/parser.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/parser'
-#  Last modified 2022-08-06 22:58:54.405711305
+#  Last modified 2022-08-07 00:09:26.122487666
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
 
 # Not a target:
+ 
 src/main.cc:
 #  Implicit rule search has been done.
 #  Last modified 2022-08-06 18:45:53.35531613
 #  File has been updated.
 #  Successfully updated.
 
-all: qrk
+all: debug
 #  Command line target.
 #  Implicit rule search has been done.
 #  File does not exist.
 #  File has been updated.
-#  Successfully updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/6=0%
 
 # Not a target:
 src/ast/label.cc:
+ 
 #  Implicit rule search has been done.
 #  Last modified 2022-08-06 01:21:56.516716286
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+src/typing/arr_type.cc:
+#  Implicit rule search has been done.
+#  Last modified 2022-08-07 00:01:12.589141539
 #  File has been updated.
 #  Successfully updated.
 
 src/typing/ptr_type.o: src/typing/ptr_type.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/typing/ptr_type'
-#  Last modified 2022-08-06 22:58:41.369044301
+ 
+#  Last modified 2022-08-07 00:09:23.015820918
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
- 
 
 src/ast/break.o: src/ast/break.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/break'
-#  Last modified 2022-08-06 22:58:53.379044612
+#  Last modified 2022-08-07 00:09:23.425820929
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
 
 src/ast/call.o: src/ast/call.cc
+ 
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/call'
-#  Last modified 2022-08-06 22:58:53.632377952
+#  Last modified 2022-08-07 00:09:24.009154278
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -639,6 +692,7 @@ src/ast/call.cc:
 #  Implicit rule search has been done.
 #  Last modified 2022-08-06 18:26:00.41861854
 #  File has been updated.
+ 
 #  Successfully updated.
 
 # Not a target:
@@ -655,10 +709,20 @@ src/ast/expr.cc:
 #  File has been updated.
 #  Successfully updated.
 
+src/typing/arr_type.o: src/typing/arr_type.cc
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'src/typing/arr_type'
+ 
+#  Last modified 2022-08-07 00:09:23.142487588
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 29):
+	$(CXXC) $(CXXFLAGS) -c $< -o $@
+
 src/ast/return.o: src/ast/return.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/return'
-#  Last modified 2022-08-06 22:58:43.475711022
+#  Last modified 2022-08-07 00:09:23.445820929
 #  File has been updated.
 #  Successfully updated.
 #  recipe to execute (from 'Makefile', line 29):
@@ -668,14 +732,15 @@ example: qrk
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 38):
+#  recipe to execute (from 'Makefile', line 35):
 	./$(TARGET) example.qrk
+ 
 
 # makefile (from 'Makefile', line 10)
 release: CXXFLAGS = $(RELEASECXXFLAGS)
 # makefile (from 'Makefile', line 11)
 release: LDFLAGS = $(RELEASELDFLAGS)
-release: src/typing/type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o src/ast/expr.o src/ast/call.o src/ast/for.o src/ast/function.o src/ast/un_op.o src/ast/label.o src/ast/var.o src/ast/extern_func.o src/ast/compound.o src/ast/goto.o src/ast/break.o src/ast/if.o src/ast/var_decl.o src/ast/bin_op.o src/ast/integer.o src/globals.o src/token.o src/lexer.o src/parser.o src/main.o
+release: src/typing/type.o src/typing/arr_type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o src/ast/expr.o src/ast/call.o src/ast/for.o src/ast/function.o src/ast/un_op.o src/ast/label.o src/ast/var.o src/ast/extern_func.o src/ast/compound.o src/ast/goto.o src/ast/break.o src/ast/if.o src/ast/var_decl.o src/ast/bin_op.o src/ast/integer.o src/globals.o src/token.o src/lexer.o src/parser.o src/main.o
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -685,19 +750,26 @@ release: src/typing/type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.
 	$(LD) $(LDFLAGS) $^ -o $(TARGET)
 
 # Not a target:
+ 
 src/ast/compound.cc:
 #  Implicit rule search has been done.
 #  Last modified 2022-08-03 13:00:34.041232068
 #  File has been updated.
 #  Successfully updated.
 
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
 src/typing/type.o: src/typing/type.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/typing/type'
-#  Last modified 2022-08-06 22:58:39.259044246
- 
+#  Last modified 2022-08-07 00:09:23.725820937
 #  File has been updated.
 #  Successfully updated.
+ 
 #  recipe to execute (from 'Makefile', line 29):
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
 
@@ -711,34 +783,34 @@ src/ast/var.cc:
 src/ast/if.o: src/ast/if.cc
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/ast/if'
-#  Last modified 2022-08-06 22:58:53.252377942
+#  Last modified 2022-08-07 00:09:23.605820934
 #  File has been updated.
 #  Successfully updated.
+ 
 #  recipe to execute (from 'Makefile', line 29):
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
 
-qrk: src/typing/type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o src/ast/expr.o src/ast/call.o src/ast/for.o src/ast/function.o src/ast/un_op.o src/ast/label.o src/ast/var.o src/ast/extern_func.o src/ast/compound.o src/ast/goto.o src/ast/break.o src/ast/if.o src/ast/var_decl.o src/ast/bin_op.o src/ast/integer.o src/globals.o src/token.o src/lexer.o src/parser.o src/main.o
+# Not a target:
+qrk:
 #  Implicit rule search has not been done.
-#  Last modified 2022-08-06 22:58:54.72237798
-#  File has been updated.
-#  Successfully updated.
-#  recipe to execute (from 'Makefile', line 32):
-	$(LD) $(LDFLAGS) $^ -o $@
+#  Modification time never checked.
+#  File has not been updated.
 
 # files hash-table stats:
-# Load=57/1024=6%, Rehash=0, Collisions=12/221=5%
+# Load=59/1024=6%, Rehash=0, Collisions=10/204=5%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 149 / storage = 1800 B / avg = 12 B
-# current buf: size = 8162 B / used = 1800 B / count = 149 / avg = 12 B
+# strcache buffers: 1 (0) / strings = 158 / storage = 1922 B / avg = 12 B
+# current buf: size = 8162 B / used = 1922 B / count = 158 / avg = 12 B
 
-# strcache performance: lookups = 246 / hit rate = 39%
+# strcache performance: lookups = 232 / hit rate = 31%
 # hash-table stats:
-# Load=149/8192=2%, Rehash=0, Collisions=6/246=2%
-# Finished Make data base on Sat Aug  6 23:39:08 2022
+ 
+# Load=158/8192=2%, Rehash=0, Collisions=4/232=2%
+# Finished Make data base on Sun Aug  7 00:10:12 2022
 
  

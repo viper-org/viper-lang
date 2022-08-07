@@ -171,11 +171,24 @@ std::shared_ptr<quark_type> parser::parse_type()
 {
     std::string text = consume().text;
     std::shared_ptr<quark_type> type = types.at(text);
-    while(current().type == token_type::star)
+    while(current().type == token_type::star || current().type == token_type::lsqbracket)
     {
         consume();
-        type = std::make_shared<quark_ptr_type>(type);
-        type->T = type_type::pointer;
+        if(current().type == token_type::star)
+        {
+            type = std::make_shared<quark_ptr_type>(type);
+            type->T = type_type::pointer;
+        }
+        else
+        {
+            unsigned int length = std::stoi(consume().text);
+
+            expect_token(token_type::rsqbracket);
+            consume();
+
+            type = std::make_shared<quark_arr_type>(type, length);
+            type->T = type_type::array;
+        }
     }
 
     return type;
@@ -276,11 +289,14 @@ std::unique_ptr<ast_expr> parser::parse_var_assign()
 
     std::string name = consume().text;
 
-    expect_token(token_type::assignment);
-    consume();
+    if(current().type == token_type::assignment)
+    {
+        consume();
 
-    std::unique_ptr<ast_expr> value = parse_expr();
-    return std::make_unique<var_decl>(T, name, std::move(value));
+        std::unique_ptr<ast_expr> value = parse_expr();
+        return std::make_unique<var_decl>(T, name, std::move(value));
+    }
+    return std::make_unique<var_decl>(T, name, nullptr);
 }
 
 std::unique_ptr<ast_expr> parser::parse_paren_expr()

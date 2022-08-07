@@ -17,7 +17,7 @@ CXXSOURCES:=$(shell find src -name '*.cc')
 OBJS:=${CXXSOURCES:.cc=.o}
 TARGET=qrk
 
-all: $(TARGET)
+all: debug
 
 release: $(OBJS)
 	$(LD) $(LDFLAGS) $^ -o $(TARGET)
@@ -27,9 +27,6 @@ debug: $(OBJS)
 
 %.o: %.cc
 	$(CXXC) $(CXXFLAGS) -c $< -o $@
-
-$(TARGET): $(OBJS)
-	$(LD) $(LDFLAGS) $^ -o $@
 
 clean:
 	rm -rf $(OBJS) $(TARGET)

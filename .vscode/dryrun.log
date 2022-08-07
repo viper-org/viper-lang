@@ -1,6 +1,7 @@
 make --dry-run --keep-going --print-directory
 make: Entering directory '/home/master/src/quark'
  
-make: Nothing to be done for 'all'.
+g++ -fsanitize=address,undefined -lLLVM src/typing/type.o src/typing/arr_type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o src/ast/expr.o src/ast/call.o src/ast/for.o src/ast/function.o src/ast/un_op.o src/ast/label.o src/ast/var.o src/ast/extern_func.o src/ast/compound.o src/ast/goto.o src/ast/break.o src/ast/if.o src/ast/var_decl.o src/ast/bin_op.o src/ast/integer.o src/globals.o src/token.o src/lexer.o src/parser.o src/main.o -o qrk
+ 
 make: Leaving directory '/home/master/src/quark'
  

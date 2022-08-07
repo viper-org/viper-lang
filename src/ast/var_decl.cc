@@ -31,18 +31,26 @@ expr_type var_decl::get_type() const
 llvm::Value* var_decl::codegen(std::shared_ptr<scope> env) const
 {
     llvm::Function* func = builder.GetInsertBlock()->getParent();
+    llvm::Value* init_val;
 
-    value->type = type;
-    llvm::Value* init_val = value->codegen(env);
+    if(value)
+    {
+        value->type = type;
+        init_val = value->codegen(env);
+    }
 
     llvm::AllocaInst* alloca = create_alloca(func, name, type);
 
-    if(init_val->getType() != type->get_type())
-            init_val = quark_type::convert(init_val, type->get_type());
+    if(value)
+    {
+        if(init_val->getType() != type->get_type())
+                init_val = quark_type::convert(init_val, type->get_type());
 
-    builder.CreateStore(init_val, alloca);
+        builder.CreateStore(init_val, alloca);
 
-    env->named_values[name] = alloca;
+        env->named_values[name] = alloca;
 
-    return init_val;   
+        return init_val; 
+    }
+    return nullptr;
 }
