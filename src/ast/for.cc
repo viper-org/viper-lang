@@ -1,5 +1,6 @@
 #include <ast/for.hh>
 #include <llvm/IR/BasicBlock.h>
+#include <iostream>
 
 for_expr::for_expr(std::unique_ptr<ast_expr> init, std::unique_ptr<ast_expr> cond, std::unique_ptr<ast_expr> iter, std::shared_ptr<scope> env, std::unique_ptr<ast_expr> body)
     :init(std::move(init)), cond(std::move(cond)), iter(std::move(iter)), env(env), body(std::move(body))
@@ -39,6 +40,7 @@ llvm::Value* for_expr::codegen(std::shared_ptr<scope>) const
     builder.SetInsertPoint(cond_bb);
 
     llvm::Value* cond_value = cond->codegen(env);
+    cond->print(std::cout);
     cond_value = quark_type::convert(cond_value, llvm::Type::getInt1Ty(ctx));
     builder.CreateCondBr(cond_value, body_bb, end_bb);
 

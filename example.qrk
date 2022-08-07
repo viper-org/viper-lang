@@ -1,6 +1,9 @@
 @main() -> i32
 {
-    i32[3] x
+    i32[10] x
 
-    return 0
+    for(i32 i = 9; i >= 0; i -= 1)
+        x[i] = i
+
+    return x[5]
 }

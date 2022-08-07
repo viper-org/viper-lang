@@ -1,7 +1,30 @@
-make --dry-run --keep-going --print-directory
+make --dry-run --always-make --keep-going --print-directory
 make: Entering directory '/home/master/src/quark'
- 
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/typing/type.cc -o src/typing/type.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/typing/arr_type.cc -o src/typing/arr_type.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/typing/ptr_type.cc -o src/typing/ptr_type.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/return.cc -o src/ast/return.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/while.cc -o src/ast/while.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/expr.cc -o src/ast/expr.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/call.cc -o src/ast/call.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/for.cc -o src/ast/for.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/function.cc -o src/ast/function.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/un_op.cc -o src/ast/un_op.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/label.cc -o src/ast/label.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/var.cc -o src/ast/var.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/extern_func.cc -o src/ast/extern_func.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/compound.cc -o src/ast/compound.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/goto.cc -o src/ast/goto.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/break.cc -o src/ast/break.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/if.cc -o src/ast/if.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/var_decl.cc -o src/ast/var_decl.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/bin_op.cc -o src/ast/bin_op.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/ast/integer.cc -o src/ast/integer.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/globals.cc -o src/globals.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/token.cc -o src/token.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/lexer.cc -o src/lexer.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/parser.cc -o src/parser.o
+g++ -fsanitize=address,undefined -Og -ggdb3 -Iinclude -std=c++17 -Wall -Wextra -Wpedantic -lLLVM -c src/main.cc -o src/main.o
 g++ -fsanitize=address,undefined -lLLVM src/typing/type.o src/typing/arr_type.o src/typing/ptr_type.o src/ast/return.o src/ast/while.o src/ast/expr.o src/ast/call.o src/ast/for.o src/ast/function.o src/ast/un_op.o src/ast/label.o src/ast/var.o src/ast/extern_func.o src/ast/compound.o src/ast/goto.o src/ast/break.o src/ast/if.o src/ast/var_decl.o src/ast/bin_op.o src/ast/integer.o src/globals.o src/token.o src/lexer.o src/parser.o src/main.o -o qrk
- 
 make: Leaving directory '/home/master/src/quark'
  

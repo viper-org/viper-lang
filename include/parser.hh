@@ -35,6 +35,7 @@ struct parser
     
     static std::unique_ptr<ast_expr> parse_identifier_expr();
     static std::unique_ptr<ast_expr> parse_var_expr();
+    static std::unique_ptr<ast_expr> parse_subscript_expr();
     static std::unique_ptr<ast_expr> parse_call_expr();
 
     static std::unique_ptr<ast_expr> parse_var_assign();

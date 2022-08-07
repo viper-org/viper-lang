@@ -40,6 +40,7 @@ llvm::Value* var_decl::codegen(std::shared_ptr<scope> env) const
     }
 
     llvm::AllocaInst* alloca = create_alloca(func, name, type);
+    env->named_values[name] = alloca;
 
     if(value)
     {
@@ -47,8 +48,6 @@ llvm::Value* var_decl::codegen(std::shared_ptr<scope> env) const
                 init_val = quark_type::convert(init_val, type->get_type());
 
         builder.CreateStore(init_val, alloca);
-
-        env->named_values[name] = alloca;
 
         return init_val; 
     }

@@ -1,3 +1,4 @@
+#include "ast/subscript.hh"
 #include <cctype>
 #include <memory>
 #include <parser.hh>
@@ -173,14 +174,15 @@ std::shared_ptr<quark_type> parser::parse_type()
     std::shared_ptr<quark_type> type = types.at(text);
     while(current().type == token_type::star || current().type == token_type::lsqbracket)
     {
-        consume();
         if(current().type == token_type::star)
         {
+            consume();
             type = std::make_shared<quark_ptr_type>(type);
             type->T = type_type::pointer;
         }
         else
         {
+            consume();
             unsigned int length = std::stoi(consume().text);
 
             expect_token(token_type::rsqbracket);
@@ -250,6 +252,8 @@ std::unique_ptr<ast_expr> parser::parse_identifier_expr()
         consume();
         return std::make_unique<label_expr>(label);
     }
+    else if(peek(1).type == token_type::lsqbracket)
+        return parse_subscript_expr();
     else
         return parse_var_expr();
 }
@@ -275,6 +279,23 @@ std::unique_ptr<ast_expr> parser::parse_call_expr()
     consume();
 
     return std::make_unique<call_expr>(name, std::move(args));
+}
+
+std::unique_ptr<ast_expr> parser::parse_subscript_expr()
+{
+    std::unique_ptr<ast_expr> result = std::make_unique<var_expr>(consume().text);
+    while(current().type == token_type::lsqbracket)
+    {
+        consume();
+
+        std::unique_ptr<ast_expr> index = parse_expr();
+
+        expect_token(token_type::rsqbracket);
+        consume();
+
+        result = std::make_unique<subscript_expr>(std::move(result), std::move(index));
+    }
+    return result;
 }
 
 std::unique_ptr<ast_expr> parser::parse_var_expr()

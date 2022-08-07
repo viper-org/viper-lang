@@ -19,5 +19,6 @@
 #include <ast/label.hh>
 #include <ast/goto.hh>
 #include <ast/un_op.hh>
+#include <ast/subscript.hh>
 
 #endif
