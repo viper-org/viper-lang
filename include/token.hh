@@ -7,6 +7,7 @@ enum class token_type
 {
     lparen, rparen,
     lbracket, rbracket,
+    lsqbracket, rsqbracket,
 
     plus, minus, star, slash,
 

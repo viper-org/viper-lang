@@ -24,5 +24,6 @@ llvm::Value* return_stmt::codegen(std::shared_ptr<scope> env) const
     llvm::Value* ret_val = value->codegen(env);
     if(ret_val->getType() != type->get_type())
         ret_val = quark_type::convert(ret_val, type->get_type());
+
     return builder.CreateRet(ret_val);
 }

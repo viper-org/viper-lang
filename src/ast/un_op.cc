@@ -80,18 +80,7 @@ llvm::Value* un_op_expr::codegen(std::shared_ptr<scope> env) const
         }
         case unary_operand::DEREFERENCE:
         {
-            if(value->get_type() == expr_type::VARIABLE)
-            {
-                var_expr* var = static_cast<var_expr*>(value.get());
-
-                llvm::AllocaInst* alloca = find_named_value(var->get_name(), env);
-
-                return builder.CreateLoad(value_codegen->getType()->getNonOpaquePointerElementType(), value_codegen, "jkl");
-            }
-            else
-            {
-                return builder.CreateLoad(value_codegen->getType()->getNonOpaquePointerElementType(), value_codegen, "abc");
-            }
+            return builder.CreateLoad(value_codegen->getType()->getNonOpaquePointerElementType(), value_codegen, "dereftmp");
         }
         default:
             break;

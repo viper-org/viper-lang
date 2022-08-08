@@ -17,7 +17,7 @@ enum class expr_type
     FOR, WHILE, BREAK,
     LABEL, GOTO,
 
-    VARIABLE, VARIABLE_DECL,
+    VARIABLE, VARIABLE_DECL, SUBSCRIPT,
 
     CALL,
 

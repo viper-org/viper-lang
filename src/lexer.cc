@@ -123,6 +123,10 @@ std::optional<token> lexer::next_token()
         return token(token_type::lbracket, "{", line);
     else if(c == '}')
         return token(token_type::rbracket, "}", line);
+    else if(c == '[')
+        return token(token_type::lsqbracket, "[", line);
+    else if(c == ']')
+        return token(token_type::rsqbracket, "]", line);
     else if(c == '@')
         return token(token_type::asperand, "@", line);
     else if(c == '&')

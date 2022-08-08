@@ -1,7 +1,9 @@
+#include "ast/subscript.hh"
 #include <ast/bin_op.hh>
 #include <ast/var.hh>
 #include <globals.hh>
 #include <iostream>
+#include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Instructions.h>
 
 bin_op_expr::bin_op_expr(token operand, std::unique_ptr<ast_expr> lhs, std::unique_ptr<ast_expr> rhs)
@@ -101,23 +103,34 @@ llvm::Value* bin_op_expr::codegen(std::shared_ptr<scope> env) const
 {
     if(operand == binary_operand::ASSIGNMENT)
     {
-        var_expr* left = static_cast<var_expr*>(lhs.get());
-        llvm::Value* value = rhs->codegen(env);
-
-        llvm::AllocaInst* alloca = find_named_value(left->get_name(), env);
-
-        if(type->T == type_type::pointer)
+        if(lhs->get_type() == expr_type::VARIABLE)
         {
-            if(value->getType() != alloca->getType())
-                value = quark_type::convert(value, alloca->getType());
+            var_expr* left = static_cast<var_expr*>(lhs.get());
+            llvm::Value* value = rhs->codegen(env);
+
+            llvm::AllocaInst* alloca = find_named_value(left->get_name(), env);
+
+            if(type->T == type_type::pointer)
+            {
+                if(value->getType() != alloca->getType())
+                    value = quark_type::convert(value, alloca->getType());
+            }
+            else
+            {
+                if(value->getType() != alloca->getAllocatedType())
+                    value = quark_type::convert(value, alloca->getAllocatedType());
+            }
+            
+            return builder.CreateStore(value, alloca);
         }
-        else
+        else if(lhs->get_type() == expr_type::SUBSCRIPT)
         {
-            if(value->getType() != alloca->getAllocatedType())
-                value = quark_type::convert(value, alloca->getAllocatedType());
+            subscript_expr* left = static_cast<subscript_expr*>(lhs.get());
+
+            llvm::Value* left_codegen = left->no_load_codegen(env);
+
+            return builder.CreateStore(rhs->codegen(env), left_codegen);
         }
-        
-        return builder.CreateStore(value, alloca);
     }
     else if(operand == binary_operand::INCREMENT_ASSIGN || operand == binary_operand::DECREMENT_ASSIGN)
     {
@@ -168,6 +181,18 @@ llvm::Value* bin_op_expr::codegen(std::shared_ptr<scope> env) const
             return builder.CreateICmpSLT(left, right, "lttmp");
         case binary_operand::GREATER:
             return builder.CreateICmpSGT(left, right, "gttmp");
+        case binary_operand::LESS_EQUAL:
+        {
+            llvm::Value* equal = builder.CreateICmpEQ(left, right, "lteqeqtmp");
+            llvm::Value* less  = builder.CreateICmpSLT(left, right, "lteqlttmp");
+            return builder.CreateOr(equal, less, "lteqortmp");
+        }
+        case binary_operand::GREATER_EQUAL:
+        {
+            llvm::Value* equal = builder.CreateICmpEQ(left, right, "gteqeqtmp");
+            llvm::Value* greater  = builder.CreateICmpSGT(left, right, "gteqgttmp");
+            return builder.CreateOr(equal, greater, "gteqortmp");
+        }
         default:
             return nullptr;
     }
