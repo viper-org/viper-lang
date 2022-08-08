@@ -1,11 +1,11 @@
-#ifndef QUARK_COMPILER_HXX
-#define QUARK_COMPILER_HXX
+#ifndef SKETCH_COMPILER_HXX
+#define SKETCH_COMPILER_HXX
 #include <string>
 #include <fstream>
 
-namespace Quark
+namespace Sketch
 {
-    enum class QuarkOutputType
+    enum class SketchOutputType
     {
         LLVM,
         Assembly,
@@ -15,12 +15,12 @@ namespace Quark
     class Compiler
     {
     public:
-        Compiler(QuarkOutputType outputType, std::string inputFileName = "a.out");
+        Compiler(SketchOutputType outputType, std::string inputFileName = "a.out");
 
-        QuarkOutputType getOutputType() const;
+        SketchOutputType getOutputType() const;
         std::string_view getInputFileName() const;
     private:
-        QuarkOutputType _outputType;
+        SketchOutputType _outputType;
         std::string _inputFileName;
 
         std::ifstream handle;

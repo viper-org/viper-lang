@@ -1,8 +1,8 @@
-#ifndef QUARK_DIAGNOSTICS_HXX
-#define QUARK_DIAGNOSTICS_HXX
+#ifndef SKETCH_DIAGNOSTICS_HXX
+#define SKETCH_DIAGNOSTICS_HXX
 #include <string_view>
 
-namespace Quark
+namespace Sketch
 {
     namespace Diagnostics
     {

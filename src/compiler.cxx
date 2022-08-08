@@ -2,16 +2,16 @@
 #include <diagnostics.hxx>
 #include <iostream>
 
-namespace Quark
+namespace Sketch
 {
-    Compiler::Compiler(QuarkOutputType outputType, std::string inputFileName)
+    Compiler::Compiler(SketchOutputType outputType, std::string inputFileName)
         :_outputType(outputType), _inputFileName(inputFileName), handle(inputFileName)
     {
         if(!handle.is_open())
             Diagnostics::FatalError("qrk", inputFileName + ": No such file or directory");
     }
 
-    QuarkOutputType Compiler::getOutputType() const
+    SketchOutputType Compiler::getOutputType() const
     {
         return _outputType;
     }
