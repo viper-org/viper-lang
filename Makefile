@@ -16,7 +16,7 @@ LD_FLAGS=-fsanitize=address,undefined -lLLVM
 CXX_SRCS:=$(shell find $(SRCDIR) -name '*.cxx')
 OBJS:=${CXX_SRCS:.cxx=.o}
 
-TARGET=quark
+TARGET=qrk
 
 all: $(TARGET)
 
