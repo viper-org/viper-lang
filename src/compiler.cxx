@@ -1,17 +1,27 @@
 #include <compiler.hxx>
 #include <diagnostics.hxx>
 #include <iostream>
+#include <sstream>
 
-namespace Sketch
+namespace Quark
 {
-    Compiler::Compiler(SketchOutputType outputType, const std::string inputFileName)
+    Compiler::Compiler(QuarkOutputType outputType, const std::string inputFileName)
         :_outputType(outputType), _inputFileName(inputFileName), handle(inputFileName)
     {
         if(!handle.is_open())
             Diagnostics::FatalError("qrk", inputFileName + ": No such file or directory");
     }
 
-    SketchOutputType Compiler::getOutputType() const
+    std::vector<Lexing::Token> Compiler::Compile()
+    {
+        std::stringstream buffer;
+        buffer << handle.rdbuf();
+
+        _lexer = std::make_unique<Lexing::Lexer>(buffer.str(), _inputFileName);
+        return _lexer->Lex();
+    }
+
+    QuarkOutputType Compiler::getOutputType() const
     {
         return _outputType;
     }

@@ -2,11 +2,11 @@
 #include <ostream>
 #include <string>
 
-namespace Sketch
+namespace Quark
 {
     namespace Lexing
     {
-        Token::Token(TokenType type, const std::string text, unsigned int lineNumber)
+        Token::Token(TokenType type, const std::string text, const unsigned int lineNumber)
             :_type(type), _text(text), _lineNumber(lineNumber)
         {
         }
@@ -56,7 +56,9 @@ namespace Sketch
                     return "Semicolon";
                 case TokenType::EndOfFile:
                     return "EndOfFile";
-            }
+                case TokenType::Identifier:
+                    return "Identifier";
+                }
         }
 
         std::ostream& operator<<(std::ostream& stream, Token token)

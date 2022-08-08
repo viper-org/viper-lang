@@ -1,8 +1,8 @@
-#ifndef SKETCH_TOKEN_HXX
-#define SKETCH_TOKEN_HXX
+#ifndef QUARK_TOKEN_HXX
+#define QUARK_TOKEN_HXX
 #include <string>
 
-namespace Sketch
+namespace Quark
 {
     namespace Lexing
     {
@@ -12,6 +12,8 @@ namespace Sketch
             LeftBracket, RightBracket,
 
             Plus, Minus, Star, Slash,
+
+            Identifier,
 
             Integer,
 
@@ -25,7 +27,7 @@ namespace Sketch
         class Token
         {
         public:
-            Token(TokenType type, const std::string text, unsigned int lineNumber);
+            Token(TokenType type, const std::string text, const unsigned int lineNumber);
 
             TokenType getType() const;
             std::string_view getText() const;

@@ -1,11 +1,13 @@
-#ifndef SKETCH_COMPILER_HXX
-#define SKETCH_COMPILER_HXX
+#ifndef QUARK_COMPILER_HXX
+#define QUARK_COMPILER_HXX
+#include <lexing/lexer.hxx>
 #include <string>
 #include <fstream>
+#include <memory>
 
-namespace Sketch
+namespace Quark
 {
-    enum class SketchOutputType
+    enum class QuarkOutputType
     {
         LLVM,
         Assembly,
@@ -15,12 +17,15 @@ namespace Sketch
     class Compiler
     {
     public:
-        Compiler(SketchOutputType outputType, const std::string inputFileName = "a.out");
+        Compiler(QuarkOutputType outputType, const std::string inputFileName = "a.out");
 
-        SketchOutputType getOutputType() const;
+        std::vector<Lexing::Token> Compile();
+
+        QuarkOutputType getOutputType() const;
         std::string_view getInputFileName() const;
     private:
-        SketchOutputType _outputType;
+        std::unique_ptr<Lexing::Lexer> _lexer;
+        QuarkOutputType _outputType;
         std::string _inputFileName;
 
         std::ifstream handle;
