@@ -24,7 +24,8 @@ To build quark, you will need:
 ### Downloading the code
 To download the code, clone the github repository `git clone https://github.com/solar-mist/quark`
 ### Building
-To build the code, simply run `make release`
+To build the code, simply run `make all`
+<br>
 If the build is taking a long time, you can use make's `-j` flag to speed up the build
 
 ---
