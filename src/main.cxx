@@ -5,7 +5,12 @@
 int main(int argc, char** argv)
 {
     if(argc < 2)
-        Sketch::Diagnostics::FatalError("qra", "no input files");
+        Quark::Diagnostics::FatalError("qra", "no input files");
     
-    Sketch::Compiler compiler(Sketch::SketchOutputType::LLVM, argv[1]);
+    Quark::Compiler compiler(Quark::QuarkOutputType::LLVM, argv[1]);
+
+    for(const Quark::Lexing::Token& token : compiler.Compile())
+    {
+        std::cout << token << std::endl;
+    }
 }
