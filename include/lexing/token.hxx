@@ -21,23 +21,25 @@ namespace Quark
 
             Semicolon,
 
-            EndOfFile
+            EndOfFile, BadToken
         };
 
         class Token
         {
         public:
-            Token(TokenType type, const std::string text, const unsigned int lineNumber);
+            Token(TokenType type, const std::string text, const unsigned int lineNumber, const unsigned int colNumber);
 
-            TokenType getType() const;
-            std::string_view getText() const;
-            unsigned int getLineNumber() const;
+            TokenType        getType()       const;
+            std::string_view getText()       const;
+            unsigned int     getLineNumber() const;
+            unsigned int     getColNumber()  const;
 
             friend std::ostream& operator<<(std::ostream& stream, Token token);
         private:
             TokenType _type;
             std::string _text;
             unsigned int _lineNumber;
+            unsigned int _colNumber;
 
             std::string typeAsString() const;
         };

@@ -6,8 +6,8 @@ namespace Quark
 {
     namespace Lexing
     {
-        Token::Token(TokenType type, const std::string text, const unsigned int lineNumber)
-            :_type(type), _text(text), _lineNumber(lineNumber)
+        Token::Token(TokenType type, const std::string text, const unsigned int lineNumber, const unsigned int colNumber)
+            :_type(type), _text(text), _lineNumber(lineNumber), _colNumber(colNumber)
         {
         }
 
@@ -24,6 +24,11 @@ namespace Quark
         unsigned int Token::getLineNumber() const
         {
             return _lineNumber;
+        }
+
+        unsigned int Token::getColNumber() const
+        {
+            return _colNumber;
         }
 
         std::string Token::typeAsString() const
@@ -58,12 +63,14 @@ namespace Quark
                     return "EndOfFile";
                 case TokenType::Identifier:
                     return "Identifier";
-                }
+                case TokenType::BadToken:
+                    return "BadToken";
+            }
         }
 
         std::ostream& operator<<(std::ostream& stream, Token token)
         {
-            stream << "Line " << token.getLineNumber() << ": " << token.typeAsString() << "(" << token.getText() << ")";
+            stream << token._lineNumber << ":" << token._colNumber << " - " << token.typeAsString() << "(" << token.getText() << ")";
             return stream;
         }
     }

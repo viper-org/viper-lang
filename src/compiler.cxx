@@ -10,6 +10,8 @@ namespace Quark
     {
         if(!handle.is_open())
             Diagnostics::FatalError("qrk", inputFileName + ": No such file or directory");
+
+        Diagnostics::setFileName(_inputFileName);
     }
 
     std::vector<Lexing::Token> Compiler::Compile()
@@ -17,7 +19,7 @@ namespace Quark
         std::stringstream buffer;
         buffer << handle.rdbuf();
 
-        _lexer = std::make_unique<Lexing::Lexer>(buffer.str(), _inputFileName);
+        _lexer = std::make_unique<Lexing::Lexer>(buffer.str());
         return _lexer->Lex();
     }
 

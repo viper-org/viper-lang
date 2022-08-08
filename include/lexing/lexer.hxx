@@ -12,12 +12,11 @@ namespace Quark
         class Lexer
         {
         public:
-            Lexer(std::string text, std::string_view fileName);
+            Lexer(std::string text);
 
             std::vector<Token> Lex();
         private:
             std::string _text;
-            std::string_view _fileName;
             unsigned int _position;
             unsigned int _lineNumber;
             unsigned int _colNumber;

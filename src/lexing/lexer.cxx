@@ -1,3 +1,4 @@
+#include "lexing/token.hxx"
 #include <lexing/lexer.hxx>
 #include <diagnostics.hxx>
 #include <optional>
@@ -6,8 +7,8 @@ namespace Quark
 {
     namespace Lexing
     {
-        Lexer::Lexer(std::string text, std::string_view fileName)
-            :_text(text), _fileName(fileName), _position(0), _lineNumber(1), _colNumber(1)
+        Lexer::Lexer(std::string text)
+            :_text(text),  _position(0), _lineNumber(1), _colNumber(1)
         {
         }
 
@@ -22,7 +23,7 @@ namespace Quark
                     tokens.push_back(token.value());
                 Consume();
             }
-            tokens.push_back(Token(TokenType::EndOfFile, "", _lineNumber));
+            tokens.push_back(Token(TokenType::EndOfFile, "", _lineNumber, _colNumber));
 
             return tokens;
         }
@@ -55,7 +56,7 @@ namespace Quark
                     Consume();
                     value += Current();
                 }
-                return Token(TokenType::Identifier, value, _lineNumber);
+                return Token(TokenType::Identifier, value, _lineNumber, _colNumber);
             }
             else if(std::isdigit(current))
             {
@@ -65,41 +66,41 @@ namespace Quark
                     Consume();
                     value += Current();
                 }
-                return Token(TokenType::Integer, value, _lineNumber);
+                return Token(TokenType::Integer, value, _lineNumber, _colNumber);
             }
             switch(current)
             {
                 case '(':
-                    return Token(TokenType::LeftParen, "(", _lineNumber);
+                    return Token(TokenType::LeftParen, "(", _lineNumber, _colNumber);
                 case ')':
-                    return Token(TokenType::RightParen, ")", _lineNumber);
+                    return Token(TokenType::RightParen, ")", _lineNumber, _colNumber);
                 
                 case '{':
-                    return Token(TokenType::LeftBracket, "{", _lineNumber);
+                    return Token(TokenType::LeftBracket, "{", _lineNumber, _colNumber);
                 case '}':
-                    return Token(TokenType::RightBracket, "}", _lineNumber);
+                    return Token(TokenType::RightBracket, "}", _lineNumber, _colNumber);
 
                 case '+':
-                    return Token(TokenType::Plus, "+", _lineNumber);
+                    return Token(TokenType::Plus, "+", _lineNumber, _colNumber);
                 case '-':
                 {
                     if(Peek(1) == '>')
                     {
                         Consume();
-                        return Token(TokenType::RightArrow, "->", _lineNumber);
+                        return Token(TokenType::RightArrow, "->", _lineNumber, _colNumber);
                     }
-                    return Token(TokenType::Minus, "-", _lineNumber);
+                    return Token(TokenType::Minus, "-", _lineNumber, _colNumber);
                 }
                 case '*':
-                    return Token(TokenType::Star, "*", _lineNumber);
+                    return Token(TokenType::Star, "*", _lineNumber, _colNumber);
                 case '/':
-                    return Token(TokenType::Slash, "/", _lineNumber);
+                    return Token(TokenType::Slash, "/", _lineNumber, _colNumber);
                 
                 case '@':
-                    return Token(TokenType::Asperand, "@", _lineNumber);
+                    return Token(TokenType::Asperand, "@", _lineNumber, _colNumber);
 
                 case ';':
-                    return Token(TokenType::Semicolon, ";", _lineNumber);
+                    return Token(TokenType::Semicolon, ";", _lineNumber, _colNumber);
 
                 case '\n':
                     _colNumber = 0;
@@ -110,7 +111,8 @@ namespace Quark
                     return std::nullopt;
 
                 default:
-                    Diagnostics::CompilerError(_fileName, _lineNumber, _colNumber, std::string("Unexpected character: ") + current, &_text[_position], &_text[_position + 1]);
+                    Diagnostics::LexerError(Token(TokenType::BadToken, std::string(1, current), _lineNumber, _colNumber));
+                    //Diagnostics::CompilerError(_lineNumber, _colNumber, std::string("Unexpected character: ") + current, &_text[_position], &_text[_position + 1]);
             }
         }
     }
