@@ -21,7 +21,7 @@ namespace Quark
         {
             std::cerr << bold << fileName << ":" << lineNumber << ":" << colNumber << ": " << red << "error: " << defaults << message << "\n";
             std::cerr << "    " << lineNumber << " |     " << bold << red << std::string(surroundBegin, surroundEnd) << defaults << "\n";
-            std::cerr << "      |     " << red << "^" << defaults << "\n";
+            std::cerr << "      |     " << red << "^" << std::string(surroundEnd - surroundBegin - 1, '~') << defaults << "\n";
             std::exit(1);
         }
     }
