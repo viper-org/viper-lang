@@ -4,7 +4,7 @@
 
 namespace Sketch
 {
-    Compiler::Compiler(SketchOutputType outputType, std::string inputFileName)
+    Compiler::Compiler(SketchOutputType outputType, const std::string inputFileName)
         :_outputType(outputType), _inputFileName(inputFileName), handle(inputFileName)
     {
         if(!handle.is_open())

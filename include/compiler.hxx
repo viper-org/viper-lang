@@ -15,7 +15,7 @@ namespace Sketch
     class Compiler
     {
     public:
-        Compiler(SketchOutputType outputType, std::string inputFileName = "a.out");
+        Compiler(SketchOutputType outputType, const std::string inputFileName = "a.out");
 
         SketchOutputType getOutputType() const;
         std::string_view getInputFileName() const;
