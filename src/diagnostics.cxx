@@ -22,17 +22,20 @@ namespace Quark
             std::exit(1);
         }
 
-        void CompilerError(const unsigned int lineNumber, const unsigned int colNumber, std::string_view message, const char *surroundBegin, const char *surroundEnd)
+        void CompilerError(const unsigned int lineNumber, const unsigned int colNumber,
+        std::string_view message,
+        const char* errorBegin, const char* errorEnd,
+        const char* lineBegin, const char* lineEnd)
         {
-            std::cerr << bold << fileName << ":" << lineNumber << ":" << colNumber << ": " << red << "error: " << defaults << message << "\n";
-            std::cerr << "    " << lineNumber << " |     " << bold << red << std::string(surroundBegin, surroundEnd) << defaults << "\n";
-            std::cerr << "      |     " << red << "^" << std::string(surroundEnd - surroundBegin - 1, '~') << defaults << "\n";
-            std::exit(1);
-        }
+            std::string start  = std::string(lineBegin, errorBegin - 1);
+            std::string error  = std::string(errorBegin, errorEnd);
+            std::string end    = std::string(errorEnd, lineEnd);
+            std::string spaces = std::string(start.length(), ' ');
 
-        void LexerError(Lexing::Token token)
-        {
-            CompilerError(token.getLineNumber(), token.getColNumber(), "stray '" + std::string(token.getText().data()) + "' in program", token.getText().begin(), token.getText().end());
+            std::cerr << bold << fileName << ":" << lineNumber << ":" << colNumber << ": " << red << "error: " << defaults << message << "\n";
+            std::cerr << "    " << lineNumber << " | " << start << bold << red << error << defaults << end << "\n";
+            std::cerr << "      | " << spaces << bold << red << "^" << std::string(error.length() - 1, '~') << defaults << "\n";
+            std::exit(1);
         }
 
         void setFileName(std::string_view newFileName)

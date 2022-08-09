@@ -1,4 +1,5 @@
 #include <parsing/parser.hxx>
+#include <sstream>
 
 namespace Quark
 {

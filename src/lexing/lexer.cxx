@@ -1,4 +1,5 @@
 #include "lexing/token.hxx"
+#include <iostream>
 #include <lexing/lexer.hxx>
 #include <diagnostics.hxx>
 #include <optional>
@@ -8,7 +9,7 @@ namespace Quark
     namespace Lexing
     {
         Lexer::Lexer(std::string text)
-            :_text(text),  _position(0), _lineNumber(1), _colNumber(1)
+            :_text(text),  _position(0), _lineNumber(1), _colNumber(1), _lineBegin(&_text[_position])
         {
         }
 
@@ -105,14 +106,19 @@ namespace Quark
                 case '\n':
                     _colNumber = 0;
                     _lineNumber++;
+                    _lineBegin = &_text[_position + 1];
                     return std::nullopt;
 
                 case ' ':
                     return std::nullopt;
 
                 default:
-                    Diagnostics::LexerError(Token(TokenType::BadToken, std::string(1, current), _lineNumber, _colNumber));
-                    //Diagnostics::CompilerError(_lineNumber, _colNumber, std::string("Unexpected character: ") + current, &_text[_position], &_text[_position + 1]);
+                    char* lineEnd;
+                    int offset = 0;
+                    while(Peek(offset) != '\n')
+                        offset++;
+                    lineEnd = &_text[_position + offset];
+                    Diagnostics::CompilerError(_lineNumber, _colNumber, "stray '" + std::string(1, current) + "' found in program", &_text[_position], &_text[_position + 1], _lineBegin, lineEnd);
             }
         }
     }

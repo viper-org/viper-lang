@@ -20,6 +20,7 @@ namespace Quark
             unsigned int _position;
             unsigned int _lineNumber;
             unsigned int _colNumber;
+            char* _lineBegin;
 
             char Current() const;
             char Consume();
