@@ -1,16 +1,19 @@
-#include "lexing/token.hxx"
 #include <iostream>
 #include <lexing/lexer.hxx>
 #include <diagnostics.hxx>
 #include <optional>
+#include <unordered_map>
 
 namespace Viper
 {
     namespace Lexing
     {
+        std::unordered_map<std::string_view, TokenType> keywords;
+
         Lexer::Lexer(std::string text)
             :_text(text),  _position(0), _lineNumber(1), _colNumber(1), _lineBegin(&_text[_position])
         {
+            keywords["return"] = TokenType::Return;
         }
 
         std::vector<Token> Lexer::Lex()
@@ -57,8 +60,9 @@ namespace Viper
                 {
                     Consume();
                     value += Current();
-                    // TODO: Check if keyword
                 }
+                if(keywords.find(value) != keywords.end())
+                    return Token(keywords.find(value)->second, start, _position + 1, _lineNumber, _colNumber);
                 return Token(TokenType::Identifier, start, _position + 1, _lineNumber, _colNumber);
             }
             else if(std::isdigit(current))

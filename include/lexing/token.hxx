@@ -17,6 +17,8 @@ namespace Viper
 
             Integer,
 
+            Return,
+
             Asperand, RightArrow,
 
             Semicolon,

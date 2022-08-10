@@ -4,5 +4,6 @@
 #include <parsing/AST/topLevel/function.hxx>
 #include <parsing/AST/expression/integer.hxx>
 #include <parsing/AST/statement/return.hxx>
+#include <parsing/AST/expression/binaryExpression.hxx>
 
 #endif

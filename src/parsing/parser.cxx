@@ -1,7 +1,5 @@
-#include <asm-generic/errno-base.h>
 #include <parsing/parser.hxx>
 #include <diagnostics.hxx>
-#include <iostream>
 
 namespace Viper
 {
@@ -30,6 +28,21 @@ namespace Viper
         std::string Parser::GetTokenText(Lexing::Token token) const
         {
             return _text.substr(token.getStart(), token.getEnd() - token.getStart());
+        }
+
+        int Parser::GetBinOpPrecedence(Lexing::TokenType tokenType) const
+        {
+            switch(tokenType)
+            {
+                case Lexing::TokenType::Star:
+                case Lexing::TokenType::Slash:
+                    return 40;
+                case Lexing::TokenType::Plus:
+                case Lexing::TokenType::Minus:
+                    return 35;
+                default:
+                    return 0;
+            }
         }
 
         void Parser::ExpectToken(Lexing::TokenType tokenType)
@@ -96,10 +109,21 @@ namespace Viper
             return std::make_unique<ASTFunction>(name, std::move(body));
         }
 
-        std::unique_ptr<ASTNode> Parser::ParseExpression()
+        std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)
         {
-            // TODO: Parse unary/binary expressions
-            return ParsePrimary();
+            std::unique_ptr<ASTNode> lhs = ParsePrimary();
+
+            while(true)
+            {
+                int binOpPrecedence = GetBinOpPrecedence(Current().getType());
+                if(binOpPrecedence < precedence)
+                    break;
+
+                Lexing::Token operatorToken = Consume();
+                std::unique_ptr<ASTNode> rhs = ParseExpression(binOpPrecedence);
+                lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
+            }
+            return lhs;
         }
 
         std::unique_ptr<ASTNode> Parser::ParsePrimary()
@@ -108,8 +132,8 @@ namespace Viper
             {
                 case Lexing::TokenType::Integer:
                     return ParseInteger();
-                case Lexing::TokenType::Identifier:
-                    return ParseKeywordExpression();
+                case Lexing::TokenType::Return:
+                    return ParseReturn();
                 default:
                     // TODO: Compiler error
                     throw;
@@ -123,16 +147,14 @@ namespace Viper
             return std::make_unique<IntegerLiteral>(value);
         }
 
-        std::unique_ptr<ASTNode> Parser::ParseKeywordExpression()
+        std::unique_ptr<ASTNode> Parser::ParseReturn()
         {
-            if(GetTokenText(Current()) == "return")
-            {
-                Consume();
-                if(Current().getType() == Lexing::TokenType::Semicolon)
-                    return std::make_unique<ReturnStatement>(nullptr);
-                return std::make_unique<ReturnStatement>(ParseExpression());
-            }
-            throw; // TODO: Compiler error
+            Consume();
+
+            if(Current().getType() == Lexing::TokenType::Semicolon)
+                return std::make_unique<ReturnStatement>(nullptr);
+
+            return std::make_unique<ReturnStatement>(ParseExpression());
         }
     }
 }
