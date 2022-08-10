@@ -1,13 +1,15 @@
+#include "lexing/token.hxx"
+#include <iostream>
 #include <lexing/lexer.hxx>
 #include <diagnostics.hxx>
 #include <optional>
 
-namespace Quark
+namespace Viper
 {
     namespace Lexing
     {
-        Lexer::Lexer(std::string text, std::string_view fileName)
-            :_text(text), _fileName(fileName), _position(0), _lineNumber(1), _colNumber(1)
+        Lexer::Lexer(std::string text)
+            :_text(text),  _position(0), _lineNumber(1), _colNumber(1), _lineBegin(&_text[_position])
         {
         }
 
@@ -22,7 +24,7 @@ namespace Quark
                     tokens.push_back(token.value());
                 Consume();
             }
-            tokens.push_back(Token(TokenType::EndOfFile, "", _lineNumber));
+            tokens.push_back(Token(TokenType::EndOfFile, _position, _position + 1, _lineNumber, _colNumber));
 
             return tokens;
         }
@@ -49,68 +51,75 @@ namespace Quark
 
             if(std::isalpha(current))
             {
+                unsigned int start = _position;
                 std::string value(1, current);
                 while(std::isalnum(Peek(1)) || Peek(1) == '_')
                 {
                     Consume();
                     value += Current();
+                    // TODO: Check if keyword
                 }
-                return Token(TokenType::Identifier, value, _lineNumber);
+                return Token(TokenType::Identifier, start, _position + 1, _lineNumber, _colNumber);
             }
             else if(std::isdigit(current))
             {
-                std::string value(1, current);
+                unsigned int start = _position;
                 while(std::isdigit(Peek(1)))
                 {
                     Consume();
-                    value += Current();
                 }
-                return Token(TokenType::Integer, value, _lineNumber);
+                return Token(TokenType::Integer, start, _position + 1, _lineNumber, _colNumber);
             }
             switch(current)
             {
                 case '(':
-                    return Token(TokenType::LeftParen, "(", _lineNumber);
+                    return Token(TokenType::LeftParen, _position, _position + 1, _lineNumber, _colNumber);
                 case ')':
-                    return Token(TokenType::RightParen, ")", _lineNumber);
+                    return Token(TokenType::RightParen, _position, _position + 1, _lineNumber, _colNumber);
                 
                 case '{':
-                    return Token(TokenType::LeftBracket, "{", _lineNumber);
+                    return Token(TokenType::LeftBracket, _position, _position + 1, _lineNumber, _colNumber);
                 case '}':
-                    return Token(TokenType::RightBracket, "}", _lineNumber);
+                    return Token(TokenType::RightBracket, _position, _position + 1, _lineNumber, _colNumber);
 
                 case '+':
-                    return Token(TokenType::Plus, "+", _lineNumber);
+                    return Token(TokenType::Plus, _position, _position + 1, _lineNumber, _colNumber);
                 case '-':
                 {
                     if(Peek(1) == '>')
                     {
                         Consume();
-                        return Token(TokenType::RightArrow, "->", _lineNumber);
+                        return Token(TokenType::RightArrow, _position - 1, _position + 1, _lineNumber, _colNumber);
                     }
-                    return Token(TokenType::Minus, "-", _lineNumber);
+                    return Token(TokenType::Minus, _position, _position + 1, _lineNumber, _colNumber);
                 }
                 case '*':
-                    return Token(TokenType::Star, "*", _lineNumber);
+                    return Token(TokenType::Star, _position, _position + 1, _lineNumber, _colNumber);
                 case '/':
-                    return Token(TokenType::Slash, "/", _lineNumber);
+                    return Token(TokenType::Slash, _position, _position + 1, _lineNumber, _colNumber);
                 
                 case '@':
-                    return Token(TokenType::Asperand, "@", _lineNumber);
+                    return Token(TokenType::Asperand, _position, _position + 1, _lineNumber, _colNumber);
 
                 case ';':
-                    return Token(TokenType::Semicolon, ";", _lineNumber);
+                    return Token(TokenType::Semicolon, _position, _position + 1, _lineNumber, _colNumber);
 
                 case '\n':
                     _colNumber = 0;
                     _lineNumber++;
+                    _lineBegin = &_text[_position + 1];
                     return std::nullopt;
 
                 case ' ':
                     return std::nullopt;
 
                 default:
-                    Diagnostics::CompilerError(_fileName, _lineNumber, _colNumber, std::string("Unexpected character: ") + current, &_text[_position], &_text[_position + 1]);
+                    char* lineEnd;
+                    int offset = 0;
+                    while(Peek(offset) != '\n')
+                        offset++;
+                    lineEnd = &_text[_position + offset];
+                    Diagnostics::CompilerError(_lineNumber, _colNumber, "stray '" + std::string(1, current) + "' found in program", &_text[_position], &_text[_position + 1], _lineBegin, lineEnd);
             }
         }
     }

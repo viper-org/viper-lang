@@ -1,8 +1,8 @@
-#ifndef QUARK_TOKEN_HXX
-#define QUARK_TOKEN_HXX
+#ifndef VIPER_TOKEN_HXX
+#define VIPER_TOKEN_HXX
 #include <string>
 
-namespace Quark
+namespace Viper
 {
     namespace Lexing
     {
@@ -21,25 +21,32 @@ namespace Quark
 
             Semicolon,
 
-            EndOfFile
+            EndOfFile, BadToken
         };
 
         class Token
         {
         public:
-            Token(TokenType type, const std::string text, const unsigned int lineNumber);
+            Token(TokenType type,
+            const unsigned int start, const unsigned int end,
+            const unsigned int lineNumber, const unsigned int colNumber);
 
-            TokenType getType() const;
-            std::string_view getText() const;
+            TokenType    getType()       const;
+            unsigned int getStart()      const;
+            unsigned int getEnd()        const;
             unsigned int getLineNumber() const;
+            unsigned int getColNumber()  const;
+
+            std::string typeAsString() const;
 
             friend std::ostream& operator<<(std::ostream& stream, Token token);
         private:
             TokenType _type;
-            std::string _text;
-            unsigned int _lineNumber;
+            unsigned int _start;
+            unsigned int _end;
 
-            std::string typeAsString() const;
+            unsigned int _lineNumber;
+            unsigned int _colNumber;
         };
     }
 }

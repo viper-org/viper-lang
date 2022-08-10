@@ -1,13 +1,15 @@
-#ifndef QUARK_COMPILER_HXX
-#define QUARK_COMPILER_HXX
+#ifndef VIPER_COMPILER_HXX
+#define VIPER_COMPILER_HXX
 #include <lexing/lexer.hxx>
+#include <parsing/parser.hxx>
+#include <parsing/AST/topLevel.hxx>
 #include <string>
 #include <fstream>
 #include <memory>
 
-namespace Quark
+namespace Viper
 {
-    enum class QuarkOutputType
+    enum class ViperOutputType
     {
         LLVM,
         Assembly,
@@ -17,18 +19,21 @@ namespace Quark
     class Compiler
     {
     public:
-        Compiler(QuarkOutputType outputType, const std::string inputFileName = "a.out");
+        Compiler(ViperOutputType outputType, const std::string inputFileName = "a.out");
 
-        std::vector<Lexing::Token> Compile();
+        std::vector<std::unique_ptr<Parsing::ASTTopLevel>> Compile();
 
-        QuarkOutputType getOutputType() const;
+        ViperOutputType getOutputType() const;
         std::string_view getInputFileName() const;
+        std::string_view getFileContents() const;
     private:
         std::unique_ptr<Lexing::Lexer> _lexer;
-        QuarkOutputType _outputType;
+        std::unique_ptr<Parsing::Parser> _parser;
+        ViperOutputType _outputType;
         std::string _inputFileName;
+        std::string _contents;
 
-        std::ifstream handle;
+        std::ifstream _handle;
     };
 }
 

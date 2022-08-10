@@ -5,12 +5,12 @@
 int main(int argc, char** argv)
 {
     if(argc < 2)
-        Quark::Diagnostics::FatalError("qra", "no input files");
+        Viper::Diagnostics::FatalError("qra", "no input files");
     
-    Quark::Compiler compiler(Quark::QuarkOutputType::LLVM, argv[1]);
+    Viper::Compiler compiler(Viper::ViperOutputType::LLVM, argv[1]);
 
-    for(const Quark::Lexing::Token& token : compiler.Compile())
+    for(const std::unique_ptr<Viper::Parsing::ASTTopLevel>& node : compiler.Compile())
     {
-        std::cout << token << std::endl;
+        node->Print(std::cout);
     }
 }
