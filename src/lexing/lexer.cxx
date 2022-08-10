@@ -24,7 +24,7 @@ namespace Quark
                     tokens.push_back(token.value());
                 Consume();
             }
-            tokens.push_back(Token(TokenType::EndOfFile, "", _lineNumber, _colNumber));
+            tokens.push_back(Token(TokenType::EndOfFile, _position, _position + 1, _lineNumber, _colNumber));
 
             return tokens;
         }
@@ -51,57 +51,58 @@ namespace Quark
 
             if(std::isalpha(current))
             {
+                unsigned int start = _position;
                 std::string value(1, current);
                 while(std::isalnum(Peek(1)) || Peek(1) == '_')
                 {
                     Consume();
                     value += Current();
+                    // TODO: Check if keyword
                 }
-                return Token(TokenType::Identifier, value, _lineNumber, _colNumber);
+                return Token(TokenType::Identifier, start, _position + 1, _lineNumber, _colNumber);
             }
             else if(std::isdigit(current))
             {
-                std::string value(1, current);
+                unsigned int start = _position;
                 while(std::isdigit(Peek(1)))
                 {
                     Consume();
-                    value += Current();
                 }
-                return Token(TokenType::Integer, value, _lineNumber, _colNumber);
+                return Token(TokenType::Integer, start, _position + 1, _lineNumber, _colNumber);
             }
             switch(current)
             {
                 case '(':
-                    return Token(TokenType::LeftParen, "(", _lineNumber, _colNumber);
+                    return Token(TokenType::LeftParen, _position, _position + 1, _lineNumber, _colNumber);
                 case ')':
-                    return Token(TokenType::RightParen, ")", _lineNumber, _colNumber);
+                    return Token(TokenType::RightParen, _position, _position + 1, _lineNumber, _colNumber);
                 
                 case '{':
-                    return Token(TokenType::LeftBracket, "{", _lineNumber, _colNumber);
+                    return Token(TokenType::LeftBracket, _position, _position + 1, _lineNumber, _colNumber);
                 case '}':
-                    return Token(TokenType::RightBracket, "}", _lineNumber, _colNumber);
+                    return Token(TokenType::RightBracket, _position, _position + 1, _lineNumber, _colNumber);
 
                 case '+':
-                    return Token(TokenType::Plus, "+", _lineNumber, _colNumber);
+                    return Token(TokenType::Plus, _position, _position + 1, _lineNumber, _colNumber);
                 case '-':
                 {
                     if(Peek(1) == '>')
                     {
                         Consume();
-                        return Token(TokenType::RightArrow, "->", _lineNumber, _colNumber);
+                        return Token(TokenType::RightArrow, _position - 1, _position + 1, _lineNumber, _colNumber);
                     }
-                    return Token(TokenType::Minus, "-", _lineNumber, _colNumber);
+                    return Token(TokenType::Minus, _position, _position + 1, _lineNumber, _colNumber);
                 }
                 case '*':
-                    return Token(TokenType::Star, "*", _lineNumber, _colNumber);
+                    return Token(TokenType::Star, _position, _position + 1, _lineNumber, _colNumber);
                 case '/':
-                    return Token(TokenType::Slash, "/", _lineNumber, _colNumber);
+                    return Token(TokenType::Slash, _position, _position + 1, _lineNumber, _colNumber);
                 
                 case '@':
-                    return Token(TokenType::Asperand, "@", _lineNumber, _colNumber);
+                    return Token(TokenType::Asperand, _position, _position + 1, _lineNumber, _colNumber);
 
                 case ';':
-                    return Token(TokenType::Semicolon, ";", _lineNumber, _colNumber);
+                    return Token(TokenType::Semicolon, _position, _position + 1, _lineNumber, _colNumber);
 
                 case '\n':
                     _colNumber = 0;

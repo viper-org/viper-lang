@@ -9,8 +9,8 @@ int main(int argc, char** argv)
     
     Quark::Compiler compiler(Quark::QuarkOutputType::LLVM, argv[1]);
 
-    for(const Quark::Lexing::Token& token : compiler.Compile())
+    for(const std::unique_ptr<Quark::Parsing::ASTTopLevel>& node : compiler.Compile())
     {
-        std::cout << token << std::endl;
+        node->Print(std::cout);
     }
 }

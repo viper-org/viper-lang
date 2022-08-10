@@ -1,15 +1,15 @@
-#ifndef QUARK_PARSING_ASTNODE_HXX
-#define QUARK_PARSING_ASTNODE_HXX
+#ifndef QUARK_AST_TOPLEVEL_HXX
+#define QUARK_AST_TOPLEVEL_HXX
 #include <ostream>
 
 namespace Quark
 {
     namespace Parsing
     {
-        class ASTNode
+        class ASTTopLevel
         {
         public:
-            virtual ~ASTNode() {  }
+            virtual ~ASTTopLevel() {  }
 
             virtual void Print(std::ostream& stream) const = 0;
         };
