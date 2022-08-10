@@ -1,4 +1,4 @@
-#include <parsing/AST/value/integer.hxx>
+#include <parsing/AST/expression/integer.hxx>
 
 namespace Viper
 {
@@ -11,7 +11,7 @@ namespace Viper
 
         void IntegerLiteral::Print(std::ostream& stream) const
         {
-            stream << "<Integer-Literal>:\nValue: " << _value;
+            stream << "<Integer-Literal>: " << _value;
         }
     }
 }

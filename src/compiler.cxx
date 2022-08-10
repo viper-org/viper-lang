@@ -9,7 +9,7 @@ namespace Viper
         :_outputType(outputType), _inputFileName(inputFileName), _handle(inputFileName)
     {
         if(!_handle.is_open())
-            Diagnostics::FatalError("qrk", inputFileName + ": No such file or directory");
+            Diagnostics::FatalError("viper", inputFileName + ": No such file or directory");
 
         Diagnostics::setFileName(_inputFileName);
 

@@ -11,11 +11,11 @@ namespace Viper
 
         void ASTFunction::Print(std::ostream& stream) const
         {
-            stream << "<Function>:\nName:" << _name << "\nBody:";
+            stream << "<Function>:\nName:" << _name << "\nBody:\n";
             for(const std::unique_ptr<ASTNode>& node : _body)
             {
-                stream << "\n";
                 node->Print(stream);
+                stream << "\n";
             }
         }
     }

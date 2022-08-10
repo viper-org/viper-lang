@@ -24,6 +24,10 @@ namespace Viper
             std::vector<std::unique_ptr<ASTTopLevel>> Parse();
 
             std::unique_ptr<ASTNode> ParseExpression();
+            std::unique_ptr<ASTNode> ParsePrimary();
+
+            std::unique_ptr<ASTNode> ParseInteger();
+            std::unique_ptr<ASTNode> ParseKeywordExpression();
 
             std::unique_ptr<ASTTopLevel> ParseFunction();
         private:

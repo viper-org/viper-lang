@@ -1,10 +1,7 @@
-#include "lexing/token.hxx"
-#include "parsing/AST/astNode.hxx"
-#include <iostream>
+#include <asm-generic/errno-base.h>
 #include <parsing/parser.hxx>
 #include <diagnostics.hxx>
-#include <sstream>
-#include <algorithm>
+#include <iostream>
 
 namespace Viper
 {
@@ -91,9 +88,51 @@ namespace Viper
             while(Current().getType() != Lexing::TokenType::RightBracket)
             {
                 body.push_back(ParseExpression());
+                ExpectToken(Lexing::TokenType::Semicolon);
+                Consume();
             }
+            Consume();
 
-            return std::make_unique<ASTFunction>(name, std::vector<std::unique_ptr<ASTNode>>());
+            return std::make_unique<ASTFunction>(name, std::move(body));
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParseExpression()
+        {
+            // TODO: Parse unary/binary expressions
+            return ParsePrimary();
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParsePrimary()
+        {
+            switch(Current().getType())
+            {
+                case Lexing::TokenType::Integer:
+                    return ParseInteger();
+                case Lexing::TokenType::Identifier:
+                    return ParseKeywordExpression();
+                default:
+                    // TODO: Compiler error
+                    throw;
+            }
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParseInteger()
+        {
+            int value = std::stoi(GetTokenText(Consume()));
+
+            return std::make_unique<IntegerLiteral>(value);
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParseKeywordExpression()
+        {
+            if(GetTokenText(Current()) == "return")
+            {
+                Consume();
+                if(Current().getType() == Lexing::TokenType::Semicolon)
+                    return std::make_unique<ReturnStatement>(nullptr);
+                return std::make_unique<ReturnStatement>(ParseExpression());
+            }
+            throw; // TODO: Compiler error
         }
     }
 }
