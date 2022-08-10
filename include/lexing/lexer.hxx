@@ -1,11 +1,11 @@
-#ifndef QUARK_LEXER_HXX
-#define QUARK_LEXER_HXX
+#ifndef VIPER_LEXER_HXX
+#define VIPER_LEXER_HXX
 #include <lexing/token.hxx>
 #include <optional>
 #include <string_view>
 #include <vector>
 
-namespace Quark
+namespace Viper
 {
     namespace Lexing
     {

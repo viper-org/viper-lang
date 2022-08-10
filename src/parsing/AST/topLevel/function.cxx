@@ -1,6 +1,6 @@
 #include <parsing/AST/topLevel/function.hxx>
 
-namespace Quark
+namespace Viper
 {
     namespace Parsing
     {
@@ -11,7 +11,7 @@ namespace Quark
 
         void ASTFunction::Print(std::ostream& stream) const
         {
-            stream << "<function>:\nname:" << _name << "\nbody:";
+            stream << "<Function>:\nName:" << _name << "\nBody:";
             for(const std::unique_ptr<ASTNode>& node : _body)
             {
                 stream << "\n";

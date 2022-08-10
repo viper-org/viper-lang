@@ -1,8 +1,8 @@
-#ifndef QUARK_TOKEN_HXX
-#define QUARK_TOKEN_HXX
+#ifndef VIPER_TOKEN_HXX
+#define VIPER_TOKEN_HXX
 #include <string>
 
-namespace Quark
+namespace Viper
 {
     namespace Lexing
     {

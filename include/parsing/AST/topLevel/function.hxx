@@ -1,11 +1,11 @@
-#ifndef QUARK_AST_TOPLEVEL_FUNCTION_HXX
-#define QUARK_AST_TOPLEVEL_FUNCTION_HXX
+#ifndef VIPER_AST_TOPLEVEL_FUNCTION_HXX
+#define VIPER_AST_TOPLEVEL_FUNCTION_HXX
 #include <parsing/AST/topLevel.hxx>
 #include <parsing/AST/astNode.hxx>
 #include <memory>
 #include <vector>
 
-namespace Quark
+namespace Viper
 {
     namespace Parsing
     {

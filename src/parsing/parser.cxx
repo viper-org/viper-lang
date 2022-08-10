@@ -1,11 +1,12 @@
 #include "lexing/token.hxx"
+#include "parsing/AST/astNode.hxx"
 #include <iostream>
 #include <parsing/parser.hxx>
 #include <diagnostics.hxx>
 #include <sstream>
 #include <algorithm>
 
-namespace Quark
+namespace Viper
 {
     namespace Parsing
     {
@@ -31,7 +32,7 @@ namespace Quark
 
         std::string Parser::GetTokenText(Lexing::Token token) const
         {
-            return _text.substr(token.getStart(), token.getEnd() - token.getStart() + 1);
+            return _text.substr(token.getStart(), token.getEnd() - token.getStart());
         }
 
         void Parser::ExpectToken(Lexing::TokenType tokenType)
@@ -44,7 +45,7 @@ namespace Quark
                 while(_text[start - 1] != '\n')
                     start--;
                 unsigned int end = Current().getEnd();
-                while(_text[end + 1] != '\n')
+                while(_text[end] != '\n')
                     end++;
                 Diagnostics::CompilerError(Current().getLineNumber(), Current().getColNumber(), "Expected '" + temp.typeAsString() + "', found " + GetTokenText(Current()), 
                 &_text[Current().getStart()], &_text[Current().getEnd()],
@@ -84,9 +85,13 @@ namespace Quark
 
             ExpectToken(Lexing::TokenType::LeftBracket);
             Consume();
-            // TODO: Parse body
-            ExpectToken(Lexing::TokenType::RightBracket);
-            Consume();
+
+            std::vector<std::unique_ptr<ASTNode>> body;
+            
+            while(Current().getType() != Lexing::TokenType::RightBracket)
+            {
+                body.push_back(ParseExpression());
+            }
 
             return std::make_unique<ASTFunction>(name, std::vector<std::unique_ptr<ASTNode>>());
         }

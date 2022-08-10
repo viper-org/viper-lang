@@ -1,8 +1,8 @@
-#ifndef QUARK_DIAGNOSTICS_HXX
-#define QUARK_DIAGNOSTICS_HXX
+#ifndef VIPER_DIAGNOSTICS_HXX
+#define VIPER_DIAGNOSTICS_HXX
 #include <string_view>
 
-namespace Quark
+namespace Viper
 {
     namespace Lexing
     {

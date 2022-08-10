@@ -1,8 +1,8 @@
-#ifndef QUARK_PARSING_ASTNODE_HXX
-#define QUARK_PARSING_ASTNODE_HXX
+#ifndef VIPER_PARSING_ASTNODE_HXX
+#define VIPER_PARSING_ASTNODE_HXX
 #include <ostream>
 
-namespace Quark
+namespace Viper
 {
     namespace Parsing
     {

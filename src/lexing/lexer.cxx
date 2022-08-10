@@ -4,7 +4,7 @@
 #include <diagnostics.hxx>
 #include <optional>
 
-namespace Quark
+namespace Viper
 {
     namespace Lexing
     {

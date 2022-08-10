@@ -1,11 +1,11 @@
-#ifndef QUARK_PARSER_HXX
-#define QUARK_PARSER_HXX
+#ifndef VIPER_PARSER_HXX
+#define VIPER_PARSER_HXX
 #include <lexing/token.hxx>
 #include <parsing/ast.hxx>
 #include <memory>
 #include <vector>
 
-namespace Quark
+namespace Viper
 {
     namespace Parsing
     {
@@ -22,6 +22,8 @@ namespace Quark
             void ExpectToken(Lexing::TokenType tokenType);
 
             std::vector<std::unique_ptr<ASTTopLevel>> Parse();
+
+            std::unique_ptr<ASTNode> ParseExpression();
 
             std::unique_ptr<ASTTopLevel> ParseFunction();
         private:

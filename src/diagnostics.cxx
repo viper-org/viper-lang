@@ -7,7 +7,7 @@ constexpr std::string_view red  = "\x1b[31m";
 
 constexpr std::string_view defaults = "\x1b[0m";
 
-namespace Quark
+namespace Viper
 {
     namespace Diagnostics
     {

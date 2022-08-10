@@ -1,8 +1,8 @@
-#ifndef QUARK_AST_TOPLEVEL_HXX
-#define QUARK_AST_TOPLEVEL_HXX
+#ifndef VIPER_AST_TOPLEVEL_HXX
+#define VIPER_AST_TOPLEVEL_HXX
 #include <ostream>
 
-namespace Quark
+namespace Viper
 {
     namespace Parsing
     {

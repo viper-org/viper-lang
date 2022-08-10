@@ -2,7 +2,7 @@
 #include <ostream>
 #include <string>
 
-namespace Quark
+namespace Viper
 {
     namespace Lexing
     {

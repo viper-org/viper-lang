@@ -3,9 +3,9 @@
 #include <iostream>
 #include <sstream>
 
-namespace Quark
+namespace Viper
 {
-    Compiler::Compiler(QuarkOutputType outputType, const std::string inputFileName)
+    Compiler::Compiler(ViperOutputType outputType, const std::string inputFileName)
         :_outputType(outputType), _inputFileName(inputFileName), _handle(inputFileName)
     {
         if(!_handle.is_open())
@@ -27,7 +27,7 @@ namespace Quark
         return _parser->Parse();
     }
 
-    QuarkOutputType Compiler::getOutputType() const
+    ViperOutputType Compiler::getOutputType() const
     {
         return _outputType;
     }
