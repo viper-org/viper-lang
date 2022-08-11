@@ -1,4 +1,5 @@
 @main() -> i32
-{ 
-    return 1 + 2 * 3;
+{
+    i32 x = 66;
+    return x * x;
 }

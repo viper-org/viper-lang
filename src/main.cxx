@@ -9,8 +9,8 @@ int main(int argc, char** argv)
     
     Viper::Compiler compiler(Viper::ViperOutputType::LLVM, argv[1]);
 
-    for(const std::unique_ptr<Viper::Parsing::ASTTopLevel>& node : compiler.Compile())
+    for(llvm::Value* node : compiler.Compile())
     {
-        node->Print(std::cout);
+        llvm::outs() << *node;
     }
 }

@@ -1,24 +1,23 @@
-#ifndef VIPER_PARSING_AST_RETURN_HXX
-#define VIPER_PARSING_AST_RETURN_HXX
+#ifndef VIPER_PARSING_AST_VARIABLE_HXX
+#define VIPER_PARSING_AST_VARIABLE_HXX
 #include <parsing/AST/astNode.hxx>
-#include <memory>
 
 namespace Viper
 {
     namespace Parsing
     {
-        class ReturnStatement : public ASTNode
+        class Variable : public ASTNode
         {
         public:
-            ReturnStatement(std::unique_ptr<ASTNode> value);
+            Variable(std::string name);
 
             void Print(std::ostream& stream) const override;
 
             llvm::Value* Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope) override;
         private:
-            std::unique_ptr<ASTNode> _value;
+            std::string _name;
         };
     }
 }
 
-#endif  
+#endif

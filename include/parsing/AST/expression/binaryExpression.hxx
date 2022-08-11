@@ -1,5 +1,5 @@
-#ifndef QUARK_AST_BINARYEXPRESSION_HXX
-#define QUARK_AST_BINARYEXPRESSION_HXX
+#ifndef VIPER_AST_BINARYEXPRESSION_HXX
+#define VIPER_AST_BINARYEXPRESSION_HXX
 #include <parsing/AST/astNode.hxx>
 #include <lexing/token.hxx>
 #include <memory>
@@ -20,6 +20,8 @@ namespace Viper
             BinaryExpression(std::unique_ptr<ASTNode> lhs, Lexing::Token  op, std::unique_ptr<ASTNode> rhs);
 
             void Print(std::ostream& stream) const override;
+
+            llvm::Value* Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope) override;
         private:
             std::unique_ptr<ASTNode> _lhs;
             BinaryOperator           _operator;

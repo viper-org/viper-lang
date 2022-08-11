@@ -13,11 +13,14 @@ namespace Viper
 
             Plus, Minus, Star, Slash,
 
-            Identifier,
-
             Integer,
 
+            Identifier,
+
             Return,
+            Type,
+
+            Equals,
 
             Asperand, RightArrow,
 

@@ -90,11 +90,14 @@ namespace Viper
             ExpectToken(Lexing::TokenType::RightArrow);
             Consume();
 
-            ExpectToken(Lexing::TokenType::Identifier);
+            ExpectToken(Lexing::TokenType::Type);
             Consume(); // TODO: Parse type
 
             ExpectToken(Lexing::TokenType::LeftBracket);
             Consume();
+
+            std::shared_ptr<Environment> scope = std::make_shared<Environment>();
+            _currentScope = scope;
 
             std::vector<std::unique_ptr<ASTNode>> body;
             
@@ -106,7 +109,7 @@ namespace Viper
             }
             Consume();
 
-            return std::make_unique<ASTFunction>(name, std::move(body));
+            return std::make_unique<ASTFunction>(name, std::move(body), scope);
         }
 
         std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)
@@ -134,6 +137,12 @@ namespace Viper
                     return ParseInteger();
                 case Lexing::TokenType::Return:
                     return ParseReturn();
+                case Lexing::TokenType::LeftParen:
+                    return ParseParenthesizedExpression();
+                case Lexing::TokenType::Type:
+                    return ParseVariableDeclaration();
+                case Lexing::TokenType::Identifier:
+                    return ParseVariable();
                 default:
                     // TODO: Compiler error
                     throw;
@@ -155,6 +164,39 @@ namespace Viper
                 return std::make_unique<ReturnStatement>(nullptr);
 
             return std::make_unique<ReturnStatement>(ParseExpression());
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParseParenthesizedExpression()
+        {
+            Consume();
+
+            std::unique_ptr<ASTNode> expression = ParseExpression();
+
+            ExpectToken(Lexing::TokenType::RightParen);
+            Consume();
+
+            return expression;
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParseVariableDeclaration()
+        {
+            // TODO: Parse type
+            Consume();
+
+            ExpectToken(Lexing::TokenType::Identifier);
+            std::string name = GetTokenText(Consume());
+
+            if(Current().getType() != Lexing::TokenType::Equals)
+                return std::make_unique<VariableDeclaration>(name, nullptr);
+            
+            Consume();
+
+            return std::make_unique<VariableDeclaration>(name, ParseExpression());
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParseVariable()
+        {
+            return std::make_unique<Variable>(GetTokenText(Consume()));
         }
     }
 }

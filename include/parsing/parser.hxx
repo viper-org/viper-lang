@@ -2,6 +2,7 @@
 #define VIPER_PARSER_HXX
 #include <lexing/token.hxx>
 #include <parsing/ast.hxx>
+#include <environment.hxx>
 #include <memory>
 #include <vector>
 
@@ -19,6 +20,7 @@ namespace Viper
             std::string _text;
             std::vector<Lexing::Token> _tokens;
             unsigned int _position;
+            std::shared_ptr<Environment> _currentScope;
 
             Lexing::Token Current() const;
             Lexing::Token Consume();
@@ -35,6 +37,12 @@ namespace Viper
             std::unique_ptr<ASTNode> ParsePrimary();
 
             std::unique_ptr<ASTNode> ParseInteger();
+
+            std::unique_ptr<ASTNode> ParseParenthesizedExpression();
+
+            std::unique_ptr<ASTNode> ParseVariable();
+
+            std::unique_ptr<ASTNode> ParseVariableDeclaration();
 
             std::unique_ptr<ASTNode> ParseReturn();
         };

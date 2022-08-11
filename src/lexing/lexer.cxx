@@ -8,12 +8,14 @@ namespace Viper
 {
     namespace Lexing
     {
-        std::unordered_map<std::string_view, TokenType> keywords;
+        std::unordered_map<std::string_view, TokenType> keywords = {
+            { "return", TokenType::Return },
+            { "i32", TokenType::Type }, // TODO: Add more types
+        };
 
         Lexer::Lexer(std::string text)
             :_text(text),  _position(0), _lineNumber(1), _colNumber(1), _lineBegin(&_text[_position])
         {
-            keywords["return"] = TokenType::Return;
         }
 
         std::vector<Token> Lexer::Lex()
@@ -101,6 +103,9 @@ namespace Viper
                     return Token(TokenType::Star, _position, _position + 1, _lineNumber, _colNumber);
                 case '/':
                     return Token(TokenType::Slash, _position, _position + 1, _lineNumber, _colNumber);
+
+                case '=':
+                    return Token(TokenType::Equals, _position, _position + 1, _lineNumber, _colNumber);
                 
                 case '@':
                     return Token(TokenType::Asperand, _position, _position + 1, _lineNumber, _colNumber);
