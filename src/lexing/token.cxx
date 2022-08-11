@@ -72,6 +72,12 @@ namespace Viper
                     return "Identifier";
                 case TokenType::BadToken:
                     return "BadToken";
+                case TokenType::Return:
+                    return "Return";
+                case TokenType::Type:
+                    return "Type";
+                case TokenType::Equals:
+                    return "Equals";
             }
         }
 

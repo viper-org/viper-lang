@@ -1,0 +1,5 @@
+@main() -> i8
+{
+    i16 x = 4;
+    return x;
+}

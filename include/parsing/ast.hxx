@@ -2,5 +2,10 @@
 #define VIPER_PARSING_AST_HXX
 
 #include <parsing/AST/topLevel/function.hxx>
+#include <parsing/AST/expression/integer.hxx>
+#include <parsing/AST/statement/return.hxx>
+#include <parsing/AST/expression/binaryExpression.hxx>
+#include <parsing/AST/statement/variableDeclaration.hxx>
+#include <parsing/AST/expression/variable.hxx>
 
 #endif
