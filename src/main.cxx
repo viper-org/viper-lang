@@ -6,7 +6,7 @@
 int main(int argc, char** argv)
 {
     if(argc < 2)
-        Viper::Diagnostics::FatalError("qra", "no input files");
+        Viper::Diagnostics::FatalError("viper", "no input files");
     
     Viper::Compiler compiler(Viper::ViperOutputType::LLVM, argv[1]);
 
