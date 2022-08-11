@@ -21,6 +21,7 @@ namespace Viper
 
     std::vector<llvm::Value*> Compiler::Compile()
     {
+        InitDefaultTypes();
         _lexer = std::make_unique<Lexing::Lexer>(_contents);
         
         _parser = std::make_unique<Parsing::Parser>(_lexer->Lex(), _contents);

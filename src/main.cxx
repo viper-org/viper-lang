@@ -12,6 +12,6 @@ int main(int argc, char** argv)
 
     for(llvm::Value* node : compiler.Compile())
     {
-        node->dump();
+        node->print(llvm::outs());
     }
 }

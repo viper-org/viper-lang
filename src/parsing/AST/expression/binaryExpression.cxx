@@ -7,7 +7,7 @@ namespace Viper
         BinaryExpression::BinaryExpression(std::unique_ptr<ASTNode> lhs, BinaryOperator op, std::unique_ptr<ASTNode> rhs)
             :_lhs(std::move(lhs)), _operator(op), _rhs(std::move(rhs))
         {
-            _type = ASTNodeType::BinaryExpression;
+            _nodeType = ASTNodeType::BinaryExpression;
         }
 
         BinaryExpression::BinaryExpression(std::unique_ptr<ASTNode> lhs, Lexing::Token op, std::unique_ptr<ASTNode> rhs)
@@ -61,7 +61,8 @@ namespace Viper
             llvm::Value* left  = _lhs->Generate(context, builder, module, scope);
             llvm::Value* right = _rhs->Generate(context, builder, module, scope);
 
-            // TODO: Check types & convert if required
+            if(left->getType() != right->getType())
+                Type::Convert(left, right->getType(), builder);
 
             switch(_operator)
             {

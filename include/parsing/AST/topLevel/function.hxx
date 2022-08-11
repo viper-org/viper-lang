@@ -13,13 +13,14 @@ namespace Viper
         class ASTFunction : public ASTTopLevel
         {
         public:
-            ASTFunction(std::string name, std::vector<std::unique_ptr<ASTNode>> body, std::shared_ptr<Environment> scope);
+            ASTFunction(std::string name, std::shared_ptr<Type> type, std::vector<std::unique_ptr<ASTNode>> body, std::shared_ptr<Environment> scope);
 
             void Print(std::ostream& stream) const override;
 
             llvm::Value* Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module) override;
         private:
             std::string _name;
+            std::shared_ptr<Type> _type;
             std::vector<std::unique_ptr<ASTNode>> _body;
             std::shared_ptr<Environment> _scope;
         };

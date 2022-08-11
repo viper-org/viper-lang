@@ -6,10 +6,10 @@ namespace Viper
 {
     namespace Parsing
     {
-        class VariableDeclaration : public ASTNode // TODO: Add type
+        class VariableDeclaration : public ASTNode
         {
         public:
-            VariableDeclaration(std::string name, std::unique_ptr<ASTNode> value);
+            VariableDeclaration(std::shared_ptr<Type> type, std::string name, std::unique_ptr<ASTNode> value);
 
             void Print(std::ostream& stream) const override;
 

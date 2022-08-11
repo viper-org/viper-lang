@@ -1,5 +1,5 @@
-#include <iostream>
 #include <lexing/lexer.hxx>
+#include <types/types.hxx>
 #include <diagnostics.hxx>
 #include <optional>
 #include <unordered_map>
@@ -9,8 +9,7 @@ namespace Viper
     namespace Lexing
     {
         std::unordered_map<std::string_view, TokenType> keywords = {
-            { "return", TokenType::Return },
-            { "i32", TokenType::Type }, // TODO: Add more types
+            { "return", TokenType::Return }
         };
 
         Lexer::Lexer(std::string text)
@@ -63,8 +62,10 @@ namespace Viper
                     Consume();
                     value += Current();
                 }
-                if(keywords.find(value) != keywords.end())
+                if(auto iterator = keywords.find(value); iterator != keywords.end())
                     return Token(keywords.find(value)->second, start, _position + 1, _lineNumber, _colNumber);
+                else if(auto iterator = types.find(value); iterator != types.end())
+                    return Token(TokenType::Type, start, _position + 1, _lineNumber, _colNumber);
                 return Token(TokenType::Identifier, start, _position + 1, _lineNumber, _colNumber);
             }
             else if(std::isdigit(current))

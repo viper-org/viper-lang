@@ -1,5 +1,5 @@
-@main() -> i32
+@main() -> i8
 {
-    i32 x = 66;
-    return x * x;
+    i16 x = 4;
+    return x;
 }

@@ -33,6 +33,8 @@ namespace Viper
 
             std::unique_ptr<ASTTopLevel> ParseFunction();
 
+            std::shared_ptr<Type> ParseType();
+
             std::unique_ptr<ASTNode> ParseExpression(int precedence = 1);
             std::unique_ptr<ASTNode> ParsePrimary();
 

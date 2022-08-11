@@ -52,7 +52,7 @@ namespace Viper
                 Lexing::Token temp(tokenType, 0, 0, 0, 0);
                 
                 unsigned int start = Current().getStart();
-                while(_text[start - 1] != '\n')
+                while(_text[start] != '\n')
                     start--;
                 unsigned int end = Current().getEnd();
                 while(_text[end] != '\n')
@@ -90,8 +90,7 @@ namespace Viper
             ExpectToken(Lexing::TokenType::RightArrow);
             Consume();
 
-            ExpectToken(Lexing::TokenType::Type);
-            Consume(); // TODO: Parse type
+            std::shared_ptr<Type> type = ParseType();
 
             ExpectToken(Lexing::TokenType::LeftBracket);
             Consume();
@@ -109,7 +108,17 @@ namespace Viper
             }
             Consume();
 
-            return std::make_unique<ASTFunction>(name, std::move(body), scope);
+            return std::make_unique<ASTFunction>(name, type, std::move(body), scope);
+        }
+
+        std::shared_ptr<Type> Parser::ParseType()
+        {
+            ExpectToken(Lexing::TokenType::Type);
+            std::string text = GetTokenText(Consume());
+            if(auto iterator = types.find(text); iterator != types.end())
+                return iterator->second;
+            
+            return nullptr; // TODO: Compiler error
         }
 
         std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)
@@ -180,18 +189,17 @@ namespace Viper
 
         std::unique_ptr<ASTNode> Parser::ParseVariableDeclaration()
         {
-            // TODO: Parse type
-            Consume();
+            std::shared_ptr<Type> type = ParseType();
 
             ExpectToken(Lexing::TokenType::Identifier);
             std::string name = GetTokenText(Consume());
 
             if(Current().getType() != Lexing::TokenType::Equals)
-                return std::make_unique<VariableDeclaration>(name, nullptr);
+                return std::make_unique<VariableDeclaration>(type, name, nullptr);
             
             Consume();
 
-            return std::make_unique<VariableDeclaration>(name, ParseExpression());
+            return std::make_unique<VariableDeclaration>(type, name, ParseExpression());
         }
 
         std::unique_ptr<ASTNode> Parser::ParseVariable()

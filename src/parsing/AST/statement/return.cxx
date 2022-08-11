@@ -7,7 +7,7 @@ namespace Viper
         ReturnStatement::ReturnStatement(std::unique_ptr<ASTNode> value)
             :_value(std::move(value))
         {
-            _type = ASTNodeType::Return;
+            _nodeType = ASTNodeType::Return;
         }
 
         void ReturnStatement::Print(std::ostream& stream) const
@@ -22,7 +22,12 @@ namespace Viper
         llvm::Value* ReturnStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope)
         {
             if(_value)
-                return builder.CreateRet(_value->Generate(context, builder, module, scope));
+            {
+                llvm::Value* generatedValue = _value->Generate(context, builder, module, scope);
+                if(generatedValue->getType() != _type->GetLLVMType(context))
+                    generatedValue = Type::Convert(generatedValue, _type->GetLLVMType(context), builder);
+                return builder.CreateRet(generatedValue);
+            }
 
             return builder.CreateRet(nullptr);
         }

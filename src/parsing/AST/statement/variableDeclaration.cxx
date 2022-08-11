@@ -4,15 +4,16 @@ namespace Viper
 {
     namespace Parsing
     {
-        llvm::AllocaInst* CreateAlloca(llvm::LLVMContext& context, llvm::Function* func, llvm::StringRef name)
+        llvm::AllocaInst* CreateAlloca(llvm::LLVMContext& context, std::shared_ptr<Type> type, llvm::Function* func, llvm::StringRef name)
         {
             llvm::IRBuilder<> tmp_builder(&func->getEntryBlock(), func->getEntryBlock().begin());
-            return tmp_builder.CreateAlloca(llvm::Type::getInt32Ty(context), nullptr, name);
+            return tmp_builder.CreateAlloca(type->GetLLVMType(context), nullptr, name);
         }
 
-        VariableDeclaration::VariableDeclaration(std::string name, std::unique_ptr<ASTNode> value)
+        VariableDeclaration::VariableDeclaration(std::shared_ptr<Type> type, std::string name, std::unique_ptr<ASTNode> value)
             :_name(name), _value(std::move(value))
         {
+            _type = type;
         }
 
         void VariableDeclaration::Print(std::ostream& stream) const
@@ -25,13 +26,14 @@ namespace Viper
         {
             llvm::Function* function = builder.GetInsertBlock()->getParent();
 
-            llvm::AllocaInst* alloca = CreateAlloca(context, function, _name);
+            llvm::AllocaInst* alloca = CreateAlloca(context, _type, function, _name);
             scope->namedValues[_name] = alloca;
             
             if(_value)
             {
                 llvm::Value* initValue = _value->Generate(context, builder, module, scope);
-                // TODO: Convert types
+                if(initValue->getType() != _type->GetLLVMType(context))
+                    initValue = Type::Convert(initValue, _type->GetLLVMType(context), builder);
 
                 return builder.CreateStore(initValue, alloca);
             }
