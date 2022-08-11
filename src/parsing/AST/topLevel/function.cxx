@@ -33,9 +33,7 @@ namespace Viper
             {
                 node->Generate(context, builder, module, _scope);
                 if(node->GetType() == ASTNodeType::Return)
-                {
                     return function;
-                }
             }
             return function;
         }

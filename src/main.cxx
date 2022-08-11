@@ -1,5 +1,6 @@
 #include <compiler.hxx>
 #include <diagnostics.hxx>
+#include <types/types.hxx>
 #include <iostream>
 
 int main(int argc, char** argv)
@@ -11,6 +12,6 @@ int main(int argc, char** argv)
 
     for(llvm::Value* node : compiler.Compile())
     {
-        llvm::outs() << *node;
+        node->dump();
     }
 }
