@@ -7,5 +7,6 @@
 #include <parsing/AST/expression/binaryExpression.hxx>
 #include <parsing/AST/statement/variableDeclaration.hxx>
 #include <parsing/AST/expression/variable.hxx>
+#include <parsing/AST/statement/if.hxx>
 
 #endif

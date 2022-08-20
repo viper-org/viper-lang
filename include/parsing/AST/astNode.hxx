@@ -14,9 +14,15 @@ namespace Viper
         {
             Integer,
 
+            Variable,
+
             BinaryExpression,
 
             Return,
+
+            VariableDeclaration,
+
+            IfStatement
         };
 
         class ASTNode

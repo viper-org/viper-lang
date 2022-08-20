@@ -18,9 +18,12 @@ namespace Viper
             Identifier,
 
             Return,
+            If,
             Type,
 
             Equals,
+
+            DoubleEquals,
 
             Asperand, RightArrow,
 

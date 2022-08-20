@@ -27,7 +27,7 @@ namespace Viper
         const char* errorBegin, const char* errorEnd,
         const char* lineBegin, const char* lineEnd)
         {
-            std::string start  = std::string(lineBegin, errorBegin - 1);
+            std::string start  = std::string(lineBegin + 1, errorBegin);
             std::string error  = std::string(errorBegin, errorEnd);
             std::string end    = std::string(errorEnd, lineEnd);
             std::string spaces = std::string(start.length(), ' ');

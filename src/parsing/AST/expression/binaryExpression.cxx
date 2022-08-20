@@ -1,5 +1,5 @@
 #include <parsing/AST/expression/binaryExpression.hxx>
-
+#include <parsing/AST/expression/variable.hxx>
 namespace Viper
 {
     namespace Parsing
@@ -27,6 +27,12 @@ namespace Viper
                 case Lexing::TokenType::Slash:
                     _operator = BinaryOperator::Divide;
                     break;
+                case Lexing::TokenType::Equals:
+                    _operator = BinaryOperator::Assignment;
+                    break;
+                case Lexing::TokenType::DoubleEquals:
+                    _operator = BinaryOperator::Equals;
+                    break;
                 default:
                     // TODO: Compiler error
                     throw;
@@ -46,18 +52,35 @@ namespace Viper
             switch(_operator)
             {
                 case BinaryOperator::Plus:
-                    return "PLUS";
+                    return "Addition";
                 case BinaryOperator::Minus:
-                    return "MINUS";
+                    return "Subtraction";
                 case BinaryOperator::Multiply:
-                    return "MULTIPLY";
+                    return "Multiplication";
                 case BinaryOperator::Divide:
-                    return "DIVIDE";
+                    return "Division";
+                case BinaryOperator::Assignment:
+                    return "Assignment";
+                case BinaryOperator::Equals:
+                    return "Equals";
             }
         }
 
         llvm::Value* BinaryExpression::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope)
         {
+            if(_operator == BinaryOperator::Assignment)
+            {
+                Variable* left = static_cast<Variable*>(_lhs.get());
+                llvm::Value* value = _rhs->Generate(context, builder, module, scope);
+
+                llvm::AllocaInst* alloca = FindNamedValue(left->GetName(), scope);
+
+                if(value->getType() != alloca->getAllocatedType())
+                    value = Type::Convert(value, alloca->getAllocatedType(), builder);
+
+                return builder.CreateStore(value, alloca);
+            }
+
             llvm::Value* left  = _lhs->Generate(context, builder, module, scope);
             llvm::Value* right = _rhs->Generate(context, builder, module, scope);
 
@@ -67,13 +90,17 @@ namespace Viper
             switch(_operator)
             {
                 case BinaryOperator::Plus:
-                    return builder.CreateAdd(left, right, "addtmp");
+                    return builder.CreateAdd(left, right, "add");
                 case BinaryOperator::Minus:
-                    return builder.CreateSub(left, right, "subtmp");
+                    return builder.CreateSub(left, right, "sub");
                 case BinaryOperator::Multiply:
-                    return builder.CreateMul(left, right, "multmp");
+                    return builder.CreateMul(left, right, "mul");
                 case BinaryOperator::Divide:
-                    return builder.CreateSDiv(left, right, "divtmp");
+                    return builder.CreateSDiv(left, right, "div");
+                case BinaryOperator::Equals:
+                    return builder.CreateICmpEQ(left, right, "eq");
+                default: // Should never be reached
+                    return nullptr;
             }
         }
     }

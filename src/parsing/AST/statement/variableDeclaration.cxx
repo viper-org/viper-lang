@@ -13,6 +13,7 @@ namespace Viper
         VariableDeclaration::VariableDeclaration(std::shared_ptr<Type> type, std::string name, std::unique_ptr<ASTNode> value)
             :_name(name), _value(std::move(value))
         {
+            _nodeType = ASTNodeType::VariableDeclaration;
             _type = type;
         }
 
