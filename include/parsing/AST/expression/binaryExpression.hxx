@@ -10,7 +10,11 @@ namespace Viper
     {
         enum class BinaryOperator
         {
-            Plus, Minus, Multiply, Divide
+            Plus, Minus, Multiply, Divide,
+
+            Assignment,
+
+            Equals,
         };
 
         class BinaryExpression : public ASTNode

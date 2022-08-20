@@ -40,6 +40,10 @@ namespace Viper
                 case Lexing::TokenType::Plus:
                 case Lexing::TokenType::Minus:
                     return 35;
+                case Lexing::TokenType::DoubleEquals:
+                    return 25;
+                case Lexing::TokenType::Equals:
+                    return 10;
                 default:
                     return 0;
             }
@@ -50,17 +54,23 @@ namespace Viper
             if(Current().getType() != tokenType)
             {
                 Lexing::Token temp(tokenType, 0, 0, 0, 0);
-                
-                unsigned int start = Current().getStart();
-                while(_text[start] != '\n')
-                    start--;
-                unsigned int end = Current().getEnd();
-                while(_text[end] != '\n')
-                    end++;
-                Diagnostics::CompilerError(Current().getLineNumber(), Current().getColNumber(), "Expected '" + temp.typeAsString() + "', found " + GetTokenText(Current()), 
-                &_text[Current().getStart()], &_text[Current().getEnd()],
-                &_text[start], &_text[end]);
+
+                ParserError("Expected '" + temp.typeAsString() + "', found " + GetTokenText(Current()));
             }
+        }
+
+        void Parser::ParserError(std::string message)
+        {
+            unsigned int start = Current().getStart();
+            while(_text[start] != '\n')
+                start--;
+            unsigned int end = Current().getEnd();
+            while(_text[end] != '\n')
+                end++;
+
+            Diagnostics::CompilerError(Current().getLineNumber(), Current().getColNumber(),
+            message, &_text[Current().getStart()], &_text[Current().getEnd()],
+                      &_text[start], &_text[end]);
         }
 
         std::vector<std::unique_ptr<ASTTopLevel>> Parser::Parse()
@@ -117,8 +127,8 @@ namespace Viper
             std::string text = GetTokenText(Consume());
             if(auto iterator = types.find(text); iterator != types.end())
                 return iterator->second;
-            
-            return nullptr; // TODO: Compiler error
+
+            ParserError("Expected type, found '" + GetTokenText(Current()) + "'");
         }
 
         std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)
@@ -146,6 +156,8 @@ namespace Viper
                     return ParseInteger();
                 case Lexing::TokenType::Return:
                     return ParseReturn();
+                case Lexing::TokenType::If:
+                    return ParseIfStatement();
                 case Lexing::TokenType::LeftParen:
                     return ParseParenthesizedExpression();
                 case Lexing::TokenType::Type:
@@ -153,8 +165,7 @@ namespace Viper
                 case Lexing::TokenType::Identifier:
                     return ParseVariable();
                 default:
-                    // TODO: Compiler error
-                    throw;
+                    ParserError("Expected primary expression, found '" + GetTokenText(Current()) + "'");
             }
         }
 
@@ -205,6 +216,43 @@ namespace Viper
         std::unique_ptr<ASTNode> Parser::ParseVariable()
         {
             return std::make_unique<Variable>(GetTokenText(Consume()));
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParseIfStatement()
+        {
+            Consume();
+
+            ExpectToken(Lexing::TokenType::LeftParen);
+            Consume();
+            std::unique_ptr<ASTNode> cond = ParseExpression();
+            ExpectToken(Lexing::TokenType::RightParen);
+            Consume();
+
+            std::shared_ptr<Environment> scope = std::make_shared<Environment>();
+            scope->outer = _currentScope;
+            _currentScope = scope;
+
+            std::unique_ptr<ASTNode> body = ParseExpression();
+
+            if(Current().getType() == Lexing::TokenType::Semicolon)
+                Consume();
+
+            _currentScope = _currentScope->outer;
+
+            if(GetTokenText(Current()) != "else")
+                return std::make_unique<IfStatement>(std::move(cond), scope, std::move(body), nullptr, nullptr);
+            
+            Consume();
+
+            std::shared_ptr<Environment> elseScope = std::make_shared<Environment>();
+            elseScope->outer = _currentScope;
+            _currentScope = elseScope;
+
+            std::unique_ptr<ASTNode> elseBody = ParseExpression();
+
+            _currentScope = _currentScope->outer;
+
+            return std::make_unique<IfStatement>(std::move(cond), scope, std::move(body), elseScope, std::move(elseBody));
         }
     }
 }

@@ -78,6 +78,10 @@ namespace Viper
                     return "Type";
                 case TokenType::Equals:
                     return "Equals";
+                case TokenType::If:
+                    return "If";
+                case TokenType::DoubleEquals:
+                    return "DoubleEquals";
             }
         }
 

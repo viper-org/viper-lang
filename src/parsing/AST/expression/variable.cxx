@@ -7,6 +7,7 @@ namespace Viper
         Variable::Variable(std::string name)
             :_name(name)
         {
+            _nodeType = ASTNodeType::Variable;
         }
 
         void Variable::Print(std::ostream& stream) const
@@ -19,6 +20,11 @@ namespace Viper
             llvm::AllocaInst* alloca = FindNamedValue(_name, scope);
 
             return builder.CreateLoad(alloca->getAllocatedType(), alloca, _name);
+        }
+
+        std::string Variable::GetName() const
+        {
+            return _name;
         }
     }
 }

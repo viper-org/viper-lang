@@ -16,9 +16,12 @@ namespace Viper
     {
         if(value->getType() == type)
             return value;
+        
+        if(type->getPrimitiveSizeInBits() == 1)
+            return builder.CreateIsNotNull(value);
 
         if(value->getType()->isIntegerTy() && type->isIntegerTy())
-            return builder.CreateSExtOrTrunc(value, type);
+            return builder.CreateIntCast(value, type, false);
 
         value->mutateType(type);
         return value;

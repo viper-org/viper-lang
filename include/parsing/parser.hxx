@@ -28,7 +28,9 @@ namespace Viper
             std::string GetTokenText(Lexing::Token token) const;
             int GetBinOpPrecedence(Lexing::TokenType tokenType) const;
 
+
             void ExpectToken(Lexing::TokenType tokenType);
+            [[noreturn]] void ParserError(std::string message);
 
 
             std::unique_ptr<ASTTopLevel> ParseFunction();
@@ -45,6 +47,8 @@ namespace Viper
             std::unique_ptr<ASTNode> ParseVariable();
 
             std::unique_ptr<ASTNode> ParseVariableDeclaration();
+
+            std::unique_ptr<ASTNode> ParseIfStatement();
 
             std::unique_ptr<ASTNode> ParseReturn();
         };
