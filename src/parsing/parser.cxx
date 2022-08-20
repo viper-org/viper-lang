@@ -234,13 +234,13 @@ namespace Viper
 
             std::unique_ptr<ASTNode> body = ParseExpression();
 
-            if(Current().getType() == Lexing::TokenType::Semicolon)
-                Consume();
-
             _currentScope = _currentScope->outer;
 
-            if(GetTokenText(Current()) != "else")
+            if(GetTokenText(Peek(1)) != "else")
                 return std::make_unique<IfStatement>(std::move(cond), scope, std::move(body), nullptr, nullptr);
+
+            ExpectToken(Lexing::TokenType::Semicolon);
+            Consume();
             
             Consume();
 

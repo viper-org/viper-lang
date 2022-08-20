@@ -1,9 +1,7 @@
 @main() -> i16
 {
     i32 x = 4;
-    if(x == 1)
-        return 1;
-    else
-        return 2;
-    return 0;
+    if(x)
+        x = 7;
+    return x;
 }
