@@ -10,7 +10,8 @@ namespace Viper
     {
         std::unordered_map<std::string_view, TokenType> keywords = {
             { "return", TokenType::Return },
-            { "if", TokenType::If }
+            { "if", TokenType::If },
+            { "while", TokenType::While },
         };
 
         Lexer::Lexer(std::string text)
@@ -114,6 +115,33 @@ namespace Viper
                         return Token(TokenType::DoubleEquals, _position - 1, _position + 1, _lineNumber, _colNumber);
                     }
                     return Token(TokenType::Equals, _position, _position + 1, _lineNumber, _colNumber);
+                }
+                case '!':
+                {
+                    if(Peek(1) == '=')
+                    {
+                        Consume();
+                        return Token(TokenType::BangEquals, _position - 1, _position + 1, _lineNumber, _colNumber);
+                    }
+                    return Token(TokenType::Bang, _position, _position + 1, _lineNumber, _colNumber);
+                }
+                case '&':
+                {
+                    if(Peek(1) == '&')
+                    {
+                        Consume();
+                        return Token(TokenType::DoubleAmpersand, _position - 1, _position + 1, _lineNumber, _colNumber);
+                    }
+                    return Token(TokenType::Ampersand, _position, _position + 1, _lineNumber, _colNumber);
+                }
+                case '|':
+                {
+                    if(Peek(1) == '|')
+                    {
+                        Consume();
+                        return Token(TokenType::DoublePipe, _position - 1, _position + 1, _lineNumber, _colNumber);
+                    }
+                    return Token(TokenType::Pipe, _position, _position + 1, _lineNumber, _colNumber);
                 }
                 
                 case '@':

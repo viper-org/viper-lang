@@ -19,11 +19,17 @@ namespace Viper
 
             Return,
             If,
+            While,
             Type,
 
             Equals,
 
             DoubleEquals,
+            BangEquals,
+            Bang,
+
+            Ampersand, DoubleAmpersand,
+            Pipe, DoublePipe,
 
             Asperand, RightArrow,
 

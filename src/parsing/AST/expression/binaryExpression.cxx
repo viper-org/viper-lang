@@ -33,6 +33,15 @@ namespace Viper
                 case Lexing::TokenType::DoubleEquals:
                     _operator = BinaryOperator::Equals;
                     break;
+                case Lexing::TokenType::BangEquals:
+                    _operator = BinaryOperator::NotEquals;
+                    break;
+                case Lexing::TokenType::DoubleAmpersand:
+                    _operator = BinaryOperator::And;
+                    break;
+                case Lexing::TokenType::DoublePipe:
+                    _operator = BinaryOperator::Or;
+                    break;
                 default:
                     // TODO: Compiler error
                     throw;
@@ -63,6 +72,12 @@ namespace Viper
                     return "Assignment";
                 case BinaryOperator::Equals:
                     return "Equals";
+                case BinaryOperator::NotEquals:
+                    return "NotEquals";
+                case BinaryOperator::And:
+                    return "And";
+                case BinaryOperator::Or:
+                    return "Or";
             }
         }
 
@@ -99,6 +114,12 @@ namespace Viper
                     return builder.CreateSDiv(left, right, "div");
                 case BinaryOperator::Equals:
                     return builder.CreateICmpEQ(left, right, "eq");
+                case BinaryOperator::NotEquals:
+                    return builder.CreateICmpNE(left, right, "ne");
+                case BinaryOperator::And:
+                    return builder.CreateLogicalAnd(left, right, "and");
+                case BinaryOperator::Or:
+                    return builder.CreateLogicalOr(left, right, "or");
                 default: // Should never be reached
                     return nullptr;
             }

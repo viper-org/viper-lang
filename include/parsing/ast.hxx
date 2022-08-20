@@ -8,5 +8,6 @@
 #include <parsing/AST/statement/variableDeclaration.hxx>
 #include <parsing/AST/expression/variable.hxx>
 #include <parsing/AST/statement/if.hxx>
+#include <parsing/AST/statement/while.hxx>
 
 #endif

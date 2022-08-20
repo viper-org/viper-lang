@@ -41,7 +41,12 @@ namespace Viper
                 case Lexing::TokenType::Minus:
                     return 35;
                 case Lexing::TokenType::DoubleEquals:
+                case Lexing::TokenType::BangEquals:
                     return 25;
+                case Lexing::TokenType::DoubleAmpersand:
+                    return 15;
+                case Lexing::TokenType::DoublePipe:
+                    return 10;
                 case Lexing::TokenType::Equals:
                     return 10;
                 default:
@@ -158,6 +163,8 @@ namespace Viper
                     return ParseReturn();
                 case Lexing::TokenType::If:
                     return ParseIfStatement();
+                case Lexing::TokenType::While: 
+                    return ParseWhileStatement();
                 case Lexing::TokenType::LeftParen:
                     return ParseParenthesizedExpression();
                 case Lexing::TokenType::Type:
@@ -253,6 +260,29 @@ namespace Viper
             _currentScope = _currentScope->outer;
 
             return std::make_unique<IfStatement>(std::move(cond), scope, std::move(body), elseScope, std::move(elseBody));
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParseWhileStatement()
+        {
+            Consume();
+
+            ExpectToken(Lexing::TokenType::LeftParen);
+            Consume();
+
+            std::unique_ptr<ASTNode> condition = ParseExpression();
+
+            ExpectToken(Lexing::TokenType::RightParen);
+            Consume();
+
+            std::shared_ptr<Environment> scope = std::make_shared<Environment>();
+            scope->outer = _currentScope;
+            _currentScope = scope;
+
+            std::unique_ptr<ASTNode> body = ParseExpression();
+
+            _currentScope = scope->outer;
+
+            return std::make_unique<WhileStatement>(std::move(condition), std::move(body), scope);
         }
     }
 }
