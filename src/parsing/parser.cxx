@@ -38,16 +38,26 @@ namespace Viper
                 case Lexing::TokenType::Star:
                 case Lexing::TokenType::Slash:
                     return 40;
+                
                 case Lexing::TokenType::Plus:
                 case Lexing::TokenType::Minus:
                     return 35;
+
+                case Lexing::TokenType::LessThan:
+                case Lexing::TokenType::LessEquals:
+                case Lexing::TokenType::GreaterThan:
+                case Lexing::TokenType::GreaterEquals:
+                    return 30;
+
                 case Lexing::TokenType::DoubleEquals:
                 case Lexing::TokenType::BangEquals:
                     return 25;
+
                 case Lexing::TokenType::DoubleAmpersand:
-                    return 15;
+                    return 20;
                 case Lexing::TokenType::DoublePipe:
-                    return 10;
+                    return 15;
+                
                 case Lexing::TokenType::Equals:
                     return 10;
                 default:

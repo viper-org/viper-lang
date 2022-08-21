@@ -29,6 +29,9 @@ namespace Viper
             BangEquals,
             Bang,
 
+            LessThan, GreaterThan,
+            LessEquals, GreaterEquals,
+
             Ampersand, DoubleAmpersand,
             Pipe, DoublePipe,
 

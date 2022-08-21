@@ -100,6 +100,14 @@ namespace Viper
                     return "Break";
                 case TokenType::Comma:
                     return "Comma";
+                case TokenType::LessThan:
+                    return "LessThan";
+                case TokenType::GreaterThan:
+                    return "GreaterThan";
+                case TokenType::LessEquals:
+                    return "LessEquals";
+                case TokenType::GreaterEquals:
+                    return "GreaterEquals";
             }
         }
 

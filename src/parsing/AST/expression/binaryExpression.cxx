@@ -42,6 +42,18 @@ namespace Viper
                 case Lexing::TokenType::DoublePipe:
                     _operator = BinaryOperator::Or;
                     break;
+                case Lexing::TokenType::LessThan:
+                    _operator = BinaryOperator::LessThan;
+                    break;
+                case Lexing::TokenType::GreaterThan:
+                    _operator = BinaryOperator::GreaterThan;
+                    break;
+                case Lexing::TokenType::LessEquals:
+                    _operator = BinaryOperator::LessEquals;
+                    break;
+                case Lexing::TokenType::GreaterEquals:
+                    _operator = BinaryOperator::GreaterEquals;
+                    break;
                 default: // This should never be reached
                     break;
             }
@@ -77,6 +89,14 @@ namespace Viper
                     return "And";
                 case BinaryOperator::Or:
                     return "Or";
+                case BinaryOperator::LessThan:
+                    return "LessThan";
+                case BinaryOperator::GreaterThan:
+                    return "GreaterThan";
+                case BinaryOperator::LessEquals:
+                    return "LessEquals";
+                case BinaryOperator::GreaterEquals:
+                    return "GreaterEquals";
             }
         }
 
@@ -111,14 +131,25 @@ namespace Viper
                     return builder.CreateMul(left, right, "mul");
                 case BinaryOperator::Divide:
                     return builder.CreateSDiv(left, right, "div");
+                
                 case BinaryOperator::Equals:
                     return builder.CreateICmpEQ(left, right, "eq");
                 case BinaryOperator::NotEquals:
                     return builder.CreateICmpNE(left, right, "ne");
+                
                 case BinaryOperator::And:
                     return builder.CreateLogicalAnd(left, right, "and");
                 case BinaryOperator::Or:
                     return builder.CreateLogicalOr(left, right, "or");
+                
+                case BinaryOperator::LessThan:
+                    return builder.CreateICmpSLT(left, right, "lt");
+                case BinaryOperator::GreaterThan:
+                    return builder.CreateICmpSGT(left, right, "gt");
+                case BinaryOperator::LessEquals:
+                    return builder.CreateICmpSLE(left, right, "le");
+                case BinaryOperator::GreaterEquals:
+                    return builder.CreateICmpSGE(left, right, "ge");
                 default: // Should never be reached
                     return nullptr;
             }

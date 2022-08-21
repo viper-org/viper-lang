@@ -1,9 +1,8 @@
-@add(i32 lhs, i32 rhs) -> i32
-{
-    return lhs + rhs;
-}
-
 @main() -> i32
 {
-    return add(abc, 7);
+    i32 x = 6;
+    while(x <= 17)
+        x = x + 1;
+    
+    return x;
 }

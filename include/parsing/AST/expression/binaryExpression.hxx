@@ -15,7 +15,9 @@ namespace Viper
             Assignment,
 
             Equals, NotEquals,
-            And, Or
+            LessThan, GreaterThan,
+            LessEquals, GreaterEquals,
+            And, Or,
         };
 
         class BinaryExpression : public ASTNode
