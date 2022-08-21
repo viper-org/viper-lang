@@ -8,6 +8,7 @@ namespace Viper
         WhileStatement::WhileStatement(std::unique_ptr<ASTNode> cond, std::unique_ptr<ASTNode> body, std::shared_ptr<Environment> scope)
             :_cond(std::move(cond)), _body(std::move(body)), _scope(scope)
         {
+            _nodeType = ASTNodeType::WhileStatement;
         }
 
         void WhileStatement::Print(std::ostream& stream) const
@@ -24,7 +25,9 @@ namespace Viper
 
             llvm::BasicBlock* condBasicBlock  = llvm::BasicBlock::Create(context, "whilecond", function);
             llvm::BasicBlock* bodyBasicBlock  = llvm::BasicBlock::Create(context, "whilebody");
-            llvm::BasicBlock* mergeBasicBlock = llvm::BasicBlock::Create(context, "whilemerge");
+            llvm::BasicBlock* mergeBasicBlock = llvm::BasicBlock::Create(context, "breakmerge");
+
+            _scope->labels.push_back(mergeBasicBlock);
 
             builder.CreateBr(condBasicBlock);
             

@@ -14,4 +14,20 @@ namespace Viper
                 throw; // TODO: Error properly
         }
     }
+
+    llvm::BasicBlock* FindLabel(std::string name, std::shared_ptr<Environment> scope)
+    {
+        while(true)
+        {
+            for(llvm::BasicBlock* block : scope->labels)
+            {
+                if(block->getName() == name)
+                    return block;
+            }
+            if(scope->outer)
+                scope = scope->outer;
+            else
+                throw; // TODO: Error properly
+        }
+    }
 }

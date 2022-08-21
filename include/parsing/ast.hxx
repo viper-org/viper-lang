@@ -9,5 +9,7 @@
 #include <parsing/AST/expression/variable.hxx>
 #include <parsing/AST/statement/if.hxx>
 #include <parsing/AST/statement/while.hxx>
+#include <parsing/AST/statement/break.hxx>
+#include <parsing/AST/statement/compound.hxx>
 
 #endif

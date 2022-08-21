@@ -22,7 +22,11 @@ namespace Viper
 
             VariableDeclaration,
 
-            IfStatement
+            IfStatement,
+            WhileStatement,
+            BreakStatement,
+
+            CompoundStatement
         };
 
         class ASTNode

@@ -1,7 +1,11 @@
 @main() -> i16
 {
     i32 x = 14;
-    while(x != 7)
+    while(1)
+    {
         x = x - 1;
+        if(x == 4)
+            break;
+    }
     return x;
 }

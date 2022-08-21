@@ -20,6 +20,7 @@ namespace Viper
             Return,
             If,
             While,
+            Break,
             Type,
 
             Equals,

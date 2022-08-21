@@ -163,14 +163,18 @@ namespace Viper
                     return ParseReturn();
                 case Lexing::TokenType::If:
                     return ParseIfStatement();
-                case Lexing::TokenType::While: 
+                case Lexing::TokenType::While:
                     return ParseWhileStatement();
+                case Lexing::TokenType::Break:
+                    return ParseBreakStatement();
                 case Lexing::TokenType::LeftParen:
                     return ParseParenthesizedExpression();
                 case Lexing::TokenType::Type:
                     return ParseVariableDeclaration();
                 case Lexing::TokenType::Identifier:
                     return ParseVariable();
+                case Lexing::TokenType::LeftBracket:
+                    return ParseCompoundStatement();
                 default:
                     ParserError("Expected primary expression, found '" + GetTokenText(Current()) + "'");
             }
@@ -283,6 +287,37 @@ namespace Viper
             _currentScope = scope->outer;
 
             return std::make_unique<WhileStatement>(std::move(condition), std::move(body), scope);
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParseBreakStatement()
+        {
+            Consume();
+
+            return std::make_unique<BreakStatement>();
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParseCompoundStatement()
+        {
+            Consume();
+
+            std::shared_ptr<Environment> scope = std::make_shared<Environment>();
+            scope->outer = _currentScope;
+            _currentScope = scope;
+
+            std::vector<std::unique_ptr<ASTNode>> statements;
+
+            while(Current().getType() != Lexing::TokenType::RightBracket)
+            {
+                statements.push_back(ParseExpression());
+                ExpectToken(Lexing::TokenType::Semicolon);
+                Consume();
+            }
+            Consume();
+            _tokens.insert(_tokens.begin() + _position, Lexing::Token(Lexing::TokenType::Semicolon, 0, 0, 0, 0));
+
+            _currentScope = scope->outer;
+
+            return std::make_unique<CompoundStatement>(std::move(statements), scope);
         }
     }
 }

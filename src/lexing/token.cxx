@@ -96,6 +96,8 @@ namespace Viper
                     return "Pipe";
                 case TokenType::DoublePipe:
                     return "DoublePipe";
+                case TokenType::Break:
+                    return "Break";
             }
         }
 
