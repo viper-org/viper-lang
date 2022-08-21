@@ -248,13 +248,12 @@ namespace Viper
         std::unique_ptr<ASTNode> Parser::ParseVariable()
         {
             std::string name = GetTokenText(Consume());
-            std::cout << name << std::endl;
             if(std::find(identifiers.begin(), identifiers.end(), name) == identifiers.end())
             {
                 _position--;
                 ParserError("'\x1b[1m" + name + "\x1b[0m' undeclared (first use in this function)");
             }
-            return std::make_unique<Variable>(GetTokenText(Consume()));
+            return std::make_unique<Variable>(name);
         }
 
         std::unique_ptr<ASTNode> Parser::ParseIfStatement()
