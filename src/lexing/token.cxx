@@ -110,6 +110,10 @@ namespace Viper
                     return "GreaterEquals";
                 case TokenType::For:
                     return "For";
+                case TokenType::LeftSquareBracket:
+                    return "LeftSquareBracket";
+                case TokenType::RightSquareBracket:
+                    return "RightSquareBracket";
             }
         }
 

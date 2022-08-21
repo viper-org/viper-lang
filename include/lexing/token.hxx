@@ -10,6 +10,7 @@ namespace Viper
         {
             LeftParen, RightParen,
             LeftBracket, RightBracket,
+            LeftSquareBracket, RightSquareBracket,
 
             Plus, Minus, Star, Slash,
 

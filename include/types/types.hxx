@@ -2,6 +2,7 @@
 #define VIPER_TYPES_HXX
 #include <types/type.hxx>
 #include <types/integerType.hxx>
+#include <types/arrayType.hxx>
 #include <map>
 
 namespace Viper

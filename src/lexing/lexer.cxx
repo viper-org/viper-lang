@@ -93,6 +93,12 @@ namespace Viper
                 case '}':
                     return Token(TokenType::RightBracket, _position, _position + 1, _lineNumber, _colNumber);
 
+                case '[':
+                    return Token(TokenType::LeftSquareBracket, _position, _position + 1, _lineNumber, _colNumber);
+                case ']':
+                    return Token(TokenType::RightSquareBracket, _position, _position + 1, _lineNumber, _colNumber);
+
+
                 case '+':
                     return Token(TokenType::Plus, _position, _position + 1, _lineNumber, _colNumber);
                 case '-':

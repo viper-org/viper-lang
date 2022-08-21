@@ -1,9 +1,5 @@
 @main() -> i32
 {
-    i32 x;
-    
-    for(x = 1; x <= 77; x = x + 1)
-        x;
-    
-    return x;
+    i32[4][2] x;
+    return 0;
 }

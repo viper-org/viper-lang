@@ -156,7 +156,20 @@ namespace Viper
             ExpectToken(Lexing::TokenType::Type);
             std::string text = GetTokenText(Consume());
             if(auto iterator = types.find(text); iterator != types.end())
-                return iterator->second;
+            {
+                std::shared_ptr<Type> type = iterator->second;
+                while(Current().getType() == Lexing::TokenType::LeftSquareBracket)
+                {
+                    Consume();
+                    unsigned int length = std::stoi(GetTokenText(Consume()));
+
+                    ExpectToken(Lexing::TokenType::RightSquareBracket);
+                    Consume();
+
+                    type = std::make_shared<ArrayType>(length, type);
+                }
+                return type;
+            }
 
             ParserError("Expected type, found '" + GetTokenText(Current()) + "'");
         }
