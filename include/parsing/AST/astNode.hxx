@@ -16,13 +16,19 @@ namespace Viper
 
             Variable,
 
+            CallExpression,
+
             BinaryExpression,
 
             Return,
 
             VariableDeclaration,
 
-            IfStatement
+            IfStatement,
+            WhileStatement,
+            BreakStatement,
+
+            CompoundStatement
         };
 
         class ASTNode

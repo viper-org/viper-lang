@@ -19,6 +19,7 @@ namespace Viper
         private:
             std::string _text;
             std::vector<Lexing::Token> _tokens;
+            std::vector<std::string> identifiers;
             unsigned int _position;
             std::shared_ptr<Environment> _currentScope;
 
@@ -44,13 +45,17 @@ namespace Viper
 
             std::unique_ptr<ASTNode> ParseParenthesizedExpression();
 
-            std::unique_ptr<ASTNode> ParseVariable();
+            std::unique_ptr<ASTNode> ParseCallExpression();
 
+            std::unique_ptr<ASTNode> ParseCompoundStatement();
+
+            std::unique_ptr<ASTNode> ParseVariable();
             std::unique_ptr<ASTNode> ParseVariableDeclaration();
 
             std::unique_ptr<ASTNode> ParseIfStatement();
-
+            std::unique_ptr<ASTNode> ParseWhileStatement();
             std::unique_ptr<ASTNode> ParseReturn();
+            std::unique_ptr<ASTNode> ParseBreakStatement();
         };
     }
 }

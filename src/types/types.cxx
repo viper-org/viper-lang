@@ -18,10 +18,10 @@ namespace Viper
             return value;
         
         if(type->getPrimitiveSizeInBits() == 1)
-            return builder.CreateIsNotNull(value);
+            return builder.CreateIsNotNull(value, "conv");
 
         if(value->getType()->isIntegerTy() && type->isIntegerTy())
-            return builder.CreateIntCast(value, type, false);
+            return builder.CreateIntCast(value, type, false, "conv");
 
         value->mutateType(type);
         return value;

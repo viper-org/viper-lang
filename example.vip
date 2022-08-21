@@ -1,7 +1,8 @@
-@main() -> i16
+@main() -> i32
 {
-    i32 x = 4;
-    if(x)
-        x = 7;
+    i32 x = 6;
+    while(x <= 17)
+        x = x + 1;
+    
     return x;
 }

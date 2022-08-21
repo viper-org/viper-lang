@@ -19,15 +19,26 @@ namespace Viper
 
             Return,
             If,
+            While,
+            Break,
             Type,
 
             Equals,
 
             DoubleEquals,
+            BangEquals,
+            Bang,
+
+            LessThan, GreaterThan,
+            LessEquals, GreaterEquals,
+
+            Ampersand, DoubleAmpersand,
+            Pipe, DoublePipe,
 
             Asperand, RightArrow,
 
             Semicolon,
+            Comma,
 
             EndOfFile, BadToken
         };

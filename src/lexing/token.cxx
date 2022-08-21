@@ -82,6 +82,32 @@ namespace Viper
                     return "If";
                 case TokenType::DoubleEquals:
                     return "DoubleEquals";
+                case TokenType::While:
+                    return "While";
+                case TokenType::BangEquals:
+                    return "BangEquals";
+                case TokenType::Bang:
+                    return "Bang";
+                case TokenType::Ampersand:
+                    return "Ampersand";
+                case TokenType::DoubleAmpersand:
+                    return "DoubleAmpersand";
+                case TokenType::Pipe:
+                    return "Pipe";
+                case TokenType::DoublePipe:
+                    return "DoublePipe";
+                case TokenType::Break:
+                    return "Break";
+                case TokenType::Comma:
+                    return "Comma";
+                case TokenType::LessThan:
+                    return "LessThan";
+                case TokenType::GreaterThan:
+                    return "GreaterThan";
+                case TokenType::LessEquals:
+                    return "LessEquals";
+                case TokenType::GreaterEquals:
+                    return "GreaterEquals";
             }
         }
 
