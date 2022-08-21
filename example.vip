@@ -1,8 +1,9 @@
 @main() -> i32
 {
-    i32 x = 6;
-    while(x <= 17)
-        x = x + 1;
+    i32 x;
+    
+    for(x = 1; x <= 77; x = x + 1)
+        x;
     
     return x;
 }

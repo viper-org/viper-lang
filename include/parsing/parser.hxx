@@ -56,6 +56,7 @@ namespace Viper
             std::unique_ptr<ASTNode> ParseWhileStatement();
             std::unique_ptr<ASTNode> ParseReturn();
             std::unique_ptr<ASTNode> ParseBreakStatement();
+            std::unique_ptr<ASTNode> ParseForStatement();
         };
     }
 }

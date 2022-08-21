@@ -190,6 +190,8 @@ namespace Viper
                     return ParseIfStatement();
                 case Lexing::TokenType::While:
                     return ParseWhileStatement();
+                case Lexing::TokenType::For:
+                    return ParseForStatement();
                 case Lexing::TokenType::Break:
                     return ParseBreakStatement();
                 case Lexing::TokenType::LeftParen:
@@ -376,6 +378,39 @@ namespace Viper
             Consume();
 
             return std::make_unique<CallExpression>(callee, std::move(args));
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParseForStatement()
+        {
+            Consume();
+
+            ExpectToken(Lexing::TokenType::LeftParen);
+            Consume();
+
+            std::unique_ptr<ASTNode> init = ParseExpression();
+
+            ExpectToken(Lexing::TokenType::Semicolon);
+            Consume();
+
+            std::unique_ptr<ASTNode> cond = ParseExpression();
+
+            ExpectToken(Lexing::TokenType::Semicolon);
+            Consume();
+
+            std::unique_ptr<ASTNode> iter = ParseExpression();
+
+            ExpectToken(Lexing::TokenType::RightParen);
+            Consume();
+
+            std::shared_ptr<Environment> scope = std::make_shared<Environment>();
+            scope->outer = _currentScope;
+            _currentScope = scope;
+
+            std::unique_ptr<ASTNode> body = ParseExpression();
+
+            _currentScope = scope->outer;
+
+            return std::make_unique<ForStatement>(std::move(init), std::move(cond), std::move(iter), std::move(body), scope);
         }
     }
 }

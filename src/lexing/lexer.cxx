@@ -12,7 +12,8 @@ namespace Viper
             { "return", TokenType::Return },
             { "if", TokenType::If },
             { "while", TokenType::While },
-            { "break", TokenType::Break }
+            { "break", TokenType::Break },
+            { "for", TokenType::For },
         };
 
         Lexer::Lexer(std::string text)

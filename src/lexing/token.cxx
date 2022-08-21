@@ -108,6 +108,8 @@ namespace Viper
                     return "LessEquals";
                 case TokenType::GreaterEquals:
                     return "GreaterEquals";
+                case TokenType::For:
+                    return "For";
             }
         }
 
