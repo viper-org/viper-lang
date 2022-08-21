@@ -1,4 +1,5 @@
 #include <environment.hxx>
+#include <diagnostics.hxx>
 
 namespace Viper
 {
@@ -10,8 +11,6 @@ namespace Viper
                 return scope->namedValues[name];
             else if(scope->outer)
                 scope = scope->outer;
-            else
-                throw; // TODO: Error properly
         }
     }
 

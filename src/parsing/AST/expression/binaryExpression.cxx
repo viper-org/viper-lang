@@ -42,9 +42,8 @@ namespace Viper
                 case Lexing::TokenType::DoublePipe:
                     _operator = BinaryOperator::Or;
                     break;
-                default:
-                    // TODO: Compiler error
-                    throw;
+                default: // This should never be reached
+                    break;
             }
         }
 

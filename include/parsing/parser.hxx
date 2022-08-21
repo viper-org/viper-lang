@@ -19,6 +19,7 @@ namespace Viper
         private:
             std::string _text;
             std::vector<Lexing::Token> _tokens;
+            std::vector<std::string> identifiers;
             unsigned int _position;
             std::shared_ptr<Environment> _currentScope;
 

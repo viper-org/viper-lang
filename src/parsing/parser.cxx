@@ -1,3 +1,4 @@
+#include <iostream>
 #include <parsing/parser.hxx>
 #include <diagnostics.hxx>
 
@@ -90,6 +91,7 @@ namespace Viper
 
         std::unique_ptr<ASTTopLevel> Parser::ParseFunction()
         {
+            identifiers.clear();
             ExpectToken(Lexing::TokenType::Asperand);
             Consume();
 
@@ -103,7 +105,9 @@ namespace Viper
             while(Current().getType() != Lexing::TokenType::RightParen)
             {
                 std::shared_ptr<Type> type = ParseType();
-                args.push_back(std::make_pair(type, GetTokenText(Consume())));
+                std::string name = GetTokenText(Consume());
+                identifiers.push_back(name);
+                args.push_back(std::make_pair(type, name));
 
                 if(Current().getType() == Lexing::TokenType::RightParen)
                     break;
@@ -231,6 +235,8 @@ namespace Viper
             ExpectToken(Lexing::TokenType::Identifier);
             std::string name = GetTokenText(Consume());
 
+            identifiers.push_back(name);
+
             if(Current().getType() != Lexing::TokenType::Equals)
                 return std::make_unique<VariableDeclaration>(type, name, nullptr);
             
@@ -241,6 +247,13 @@ namespace Viper
 
         std::unique_ptr<ASTNode> Parser::ParseVariable()
         {
+            std::string name = GetTokenText(Consume());
+            std::cout << name << std::endl;
+            if(std::find(identifiers.begin(), identifiers.end(), name) == identifiers.end())
+            {
+                _position--;
+                ParserError("'\x1b[1m" + name + "\x1b[0m' undeclared (first use in this function)");
+            }
             return std::make_unique<Variable>(GetTokenText(Consume()));
         }
 

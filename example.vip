@@ -1,6 +1,6 @@
 @add(i32 lhs, i32 rhs) -> i32
 {
-    return lhs + rhs;
+    return lhd + rhs;
 }
 
 @main() -> i32
