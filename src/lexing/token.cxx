@@ -98,6 +98,8 @@ namespace Viper
                     return "DoublePipe";
                 case TokenType::Break:
                     return "Break";
+                case TokenType::Comma:
+                    return "Comma";
             }
         }
 

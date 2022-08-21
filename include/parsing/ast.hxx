@@ -11,5 +11,6 @@
 #include <parsing/AST/statement/while.hxx>
 #include <parsing/AST/statement/break.hxx>
 #include <parsing/AST/statement/compound.hxx>
+#include <parsing/AST/expression/call.hxx>
 
 #endif

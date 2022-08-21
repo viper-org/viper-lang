@@ -98,8 +98,19 @@ namespace Viper
 
             ExpectToken(Lexing::TokenType::LeftParen);
             Consume();
-            // TODO: Parse args
-            ExpectToken(Lexing::TokenType::RightParen);
+            
+            std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
+            while(Current().getType() != Lexing::TokenType::RightParen)
+            {
+                std::shared_ptr<Type> type = ParseType();
+                args.push_back(std::make_pair(type, GetTokenText(Consume())));
+
+                if(Current().getType() == Lexing::TokenType::RightParen)
+                    break;
+
+                ExpectToken(Lexing::TokenType::Comma);
+                Consume();
+            }
             Consume();
 
             ExpectToken(Lexing::TokenType::RightArrow);
@@ -123,7 +134,7 @@ namespace Viper
             }
             Consume();
 
-            return std::make_unique<ASTFunction>(name, type, std::move(body), scope);
+            return std::make_unique<ASTFunction>(name, type, std::move(args), std::move(body), scope);
         }
 
         std::shared_ptr<Type> Parser::ParseType()
@@ -172,7 +183,11 @@ namespace Viper
                 case Lexing::TokenType::Type:
                     return ParseVariableDeclaration();
                 case Lexing::TokenType::Identifier:
+                {
+                    if(Peek(1).getType() == Lexing::TokenType::LeftParen)
+                        return ParseCallExpression();
                     return ParseVariable();
+                }
                 case Lexing::TokenType::LeftBracket:
                     return ParseCompoundStatement();
                 default:
@@ -318,6 +333,27 @@ namespace Viper
             _currentScope = scope->outer;
 
             return std::make_unique<CompoundStatement>(std::move(statements), scope);
+        }
+        
+        std::unique_ptr<ASTNode> Parser::ParseCallExpression()
+        {
+            std::string callee = GetTokenText(Consume());
+
+            Consume();
+
+            std::vector<std::unique_ptr<ASTNode>> args;
+
+            while(Current().getType() != Lexing::TokenType::RightParen)
+            {
+                args.push_back(ParseExpression());
+                if(Current().getType() == Lexing::TokenType::RightParen)
+                    break;
+                ExpectToken(Lexing::TokenType::Comma);
+                Consume();
+            }
+            Consume();
+
+            return std::make_unique<CallExpression>(callee, std::move(args));
         }
     }
 }

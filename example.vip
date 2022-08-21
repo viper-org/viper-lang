@@ -1,11 +1,9 @@
-@main() -> i16
+@add(i32 lhs, i32 rhs) -> i32
 {
-    i32 x = 14;
-    while(1)
-    {
-        x = x - 1;
-        if(x == 4)
-            break;
-    }
-    return x;
+    return lhs + rhs;
+}
+
+@main() -> i32
+{
+    return add(6, 7);
 }

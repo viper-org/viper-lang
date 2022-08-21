@@ -44,6 +44,8 @@ namespace Viper
 
             std::unique_ptr<ASTNode> ParseParenthesizedExpression();
 
+            std::unique_ptr<ASTNode> ParseCallExpression();
+
             std::unique_ptr<ASTNode> ParseCompoundStatement();
 
             std::unique_ptr<ASTNode> ParseVariable();

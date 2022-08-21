@@ -35,6 +35,7 @@ namespace Viper
             Asperand, RightArrow,
 
             Semicolon,
+            Comma,
 
             EndOfFile, BadToken
         };
