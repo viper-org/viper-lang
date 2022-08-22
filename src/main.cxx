@@ -10,8 +10,5 @@ int main(int argc, char** argv)
     
     Viper::Compiler compiler(Viper::ViperOutputType::LLVM, argv[1]);
 
-    for(llvm::Value* node : compiler.Compile())
-    {
-        node->print(llvm::outs());
-    }
+    compiler.Compile();
 }

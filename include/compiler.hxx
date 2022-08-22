@@ -20,7 +20,7 @@ namespace Viper
     public:
         Compiler(ViperOutputType outputType, const std::string inputFileName = "a.out");
 
-        std::vector<llvm::Value*> Compile();
+        void Compile();
 
         ViperOutputType getOutputType() const;
         std::string_view getInputFileName() const;
@@ -36,6 +36,8 @@ namespace Viper
         ViperOutputType _outputType;
         std::string _inputFileName;
         std::string _contents;
+
+        std::string _targetTriple;
 
         std::ifstream _handle;
     };
