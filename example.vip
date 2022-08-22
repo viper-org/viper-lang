@@ -1,5 +1,9 @@
+@test() -> i32
+{
+    return 6;
+}
+
 @main() -> i32
 {
-    i32[4][2] x;
     return 0;
 }

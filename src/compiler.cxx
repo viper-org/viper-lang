@@ -25,6 +25,9 @@ namespace Viper
         _targetTriple = llvm::sys::getDefaultTargetTriple();
         _module.setTargetTriple(_targetTriple);
 
+        _module.setPICLevel(llvm::PICLevel::Level::BigPIC);
+        _module.setPIELevel(llvm::PIELevel::Level::Large);
+
         std::stringstream buf;
         buf << _handle.rdbuf();
         _contents = buf.str();
