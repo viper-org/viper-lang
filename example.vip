@@ -1,8 +1,4 @@
-extern @puts(i8* message) -> void;
-
 @main() -> i32
 {
-    i32 x = 4;
-
-    return x--;
+    return 0;
 }

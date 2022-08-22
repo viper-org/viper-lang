@@ -35,6 +35,8 @@ namespace Viper
         {
             switch(tokenType)
             {
+                case Lexing::TokenType::LeftSquareBracket:
+                    return 55;
                 case Lexing::TokenType::Star:
                 case Lexing::TokenType::Slash:
                     return 40;
@@ -155,7 +157,10 @@ namespace Viper
             while(Current().getType() != Lexing::TokenType::RightParen)
             {
                 std::shared_ptr<Type> type = ParseType();
-                args.push_back(std::make_pair(type, GetTokenText(Consume())));
+                std::string name;
+                if(Current().getType() != Lexing::TokenType::Comma && Current().getType() != Lexing::TokenType::RightParen)
+                    name = GetTokenText(Consume());
+                args.push_back(std::make_pair(type, name));
                 if(Current().getType() == Lexing::TokenType::RightParen)
                     break;
                 ExpectToken(Lexing::TokenType::Comma);
@@ -279,6 +284,11 @@ namespace Viper
                 Lexing::Token operatorToken = Consume();
                 std::unique_ptr<ASTNode> rhs = ParseExpression(binOpPrecedence);
                 lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
+                if(operatorToken.getType() == Lexing::TokenType::LeftSquareBracket)
+                {
+                    ExpectToken(Lexing::TokenType::RightSquareBracket);
+                    Consume();
+                }
             }
             unOpPrecedence = GetPostfixUnOpPrecedence(Current().getType());
             if(unOpPrecedence != 0 && unOpPrecedence >= precedence)
@@ -329,8 +339,6 @@ namespace Viper
                 {
                     if(Peek(1).getType() == Lexing::TokenType::LeftParen)
                         return ParseCallExpression();
-                    if(Peek(1).getType() == Lexing::TokenType::LeftSquareBracket)
-                        return ParseSubscript();
                     return ParseVariable();
                 }
 
@@ -548,19 +556,6 @@ namespace Viper
             _currentScope = scope->outer;
 
             return std::make_unique<ForStatement>(std::move(init), std::move(cond), std::move(iter), std::move(body), scope);
-        }
-
-        std::unique_ptr<ASTNode> Parser::ParseSubscript()
-        {
-            std::unique_ptr<ASTNode> operand = ParseVariable();
-            Consume();
-
-            std::unique_ptr<ASTNode> index = ParseExpression();
-
-            ExpectToken(Lexing::TokenType::RightSquareBracket);
-            Consume();
-
-            return std::make_unique<SubscriptExpression>(std::move(operand), std::move(index));
         }
 
         std::unique_ptr<ASTNode> Parser::ParseString()

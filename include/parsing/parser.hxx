@@ -27,7 +27,7 @@ namespace Viper
             Lexing::Token Consume();
             Lexing::Token Peek(int offset = 1) const;
             std::string GetTokenText(Lexing::Token token) const;
-            
+
             int GetBinOpPrecedence(Lexing::TokenType tokenType) const;
             int GetPrefixUnOpPrecedence(Lexing::TokenType tokenType) const;
             int GetPostfixUnOpPrecedence(Lexing::TokenType tokenType) const;
@@ -57,7 +57,6 @@ namespace Viper
             std::unique_ptr<ASTNode> ParseCompoundStatement();
 
             std::unique_ptr<ASTNode> ParseVariable();
-            std::unique_ptr<ASTNode> ParseSubscript();
             std::unique_ptr<ASTNode> ParseVariableDeclaration();
 
             std::unique_ptr<ASTNode> ParseIfStatement();

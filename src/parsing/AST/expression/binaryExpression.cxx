@@ -1,7 +1,6 @@
 #include <iostream>
 #include <parsing/AST/expression/binaryExpression.hxx>
 #include <parsing/AST/expression/variable.hxx>
-#include <parsing/AST/expression/subscript.hxx>
 
 namespace Viper
 {
@@ -16,6 +15,7 @@ namespace Viper
         BinaryExpression::BinaryExpression(std::unique_ptr<ASTNode> lhs, Lexing::Token op, std::unique_ptr<ASTNode> rhs)
             :_lhs(std::move(lhs)), _rhs(std::move(rhs))
         {
+            _nodeType = ASTNodeType::BinaryExpression;
             switch(op.getType())
             {
                 case Lexing::TokenType::Plus:
@@ -56,6 +56,9 @@ namespace Viper
                     break;
                 case Lexing::TokenType::GreaterEquals:
                     _operator = BinaryOperator::GreaterEquals;
+                    break;
+                case Lexing::TokenType::LeftSquareBracket:
+                    _operator = BinaryOperator::Subscript;
                     break;
                 default: // This should never be reached
                     break;
@@ -100,6 +103,8 @@ namespace Viper
                     return "LessEquals";
                 case BinaryOperator::GreaterEquals:
                     return "GreaterEquals";
+                case BinaryOperator::Subscript:
+                    return "Subscript";
             }
         }
 
@@ -119,18 +124,35 @@ namespace Viper
 
                     return builder.CreateStore(value, alloca);
                 }
-                else if(_lhs->GetNodeType() == ASTNodeType::SubscriptExpression)
+
+                if(_lhs->GetNodeType() == ASTNodeType::BinaryExpression)
                 {
-                    //SubscriptExpression* left = static_cast<SubscriptExpression*>(_lhs.get());
+                    BinaryExpression* left = static_cast<BinaryExpression*>(_lhs.get());
+                    if(left->_operator == BinaryOperator::Subscript)
+                    {
+                        llvm::Value* rightCodegen = _rhs->Generate(context, builder, module, scope, flags);
+                        llvm::Value* leftCodegen = _lhs->Generate(context, builder, module, scope, { CodegenFlag::NoLoad });
+                        if(leftCodegen->getType()->getNonOpaquePointerElementType() != rightCodegen->getType())
+                            rightCodegen = Type::Convert(rightCodegen, leftCodegen->getType()->getNonOpaquePointerElementType(), builder);
 
-                    llvm::Value* rightCodegen = _rhs->Generate(context, builder, module, scope, flags);
-                    llvm::Value* leftCodegen = _lhs->Generate(context, builder, module, scope, { CodegenFlag::NoLoad });
-
-                    if(leftCodegen->getType()->getNonOpaquePointerElementType() != rightCodegen->getType())
-                        rightCodegen = Type::Convert(rightCodegen, leftCodegen->getType()->getNonOpaquePointerElementType(), builder);
-
-                    return builder.CreateStore(rightCodegen, leftCodegen);
+                        return builder.CreateStore(rightCodegen, leftCodegen);
+                    }
                 }
+            }
+            if(_operator == BinaryOperator::Subscript)
+            {
+                if(_lhs->GetNodeType() == ASTNodeType::Variable)
+                {
+                    Variable* left = static_cast<Variable*>(_lhs.get());
+
+                    llvm::AllocaInst* alloca = FindNamedValue(left->GetName(), scope);
+                    llvm::Value* indexCodegen = Type::Convert(_rhs->Generate(context, builder, module, scope), types.at("i64")->GetLLVMType(context), builder);
+                    llvm::Value* gep = builder.CreateInBoundsGEP(alloca->getAllocatedType(), alloca, { llvm::ConstantInt::get(types.at("i64")->GetLLVMType(context), 0), indexCodegen }, "subscript");
+                    if(std::find(flags.begin(), flags.end(), CodegenFlag::NoLoad) != flags.end())
+                        return gep;
+                    return builder.CreateLoad(gep->getType()->getNonOpaquePointerElementType(), gep, "subscriptload");
+                }
+                return nullptr; // TODO: Parse multi level arrays
             }
 
             llvm::Value* left  = _lhs->Generate(context, builder, module, scope, flags);

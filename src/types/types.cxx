@@ -25,6 +25,11 @@ namespace Viper
 
         if(value->getType()->isIntegerTy() && type->isIntegerTy())
             return builder.CreateIntCast(value, type, true, "conv");
+            
+        if(value->getType()->isIntegerTy() && type->isPointerTy())
+            return builder.CreateIntToPtr(value, type);
+        if(value->getType()->isPointerTy() && type->isIntegerTy())
+            return builder.CreatePtrToInt(value, type);
 
         value->mutateType(type);
         return value;

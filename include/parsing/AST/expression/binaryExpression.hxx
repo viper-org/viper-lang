@@ -18,6 +18,8 @@ namespace Viper
             LessThan, GreaterThan,
             LessEquals, GreaterEquals,
             And, Or,
+
+            Subscript,
         };
 
         class BinaryExpression : public ASTNode
