@@ -33,6 +33,16 @@ namespace Viper
             if(_value)
             {
                 llvm::Value* initValue = _value->Generate(context, builder, module, scope);
+                if(alloca->getType()->isPointerTy())
+                {
+                    if(alloca->getType()->getNonOpaquePointerElementType()->isArrayTy())
+                    {
+                        llvm::MaybeAlign align(1);
+                        unsigned int size = alloca->getAllocatedType()->getArrayNumElements();
+                        return builder.CreateMemCpy(alloca, align, initValue, align, size);
+                    }
+                }
+
                 if(initValue->getType() != _type->GetLLVMType(context))
                     initValue = Type::Convert(initValue, _type->GetLLVMType(context), builder);
 

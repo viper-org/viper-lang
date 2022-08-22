@@ -4,6 +4,7 @@
 #include <types/integerType.hxx>
 #include <types/voidType.hxx>
 #include <types/arrayType.hxx>
+#include <types/pointerType.hxx>
 #include <map>
 
 namespace Viper

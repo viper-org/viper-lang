@@ -44,6 +44,8 @@ namespace Viper
             std::unique_ptr<ASTNode> ParsePrimary();
 
             std::unique_ptr<ASTNode> ParseInteger();
+            std::unique_ptr<ASTNode> ParseCharacter();
+            std::unique_ptr<ASTNode> ParseString();
 
             std::unique_ptr<ASTNode> ParseParenthesizedExpression();
 

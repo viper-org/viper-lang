@@ -15,5 +15,6 @@
 #include <parsing/AST/statement/for.hxx>
 #include <parsing/AST/expression/subscript.hxx>
 #include <parsing/AST/topLevel/extern.hxx>
+#include <parsing/AST/expression/string.hxx>
 
 #endif

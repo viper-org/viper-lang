@@ -183,6 +183,28 @@ namespace Viper
                     return Token(TokenType::GreaterThan, _position, _position + 1, _lineNumber, _colNumber);
                 }
 
+                case '\'':
+                {
+                    int start = _position;
+                    Consume();
+                    while(Current() != '\'')
+                    {
+                        Consume();
+                    }
+                    return Token(TokenType::Character, start, _position, _lineNumber, _colNumber);
+                }
+
+                case '"':
+                {
+                    Consume();
+                    int start = _position;
+                    while(Current() != '"')
+                    {
+                        Consume();
+                    }
+                    return Token(TokenType::String, start, _position, _lineNumber, _colNumber);
+                }
+
 
                 case '\n':
                     _colNumber = 0;

@@ -35,7 +35,8 @@ namespace Viper
 
         enum class CodegenFlag
         {
-            NoLoad
+            NoLoad,
+            WithGEP
         };
 
         class ASTNode

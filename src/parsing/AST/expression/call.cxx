@@ -32,7 +32,7 @@ namespace Viper
             std::vector<llvm::Value*> argValues;
             for(unsigned int i = 0; i < _args.size(); i++)
             {
-                llvm::Value* value = _args[i]->Generate(context, builder, module, scope);
+                llvm::Value* value = _args[i]->Generate(context, builder, module, scope, { CodegenFlag::WithGEP, CodegenFlag::NoLoad });
                 if(value->getType() != (function->args().begin()+i)->getType())
                     value = Type::Convert(value, (function->args().begin()+i)->getType(), builder);
                 

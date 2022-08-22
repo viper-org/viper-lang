@@ -1,3 +1,4 @@
+#include <llvm/IR/DerivedTypes.h>
 #include <types/types.hxx>
 
 namespace Viper

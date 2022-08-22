@@ -1,3 +1,4 @@
+#include <iostream>
 #include <parsing/AST/expression/binaryExpression.hxx>
 #include <parsing/AST/expression/variable.hxx>
 #include <parsing/AST/expression/subscript.hxx>
