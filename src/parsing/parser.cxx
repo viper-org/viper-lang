@@ -65,6 +65,33 @@ namespace Viper
             }
         }
 
+        int Parser::GetPrefixUnOpPrecedence(Lexing::TokenType tokenType) const
+        {
+            switch(tokenType)
+            {
+                case Lexing::TokenType::Bang:
+                case Lexing::TokenType::Minus:
+                case Lexing::TokenType::Increment:
+                case Lexing::TokenType::Decrement:
+                    return 50;
+                default:
+                    return 0;
+            }
+        }
+
+        int Parser::GetPostfixUnOpPrecedence(Lexing::TokenType tokenType) const
+        {
+            switch(tokenType)
+            {
+                case Lexing::TokenType::Increment:
+                case Lexing::TokenType::Decrement:
+                    return 55;
+                default:
+                    return 0;
+            }
+        }
+
+
         void Parser::ExpectToken(Lexing::TokenType tokenType)
         {
             if(Current().getType() != tokenType)
@@ -232,7 +259,16 @@ namespace Viper
 
         std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)
         {
-            std::unique_ptr<ASTNode> lhs = ParsePrimary();
+            std::unique_ptr<ASTNode> lhs;
+            int unOpPrecedence = GetPrefixUnOpPrecedence(Current().getType());
+            if(unOpPrecedence != 0 && unOpPrecedence >= precedence)
+            {
+                Lexing::Token operatorToken = Consume();
+                std::unique_ptr<ASTNode> operand = ParseExpression(unOpPrecedence);
+                lhs = std::make_unique<UnaryExpression>(std::move(operand), operatorToken);
+            }
+            else
+                lhs = ParsePrimary();
 
             while(true)
             {
@@ -243,6 +279,22 @@ namespace Viper
                 Lexing::Token operatorToken = Consume();
                 std::unique_ptr<ASTNode> rhs = ParseExpression(binOpPrecedence);
                 lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
+            }
+            unOpPrecedence = GetPostfixUnOpPrecedence(Current().getType());
+            if(unOpPrecedence != 0 && unOpPrecedence >= precedence)
+            {
+                Lexing::Token operatorToken = Consume();
+                switch(operatorToken.getType())
+                {
+                    case Lexing::TokenType::Increment:
+                        lhs = std::make_unique<UnaryExpression>(std::move(lhs), UnaryOperator::PostfixIncrement);
+                        break;
+                    case Lexing::TokenType::Decrement:
+                        lhs = std::make_unique<UnaryExpression>(std::move(lhs), UnaryOperator::PostfixDecrement);
+                        break;
+                    default: // This should never be reached
+                        break;
+                }
             }
             return lhs;
         }

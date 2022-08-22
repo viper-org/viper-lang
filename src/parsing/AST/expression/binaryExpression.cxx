@@ -103,14 +103,14 @@ namespace Viper
             }
         }
 
-        llvm::Value* BinaryExpression::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope, std::vector<CodegenFlag>)
+        llvm::Value* BinaryExpression::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope, std::vector<CodegenFlag> flags)
         {
             if(_operator == BinaryOperator::Assignment)
             {
                 if(_lhs->GetNodeType() == ASTNodeType::Variable)
                 {
                     Variable* left = static_cast<Variable*>(_lhs.get());
-                    llvm::Value* value = _rhs->Generate(context, builder, module, scope);
+                    llvm::Value* value = _rhs->Generate(context, builder, module, scope, flags);
 
                     llvm::AllocaInst* alloca = FindNamedValue(left->GetName(), scope);
 
@@ -123,7 +123,7 @@ namespace Viper
                 {
                     //SubscriptExpression* left = static_cast<SubscriptExpression*>(_lhs.get());
 
-                    llvm::Value* rightCodegen = _rhs->Generate(context, builder, module, scope);
+                    llvm::Value* rightCodegen = _rhs->Generate(context, builder, module, scope, flags);
                     llvm::Value* leftCodegen = _lhs->Generate(context, builder, module, scope, { CodegenFlag::NoLoad });
 
                     if(leftCodegen->getType()->getNonOpaquePointerElementType() != rightCodegen->getType())
@@ -133,8 +133,8 @@ namespace Viper
                 }
             }
 
-            llvm::Value* left  = _lhs->Generate(context, builder, module, scope);
-            llvm::Value* right = _rhs->Generate(context, builder, module, scope);
+            llvm::Value* left  = _lhs->Generate(context, builder, module, scope, flags);
+            llvm::Value* right = _rhs->Generate(context, builder, module, scope, flags);
 
             if(left->getType() != right->getType())
                 left = Type::Convert(left, right->getType(), builder);

@@ -14,6 +14,8 @@ namespace Viper
 
             Plus, Minus, Star, Slash,
 
+            Increment, Decrement,
+
             Integer,
             Character,
             String,

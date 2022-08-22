@@ -101,13 +101,25 @@ namespace Viper
 
 
                 case '+':
+                {
+                    if(Peek(1) == '+')
+                    {
+                        Consume();
+                        return Token(TokenType::Increment, _position - 1, _position + 1, _lineNumber, _colNumber);
+                    }
                     return Token(TokenType::Plus, _position, _position + 1, _lineNumber, _colNumber);
+                }
                 case '-':
                 {
                     if(Peek(1) == '>')
                     {
                         Consume();
                         return Token(TokenType::RightArrow, _position - 1, _position + 1, _lineNumber, _colNumber);
+                    }
+                    else if(Peek(1) == '-')
+                    {
+                        Consume();
+                        return Token(TokenType::Decrement, _position - 1, _position + 1, _lineNumber, _colNumber);
                     }
                     return Token(TokenType::Minus, _position, _position + 1, _lineNumber, _colNumber);
                 }

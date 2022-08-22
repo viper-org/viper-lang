@@ -7,10 +7,11 @@ namespace Viper
 
     void InitDefaultTypes()
     {
-        types["i8"]  = std::make_shared<IntegerType>(8);
-        types["i16"] = std::make_shared<IntegerType>(16);
-        types["i32"] = std::make_shared<IntegerType>(32);
-        types["i64"] = std::make_shared<IntegerType>(64);
+        types["i8"]   = std::make_shared<IntegerType>(8);
+        types["i16"]  = std::make_shared<IntegerType>(16);
+        types["i32"]  = std::make_shared<IntegerType>(32);
+        types["i64"]  = std::make_shared<IntegerType>(64); 
+        types["bool"] = std::make_shared<IntegerType>(1);
         types["void"] = std::make_shared<VoidType>();
     }
 

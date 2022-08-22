@@ -7,6 +7,7 @@ namespace Viper
         StringLiteral::StringLiteral(std::string text)
             :_text(text)
         {
+            _nodeType = ASTNodeType::String;
             _type = std::make_unique<ArrayType>(text.length(), types.at("i8"));
         }
 

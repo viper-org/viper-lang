@@ -2,7 +2,7 @@ extern @puts(i8* message) -> void;
 
 @main() -> i32
 {
-    puts("Hello World!");
+    i32 x = 4;
 
-    return 0;
+    return x--;
 }

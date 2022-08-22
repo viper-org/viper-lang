@@ -13,6 +13,7 @@ namespace Viper
         enum class ASTNodeType
         {
             Integer,
+            String,
 
             Variable,
 
@@ -21,6 +22,7 @@ namespace Viper
             CallExpression,
 
             BinaryExpression,
+            UnaryExpression,
 
             Return,
 
@@ -28,6 +30,7 @@ namespace Viper
 
             IfStatement,
             WhileStatement,
+            ForStatement,
             BreakStatement,
 
             CompoundStatement

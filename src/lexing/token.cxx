@@ -120,6 +120,10 @@ namespace Viper
                     return "Character";
                 case TokenType::String:
                     return "String";
+                case TokenType::Increment:
+                    return "Increment";
+                case TokenType::Decrement:
+                    return "Decrement";
             }
         }
 

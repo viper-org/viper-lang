@@ -27,7 +27,10 @@ namespace Viper
             Lexing::Token Consume();
             Lexing::Token Peek(int offset = 1) const;
             std::string GetTokenText(Lexing::Token token) const;
+            
             int GetBinOpPrecedence(Lexing::TokenType tokenType) const;
+            int GetPrefixUnOpPrecedence(Lexing::TokenType tokenType) const;
+            int GetPostfixUnOpPrecedence(Lexing::TokenType tokenType) const;
 
 
             void ExpectToken(Lexing::TokenType tokenType);

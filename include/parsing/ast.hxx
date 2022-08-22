@@ -16,5 +16,6 @@
 #include <parsing/AST/expression/subscript.hxx>
 #include <parsing/AST/topLevel/extern.hxx>
 #include <parsing/AST/expression/string.hxx>
+#include <parsing/AST/expression/unaryExpression.hxx>
 
 #endif
