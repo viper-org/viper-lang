@@ -13,5 +13,6 @@
 #include <parsing/AST/statement/compound.hxx>
 #include <parsing/AST/expression/call.hxx>
 #include <parsing/AST/statement/for.hxx>
+#include <parsing/AST/expression/subscript.hxx>
 
 #endif

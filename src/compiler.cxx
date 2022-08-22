@@ -13,8 +13,8 @@
 
 namespace Viper
 {
-    Compiler::Compiler(ViperOutputType outputType, const std::string inputFileName)
-        :_builder(_context), _module(inputFileName, _context), _outputType(outputType), _inputFileName(inputFileName), _handle(inputFileName)
+    Compiler::Compiler(OutputType outputType, const std::string& inputFileName, const std::optional<std::string>& outputFileName)
+        :_builder(_context), _module(inputFileName, _context), _outputType(outputType), _inputFileName(inputFileName), _outputFileName(outputFileName), _handle(inputFileName)
     {
         if(!_handle.is_open())
             Diagnostics::FatalError("viper", inputFileName + ": No such file or directory");
@@ -43,9 +43,10 @@ namespace Viper
         for(std::unique_ptr<Parsing::ASTTopLevel>& node : _parser->Parse())
             node->Generate(_context, _builder, _module);
         
-        if(_outputType == ViperOutputType::LLVM)
+        if(_outputType == OutputType::LLVM)
         {
-            std::string outputFileName = _inputFileName + ".ll";
+            std::string outputFileName = _outputFileName.value_or(_inputFileName + ".ll");
+            
             std::error_code ec;
             llvm::raw_fd_ostream dest = llvm::raw_fd_ostream(outputFileName, ec, llvm::sys::fs::OF_None);
             if(ec)
@@ -56,7 +57,7 @@ namespace Viper
 
             _module.print(dest, nullptr);
         }
-        else if(_outputType == ViperOutputType::Assembly || _outputType == ViperOutputType::Object)
+        else if(_outputType == OutputType::Assembly || _outputType == OutputType::Object)
         {
             llvm::InitializeAllTargetInfos();
             llvm::InitializeAllTargets();
@@ -80,10 +81,10 @@ namespace Viper
             llvm::TargetMachine* targetMachine = target->createTargetMachine(_targetTriple, cpu, features, options, rm);
 
             std::string outputFileName;
-            if(_outputType == ViperOutputType::Assembly)
-                outputFileName = _inputFileName + ".s";
+            if(_outputType == OutputType::Assembly)
+                outputFileName = _outputFileName.value_or(_inputFileName + ".s");
             else
-                outputFileName = _inputFileName + ".o";
+                outputFileName = _outputFileName.value_or(_inputFileName + ".o");
             
             std::error_code ec;
             llvm::raw_fd_ostream dest = llvm::raw_fd_ostream(outputFileName, ec, llvm::sys::fs::OF_None);
@@ -96,7 +97,7 @@ namespace Viper
 
             llvm::legacy::PassManager pass;
             [[maybe_unused]] llvm::CodeGenFileType fileType;
-            if(_outputType == ViperOutputType::Assembly)
+            if(_outputType == OutputType::Assembly)
                 fileType = llvm::CGFT_AssemblyFile;
             else
                 fileType = llvm::CGFT_ObjectFile;
@@ -113,7 +114,7 @@ namespace Viper
         }
     }
 
-    ViperOutputType Compiler::getOutputType() const
+    OutputType Compiler::getOutputType() const
     {
         return _outputType;
     }

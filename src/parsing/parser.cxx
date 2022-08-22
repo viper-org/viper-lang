@@ -215,6 +215,8 @@ namespace Viper
                 {
                     if(Peek(1).getType() == Lexing::TokenType::LeftParen)
                         return ParseCallExpression();
+                    if(Peek(1).getType() == Lexing::TokenType::LeftSquareBracket)
+                        return ParseSubscript();
                     return ParseVariable();
                 }
                 case Lexing::TokenType::LeftBracket:
@@ -424,6 +426,19 @@ namespace Viper
             _currentScope = scope->outer;
 
             return std::make_unique<ForStatement>(std::move(init), std::move(cond), std::move(iter), std::move(body), scope);
+        }
+
+        std::unique_ptr<ASTNode> Parser::ParseSubscript()
+        {
+            std::unique_ptr<ASTNode> operand = ParseVariable();
+            Consume();
+
+            std::unique_ptr<ASTNode> index = ParseExpression();
+
+            ExpectToken(Lexing::TokenType::RightSquareBracket);
+            Consume();
+
+            return std::make_unique<SubscriptExpression>(std::move(operand), std::move(index));
         }
     }
 }

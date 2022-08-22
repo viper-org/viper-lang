@@ -16,6 +16,8 @@ namespace Viper
 
             Variable,
 
+            SubscriptExpression,
+
             CallExpression,
 
             BinaryExpression,

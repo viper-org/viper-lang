@@ -1,5 +1,7 @@
 #include <parsing/AST/expression/binaryExpression.hxx>
 #include <parsing/AST/expression/variable.hxx>
+#include <parsing/AST/expression/subscript.hxx>
+
 namespace Viper
 {
     namespace Parsing
@@ -104,15 +106,27 @@ namespace Viper
         {
             if(_operator == BinaryOperator::Assignment)
             {
-                Variable* left = static_cast<Variable*>(_lhs.get());
-                llvm::Value* value = _rhs->Generate(context, builder, module, scope);
+                if(_lhs->GetNodeType() == ASTNodeType::Variable)
+                {
+                    Variable* left = static_cast<Variable*>(_lhs.get());
+                    llvm::Value* value = _rhs->Generate(context, builder, module, scope);
 
-                llvm::AllocaInst* alloca = FindNamedValue(left->GetName(), scope);
+                    llvm::AllocaInst* alloca = FindNamedValue(left->GetName(), scope);
 
-                if(value->getType() != alloca->getAllocatedType())
-                    value = Type::Convert(value, alloca->getAllocatedType(), builder);
+                    if(value->getType() != alloca->getAllocatedType())
+                        value = Type::Convert(value, alloca->getAllocatedType(), builder);
 
-                return builder.CreateStore(value, alloca);
+                    return builder.CreateStore(value, alloca);
+                }
+                else if(_lhs->GetNodeType() == ASTNodeType::SubscriptExpression)
+                {
+                    //SubscriptExpression* left = static_cast<SubscriptExpression*>(_lhs.get());
+
+                    llvm::Value* rightCodegen = _rhs->Generate(context, builder, module, scope);
+                    llvm::Value* leftCodegen = _lhs->Generate(context, builder, module, scope);
+
+                    return builder.CreateStore(rightCodegen, leftCodegen);
+                }
             }
 
             llvm::Value* left  = _lhs->Generate(context, builder, module, scope);

@@ -22,6 +22,13 @@ namespace Viper
             std::exit(1);
         }
 
+        void Error(std::string_view sender, std::string_view message)
+        {
+            std::cerr << bold << sender << ": " << red << "error: " << defaults << message << "\n";
+            std::cerr << "compilation terminated.\n";
+            std::exit(1);
+        }
+
         void CompilerError(const unsigned int lineNumber, const unsigned int colNumber,
         std::string_view message,
         const char* errorBegin, const char* errorEnd,

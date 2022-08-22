@@ -50,6 +50,7 @@ namespace Viper
             std::unique_ptr<ASTNode> ParseCompoundStatement();
 
             std::unique_ptr<ASTNode> ParseVariable();
+            std::unique_ptr<ASTNode> ParseSubscript();
             std::unique_ptr<ASTNode> ParseVariableDeclaration();
 
             std::unique_ptr<ASTNode> ParseIfStatement();
