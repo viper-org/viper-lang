@@ -20,7 +20,7 @@ namespace Viper
             }
         }
 
-        llvm::Value* CompoundStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment>)
+        llvm::Value* CompoundStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment>, std::vector<CodegenFlag>)
         {
             for(std::unique_ptr<ASTNode>& statement : _statements)
                 statement->Generate(context, builder, module, _scope);

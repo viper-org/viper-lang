@@ -1,5 +1,8 @@
+#include <iostream>
 #include <parsing/AST/expression/binaryExpression.hxx>
 #include <parsing/AST/expression/variable.hxx>
+#include <parsing/AST/expression/subscript.hxx>
+
 namespace Viper
 {
     namespace Parsing
@@ -100,26 +103,41 @@ namespace Viper
             }
         }
 
-        llvm::Value* BinaryExpression::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope)
+        llvm::Value* BinaryExpression::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope, std::vector<CodegenFlag>)
         {
             if(_operator == BinaryOperator::Assignment)
             {
-                Variable* left = static_cast<Variable*>(_lhs.get());
-                llvm::Value* value = _rhs->Generate(context, builder, module, scope);
+                if(_lhs->GetNodeType() == ASTNodeType::Variable)
+                {
+                    Variable* left = static_cast<Variable*>(_lhs.get());
+                    llvm::Value* value = _rhs->Generate(context, builder, module, scope);
 
-                llvm::AllocaInst* alloca = FindNamedValue(left->GetName(), scope);
+                    llvm::AllocaInst* alloca = FindNamedValue(left->GetName(), scope);
 
-                if(value->getType() != alloca->getAllocatedType())
-                    value = Type::Convert(value, alloca->getAllocatedType(), builder);
+                    if(value->getType() != alloca->getAllocatedType())
+                        value = Type::Convert(value, alloca->getAllocatedType(), builder);
 
-                return builder.CreateStore(value, alloca);
+                    return builder.CreateStore(value, alloca);
+                }
+                else if(_lhs->GetNodeType() == ASTNodeType::SubscriptExpression)
+                {
+                    //SubscriptExpression* left = static_cast<SubscriptExpression*>(_lhs.get());
+
+                    llvm::Value* rightCodegen = _rhs->Generate(context, builder, module, scope);
+                    llvm::Value* leftCodegen = _lhs->Generate(context, builder, module, scope, { CodegenFlag::NoLoad });
+
+                    if(leftCodegen->getType()->getNonOpaquePointerElementType() != rightCodegen->getType())
+                        rightCodegen = Type::Convert(rightCodegen, leftCodegen->getType()->getNonOpaquePointerElementType(), builder);
+
+                    return builder.CreateStore(rightCodegen, leftCodegen);
+                }
             }
 
             llvm::Value* left  = _lhs->Generate(context, builder, module, scope);
             llvm::Value* right = _rhs->Generate(context, builder, module, scope);
 
             if(left->getType() != right->getType())
-                Type::Convert(left, right->getType(), builder);
+                left = Type::Convert(left, right->getType(), builder);
 
             switch(_operator)
             {

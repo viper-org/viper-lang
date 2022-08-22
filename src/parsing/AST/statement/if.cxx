@@ -21,7 +21,7 @@ namespace Viper
             _body->Print(stream);
         }
 
-        llvm::Value* IfStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope)
+        llvm::Value* IfStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope, std::vector<CodegenFlag>)
         {
             bool hasElse = (_elseBody != nullptr);
 

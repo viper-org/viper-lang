@@ -12,7 +12,9 @@ namespace Viper
             { "return", TokenType::Return },
             { "if", TokenType::If },
             { "while", TokenType::While },
-            { "break", TokenType::Break }
+            { "break", TokenType::Break },
+            { "for", TokenType::For },
+            { "extern", TokenType::Extern },
         };
 
         Lexer::Lexer(std::string text)
@@ -91,6 +93,12 @@ namespace Viper
                     return Token(TokenType::LeftBracket, _position, _position + 1, _lineNumber, _colNumber);
                 case '}':
                     return Token(TokenType::RightBracket, _position, _position + 1, _lineNumber, _colNumber);
+
+                case '[':
+                    return Token(TokenType::LeftSquareBracket, _position, _position + 1, _lineNumber, _colNumber);
+                case ']':
+                    return Token(TokenType::RightSquareBracket, _position, _position + 1, _lineNumber, _colNumber);
+
 
                 case '+':
                     return Token(TokenType::Plus, _position, _position + 1, _lineNumber, _colNumber);
@@ -173,6 +181,28 @@ namespace Viper
                         return Token(TokenType::GreaterEquals, _position - 1, _position + 1, _lineNumber, _colNumber);
                     }
                     return Token(TokenType::GreaterThan, _position, _position + 1, _lineNumber, _colNumber);
+                }
+
+                case '\'':
+                {
+                    int start = _position;
+                    Consume();
+                    while(Current() != '\'')
+                    {
+                        Consume();
+                    }
+                    return Token(TokenType::Character, start, _position, _lineNumber, _colNumber);
+                }
+
+                case '"':
+                {
+                    Consume();
+                    int start = _position;
+                    while(Current() != '"')
+                    {
+                        Consume();
+                    }
+                    return Token(TokenType::String, start, _position, _lineNumber, _colNumber);
                 }
 
 

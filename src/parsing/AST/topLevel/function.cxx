@@ -1,3 +1,4 @@
+#include <llvm/IR/Attributes.h>
 #include <parsing/AST/topLevel/function.hxx>
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/BasicBlock.h>
@@ -31,6 +32,20 @@ namespace Viper
 
             llvm::FunctionType* functionType = llvm::FunctionType::get(_type->GetLLVMType(context), argTypes, false);
             llvm::Function* function = llvm::Function::Create(functionType, llvm::Function::ExternalLinkage, _name, module);
+
+            llvm::Attribute noinline  = llvm::Attribute::get(context, llvm::Attribute::AttrKind::NoInline);
+            llvm::Attribute nounwind  = llvm::Attribute::get(context, llvm::Attribute::AttrKind::NoUnwind);
+            llvm::Attribute optnone   = llvm::Attribute::get(context, llvm::Attribute::AttrKind::OptimizeNone);
+            llvm::Attribute sspstrong = llvm::Attribute::get(context, llvm::Attribute::AttrKind::StackProtectStrong);
+            llvm::Attribute uwtable   = llvm::Attribute::get(context, llvm::Attribute::AttrKind::UWTable);
+
+            llvm::AttributeList attributes;
+            attributes = attributes.addFnAttribute(context, noinline);
+            attributes = attributes.addFnAttribute(context, nounwind);
+            attributes = attributes.addFnAttribute(context, optnone);
+            attributes = attributes.addFnAttribute(context, sspstrong);
+            attributes = attributes.addFnAttribute(context, uwtable);
+            function->setAttributes(attributes);
 
             unsigned int i = 0;
             for(llvm::Argument& arg : function->args())

@@ -8,7 +8,7 @@
 
 namespace Viper
 {
-    enum class ViperOutputType
+    enum class OutputType
     {
         LLVM,
         Assembly,
@@ -18,11 +18,11 @@ namespace Viper
     class Compiler
     {
     public:
-        Compiler(ViperOutputType outputType, const std::string inputFileName = "a.out");
+        Compiler(OutputType outputType, const std::string& inputFileName, const std::optional<std::string>& outputFileName);
 
-        std::vector<llvm::Value*> Compile();
+        void Compile();
 
-        ViperOutputType getOutputType() const;
+        OutputType getOutputType() const;
         std::string_view getInputFileName() const;
         std::string_view getFileContents() const;
     private:
@@ -33,9 +33,12 @@ namespace Viper
         llvm::IRBuilder<> _builder;
         llvm::Module      _module;
 
-        ViperOutputType _outputType;
+        OutputType _outputType;
         std::string _inputFileName;
+        std::optional<std::string> _outputFileName;
         std::string _contents;
+
+        std::string _targetTriple;
 
         std::ifstream _handle;
     };

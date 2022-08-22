@@ -1,36 +1,43 @@
 #include <llvm/IR/BasicBlock.h>
-#include <parsing/AST/statement/while.hxx>
+#include <parsing/AST/statement/for.hxx>
 
 namespace Viper
 {
     namespace Parsing
     {
-        WhileStatement::WhileStatement(std::unique_ptr<ASTNode> cond, std::unique_ptr<ASTNode> body, std::shared_ptr<Environment> scope)
-            :_cond(std::move(cond)), _body(std::move(body)), _scope(scope)
+        ForStatement::ForStatement(std::unique_ptr<ASTNode> init, std::unique_ptr<ASTNode> cond, std::unique_ptr<ASTNode> iter, std::unique_ptr<ASTNode> body, std::shared_ptr<Environment> scope)
+            :_init(std::move(init)), _cond(std::move(cond)), _iter(std::move(iter)), _body(std::move(body)), _scope(scope)
         {
-            _nodeType = ASTNodeType::WhileStatement;
         }
 
-        void WhileStatement::Print(std::ostream& stream) const
+        void ForStatement::Print(std::ostream& stream) const
         {
-            stream << "<While-Statement>:\nCondition: ";
+            stream << "<While-Statement>:\nInit: ";
+            _init->Print(stream);
+
+            stream << "\nCondition: ";
             _cond->Print(stream);
+
+            stream << "\nIterate: ";
+            _iter->Print(stream);
+
             stream << "\nBody: ";
             _body->Print(stream);
         }
 
-        llvm::Value* WhileStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment>, std::vector<CodegenFlag>)
+        llvm::Value* ForStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment>, std::vector<CodegenFlag>)
         {
+            _init->Generate(context, builder, module, _scope);
+
             llvm::Function* function = builder.GetInsertBlock()->getParent();
 
-            llvm::BasicBlock* condBasicBlock  = llvm::BasicBlock::Create(context, "whilecond", function);
-            llvm::BasicBlock* bodyBasicBlock  = llvm::BasicBlock::Create(context, "whilebody");
+            llvm::BasicBlock* condBasicBlock = llvm::BasicBlock::Create(context, "forcond", function);
+            llvm::BasicBlock* bodyBasicBlock = llvm::BasicBlock::Create(context, "forbody");
             llvm::BasicBlock* mergeBasicBlock = llvm::BasicBlock::Create(context, "breakmerge");
 
             _scope->labels.push_back(mergeBasicBlock);
 
             builder.CreateBr(condBasicBlock);
-            
             builder.SetInsertPoint(condBasicBlock);
 
             llvm::Value* condValue = _cond->Generate(context, builder, module, _scope);
@@ -42,6 +49,7 @@ namespace Viper
             function->getBasicBlockList().push_back(bodyBasicBlock);
             builder.SetInsertPoint(bodyBasicBlock);
             _body->Generate(context, builder, module, _scope);
+            _iter->Generate(context, builder, module, _scope);
             builder.CreateBr(condBasicBlock);
 
             bodyBasicBlock = builder.GetInsertBlock();

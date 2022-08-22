@@ -20,7 +20,7 @@ namespace Viper
             }
         }
 
-        llvm::Value* CallExpression::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope)
+        llvm::Value* CallExpression::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope, std::vector<CodegenFlag>)
         {
             llvm::Function* function = module.getFunction(_callee);
 
@@ -32,14 +32,14 @@ namespace Viper
             std::vector<llvm::Value*> argValues;
             for(unsigned int i = 0; i < _args.size(); i++)
             {
-                llvm::Value* value = _args[i]->Generate(context, builder, module, scope);
+                llvm::Value* value = _args[i]->Generate(context, builder, module, scope, { CodegenFlag::WithGEP, CodegenFlag::NoLoad });
                 if(value->getType() != (function->args().begin()+i)->getType())
                     value = Type::Convert(value, (function->args().begin()+i)->getType(), builder);
                 
                 argValues.push_back(value);
             }
 
-            return builder.CreateCall(function, argValues, "call");
+            return builder.CreateCall(function, argValues);
         }
     }
 }

@@ -33,8 +33,10 @@ namespace Viper
             void ExpectToken(Lexing::TokenType tokenType);
             [[noreturn]] void ParserError(std::string message);
 
-
+            
+            std::unique_ptr<ASTTopLevel> ParseTopLevel();
             std::unique_ptr<ASTTopLevel> ParseFunction();
+            std::unique_ptr<ASTTopLevel> ParseExtern();
 
             std::shared_ptr<Type> ParseType();
 
@@ -42,6 +44,8 @@ namespace Viper
             std::unique_ptr<ASTNode> ParsePrimary();
 
             std::unique_ptr<ASTNode> ParseInteger();
+            std::unique_ptr<ASTNode> ParseCharacter();
+            std::unique_ptr<ASTNode> ParseString();
 
             std::unique_ptr<ASTNode> ParseParenthesizedExpression();
 
@@ -50,12 +54,14 @@ namespace Viper
             std::unique_ptr<ASTNode> ParseCompoundStatement();
 
             std::unique_ptr<ASTNode> ParseVariable();
+            std::unique_ptr<ASTNode> ParseSubscript();
             std::unique_ptr<ASTNode> ParseVariableDeclaration();
 
             std::unique_ptr<ASTNode> ParseIfStatement();
             std::unique_ptr<ASTNode> ParseWhileStatement();
             std::unique_ptr<ASTNode> ParseReturn();
             std::unique_ptr<ASTNode> ParseBreakStatement();
+            std::unique_ptr<ASTNode> ParseForStatement();
         };
     }
 }

@@ -10,18 +10,23 @@ namespace Viper
         {
             LeftParen, RightParen,
             LeftBracket, RightBracket,
+            LeftSquareBracket, RightSquareBracket,
 
             Plus, Minus, Star, Slash,
 
             Integer,
+            Character,
+            String,
 
             Identifier,
 
             Return,
             If,
             While,
+            For,
             Break,
             Type,
+            Extern,
 
             Equals,
 

@@ -14,7 +14,7 @@ namespace Viper
             stream << "<Break-Statement>";
         }
 
-        llvm::Value* BreakStatement::Generate(llvm::LLVMContext&, llvm::IRBuilder<>& builder, llvm::Module&, std::shared_ptr<Environment> scope)
+        llvm::Value* BreakStatement::Generate(llvm::LLVMContext&, llvm::IRBuilder<>& builder, llvm::Module&, std::shared_ptr<Environment> scope, std::vector<CodegenFlag>)
         {
             return builder.CreateBr(FindLabel("breakmerge", scope));
         }

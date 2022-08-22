@@ -14,7 +14,8 @@ namespace Viper
         namespace {
             [[maybe_unused]] extern std::string_view fileName;
         }
-        void FatalError(std::string_view sender, std::string_view message);
+        [[noreturn]] void FatalError(std::string_view sender, std::string_view message);
+        [[noreturn]] void Error(std::string_view sender, std::string_view message);
         
         [[noreturn]] void CompilerError(const unsigned int lineNumber, const unsigned int colNumber, 
             std::string_view message,

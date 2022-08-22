@@ -1,8 +1,8 @@
+extern @puts(i8* message) -> void;
+
 @main() -> i32
 {
-    i32 x = 6;
-    while(x <= 17)
-        x = x + 1;
-    
-    return x;
+    puts("Hello World!");
+
+    return 0;
 }
