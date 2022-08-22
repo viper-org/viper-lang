@@ -15,7 +15,7 @@ namespace Viper
             stream << "<Variable>:\nName: " << _name;
         }
 
-        llvm::Value* Variable::Generate(llvm::LLVMContext&, llvm::IRBuilder<>& builder, llvm::Module&, std::shared_ptr<Environment> scope)
+        llvm::Value* Variable::Generate(llvm::LLVMContext&, llvm::IRBuilder<>& builder, llvm::Module&, std::shared_ptr<Environment> scope, std::vector<CodegenFlag>)
         {
             llvm::AllocaInst* alloca = FindNamedValue(_name, scope);
 

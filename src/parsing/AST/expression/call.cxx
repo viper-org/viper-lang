@@ -20,7 +20,7 @@ namespace Viper
             }
         }
 
-        llvm::Value* CallExpression::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope)
+        llvm::Value* CallExpression::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope, std::vector<CodegenFlag>)
         {
             llvm::Function* function = module.getFunction(_callee);
 
@@ -39,7 +39,7 @@ namespace Viper
                 argValues.push_back(value);
             }
 
-            return builder.CreateCall(function, argValues, "call");
+            return builder.CreateCall(function, argValues);
         }
     }
 }

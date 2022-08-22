@@ -94,9 +94,57 @@ namespace Viper
             std::vector<std::unique_ptr<ASTTopLevel>> nodes;
             while(Current().getType() != Lexing::TokenType::EndOfFile)
             {
-                nodes.push_back(ParseFunction());
+                nodes.push_back(ParseTopLevel());
             }
             return nodes;
+        }
+
+        std::unique_ptr<ASTTopLevel> Parser::ParseTopLevel()
+        {
+            switch(Current().getType())
+            {
+                case Lexing::TokenType::Asperand:
+                    return ParseFunction();
+                case Lexing::TokenType::Extern:
+                    return ParseExtern();
+                default:
+                    ParserError("Expected top-level expression, found '" + GetTokenText(Current()) + "'");
+            }
+        }
+
+        std::unique_ptr<ASTTopLevel> Parser::ParseExtern()
+        {
+            Consume();
+
+            ExpectToken(Lexing::TokenType::Asperand);
+            Consume();
+
+            std::string name = GetTokenText(Consume());
+
+            ExpectToken(Lexing::TokenType::LeftParen);
+            Consume();
+
+            std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
+            while(Current().getType() != Lexing::TokenType::RightParen)
+            {
+                std::shared_ptr<Type> type = ParseType();
+                args.push_back(std::make_pair(type, GetTokenText(Consume())));
+                if(Current().getType() == Lexing::TokenType::RightParen)
+                    break;
+                ExpectToken(Lexing::TokenType::Comma);
+                Consume();
+            }
+            Consume();
+
+            ExpectToken(Lexing::TokenType::RightArrow);
+            Consume();
+
+            std::shared_ptr<Type> type = ParseType();
+
+            ExpectToken(Lexing::TokenType::Semicolon);
+            Consume();
+
+            return std::make_unique<ExternFunction>(name, type, args);
         }
 
         std::unique_ptr<ASTTopLevel> Parser::ParseFunction()

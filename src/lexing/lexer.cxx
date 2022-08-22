@@ -14,6 +14,7 @@ namespace Viper
             { "while", TokenType::While },
             { "break", TokenType::Break },
             { "for", TokenType::For },
+            { "extern", TokenType::Extern },
         };
 
         Lexer::Lexer(std::string text)

@@ -19,7 +19,7 @@ namespace Viper
             _body->Print(stream);
         }
 
-        llvm::Value* WhileStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment>)
+        llvm::Value* WhileStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment>, std::vector<CodegenFlag>)
         {
             llvm::Function* function = builder.GetInsertBlock()->getParent();
 

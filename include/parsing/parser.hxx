@@ -33,8 +33,10 @@ namespace Viper
             void ExpectToken(Lexing::TokenType tokenType);
             [[noreturn]] void ParserError(std::string message);
 
-
+            
+            std::unique_ptr<ASTTopLevel> ParseTopLevel();
             std::unique_ptr<ASTTopLevel> ParseFunction();
+            std::unique_ptr<ASTTopLevel> ParseExtern();
 
             std::shared_ptr<Type> ParseType();
 

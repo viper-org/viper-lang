@@ -33,6 +33,11 @@ namespace Viper
             CompoundStatement
         };
 
+        enum class CodegenFlag
+        {
+            NoLoad
+        };
+
         class ASTNode
         {
         public:
@@ -40,7 +45,7 @@ namespace Viper
 
             virtual void Print(std::ostream& stream) const = 0;
 
-            virtual llvm::Value* Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope) = 0;
+            virtual llvm::Value* Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope, std::vector<CodegenFlag> flags = {}) = 0;
 
             ASTNodeType GetNodeType() const { return _nodeType; }
             std::shared_ptr<Type> GetType() const { return _type; }

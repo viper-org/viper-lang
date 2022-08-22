@@ -114,6 +114,8 @@ namespace Viper
                     return "LeftSquareBracket";
                 case TokenType::RightSquareBracket:
                     return "RightSquareBracket";
+                case TokenType::Extern:
+                    return "Extern";
             }
         }
 

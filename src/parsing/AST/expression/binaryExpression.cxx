@@ -102,7 +102,7 @@ namespace Viper
             }
         }
 
-        llvm::Value* BinaryExpression::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope)
+        llvm::Value* BinaryExpression::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope, std::vector<CodegenFlag>)
         {
             if(_operator == BinaryOperator::Assignment)
             {
@@ -123,7 +123,10 @@ namespace Viper
                     //SubscriptExpression* left = static_cast<SubscriptExpression*>(_lhs.get());
 
                     llvm::Value* rightCodegen = _rhs->Generate(context, builder, module, scope);
-                    llvm::Value* leftCodegen = _lhs->Generate(context, builder, module, scope);
+                    llvm::Value* leftCodegen = _lhs->Generate(context, builder, module, scope, { CodegenFlag::NoLoad });
+
+                    if(leftCodegen->getType()->getNonOpaquePointerElementType() != rightCodegen->getType())
+                        rightCodegen = Type::Convert(rightCodegen, leftCodegen->getType()->getNonOpaquePointerElementType(), builder);
 
                     return builder.CreateStore(rightCodegen, leftCodegen);
                 }
@@ -133,7 +136,7 @@ namespace Viper
             llvm::Value* right = _rhs->Generate(context, builder, module, scope);
 
             if(left->getType() != right->getType())
-                Type::Convert(left, right->getType(), builder);
+                left = Type::Convert(left, right->getType(), builder);
 
             switch(_operator)
             {

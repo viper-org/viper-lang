@@ -1,6 +1,24 @@
+extern @PutC(i8 c) -> void;
+
 @main() -> i32
 {
-    i32[5] x;
-    x[2] = 6;
+    i8[13] msg;
+    msg[0] = 72;
+    msg[1] = 101;
+    msg[2] = 108;
+    msg[3] = 108;
+    msg[4] = 111;
+    msg[5] = 32;
+    msg[6] = 119;
+    msg[7] = 111;
+    msg[8] = 114;
+    msg[9] = 108;
+    msg[10] = 100;
+    msg[11] = 33;
+    msg[12] = 10;
+
+    for(i64 i = 0; i < 13; i = i + 1)
+        PutC(msg[i]);
+
     return 0;
 }

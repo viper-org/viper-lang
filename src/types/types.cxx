@@ -10,6 +10,7 @@ namespace Viper
         types["i16"] = std::make_shared<IntegerType>(16);
         types["i32"] = std::make_shared<IntegerType>(32);
         types["i64"] = std::make_shared<IntegerType>(64);
+        types["void"] = std::make_shared<VoidType>();
     }
 
     llvm::Value* Type::Convert(llvm::Value* value, llvm::Type* type, llvm::IRBuilder<>& builder)
@@ -21,7 +22,7 @@ namespace Viper
             return builder.CreateIsNotNull(value, "conv");
 
         if(value->getType()->isIntegerTy() && type->isIntegerTy())
-            return builder.CreateIntCast(value, type, false, "conv");
+            return builder.CreateIntCast(value, type, true, "conv");
 
         value->mutateType(type);
         return value;

@@ -24,6 +24,7 @@ namespace Viper
             For,
             Break,
             Type,
+            Extern,
 
             Equals,
 

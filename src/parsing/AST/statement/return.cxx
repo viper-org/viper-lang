@@ -20,7 +20,7 @@ namespace Viper
                 stream << "None";
         }
 
-        llvm::Value* ReturnStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope)
+        llvm::Value* ReturnStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope, std::vector<CodegenFlag>)
         {
             llvm::Type* returnType = builder.GetInsertBlock()->getParent()->getReturnType();
             if(_value)

@@ -23,7 +23,7 @@ namespace Viper
             _value->Print(stream);
         }
 
-        llvm::Value* VariableDeclaration::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope)
+        llvm::Value* VariableDeclaration::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment> scope, std::vector<CodegenFlag>)
         {
             llvm::Function* function = builder.GetInsertBlock()->getParent();
 

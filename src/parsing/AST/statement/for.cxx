@@ -25,7 +25,7 @@ namespace Viper
             _body->Print(stream);
         }
 
-        llvm::Value* ForStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment>)
+        llvm::Value* ForStatement::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::shared_ptr<Environment>, std::vector<CodegenFlag>)
         {
             _init->Generate(context, builder, module, _scope);
 

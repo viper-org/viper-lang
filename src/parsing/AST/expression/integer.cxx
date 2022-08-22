@@ -17,7 +17,7 @@ namespace Viper
             stream << "<Integer-Literal>: " << _value;
         }
 
-        llvm::Value* IntegerLiteral::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>&, llvm::Module&, std::shared_ptr<Environment>)
+        llvm::Value* IntegerLiteral::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>&, llvm::Module&, std::shared_ptr<Environment>, std::vector<CodegenFlag>)
         {
             return llvm::ConstantInt::get(_type->GetLLVMType(context), _value);
         }
