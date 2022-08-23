@@ -1,5 +1,6 @@
-#include <llvm/IR/Attributes.h>
 #include <parsing/AST/topLevel/function.hxx>
+#include <codegen/functionSymbol.hxx>
+#include <llvm/IR/Attributes.h>
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/BasicBlock.h>
 
@@ -24,14 +25,15 @@ namespace Viper
 
         extern llvm::AllocaInst* CreateAlloca(llvm::LLVMContext& context, std::shared_ptr<Type> type, llvm::Function* func, llvm::StringRef name);
 
-        llvm::Value* ASTFunction::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module)
+        std::pair<llvm::Value*, std::unique_ptr<CodeGen::Symbol>> ASTFunction::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module)
         {
-            std::vector<llvm::Type*> argTypes;
+            std::vector<llvm::Type*> llvmArgTypes;
             for(auto& arg : _args)
-                argTypes.push_back(arg.first->GetLLVMType(context));
+                llvmArgTypes.push_back(arg.first->GetLLVMType(context));
 
-            llvm::FunctionType* functionType = llvm::FunctionType::get(_type->GetLLVMType(context), argTypes, false);
+            llvm::FunctionType* functionType = llvm::FunctionType::get(_type->GetLLVMType(context), llvmArgTypes, false);
             llvm::Function* function = llvm::Function::Create(functionType, llvm::Function::ExternalLinkage, _name, module);
+            llvm::outs() << function->getName() << "\n";
 
             llvm::Attribute noinline  = llvm::Attribute::get(context, llvm::Attribute::AttrKind::NoInline);
             llvm::Attribute nounwind  = llvm::Attribute::get(context, llvm::Attribute::AttrKind::NoUnwind);
@@ -63,17 +65,21 @@ namespace Viper
                 _scope->namedValues[std::string(arg.getName())] = alloca;
             }
 
+            std::vector<std::shared_ptr<Type>> types;
+            for(auto& arg : _args)
+                types.push_back(arg.first);
+
             for(std::unique_ptr<ASTNode>& node : _body)
             {
                 if(node->GetNodeType() == ASTNodeType::Return)
                 {
                     node->SetType(_type);
                     node->Generate(context, builder, module, _scope);
-                    return function;
+                    return std::make_pair(function, std::make_unique<CodeGen::FunctionSymbol>(_name, types, _type));
                 }
                 node->Generate(context, builder, module, _scope);
             }
-            return function;
+            return std::make_pair(function, std::make_unique<CodeGen::FunctionSymbol>(_name, types, _type));
         }
     }
 }

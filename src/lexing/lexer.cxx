@@ -58,7 +58,7 @@ namespace Viper
         {
             char current = Current();
 
-            if(std::isalpha(current))
+            if(std::isalpha(current) || current == '_')
             {
                 unsigned int start = _position;
                 std::string value(1, current);

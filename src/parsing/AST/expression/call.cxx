@@ -1,4 +1,5 @@
 #include <parsing/AST/expression/call.hxx>
+#include <diagnostics.hxx>
 
 namespace Viper
 {
@@ -26,7 +27,7 @@ namespace Viper
 
             if(!function)
             {
-                throw; // TODO: Declare as extern
+                Diagnostics::Error("viper", "Unknown function: '\x1b[1m" + _callee + "\x1b[0m'. Did you forget to import a library?");
             }
 
             std::vector<llvm::Value*> argValues;

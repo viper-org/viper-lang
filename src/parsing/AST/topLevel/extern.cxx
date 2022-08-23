@@ -1,5 +1,5 @@
-#include <llvm/IR/DerivedTypes.h>
 #include <parsing/AST/topLevel/extern.hxx>
+#include <codegen/functionSymbol.hxx>
 
 namespace Viper
 {
@@ -15,13 +15,13 @@ namespace Viper
             stream << "<Extern-Function>:\nName: " << _name;
         }
 
-        llvm::Value* ExternFunction::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>&, llvm::Module& module)
+        std::pair<llvm::Value*, std::unique_ptr<CodeGen::Symbol>> ExternFunction::Generate(llvm::LLVMContext& context, llvm::IRBuilder<>&, llvm::Module& module)
         {
-            std::vector<llvm::Type*> argTypes;
+            std::vector<llvm::Type*> llvmArgTypes;
             for(std::pair<std::shared_ptr<Type>, std::string>& arg : _args)
-                argTypes.push_back(arg.first->GetLLVMType(context));
+                llvmArgTypes.push_back(arg.first->GetLLVMType(context));
             
-            llvm::FunctionType* functionType = llvm::FunctionType::get(_type->GetLLVMType(context), argTypes, false);
+            llvm::FunctionType* functionType = llvm::FunctionType::get(_type->GetLLVMType(context), llvmArgTypes, false);
 
             llvm::Function* function = llvm::Function::Create(functionType, llvm::Function::ExternalLinkage, _name, module);
 
@@ -29,7 +29,11 @@ namespace Viper
             for(llvm::Argument& arg : function->args())
                 arg.setName(_args[i++].second);
 
-            return function;
+            std::vector<std::shared_ptr<Type>> types;
+            for(auto& arg : _args)
+                types.push_back(arg.first);
+
+            return std::make_pair(function, nullptr);;
         }
     }
 }

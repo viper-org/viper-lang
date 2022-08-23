@@ -16,6 +16,8 @@ namespace Viper
             LogicalNegation,
 
             IntegralNegation,
+
+            Indirection, AddressOf,
         };
 
         class UnaryExpression : public ASTNode

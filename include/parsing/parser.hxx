@@ -13,12 +13,13 @@ namespace Viper
         class Parser
         {
         public:
-            Parser(const std::vector<Lexing::Token>& tokens, const std::string& text);
+            Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, const std::vector<std::string>& libraries);
 
             std::vector<std::unique_ptr<ASTTopLevel>> Parse();
         private:
             std::string _text;
             std::vector<Lexing::Token> _tokens;
+            std::vector<std::unique_ptr<CodeGen::Symbol>> _symbols;
             std::vector<std::string> identifiers;
             unsigned int _position;
             std::shared_ptr<Environment> _currentScope;
@@ -35,6 +36,10 @@ namespace Viper
 
             void ExpectToken(Lexing::TokenType tokenType);
             [[noreturn]] void ParserError(std::string message);
+
+            friend class CodeGen::Symbol;
+
+            std::vector<std::unique_ptr<CodeGen::Symbol>> ParseSymbols();
 
             
             std::unique_ptr<ASTTopLevel> ParseTopLevel();

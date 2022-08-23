@@ -21,7 +21,9 @@ namespace Viper
             return value;
         
         if(type->getPrimitiveSizeInBits() == 1)
-            return builder.CreateIsNotNull(value, "conv");
+        {
+            return builder.CreateIsNotNull(Type::Convert(value, llvm::Type::getInt32Ty(builder.getContext()), builder), "conv");
+        }
 
         if(value->getType()->isIntegerTy() && type->isIntegerTy())
             return builder.CreateIntCast(value, type, true, "conv");

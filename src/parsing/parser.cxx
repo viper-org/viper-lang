@@ -1,14 +1,22 @@
 #include <iostream>
 #include <parsing/parser.hxx>
+#include <codegen/functionSymbol.hxx>
 #include <diagnostics.hxx>
 
 namespace Viper
 {
     namespace Parsing
     {
-        Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text)
+        Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, const std::vector<std::string>& libraries)
             :_text(text), _tokens(tokens), _position(0)
         {
+            for(const std::string& library : libraries)
+            {
+                for(std::unique_ptr<CodeGen::Symbol>& symbol : CodeGen::Symbol::ParseSymbols(library))
+                {
+                    _symbols.push_back(std::move(symbol));
+                }
+            }
         }
 
         Lexing::Token Parser::Current() const
@@ -75,6 +83,8 @@ namespace Viper
                 case Lexing::TokenType::Minus:
                 case Lexing::TokenType::Increment:
                 case Lexing::TokenType::Decrement:
+                case Lexing::TokenType::Star:
+                case Lexing::TokenType::Ampersand:
                     return 50;
                 default:
                     return 0;
@@ -118,9 +128,49 @@ namespace Viper
                       &_text[start], &_text[end]);
         }
 
+        std::vector<std::unique_ptr<CodeGen::Symbol>> Parser::ParseSymbols()
+        {
+            std::vector<std::unique_ptr<CodeGen::Symbol>> result;
+
+            while(Current().getType() != Lexing::TokenType::EndOfFile)
+            {
+                ExpectToken(Lexing::TokenType::Asperand);
+                Consume();
+
+                std::string name = GetTokenText(Consume());
+
+                ExpectToken(Lexing::TokenType::LeftParen);
+                Consume();
+
+                std::vector<std::shared_ptr<Type>> types;
+                while(Current().getType() != Lexing::TokenType::RightParen)
+                {
+                    types.push_back(ParseType());
+                    if(Current().getType() == Lexing::TokenType::RightParen)
+                        break;
+                    ExpectToken(Lexing::TokenType::Comma);
+                    Consume();
+                }
+                Consume();
+
+                std::shared_ptr<Type> returnType = ParseType();
+                result.push_back(std::make_unique<CodeGen::FunctionSymbol>(name, types, returnType));
+            }
+
+            return result;
+        }
+
         std::vector<std::unique_ptr<ASTTopLevel>> Parser::Parse()
         {
             std::vector<std::unique_ptr<ASTTopLevel>> nodes;
+            for(std::unique_ptr<CodeGen::Symbol>& symbol : _symbols)
+            {
+                CodeGen::FunctionSymbol* functionSymbol = static_cast<CodeGen::FunctionSymbol*>(symbol.get());
+                std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
+                for(const std::shared_ptr<Type>& type : functionSymbol->GetArgs())
+                    args.push_back(std::make_pair(type, ""));
+                nodes.push_back(std::make_unique<ExternFunction>(functionSymbol->GetName(), functionSymbol->GetType(), args));
+            }
             while(Current().getType() != Lexing::TokenType::EndOfFile)
             {
                 nodes.push_back(ParseTopLevel());

@@ -158,15 +158,23 @@ namespace Viper
             llvm::Value* left  = _lhs->Generate(context, builder, module, scope, flags);
             llvm::Value* right = _rhs->Generate(context, builder, module, scope, flags);
 
-            if(left->getType() != right->getType())
-                left = Type::Convert(left, right->getType(), builder);
+            if(left->getType() != right->getType() && (!left->getType()->isPointerTy() && !right->getType()->isPointerTy()))
+                right = Type::Convert(right, left->getType(), builder);
 
             switch(_operator)
             {
                 case BinaryOperator::Plus:
+                {
+                    if(left->getType()->isPointerTy())
+                        return builder.CreateInBoundsGEP(left->getType()->getNonOpaquePointerElementType(), left, right, "add");
+                    if(right->getType()->isPointerTy())
+                        return builder.CreateInBoundsGEP(right->getType()->getNonOpaquePointerElementType(), right, left, "add");
                     return builder.CreateAdd(left, right, "add");
+                }
                 case BinaryOperator::Minus:
+                {
                     return builder.CreateSub(left, right, "sub");
+                }
                 case BinaryOperator::Multiply:
                     return builder.CreateMul(left, right, "mul");
                 case BinaryOperator::Divide:

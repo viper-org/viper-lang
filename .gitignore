@@ -3,5 +3,6 @@
 
 *.json
 *.o
+*.vplib
 
 viper

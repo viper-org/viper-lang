@@ -1,5 +1,6 @@
 #include <iostream>
 #include <parsing/AST/expression/unaryExpression.hxx>
+#include <parsing/AST/expression/variable.hxx>
 
 namespace Viper
 {
@@ -28,6 +29,12 @@ namespace Viper
                 case Lexing::TokenType::Decrement:
                     _operator = UnaryOperator::PrefixDecrement;
                     break;
+                case Lexing::TokenType::Ampersand:
+                    _operator = UnaryOperator::AddressOf;
+                    break;
+                case Lexing::TokenType::Star:
+                    _operator = UnaryOperator::Indirection;
+                    break; 
                 default: // This should never be reached
                     break;
             }
@@ -56,6 +63,10 @@ namespace Viper
                     return "LogicalNegation";
                 case UnaryOperator::IntegralNegation:
                     return "IntegralNegation";
+                case UnaryOperator::Indirection:
+                    return "Indirection";
+                case UnaryOperator::AddressOf:
+                    return "AddressOf";
             }
         }
 
@@ -73,19 +84,31 @@ namespace Viper
                     return builder.CreateNeg(operandCodegen, "neg");
                 
                 case UnaryOperator::PrefixIncrement:
-                    return builder.CreateAdd(operandCodegen, llvm::ConstantInt::get(operandCodegen->getType(), 1));
+                    return builder.CreateAdd(operandCodegen, llvm::ConstantInt::get(operandCodegen->getType(), 1), "inc");
                 case UnaryOperator::PrefixDecrement:
-                    return builder.CreateAdd(operandCodegen, llvm::ConstantInt::get(operandCodegen->getType(), -1));
+                    return builder.CreateAdd(operandCodegen, llvm::ConstantInt::get(operandCodegen->getType(), -1), "dec");
 
                 case UnaryOperator::PostfixIncrement:
                 {
-                    builder.CreateAdd(operandCodegen, llvm::ConstantInt::get(operandCodegen->getType(), 1));
+                    builder.CreateAdd(operandCodegen, llvm::ConstantInt::get(operandCodegen->getType(), 1), "inc");
                     return operandCodegen;
                 }
                 case UnaryOperator::PostfixDecrement:
                 {
-                    builder.CreateAdd(operandCodegen, llvm::ConstantInt::get(operandCodegen->getType(), -1));
+                    builder.CreateAdd(operandCodegen, llvm::ConstantInt::get(operandCodegen->getType(), -1), "dec");
                     return operandCodegen;
+                }
+
+                case UnaryOperator::AddressOf:
+                {
+                    if(_operand->GetNodeType() != ASTNodeType::Variable)
+                        throw; // TODO: Error properly
+                    Variable* variable = static_cast<Variable*>(_operand.get());
+                    return FindNamedValue(variable->GetName(), scope);
+                }
+                case UnaryOperator::Indirection:
+                {
+                    return builder.CreateLoad(operandCodegen->getType()->getNonOpaquePointerElementType(), operandCodegen, "deref");
                 }
                 default: // This should never be reached
                     break;
