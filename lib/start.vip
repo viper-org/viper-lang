@@ -1,8 +1,0 @@
-extern @main() -> i32;
-extern @SystemCall(i64, i64, i64, i64) -> i64;
-
-@_start() -> void
-{
-    SystemCall(60, main(), 0, 0);
-    return;
-}
