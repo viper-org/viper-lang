@@ -18,7 +18,6 @@ Viper is a C like programming language that uses the LLVM backend.
 ## Installation
 ### Prerequisites
 To build viper, you will need:
-* LLVM
 * Any g++ version with c++17
 * GNU Make
 ### Downloading the code
