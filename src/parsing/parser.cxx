@@ -7,8 +7,8 @@ namespace Viper
 {
     namespace Parsing
     {
-        Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, const std::vector<std::string>& libraries)
-            :_text(text), _tokens(tokens), _position(0)
+        Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, const std::vector<std::string>& libraries, llvm::LLVMContext& context)
+            :_text(text), _tokens(tokens), _position(0), _context(context)
         {
             for(const std::string& library : libraries)
             {
@@ -45,6 +45,8 @@ namespace Viper
             {
                 case Lexing::TokenType::LeftSquareBracket:
                     return 55;
+                case Lexing::TokenType::Dot:
+                    return 45;
                 case Lexing::TokenType::Star:
                 case Lexing::TokenType::Slash:
                     return 40;
@@ -186,8 +188,45 @@ namespace Viper
                     return ParseFunction();
                 case Lexing::TokenType::Extern:
                     return ParseExtern();
+                case Lexing::TokenType::Struct:
+                    ParseStruct();
+                    return ParseTopLevel();
                 default:
                     ParserError("Expected top-level expression, found '" + GetTokenText(Current()) + "'");
+            }
+        }
+
+        void Parser::ParseStruct()
+        {
+            Consume();
+            std::string name = GetTokenText(Consume());
+
+            ExpectToken(Lexing::TokenType::LeftBracket);
+            Consume();
+
+            std::vector<std::pair<std::shared_ptr<Type>, std::string>> fields;
+            unsigned int size = 0;
+            while(Current().getType() != Lexing::TokenType::RightBracket)
+            {
+                ExpectToken(Lexing::TokenType::Type);
+                std::shared_ptr<Type> type = ParseType();
+
+                ExpectToken(Lexing::TokenType::Identifier);
+                std::string name = GetTokenText(Consume());
+
+                ExpectToken(Lexing::TokenType::Semicolon);
+                Consume();
+                
+                fields.push_back(std::make_pair(type, name));
+                size += type->GetSize();
+            }
+            Consume();
+            
+            types[name] = std::make_shared<StructType>(name, std::move(fields), size, _context);
+            for(Lexing::Token& token : _tokens)
+            {
+                if(GetTokenText(token) == name)
+                    token = Lexing::Token(Lexing::TokenType::Type, token.getStart(), token.getEnd(), token.getLineNumber(), token.getColNumber());
             }
         }
 
@@ -332,12 +371,21 @@ namespace Viper
                     break;
 
                 Lexing::Token operatorToken = Consume();
-                std::unique_ptr<ASTNode> rhs = ParseExpression(binOpPrecedence);
-                lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
-                if(operatorToken.getType() == Lexing::TokenType::LeftSquareBracket)
+
+                if(operatorToken.getType() == Lexing::TokenType::Dot)
                 {
-                    ExpectToken(Lexing::TokenType::RightSquareBracket);
-                    Consume();
+                    std::unique_ptr<ASTNode> rhs = std::make_unique<Variable>(GetTokenText(Consume()));
+                    lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
+                }
+                else
+                {
+                    std::unique_ptr<ASTNode> rhs = ParseExpression(binOpPrecedence);
+                    lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
+                    if(operatorToken.getType() == Lexing::TokenType::LeftSquareBracket)
+                    {
+                        ExpectToken(Lexing::TokenType::RightSquareBracket);
+                        Consume();
+                    }
                 }
             }
             unOpPrecedence = GetPostfixUnOpPrecedence(Current().getType());

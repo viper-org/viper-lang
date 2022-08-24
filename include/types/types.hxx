@@ -5,11 +5,12 @@
 #include <types/voidType.hxx>
 #include <types/arrayType.hxx>
 #include <types/pointerType.hxx>
+#include <types/structType.hxx>
 #include <map>
 
 namespace Viper
 {
-    extern std::map<std::string_view, std::shared_ptr<Type>> types;
+    extern std::map<std::string, std::shared_ptr<Type>> types;
     void InitDefaultTypes();
 }
 

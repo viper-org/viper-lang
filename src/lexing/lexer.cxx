@@ -15,6 +15,7 @@ namespace Viper
             { "break", TokenType::Break },
             { "for", TokenType::For },
             { "extern", TokenType::Extern },
+            { "struct", TokenType::Struct },
         };
 
         Lexer::Lexer(std::string text)
@@ -173,6 +174,9 @@ namespace Viper
 
                 case ',':
                     return Token(TokenType::Comma, _position, _position + 1, _lineNumber, _colNumber);
+                
+                case '.':
+                    return Token(TokenType::Dot, _position, _position + 1, _lineNumber, _colNumber);
                 
 
                 case '<':

@@ -3,7 +3,7 @@
 
 namespace Viper
 {
-    std::map<std::string_view, std::shared_ptr<Type>> types;
+    std::map<std::string, std::shared_ptr<Type>> types;
 
     void InitDefaultTypes()
     {
@@ -29,9 +29,11 @@ namespace Viper
             return builder.CreateIntCast(value, type, true, "conv");
             
         if(value->getType()->isIntegerTy() && type->isPointerTy())
-            return builder.CreateIntToPtr(value, type);
+            return builder.CreateIntToPtr(value, type, "conv");
         if(value->getType()->isPointerTy() && type->isIntegerTy())
-            return builder.CreatePtrToInt(value, type);
+        {
+            return builder.CreatePtrToInt(value, type, "conv");
+        }
 
         value->mutateType(type);
         return value;

@@ -20,6 +20,7 @@ namespace Viper
             And, Or,
 
             Subscript,
+            MemberAccess,
         };
 
         class BinaryExpression : public ASTNode

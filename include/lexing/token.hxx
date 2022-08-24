@@ -27,8 +27,12 @@ namespace Viper
             While,
             For,
             Break,
+            
             Type,
+
             Extern,
+
+            Struct,
 
             Equals,
 
@@ -46,6 +50,7 @@ namespace Viper
 
             Semicolon,
             Comma,
+            Dot,
 
             EndOfFile, BadToken
         };

@@ -45,7 +45,7 @@ namespace Viper
         InitDefaultTypes();
         _lexer = std::make_unique<Lexing::Lexer>(_contents);
         
-        _parser = std::make_unique<Parsing::Parser>(_lexer->Lex(), _contents, _libraries);
+        _parser = std::make_unique<Parsing::Parser>(_lexer->Lex(), _contents, _libraries, _context);
 
         for(std::unique_ptr<Parsing::ASTTopLevel>& node : _parser->Parse())
         {
@@ -156,7 +156,6 @@ namespace Viper
         for(const std::string& file : objectFiles)
             command += " " + file;
 
-        llvm::outs() << command << "\n";
         system(command.data()); // TODO: Remove call to system and implement a proper linking solution
         for(const std::string& file : objectFiles)
             std::remove(file.data());

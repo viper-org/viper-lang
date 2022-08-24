@@ -33,19 +33,16 @@ namespace Viper
 
             llvm::FunctionType* functionType = llvm::FunctionType::get(_type->GetLLVMType(context), llvmArgTypes, false);
             llvm::Function* function = llvm::Function::Create(functionType, llvm::Function::ExternalLinkage, _name, module);
-            llvm::outs() << function->getName() << "\n";
 
             llvm::Attribute noinline  = llvm::Attribute::get(context, llvm::Attribute::AttrKind::NoInline);
             llvm::Attribute nounwind  = llvm::Attribute::get(context, llvm::Attribute::AttrKind::NoUnwind);
             llvm::Attribute optnone   = llvm::Attribute::get(context, llvm::Attribute::AttrKind::OptimizeNone);
-            llvm::Attribute sspstrong = llvm::Attribute::get(context, llvm::Attribute::AttrKind::StackProtectStrong);
             llvm::Attribute uwtable   = llvm::Attribute::get(context, llvm::Attribute::AttrKind::UWTable);
 
             llvm::AttributeList attributes;
             attributes = attributes.addFnAttribute(context, noinline);
             attributes = attributes.addFnAttribute(context, nounwind);
             attributes = attributes.addFnAttribute(context, optnone);
-            attributes = attributes.addFnAttribute(context, sspstrong);
             attributes = attributes.addFnAttribute(context, uwtable);
             function->setAttributes(attributes);
 
@@ -60,9 +57,9 @@ namespace Viper
             i = 0;
             for(llvm::Argument& arg : function->args())
             {
-                llvm::AllocaInst* alloca = CreateAlloca(context, _args[i++].first, function, arg.getName());
+                llvm::AllocaInst* alloca = CreateAlloca(context, _args[i].first, function, arg.getName());
                 builder.CreateStore(&arg, alloca);
-                _scope->namedValues[std::string(arg.getName())] = alloca;
+                _scope->namedValues[std::string(arg.getName())] = std::make_pair(alloca, _args[i++].first);
             }
 
             std::vector<std::shared_ptr<Type>> types;

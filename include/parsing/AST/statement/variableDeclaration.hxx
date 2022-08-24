@@ -1,5 +1,5 @@
-#ifndef VIPER_AST_VARIABLEDECL_HXX
-#define VIPER_AST_VARIABLEDECL_HXX
+#ifndef VIPER_AST_VARIABLE_DECL_HXX
+#define VIPER_AST_VARIABLE_DECL_HXX
 #include <parsing/AST/astNode.hxx>
 
 namespace Viper

@@ -28,6 +28,8 @@ namespace Viper
 
             VariableDeclaration,
 
+            StructDeclaration,
+
             IfStatement,
             WhileStatement,
             ForStatement,
@@ -39,7 +41,6 @@ namespace Viper
         enum class CodegenFlag
         {
             NoLoad,
-            WithGEP
         };
 
         class ASTNode

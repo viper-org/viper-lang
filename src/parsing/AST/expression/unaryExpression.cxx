@@ -104,7 +104,7 @@ namespace Viper
                     if(_operand->GetNodeType() != ASTNodeType::Variable)
                         throw; // TODO: Error properly
                     Variable* variable = static_cast<Variable*>(_operand.get());
-                    return FindNamedValue(variable->GetName(), scope);
+                    return FindNamedValue(variable->GetName(), scope).first;
                 }
                 case UnaryOperator::Indirection:
                 {

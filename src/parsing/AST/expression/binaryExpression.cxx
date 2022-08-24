@@ -1,4 +1,5 @@
 #include <iostream>
+#include <llvm/IR/DerivedTypes.h>
 #include <parsing/AST/expression/binaryExpression.hxx>
 #include <parsing/AST/expression/variable.hxx>
 
@@ -60,6 +61,9 @@ namespace Viper
                 case Lexing::TokenType::LeftSquareBracket:
                     _operator = BinaryOperator::Subscript;
                     break;
+                case Lexing::TokenType::Dot:
+                    _operator = BinaryOperator::MemberAccess;
+                    break;
                 default: // This should never be reached
                     break;
             }
@@ -105,6 +109,8 @@ namespace Viper
                     return "GreaterEquals";
                 case BinaryOperator::Subscript:
                     return "Subscript";
+                case BinaryOperator::MemberAccess:
+                    return "MemberAccess";
             }
         }
 
@@ -117,7 +123,7 @@ namespace Viper
                     Variable* left = static_cast<Variable*>(_lhs.get());
                     llvm::Value* value = _rhs->Generate(context, builder, module, scope, flags);
 
-                    llvm::AllocaInst* alloca = FindNamedValue(left->GetName(), scope);
+                    llvm::AllocaInst* alloca = FindNamedValue(left->GetName(), scope).first;
 
                     if(value->getType() != alloca->getAllocatedType())
                         value = Type::Convert(value, alloca->getAllocatedType(), builder);
@@ -128,7 +134,7 @@ namespace Viper
                 if(_lhs->GetNodeType() == ASTNodeType::BinaryExpression)
                 {
                     BinaryExpression* left = static_cast<BinaryExpression*>(_lhs.get());
-                    if(left->_operator == BinaryOperator::Subscript)
+                    if(left->_operator == BinaryOperator::Subscript || left->_operator == BinaryOperator::MemberAccess)
                     {
                         llvm::Value* rightCodegen = _rhs->Generate(context, builder, module, scope, flags);
                         llvm::Value* leftCodegen = _lhs->Generate(context, builder, module, scope, { CodegenFlag::NoLoad });
@@ -145,7 +151,7 @@ namespace Viper
                 {
                     Variable* left = static_cast<Variable*>(_lhs.get());
 
-                    llvm::AllocaInst* alloca = FindNamedValue(left->GetName(), scope);
+                    llvm::AllocaInst* alloca = FindNamedValue(left->GetName(), scope).first;
                     llvm::Value* indexCodegen = Type::Convert(_rhs->Generate(context, builder, module, scope), types.at("i64")->GetLLVMType(context), builder);
                     llvm::Value* gep = builder.CreateInBoundsGEP(alloca->getAllocatedType(), alloca, { llvm::ConstantInt::get(types.at("i64")->GetLLVMType(context), 0), indexCodegen }, "subscript");
                     if(std::find(flags.begin(), flags.end(), CodegenFlag::NoLoad) != flags.end())
@@ -153,6 +159,18 @@ namespace Viper
                     return builder.CreateLoad(gep->getType()->getNonOpaquePointerElementType(), gep, "subscriptload");
                 }
                 return nullptr; // TODO: Parse multi level arrays
+            }
+            if(_operator == BinaryOperator::MemberAccess)
+            {
+                Variable* left = static_cast<Variable*>(_lhs.get());
+                Variable* right = static_cast<Variable*>(_rhs.get());
+                std::shared_ptr<Type> type = FindNamedValue(left->GetName(), scope).second;
+                StructType* structType = static_cast<StructType*>(type.get());
+                
+                llvm::Value* gep = builder.CreateStructGEP(type->GetLLVMType(context), FindNamedValue(left->GetName(), scope).first, structType->GetMemberIndex(right->GetName()), "access");
+                if(std::find(flags.begin(), flags.end(), CodegenFlag::NoLoad) != flags.end())
+                    return gep;
+                return builder.CreateLoad(gep->getType()->getNonOpaquePointerElementType(), gep, "accessload");
             }
 
             llvm::Value* left  = _lhs->Generate(context, builder, module, scope, flags);

@@ -21,7 +21,8 @@ namespace Viper
             buf << file.rdbuf();
             std::string text = buf.str().substr(0, buf.str().find_first_of(0x0A));
             Lexing::Lexer lexer(text);
-            Parsing::Parser parser(lexer.Lex(), text, {});
+            llvm::LLVMContext tmp;
+            Parsing::Parser parser(lexer.Lex(), text, {}, tmp);
 
             return parser.ParseSymbols();
         }

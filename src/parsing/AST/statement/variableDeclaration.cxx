@@ -28,7 +28,7 @@ namespace Viper
             llvm::Function* function = builder.GetInsertBlock()->getParent();
 
             llvm::AllocaInst* alloca = CreateAlloca(context, _type, function, _name);
-            scope->namedValues[_name] = alloca;
+            scope->namedValues[_name] = std::make_pair(alloca, _type);
             
             if(_value)
             {
