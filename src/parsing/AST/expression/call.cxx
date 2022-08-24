@@ -1,4 +1,5 @@
 #include <parsing/AST/expression/call.hxx>
+#include <diagnostics.hxx>
 
 namespace Viper
 {
@@ -26,13 +27,13 @@ namespace Viper
 
             if(!function)
             {
-                throw; // TODO: Declare as extern
+                Diagnostics::Error("viper", "Unknown function: '\x1b[1m" + _callee + "\x1b[0m'. Did you forget to import a library?");
             }
 
             std::vector<llvm::Value*> argValues;
             for(unsigned int i = 0; i < _args.size(); i++)
             {
-                llvm::Value* value = _args[i]->Generate(context, builder, module, scope, { CodegenFlag::WithGEP, CodegenFlag::NoLoad });
+                llvm::Value* value = _args[i]->Generate(context, builder, module, scope, {});
                 if(value->getType() != (function->args().begin()+i)->getType())
                     value = Type::Convert(value, (function->args().begin()+i)->getType(), builder);
                 

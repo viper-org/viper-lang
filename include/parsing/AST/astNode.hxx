@@ -13,6 +13,7 @@ namespace Viper
         enum class ASTNodeType
         {
             Integer,
+            String,
 
             Variable,
 
@@ -21,13 +22,17 @@ namespace Viper
             CallExpression,
 
             BinaryExpression,
+            UnaryExpression,
 
             Return,
 
             VariableDeclaration,
 
+            StructDeclaration,
+
             IfStatement,
             WhileStatement,
+            ForStatement,
             BreakStatement,
 
             CompoundStatement
@@ -36,7 +41,6 @@ namespace Viper
         enum class CodegenFlag
         {
             NoLoad,
-            WithGEP
         };
 
         class ASTNode

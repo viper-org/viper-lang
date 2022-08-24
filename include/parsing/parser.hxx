@@ -13,30 +13,40 @@ namespace Viper
         class Parser
         {
         public:
-            Parser(const std::vector<Lexing::Token>& tokens, const std::string& text);
+            Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, const std::vector<std::string>& libraries, llvm::LLVMContext& context);
 
             std::vector<std::unique_ptr<ASTTopLevel>> Parse();
         private:
             std::string _text;
             std::vector<Lexing::Token> _tokens;
+            std::vector<std::unique_ptr<CodeGen::Symbol>> _symbols;
             std::vector<std::string> identifiers;
             unsigned int _position;
             std::shared_ptr<Environment> _currentScope;
+            llvm::LLVMContext& _context;
 
             Lexing::Token Current() const;
             Lexing::Token Consume();
             Lexing::Token Peek(int offset = 1) const;
             std::string GetTokenText(Lexing::Token token) const;
+
             int GetBinOpPrecedence(Lexing::TokenType tokenType) const;
+            int GetPrefixUnOpPrecedence(Lexing::TokenType tokenType) const;
+            int GetPostfixUnOpPrecedence(Lexing::TokenType tokenType) const;
 
 
             void ExpectToken(Lexing::TokenType tokenType);
             [[noreturn]] void ParserError(std::string message);
 
+            friend class CodeGen::Symbol;
+
+            std::vector<std::unique_ptr<CodeGen::Symbol>> ParseSymbols();
+
             
             std::unique_ptr<ASTTopLevel> ParseTopLevel();
             std::unique_ptr<ASTTopLevel> ParseFunction();
             std::unique_ptr<ASTTopLevel> ParseExtern();
+            void ParseStruct();
 
             std::shared_ptr<Type> ParseType();
 
@@ -54,7 +64,6 @@ namespace Viper
             std::unique_ptr<ASTNode> ParseCompoundStatement();
 
             std::unique_ptr<ASTNode> ParseVariable();
-            std::unique_ptr<ASTNode> ParseSubscript();
             std::unique_ptr<ASTNode> ParseVariableDeclaration();
 
             std::unique_ptr<ASTNode> ParseIfStatement();

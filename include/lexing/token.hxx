@@ -14,6 +14,8 @@ namespace Viper
 
             Plus, Minus, Star, Slash,
 
+            Increment, Decrement,
+
             Integer,
             Character,
             String,
@@ -25,8 +27,12 @@ namespace Viper
             While,
             For,
             Break,
+            
             Type,
+
             Extern,
+
+            Struct,
 
             Equals,
 
@@ -44,6 +50,7 @@ namespace Viper
 
             Semicolon,
             Comma,
+            Dot,
 
             EndOfFile, BadToken
         };

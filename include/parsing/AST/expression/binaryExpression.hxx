@@ -1,5 +1,5 @@
-#ifndef VIPER_AST_BINARYEXPRESSION_HXX
-#define VIPER_AST_BINARYEXPRESSION_HXX
+#ifndef VIPER_AST_BINARY_EXPRESSION_HXX
+#define VIPER_AST_BINARY_EXPRESSION_HXX
 #include <parsing/AST/astNode.hxx>
 #include <lexing/token.hxx>
 #include <memory>
@@ -18,6 +18,9 @@ namespace Viper
             LessThan, GreaterThan,
             LessEquals, GreaterEquals,
             And, Or,
+
+            Subscript,
+            MemberAccess,
         };
 
         class BinaryExpression : public ASTNode

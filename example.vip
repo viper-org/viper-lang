@@ -1,8 +1,0 @@
-extern @puts(i8* message) -> void;
-
-@main() -> i32
-{
-    puts("Hello World!");
-
-    return 0;
-}

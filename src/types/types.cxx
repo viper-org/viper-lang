@@ -3,14 +3,15 @@
 
 namespace Viper
 {
-    std::map<std::string_view, std::shared_ptr<Type>> types;
+    std::map<std::string, std::shared_ptr<Type>> types;
 
     void InitDefaultTypes()
     {
-        types["i8"]  = std::make_shared<IntegerType>(8);
-        types["i16"] = std::make_shared<IntegerType>(16);
-        types["i32"] = std::make_shared<IntegerType>(32);
-        types["i64"] = std::make_shared<IntegerType>(64);
+        types["i8"]   = std::make_shared<IntegerType>(8);
+        types["i16"]  = std::make_shared<IntegerType>(16);
+        types["i32"]  = std::make_shared<IntegerType>(32);
+        types["i64"]  = std::make_shared<IntegerType>(64); 
+        types["bool"] = std::make_shared<IntegerType>(1);
         types["void"] = std::make_shared<VoidType>();
     }
 
@@ -20,10 +21,19 @@ namespace Viper
             return value;
         
         if(type->getPrimitiveSizeInBits() == 1)
-            return builder.CreateIsNotNull(value, "conv");
+        {
+            return builder.CreateIsNotNull(Type::Convert(value, llvm::Type::getInt32Ty(builder.getContext()), builder), "conv");
+        }
 
         if(value->getType()->isIntegerTy() && type->isIntegerTy())
             return builder.CreateIntCast(value, type, true, "conv");
+            
+        if(value->getType()->isIntegerTy() && type->isPointerTy())
+            return builder.CreateIntToPtr(value, type, "conv");
+        if(value->getType()->isPointerTy() && type->isIntegerTy())
+        {
+            return builder.CreatePtrToInt(value, type, "conv");
+        }
 
         value->mutateType(type);
         return value;

@@ -15,6 +15,7 @@ namespace Viper
             { "break", TokenType::Break },
             { "for", TokenType::For },
             { "extern", TokenType::Extern },
+            { "struct", TokenType::Struct },
         };
 
         Lexer::Lexer(std::string text)
@@ -58,7 +59,7 @@ namespace Viper
         {
             char current = Current();
 
-            if(std::isalpha(current))
+            if(std::isalpha(current) || current == '_')
             {
                 unsigned int start = _position;
                 std::string value(1, current);
@@ -101,13 +102,25 @@ namespace Viper
 
 
                 case '+':
+                {
+                    if(Peek(1) == '+')
+                    {
+                        Consume();
+                        return Token(TokenType::Increment, _position - 1, _position + 1, _lineNumber, _colNumber);
+                    }
                     return Token(TokenType::Plus, _position, _position + 1, _lineNumber, _colNumber);
+                }
                 case '-':
                 {
                     if(Peek(1) == '>')
                     {
                         Consume();
                         return Token(TokenType::RightArrow, _position - 1, _position + 1, _lineNumber, _colNumber);
+                    }
+                    else if(Peek(1) == '-')
+                    {
+                        Consume();
+                        return Token(TokenType::Decrement, _position - 1, _position + 1, _lineNumber, _colNumber);
                     }
                     return Token(TokenType::Minus, _position, _position + 1, _lineNumber, _colNumber);
                 }
@@ -161,6 +174,9 @@ namespace Viper
 
                 case ',':
                     return Token(TokenType::Comma, _position, _position + 1, _lineNumber, _colNumber);
+                
+                case '.':
+                    return Token(TokenType::Dot, _position, _position + 1, _lineNumber, _colNumber);
                 
 
                 case '<':

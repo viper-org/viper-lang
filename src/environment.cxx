@@ -3,7 +3,7 @@
 
 namespace Viper
 {
-    llvm::AllocaInst* FindNamedValue(std::string name, std::shared_ptr<Environment> scope)
+    std::pair<llvm::AllocaInst*, std::shared_ptr<Type>> FindNamedValue(std::string name, std::shared_ptr<Environment> scope)
     {
         while(true)
         {

@@ -17,7 +17,7 @@ namespace Viper
 
             void Print(std::ostream& stream) const override;
 
-            llvm::Value* Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module) override;
+            std::pair<llvm::Value*, std::unique_ptr<CodeGen::Symbol>> Generate(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module) override;
         private:
             std::string _name;
             std::shared_ptr<Type> _type;
