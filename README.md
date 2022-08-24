@@ -21,7 +21,7 @@ To build viper, you will need:
 * Any g++ version with c++17
 * GNU Make
 ### Downloading the code
-To download the code, clone the github repository `git clone https://github.com/solar-mist/viper`
+To download the code, clone the github repository `git clone https://github.com/lang-viper/viper`
 ### Building
 To build the code, simply run `make all`
 <br>
