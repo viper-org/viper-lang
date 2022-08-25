@@ -6,42 +6,42 @@ constexpr std::string_view red  = "\x1b[31m";
 
 constexpr std::string_view defaults = "\x1b[0m";
 
-namespace diagnostics
+namespace Diagnostics
 {
-    std::string_view file_name;
+    std::string_view fileName;
 
-    void fatal_error(std::string_view sender, std::string_view message)
+    void FatalError(std::string_view sender, std::string_view message)
     {
         std::cerr << bold << sender << ": " << red << "fatal error: " << defaults << message << "\n";
         std::cerr << "compilation terminated.\n";
         std::exit(1);
     }
 
-    void error(std::string_view sender, std::string_view message)
+    void Error(std::string_view sender, std::string_view message)
     {
         std::cerr << bold << sender << ": " << red << "error: " << defaults << message << "\n";
         std::cerr << "compilation terminated.\n";
         std::exit(1);
     }
 
-    void compiler_error(const unsigned int line_number, const unsigned int col_number, 
+    void CompilerError(const unsigned int lineNumber, const unsigned int colNumber, 
     std::string_view message,
-    const char* error_begin, const char* error_end,
-    const char* line_begin, const char* line_end)
+    const char* errorBegin, const char* errorEnd,
+    const char* lineBegin, const char* lineEnd)
     {
-        std::string start  = std::string(line_begin + 1, error_begin);
-        std::string error  = std::string(error_begin, error_end);
-        std::string end    = std::string(error_end, line_end);
+        std::string start  = std::string(lineBegin + 1, errorBegin);
+        std::string error  = std::string(errorBegin, errorEnd);
+        std::string end    = std::string(errorEnd, lineEnd);
         std::string spaces = std::string(start.length(), ' ');
 
-        std::cerr << bold << file_name << ":" << line_number << ":" << col_number << ": " << red << "error: " << defaults << message << "\n";
-        std::cerr << "    " << line_number << " | " << start << bold << red << error << defaults << end << "\n";
+        std::cerr << bold << fileName << ":" << lineNumber << ":" << colNumber << ": " << red << "error: " << defaults << message << "\n";
+        std::cerr << "    " << lineNumber << " | " << start << bold << red << error << defaults << end << "\n";
         std::cerr << "      | " << spaces << bold << red << "^" << std::string(error.length() - 1, '~') << defaults << "\n";
         std::exit(1);
     }
 
-    void set_file_name(std::string_view new_file_name)
+    void setFileName(std::string_view newFileName)
     {
-        file_name = new_file_name;
+        fileName = newFileName;
     }
 }

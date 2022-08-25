@@ -1,28 +1,32 @@
 #include <compiler.hh>
 #include <diagnostics.hh>
 #include <lexing/lexer.hh>
+#include <parsing/parser.hh>
 #include <sstream>
 #include <iostream>
 
-compiler::compiler(outputType output_type, const std::string& input_file_name)
-    :output_type(output_type), input_file_name(input_file_name)
+Compiler::Compiler(OutputType outputType, const std::string& inputFileName)
+    :_outputType(outputType), _inputFileName(inputFileName)
 {
-    input_handle = std::ifstream(input_file_name);
-    if(!input_handle.is_open())
-        diagnostics::fatal_error("viper", input_file_name + ": No such file or directory");
-
+    _inputHandle = std::ifstream(inputFileName);
+    if(!_inputHandle.is_open())
+        Diagnostics::FatalError("viper", inputFileName + ": No such file or directory");
+    Diagnostics::setFileName(_inputFileName);
+    
     std::stringstream buf;
-    buf << input_handle.rdbuf();
-    contents = buf.str();
+    buf << _inputHandle.rdbuf();
+    _contents = buf.str();
 
-    input_handle.close();
+    _inputHandle.close();
 }
 
-void compiler::compile()
+void Compiler::Compile()
 {
-    lexer lex(contents);
-    for(const token& tok : lex.lex())
+    Lexer lexer(_contents);
+    Parser parser(lexer.Lex(), _contents);
+
+    for(std::unique_ptr<ASTTopLevel>& node : parser.Parse())
     {
-        std::cout << tok << std::endl;
+        node->Print(std::cout);
     }
 }

@@ -5,24 +5,24 @@
 #include <string>
 #include <vector>
 
-class lexer
+class Lexer
 {
 public:
-    lexer(const std::string& text);
+    Lexer(const std::string& text);
 
-    std::vector<token> lex();
+    std::vector<Token> Lex();
 private:
-    std::string text;
-    unsigned int position;
-    unsigned int line_number;
-    unsigned int col_number;
-    char* line_begin;
+    std::string _text;
+    unsigned int _position;
+    unsigned int _lineNumber;
+    unsigned int _colNumber;
+    char* _lineBegin;
 
     char current() const;
     char consume();
     char peek(const int offset) const;
 
-    std::optional<token> next_token();
+    std::optional<Token> next_token();
 };
 
 #endif

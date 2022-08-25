@@ -3,48 +3,51 @@
 #include <string>
 #include <ostream>
 
-enum class tokenType
+enum class TokenType
 {
-    asperand,
+    LeftParen, RightParen,
+    LeftBracket, RightBracket,
 
-    identifier,
+    Integer,
 
-    left_paren,
-    right_paren,
+    Identifier,
 
-    right_arrow,
+    Return,
 
-    type,
+    Type,
 
-    left_bracket,
-    right_bracket,
+    Asperand, RightArrow,
 
-    keyword_return,
-
-    integer_literal,
-
-    semicolon,
+    Semicolon,
 };
 
-class token
+class Token
 {
 public:
-    token(tokenType type, const std::string& text,
+    Token(TokenType type, const std::string& text,
     const unsigned int start, const unsigned int end,
-    const unsigned int line_number, const unsigned int col_number);
+    const unsigned int lineNumber, const unsigned int colNumber);
 
-    std::string type_as_string() const;
+    std::string TypeAsString() const;
 
-    friend std::ostream& operator<<(std::ostream& stream, token tok);
+    TokenType GetType() const;
+    std::string GetText() const;
+    
+    unsigned int GetStart() const;
+    unsigned int GetEnd() const;
+    unsigned int GetLine() const;
+    unsigned int GetCol() const;
 
-    tokenType type;
-    std::string text;
+    friend std::ostream& operator<<(std::ostream& stream, Token token);
+private:
+    TokenType _type;
+    std::string _text;
 
-    unsigned int start;
-    unsigned int end;
+    unsigned int _start;
+    unsigned int _end;
 
-    unsigned int line_number;
-    unsigned int col_number;
+    unsigned int _lineNumber;
+    unsigned int _colNumber;
 };
 
 #endif

@@ -1,44 +1,75 @@
 #include <lexing/token.hh>
 
-token::token(tokenType type, const std::string& text,
+Token::Token(TokenType type, const std::string& text,
     const unsigned int start, const unsigned int end,
-    const unsigned int line_number, const unsigned int col_number)
-    :type(type), text(text), start(start), end(end), line_number(line_number), col_number(col_number)
+    const unsigned int lineNumber, const unsigned int colNumber)
+    :_type(type), _text(text), _start(start), _end(end), _lineNumber(lineNumber), _colNumber(colNumber)
 {
 }
 
-std::string token::type_as_string() const
+std::string Token::TypeAsString() const
 {
-    switch(type)
+    switch(_type)
     {
-        case tokenType::asperand:
-            return "asperand";
-        case tokenType::identifier:
-            return "identifier";
-        case tokenType::left_paren:
-            return "left_paren";
-        case tokenType::right_paren:
-            return "right_paren";
-        case tokenType::right_arrow:
-            return "right_arrow";
-        case tokenType::type:
-            return "type";
-        case tokenType::left_bracket:
-            return "left_bracket";
-        case tokenType::right_bracket:
-            return "right_bracket";
-        case tokenType::keyword_return:
-            return "keyword_return";
-        case tokenType::integer_literal:
-            return "integer_literal";
-        case tokenType::semicolon:
-            return "semicolon";
+        case TokenType::LeftParen:
+            return "LeftParen";
+        case TokenType::RightParen:
+            return "RightParen";
+        case TokenType::LeftBracket:
+            return "LeftBracket";
+        case TokenType::RightBracket:
+            return "RightBracket";
+        case TokenType::Integer:
+            return "Integer";
+        case TokenType::Identifier:
+            return "Identifier";
+        case TokenType::Return:
+            return "Return";
+        case TokenType::Type:
+            return "Type";
+        case TokenType::Asperand:
+            return "Asperand";
+        case TokenType::RightArrow:
+            return "RightArrow";
+        case TokenType::Semicolon:
+            return "Semicolon";
     }
     return "";
 }
 
-std::ostream& operator<<(std::ostream& stream, token tok)
+TokenType Token::GetType() const
 {
-    stream << tok.line_number << ":" << tok.col_number << " - " << tok.type_as_string() << "(" << tok.text << ")";
+    return _type;
+}
+
+std::string Token::GetText() const
+{
+    return _text;
+}
+
+
+unsigned int Token::GetStart() const
+{
+    return _start;
+}
+
+unsigned int Token::GetEnd() const
+{
+    return _end;
+}
+
+unsigned int Token::GetLine() const
+{
+    return _lineNumber;
+}
+
+unsigned int Token::GetCol() const
+{
+    return _colNumber;
+}
+
+std::ostream& operator<<(std::ostream& stream, Token token)
+{
+    stream << token.GetLine() << ":" << token.GetCol() << " - " << token.TypeAsString() << "(" << token._text << ")";
     return stream;
 }

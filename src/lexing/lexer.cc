@@ -1,27 +1,25 @@
-#include "lexing/token.hh"
-#include <cctype>
 #include <lexing/lexer.hh>
 #include <diagnostics.hh>
 #include <optional>
 #include <unordered_map>
 
-std::unordered_map<std::string_view, tokenType> keywords = {
-    { "return", tokenType::keyword_return },
-    { "int32", tokenType::type }, // TODO: Add proper type support
+std::unordered_map<std::string_view, TokenType> keywords = {
+    { "return", TokenType::Return },
+    { "int32", TokenType::Type }, // TODO: Add proper type support
 };
 
-lexer::lexer(const std::string& text)
-    :text(text), position(0), line_number(1), col_number(1), line_begin(&this->text[position])
+Lexer::Lexer(const std::string& text)
+    :_text(text), _position(0), _lineNumber(1), _colNumber(1), _lineBegin(&this->_text[_position])
 {
 }
 
-std::vector<token> lexer::lex()
+std::vector<Token> Lexer::Lex()
 {
-    std::vector<token> tokens;
+    std::vector<Token> tokens;
 
-    while(position < text.length())
+    while(_position < _text.length())
     {
-        std::optional<token> tok = next_token();
+        std::optional<Token> tok = next_token();
         if(tok.has_value())
             tokens.push_back(tok.value());
         consume();
@@ -30,26 +28,27 @@ std::vector<token> lexer::lex()
     return tokens;
 }
 
-char lexer::current() const
+char Lexer::current() const
 {
-    return text[position];
+    return _text[_position];
 }
 
-char lexer::consume()
+char Lexer::consume()
 {
-    return text[position++];
+    _colNumber++;
+    return _text[_position++];
 }
 
-char lexer::peek(int offset) const
+char Lexer::peek(int offset) const
 {
-    return text[position + offset];
+    return _text[_position + offset];
 }
 
-std::optional<token> lexer::next_token()
+std::optional<Token> Lexer::next_token()
 {
     if(std::isalpha(current()) || current() == '_')
     {
-        unsigned int start = position;
+        unsigned int start = _position;
         std::string value = std::string(1, current());
         
         while(std::isalnum(peek(1)) || peek(1) == '_')
@@ -59,14 +58,14 @@ std::optional<token> lexer::next_token()
         }
 
         if(auto it = keywords.find(value); it != keywords.end())
-            return token(keywords.find(value)->second, value, start, position + 1, line_number, col_number);
+            return Token(keywords.find(value)->second, value, start, _position + 1, _lineNumber, _colNumber);
         
-        return token(tokenType::identifier, value, start, position + 1, line_number, col_number);
+        return Token(TokenType::Identifier, value, start, _position + 1, _lineNumber, _colNumber);
     }
 
     if(isdigit(current()))
     {
-        unsigned int start = position;
+        unsigned int start = _position;
         std::string value = std::string(1, current());
 
         while(std::isalnum(peek(1)) || peek(1) == '_')
@@ -75,45 +74,45 @@ std::optional<token> lexer::next_token()
             value += current();
         }
 
-        return token(tokenType::integer_literal, value, start, position + 1, line_number, col_number);
+        return Token(TokenType::Integer, value, start, _position + 1, _lineNumber, _colNumber);
     }
 
     switch(current())
     {
         case '\n':
         {
-            col_number = 0;
-            ++line_number;
-            line_begin = &text[position + 1];
+            _colNumber = 0;
+            ++_lineNumber;
+            _lineBegin = &_text[_position + 1];
             return std::nullopt;
         }
         case ' ':
             return std::nullopt;
-
-        case '@':
-            return token(tokenType::asperand, "@", position, position + 1, line_number, col_number);
         
 
         case '(':
-            return token(tokenType::left_paren, "(", position, position + 1, line_number, col_number);
+            return Token(TokenType::LeftParen, "(", _position, _position + 1, _lineNumber, _colNumber);
         case ')':
-            return token(tokenType::right_paren, ")", position, position + 1, line_number, col_number);
+            return Token(TokenType::RightParen, ")", _position, _position + 1, _lineNumber, _colNumber);
 
         case '{':
-            return token(tokenType::left_bracket, "{", position, position + 1, line_number, col_number);
+            return Token(TokenType::LeftBracket, "{", _position, _position + 1, _lineNumber, _colNumber);
         case '}':
-            return token(tokenType::right_bracket, "}", position, position + 1, line_number, col_number);
+            return Token(TokenType::RightBracket, "}", _position, _position + 1, _lineNumber, _colNumber);
 
         case ';':
-            return token(tokenType::semicolon, ";", position, position + 1, line_number, col_number);
+            return Token(TokenType::Semicolon, ";", _position, _position + 1, _lineNumber, _colNumber);
 
+
+        case '@':
+            return Token(TokenType::Asperand, "@", _position, _position + 1, _lineNumber, _colNumber);
 
         case '-':
         {
             if(peek(1) == '>')
             {
                 consume();
-                return token(tokenType::right_arrow, "->", position - 1, position + 1, line_number, col_number);
+                return Token(TokenType::RightArrow, "->", _position - 1, _position + 1, _lineNumber, _colNumber);
             }
         }
         
@@ -123,7 +122,7 @@ std::optional<token> lexer::next_token()
             int offset = 0;
             while(peek(offset) != '\n')
                 offset++;
-            line_end = &text[position + offset];
-            diagnostics::compiler_error(line_number, col_number, "stray '" + std::string(1, current()) + "' found in program", &text[position], &text[position + 1], line_begin, line_end);
+            line_end = &_text[_position + offset];
+            Diagnostics::CompilerError(_lineNumber, _colNumber, "stray '" + std::string(1, current()) + "' found in program", &_text[_position], &_text[_position + 1], _lineBegin, line_end);
     }
 }

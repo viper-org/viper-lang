@@ -4,10 +4,10 @@
 int main(int argc, char** argv)
 {
     if(argc < 2)
-        diagnostics::fatal_error("viper", "no input files");
+        Diagnostics::FatalError("viper", "no input files");
 
-    compiler compile = compiler(outputType::assembly, argv[1]);
-    compile.compile();
+    Compiler compile = Compiler(OutputType::Assembly, argv[1]);
+    compile.Compile();
 
     return 0;
 }

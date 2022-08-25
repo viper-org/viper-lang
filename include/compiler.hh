@@ -3,25 +3,25 @@
 #include <string>
 #include <fstream>
 
-enum class outputType
+enum class OutputType
 {
-    assembly,
+    Assembly,
     // TODO: Add more output types
 };
 
-class compiler
+class Compiler
 {
 public:
-    compiler(outputType output_type, const std::string& input_file_name);
+    Compiler(OutputType outputType, const std::string& inputFileName);
 
-    void compile();
+    void Compile();
 
 private:
-    outputType output_type;
-    std::string input_file_name;
+    OutputType _outputType;
+    std::string _inputFileName;
 
-    std::ifstream input_handle;
-    std::string contents;
+    std::ifstream _inputHandle;
+    std::string _contents;
 };
 
 #endif
