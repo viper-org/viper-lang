@@ -6,12 +6,12 @@
 #include <iostream>
 
 Compiler::Compiler(OutputType outputType, const std::string& inputFileName)
-    :_outputType(outputType), _inputFileName(inputFileName)
+    :_outputType(outputType), _module(inputFileName), _builder(_module)
 {
     _inputHandle = std::ifstream(inputFileName);
     if(!_inputHandle.is_open())
         Diagnostics::FatalError("viper", inputFileName + ": No such file or directory");
-    Diagnostics::setFileName(_inputFileName);
+    Diagnostics::setFileName(inputFileName);
     
     std::stringstream buf;
     buf << _inputHandle.rdbuf();
@@ -22,11 +22,11 @@ Compiler::Compiler(OutputType outputType, const std::string& inputFileName)
 
 void Compiler::Compile()
 {
-    Lexer lexer(_contents);
-    Parser parser(lexer.Lex(), _contents);
+    Lexing::Lexer lexer(_contents);
+    Parsing::Parser parser(lexer.Lex(), _contents);
 
     for(std::unique_ptr<ASTTopLevel>& node : parser.Parse())
-    {
-        node->Print(std::cout);
-    }
+        node->Generate(_module, _builder);
+    
+    std::cout << _module.Generate() << std::endl;
 }

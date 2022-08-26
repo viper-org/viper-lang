@@ -9,6 +9,8 @@ public:
     ReturnStatement(std::unique_ptr<ASTNode> value);
 
     void Print(std::ostream& stream, int indent) const override;
+
+    Codegen::Value* Generate(Codegen::Module& module, Codegen::Builder& builder) override;
 private:
     std::unique_ptr<ASTNode> _value;
 };

@@ -5,24 +5,27 @@
 #include <string>
 #include <vector>
 
-class Lexer
+namespace Lexing
 {
-public:
-    Lexer(const std::string& text);
+    class Lexer
+    {
+    public:
+        Lexer(const std::string& text);
 
-    std::vector<Token> Lex();
-private:
-    std::string _text;
-    unsigned int _position;
-    unsigned int _lineNumber;
-    unsigned int _colNumber;
-    char* _lineBegin;
+        std::vector<Lexing::Token> Lex();
+    private:
+        std::string _text;
+        unsigned int _position;
+        unsigned int _lineNumber;
+        unsigned int _colNumber;
+        char* _lineBegin;
 
-    char current() const;
-    char consume();
-    char peek(const int offset) const;
+        char current() const;
+        char consume();
+        char peek(const int offset) const;
 
-    std::optional<Token> next_token();
-};
+        std::optional<Lexing::Token> next_token();
+    };
+}
 
 #endif

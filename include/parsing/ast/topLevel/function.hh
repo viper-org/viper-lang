@@ -12,6 +12,8 @@ public:
     ASTFunction(std::string name, std::vector<std::unique_ptr<ASTNode>> body);
 
     void Print(std::ostream& stream) const override;
+
+    Codegen::Global* Generate(Codegen::Module& module, Codegen::Builder& builder) override;
 private:
     std::string _name;
     std::vector<std::unique_ptr<ASTNode>> _body;

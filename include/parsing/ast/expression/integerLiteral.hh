@@ -8,6 +8,8 @@ public:
     IntegerLiteral(long long value);
 
     void Print(std::ostream& stream, int indent) const override;
+
+    Codegen::Value* Generate(Codegen::Module& module, Codegen::Builder& builder) override;
 private:
     long long _value;
 };

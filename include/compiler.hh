@@ -1,5 +1,7 @@
 #ifndef VIPER_COMPILER_HH
 #define VIPER_COMPILER_HH
+#include <codegen/builder.hh>
+#include <codegen/module.hh>
 #include <string>
 #include <fstream>
 
@@ -18,7 +20,9 @@ public:
 
 private:
     OutputType _outputType;
-    std::string _inputFileName;
+
+    Codegen::Module _module;
+    Codegen::Builder _builder;
 
     std::ifstream _inputHandle;
     std::string _contents;
