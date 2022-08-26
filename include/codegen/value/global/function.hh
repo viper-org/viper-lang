@@ -9,10 +9,11 @@ namespace Codegen
     public:
         static Function* Create(const std::string& name, Module& module);
     protected:
-        Function(const std::string& name, const Module& module);
+        Function(const std::string& name, Module& module);
         const std::string Generate() override;
     private:
         std::string _name;
+        std::vector<Value*>& _body;
     };
 }
 

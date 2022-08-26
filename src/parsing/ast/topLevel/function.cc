@@ -24,7 +24,9 @@ Codegen::Global* ASTFunction::Generate(Codegen::Module& module, Codegen::Builder
 
     for(std::unique_ptr<ASTNode>& node : _body)
     {
-        (void)node;
+        node->Generate(module, builder);
+        if(node->GetNodeType() == ASTNodeType::ReturnStatement)
+            break;
     }
 
     return function;

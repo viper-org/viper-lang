@@ -10,12 +10,6 @@ namespace Codegen
     {
     }
 
-    Module::~Module()
-    {
-        for(Global* global : _globals)
-            delete global;
-    }
-
     const std::string& Module::GetID() const
     {
         return _id;
@@ -27,7 +21,7 @@ namespace Codegen
         result += "\"\n\t.text";
         for(Global* global : _globals)
             result += global->Generate();
-        
+
         result += "\n\t.section\t.note.GNU-stack,\"\",@progbits\n";
 
         return result;
@@ -36,5 +30,10 @@ namespace Codegen
     std::vector<Global*>& Module::GetGlobals()
     {
         return _globals;
+    }
+
+    std::map<Function*, std::vector<Value*>>& Module::GetFunctionBodies()
+    {
+        return _functionBodies;
     }
 }

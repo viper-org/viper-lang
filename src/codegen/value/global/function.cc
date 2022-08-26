@@ -2,8 +2,8 @@
 
 namespace Codegen
 {
-    Function::Function(const std::string& name, const Module& module)
-        :Global(module), _name(name)
+    Function::Function(const std::string& name, Module& module)
+        :Global(module), _name(name), _body(module.GetFunctionBodies()[this])
     {
     }
 
@@ -15,10 +15,18 @@ namespace Codegen
 
         result += ":\n\tpushq %rbp";
         result += "\n\tmovq %rsp, %rbp";
-        // TODO: Emit body
+
+        for(Value* value : _body)
+        {
+            result += value->Generate();
+            delete value;
+        }
+
         result += "\n\tpopq %rbp";
         result += "\n\tret";
         result += "\n\t.size   " + _name + ", .-" + _name;
+
+        delete this;
 
         return result;
     }

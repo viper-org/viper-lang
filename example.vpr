@@ -1,4 +1,4 @@
 @Main() -> int32
 {
-    return 4;
+    return 44;
 }

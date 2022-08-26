@@ -2,7 +2,7 @@
 
 namespace Codegen
 {
-    Builder::Builder(const Module& module)
+    Builder::Builder(Module& module)
         :_module(module)
     {
     }
@@ -17,5 +17,14 @@ namespace Codegen
         IntegerLiteral* literal = new IntegerLiteral(value, _module);
 
         return literal;
+    }
+
+    Value* Builder::CreateRet(Value* value)
+    {
+        RetVal* ret = new RetVal(value, _module);
+
+        _module.GetFunctionBodies()[_insertFunction].push_back(ret);
+
+        return ret;
     }
 }
