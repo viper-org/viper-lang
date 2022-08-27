@@ -22,6 +22,7 @@ namespace Codegen
             delete basicBlock;
         }
 
+        result += "\n.return:";
         result += "\n\tpopq %rbp";
         result += "\n\tret";
         result += "\n\t.size   " + _name + ", .-" + _name;

@@ -13,6 +13,8 @@ namespace Codegen
         std::string result = _value->Generate();
         delete _value;
 
-        return result + "\n\tpopq %rax";
+        result += "\n\tpopq %rax";
+
+        return result + "\n\tjmp .return";
     }
 }

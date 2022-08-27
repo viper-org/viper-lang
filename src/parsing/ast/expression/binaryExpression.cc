@@ -50,32 +50,21 @@ void BinaryExpression::Print(std::ostream& stream, int indent) const
     _rhs->Print(stream, indent + 2);
 }
 
-Codegen::Value* BinaryExpression::Generate(Codegen::Module&, Codegen::Builder& builder)
+Codegen::Value* BinaryExpression::Generate(Codegen::Module& module, Codegen::Builder& builder)
 {
-    if(_lhs->GetNodeType() == ASTNodeType::Integer && _rhs->GetNodeType() == ASTNodeType::Integer)
+    Codegen::Value* left = _lhs->Generate(module, builder);
+    Codegen::Value* right = _rhs->Generate(module, builder);
+
+    switch(_operator)
     {
-        long long left  = static_cast<IntegerLiteral*>(_lhs.get())->GetValue();
-        long long right = static_cast<IntegerLiteral*>(_rhs.get())->GetValue();
-
-        long long total;
-
-        switch(_operator)
-        {
-            case BinaryOperator::Addition:
-                total = left + right;
-                break;
-            case BinaryOperator::Subtraction:
-                total = left - right;
-                break;
-            case BinaryOperator::Multiplication:
-                total = left * right;
-                break;
-            case BinaryOperator::Division:
-                total = left / right;
-                break;
-        }
-
-        return builder.CreateIntLiteral(total);
+        case BinaryOperator::Addition:
+            return builder.CreateAdd(left, right);
+        case BinaryOperator::Subtraction:
+            return builder.CreateSub(left, right);
+        case BinaryOperator::Multiplication:
+            return builder.CreateMul(left, right);
+        case BinaryOperator::Division:
+            throw; // TODO: Implement division
     }
-    throw; // TODO: Implement proper binary operators
+    return nullptr;
 }

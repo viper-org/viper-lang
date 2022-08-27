@@ -8,6 +8,7 @@
 #include <codegen/value/instruction/instruction.hh>
 #include <codegen/value/instruction/ret.hh>
 #include <codegen/value/basicBlock.hh>
+#include <codegen/value/instruction/binaryOperator.hh>
 
 namespace Codegen
 {
@@ -21,6 +22,14 @@ namespace Codegen
         Value* CreateIntLiteral(long long value);
 
         Value* CreateRet(Value* value);
+
+
+        Value* CreateAdd(Value* left, Value* right);
+        Value* CreateSub(Value* left, Value* right);
+        Value* CreateMul(Value* left, Value* right);
+
+    protected:
+        Value* CreateBinOp(Value* left, Instruction::Instructions op, Value* right);
     
     private:
         Module& _module;
