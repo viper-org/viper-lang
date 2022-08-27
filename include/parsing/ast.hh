@@ -6,5 +6,6 @@
 #include <parsing/ast/topLevel/function.hh>
 #include <parsing/ast/expression/integerLiteral.hh>
 #include <parsing/ast/statement/return.hh>
+#include <parsing/ast/expression/binaryExpression.hh>
 
 #endif

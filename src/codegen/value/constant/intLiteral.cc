@@ -9,6 +9,6 @@ namespace Codegen
 
     const std::string IntegerLiteral::Generate()
     {
-        return "$" + std::to_string(_value);
+        return "\n\tpush $" + std::to_string(_value);
     }
 }

@@ -5,7 +5,9 @@
 #include <codegen/value/global/global.hh>
 #include <codegen/value/global/function.hh>
 #include <codegen/value/constant/intLiteral.hh>
-#include <codegen/value/ret.hh>
+#include <codegen/value/instruction/instruction.hh>
+#include <codegen/value/instruction/ret.hh>
+#include <codegen/value/basicBlock.hh>
 
 namespace Codegen
 {
@@ -14,7 +16,7 @@ namespace Codegen
     public:
         Builder(Module& module);
 
-        void SetInsertFunction(Function* insertFunction);
+        void SetInsertPoint(BasicBlock* insertPoint);
 
         Value* CreateIntLiteral(long long value);
 
@@ -22,7 +24,7 @@ namespace Codegen
     
     private:
         Module& _module;
-        Function* _insertFunction;
+        BasicBlock* _insertPoint;
     };
 }
 

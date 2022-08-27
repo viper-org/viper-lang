@@ -3,6 +3,7 @@
 ReturnStatement::ReturnStatement(std::unique_ptr<ASTNode> value)
     :_value(std::move(value))
 {
+    _nodeType = ASTNodeType::ReturnStatement;
 }
 
 void ReturnStatement::Print(std::ostream& stream, int indent) const

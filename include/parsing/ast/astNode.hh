@@ -9,7 +9,9 @@ enum class ASTNodeType
 {
     Integer,
 
-    ReturnStatement
+    BinaryExpression,
+
+    ReturnStatement,
 };
 
 class ASTNode
@@ -22,7 +24,7 @@ public:
     ASTNodeType GetNodeType() const { return _nodeType; }
 
     virtual Codegen::Value* Generate(Codegen::Module& module, Codegen::Builder& builder) = 0;
-private:
+protected:
     ASTNodeType _nodeType;
 };
 

@@ -20,7 +20,8 @@ Codegen::Global* ASTFunction::Generate(Codegen::Module& module, Codegen::Builder
 {
     Codegen::Function* function = Codegen::Function::Create(_name, module);
 
-    builder.SetInsertFunction(function);
+    Codegen::BasicBlock* entryBlock = Codegen::BasicBlock::Create(module, _name, function);
+    builder.SetInsertPoint(entryBlock);
 
     for(std::unique_ptr<ASTNode>& node : _body)
     {

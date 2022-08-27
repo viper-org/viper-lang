@@ -3,7 +3,7 @@
 namespace Codegen
 {
     Function::Function(const std::string& name, Module& module)
-        :Global(module), _name(name), _body(module.GetFunctionBodies()[this])
+        :Global(module), _name(name)
     {
     }
 
@@ -16,10 +16,10 @@ namespace Codegen
         result += ":\n\tpushq %rbp";
         result += "\n\tmovq %rsp, %rbp";
 
-        for(Value* value : _body)
+        for(BasicBlock* basicBlock : _basicBlockList)
         {
-            result += value->Generate();
-            delete value;
+            result += basicBlock->Generate();
+            delete basicBlock;
         }
 
         result += "\n\tpopq %rbp";
@@ -38,5 +38,10 @@ namespace Codegen
         module.GetGlobals().push_back(static_cast<Global*>(function));
 
         return function;
+    }
+
+    std::vector<BasicBlock*>& Function::GetBasicBlockList()
+    {
+        return _basicBlockList;
     }
 }

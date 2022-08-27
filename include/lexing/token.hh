@@ -10,6 +10,8 @@ namespace Lexing
         LeftParen, RightParen,
         LeftBracket, RightBracket,
 
+        Plus, Minus, Star, Slash,
+
         Integer,
 
         Identifier,

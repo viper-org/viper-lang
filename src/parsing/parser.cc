@@ -23,6 +23,23 @@ namespace Parsing
         return _tokens[_position + offset];
     }
 
+    int Parser::GetBinOpPrecedence(Lexing::TokenType type)
+    {
+        switch(type)
+        {
+            case Lexing::TokenType::Star:
+            case Lexing::TokenType::Slash:
+                return 40;
+            
+            case Lexing::TokenType::Plus:
+            case Lexing::TokenType::Minus:
+                return 35;
+
+            default:
+                return 0;
+        }
+    }
+
     void Parser::ExpectToken(Lexing::TokenType tokenType)
     {
         if(Current().GetType() != tokenType)
@@ -101,9 +118,21 @@ namespace Parsing
         return std::make_unique<ASTFunction>(name, std::move(body));
     }
 
-    std::unique_ptr<ASTNode> Parser::ParseExpression()
+    std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)
     {
-        return ParsePrimary();
+        std::unique_ptr<ASTNode> lhs = ParsePrimary();
+        while(true)
+        {
+            int binOpPrecedence = GetBinOpPrecedence(Current().GetType());
+            if(binOpPrecedence < precedence)
+                break;
+
+            Lexing::Token operatorToken = Consume();
+
+            std::unique_ptr<ASTNode> rhs = ParseExpression(binOpPrecedence);
+            lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
+        }
+        return lhs;
     }
 
     std::unique_ptr<ASTNode> Parser::ParsePrimary()

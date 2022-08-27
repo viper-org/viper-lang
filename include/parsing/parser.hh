@@ -21,13 +21,15 @@ namespace Parsing
         Lexing::Token Consume();
         Lexing::Token Peek(const int offset) const;
 
+        int GetBinOpPrecedence(Lexing::TokenType type);
+
         void ExpectToken(Lexing::TokenType tokenType);
         [[noreturn]] void ParserError(std::string message);
 
         std::unique_ptr<ASTTopLevel> ParseTopLevel();
         std::unique_ptr<ASTTopLevel> ParseFunction();
 
-        std::unique_ptr<ASTNode> ParseExpression();
+        std::unique_ptr<ASTNode> ParseExpression(int precedence = 1);
         std::unique_ptr<ASTNode> ParsePrimary();
 
         std::unique_ptr<ASTNode> ParseIntegerLiteral();

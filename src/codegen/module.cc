@@ -22,7 +22,7 @@ namespace Codegen
         for(Global* global : _globals)
             result += global->Generate();
 
-        result += "\n\t.section\t.note.GNU-stack,\"\",@progbits\n";
+        result += "\n\t.section\t.note.GNU-stack,\"\",@progbits";
 
         return result;
     }

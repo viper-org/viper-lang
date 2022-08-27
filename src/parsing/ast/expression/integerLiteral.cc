@@ -3,6 +3,7 @@
 IntegerLiteral::IntegerLiteral(long long value)
     :_value(value)
 {
+    _nodeType = ASTNodeType::Integer;
 }
 
 void IntegerLiteral::Print(std::ostream& stream, int indent) const
@@ -13,4 +14,9 @@ void IntegerLiteral::Print(std::ostream& stream, int indent) const
 Codegen::Value* IntegerLiteral::Generate(Codegen::Module&, Codegen::Builder& builder)
 {
     return builder.CreateIntLiteral(_value);
+}
+
+long long IntegerLiteral::GetValue() const
+{
+    return _value;
 }

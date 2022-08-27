@@ -102,13 +102,8 @@ namespace Lexing
             case '}':
                 return Token(Lexing::TokenType::RightBracket, "}", _position, _position + 1, _lineNumber, _colNumber);
 
-            case ';':
-                return Token(Lexing::TokenType::Semicolon, ";", _position, _position + 1, _lineNumber, _colNumber);
-
-
-            case '@':
-                return Token(Lexing::TokenType::Asperand, "@", _position, _position + 1, _lineNumber, _colNumber);
-
+            case '+':
+                return Token(Lexing::TokenType::Plus, "+", _position, _position + 1, _lineNumber, _colNumber);
             case '-':
             {
                 if(peek(1) == '>')
@@ -116,7 +111,20 @@ namespace Lexing
                     consume();
                     return Token(Lexing::TokenType::RightArrow, "->", _position - 1, _position + 1, _lineNumber, _colNumber);
                 }
+                return Token(Lexing::TokenType::Minus, "-", _position, _position + 1, _lineNumber, _colNumber);
             }
+            case '*':
+                return Token(Lexing::TokenType::Star, "*", _position, _position + 1, _lineNumber, _colNumber);
+            case '/':
+                return Token(Lexing::TokenType::Slash, "/", _position, _position + 1, _lineNumber, _colNumber);
+
+
+            case ';':
+                return Token(Lexing::TokenType::Semicolon, ";", _position, _position + 1, _lineNumber, _colNumber);
+
+
+            case '@':
+                return Token(Lexing::TokenType::Asperand, "@", _position, _position + 1, _lineNumber, _colNumber);
             
 
             default:

@@ -7,15 +7,14 @@ namespace Codegen
     {
     }
 
-    void Builder::SetInsertFunction(Function* insertFunction)
+    void Builder::SetInsertPoint(BasicBlock* insertPoint)
     {
-        _insertFunction = insertFunction;
+        _insertPoint = insertPoint;
     }
 
     Value* Builder::CreateIntLiteral(long long value)
     {
         IntegerLiteral* literal = new IntegerLiteral(value, _module);
-
         return literal;
     }
 
@@ -23,7 +22,7 @@ namespace Codegen
     {
         RetVal* ret = new RetVal(value, _module);
 
-        _module.GetFunctionBodies()[_insertFunction].push_back(ret);
+        _insertPoint->GetInstrList().push_back(ret);
 
         return ret;
     }

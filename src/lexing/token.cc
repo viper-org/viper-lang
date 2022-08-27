@@ -21,6 +21,14 @@ namespace Lexing
                 return "LeftBracket";
             case Lexing::TokenType::RightBracket:
                 return "RightBracket";
+            case Lexing::TokenType::Plus:
+                return "Plus";
+            case Lexing::TokenType::Minus:
+                return "Minus";
+            case Lexing::TokenType::Star:
+                return "Star";
+            case Lexing::TokenType::Slash:
+                return "Slash";
             case Lexing::TokenType::Integer:
                 return "Integer";
             case Lexing::TokenType::Identifier:
