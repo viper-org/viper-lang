@@ -3,18 +3,26 @@
 
 namespace Codegen
 {
-    RetVal::RetVal(Value* value, const Module& module)
+    RetInst::RetInst(Value* value, const Module& module)
         :Instruction(module), _value(value)
     {
     }
 
-    const std::string RetVal::Generate()
+    const std::pair<std::string, Register*> RetInst::Generate(Register*)
     {
-        std::string result = _value->Generate();
+        std::pair<std::string, Register*> valueCodegen = _value->Generate();
+        std::string result = valueCodegen.first;
         delete _value;
 
-        result += "\n\tpopq %rax";
+        if(valueCodegen.second->GetID() == "%rax")
+        {
+            Register::FreeRegister(valueCodegen.second);
+            return std::make_pair(result, nullptr);
+        }
 
-        return result + "\n\tjmp .return";
+        result += "\n\tmovq " + valueCodegen.second->GetID() + ", %rax";
+        Register::FreeRegister(valueCodegen.second);
+
+        return std::make_pair(result, nullptr);
     }
 }

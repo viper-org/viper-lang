@@ -9,15 +9,15 @@
 class ASTFunction : public ASTTopLevel
 {
 public:
-    ASTFunction(std::string name, std::vector<std::unique_ptr<ASTNode>> body);
+    ASTFunction(std::string name, std::vector<std::string> args, std::vector<std::unique_ptr<ASTNode>> body);
 
     void Print(std::ostream& stream) const override;
 
     Codegen::Global* Generate(Codegen::Module& module, Codegen::Builder& builder) override;
 private:
     std::string _name;
+    std::vector<std::string> _args;
     std::vector<std::unique_ptr<ASTNode>> _body;
-    // TODO: Add args
 };
 
 #endif

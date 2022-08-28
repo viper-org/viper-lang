@@ -43,6 +43,12 @@ namespace Lexing
                 return "RightArrow";
             case Lexing::TokenType::Semicolon:
                 return "Semicolon";
+            case Lexing::TokenType::Equals:
+                return "Equals";
+            case Lexing::TokenType::Comma:
+                return "Comma";
+            case Lexing::TokenType::Extern:
+                return "Extern";
         }
         return "";
     }

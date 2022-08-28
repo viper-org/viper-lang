@@ -19,10 +19,9 @@ namespace Codegen
         const std::string Generate();
 
         std::vector<Global*>& GetGlobals();
-        std::map<Function*, std::vector<Value*>>& GetFunctionBodies();
+        Function* GetFunction(const std::string& name) const;
     private:
         std::vector<Global*> _globals;
-        std::map<Function*, std::vector<Value*>> _functionBodies;
         std::string _id;
     };
 }

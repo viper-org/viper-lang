@@ -11,15 +11,15 @@ namespace Codegen
         return block;
     }
 
-    const std::string BasicBlock::Generate()
+    const std::pair<std::string, Register*> BasicBlock::Generate(Register*)
     {
         std::string result;
         for(Instruction* instr : _instructions)
         {
-            result += instr->Generate();
+            result += instr->Generate().first;
             delete instr;
         }
-        return result;
+        return std::make_pair(result, nullptr);
     }
 
     BasicBlock::BasicBlock(Module& module, const std::string& name, Function* parent)

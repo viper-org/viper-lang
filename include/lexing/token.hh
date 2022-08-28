@@ -12,6 +12,8 @@ namespace Lexing
 
         Plus, Minus, Star, Slash,
 
+        Equals,
+
         Integer,
 
         Identifier,
@@ -19,10 +21,11 @@ namespace Lexing
         Return,
 
         Type,
+        Extern,
 
         Asperand, RightArrow,
 
-        Semicolon,
+        Semicolon, Comma,
     };
     class Token
     {

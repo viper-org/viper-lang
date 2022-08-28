@@ -1,5 +1,6 @@
 #include <parsing/ast/expression/binaryExpression.hh>
-#include <parsing/ast/expression/integerLiteral.hh>
+#include <parsing/ast/expression/variable.hh>
+#include <globals.hh>
 
 BinaryExpression::BinaryExpression(std::unique_ptr<ASTNode> lhs, Lexing::Token token, std::unique_ptr<ASTNode> rhs)
     :_lhs(std::move(lhs)), _rhs(std::move(rhs))
@@ -19,6 +20,9 @@ BinaryExpression::BinaryExpression(std::unique_ptr<ASTNode> lhs, Lexing::Token t
         case Lexing::TokenType::Slash:
             _operator = BinaryOperator::Division;
             break;
+        case Lexing::TokenType::Equals:
+            _operator = BinaryOperator::Assignment;
+            break;
         default:
             break;
     }
@@ -36,6 +40,8 @@ std::string BinaryExpression::OperatorToString() const
             return "Multiplication";
         case BinaryOperator::Division:
             return "Division";
+        case BinaryOperator::Assignment:
+            return "Assignment";
     }
     return "";
 }
@@ -52,8 +58,17 @@ void BinaryExpression::Print(std::ostream& stream, int indent) const
 
 Codegen::Value* BinaryExpression::Generate(Codegen::Module& module, Codegen::Builder& builder)
 {
-    Codegen::Value* left = _lhs->Generate(module, builder);
     Codegen::Value* right = _rhs->Generate(module, builder);
+    if(_operator == BinaryOperator::Assignment)
+    {
+        Variable* left = static_cast<Variable*>(_lhs.get());
+
+        Codegen::AllocaInst* alloca = namedValues.at(left->GetName());
+
+        return builder.CreateStore(right, alloca);
+    }
+
+    Codegen::Value* left = _lhs->Generate(module, builder);
 
     switch(_operator)
     {
@@ -63,7 +78,7 @@ Codegen::Value* BinaryExpression::Generate(Codegen::Module& module, Codegen::Bui
             return builder.CreateSub(left, right);
         case BinaryOperator::Multiplication:
             return builder.CreateMul(left, right);
-        case BinaryOperator::Division:
+        default:
             throw; // TODO: Implement division
     }
     return nullptr;

@@ -9,6 +9,10 @@
 #include <codegen/value/instruction/ret.hh>
 #include <codegen/value/basicBlock.hh>
 #include <codegen/value/instruction/binaryOperator.hh>
+#include <codegen/value/instruction/alloca.hh>
+#include <codegen/value/instruction/store.hh>
+#include <codegen/value/instruction/load.hh>
+#include <codegen/value/instruction/call.hh>
 
 namespace Codegen
 {
@@ -28,12 +32,19 @@ namespace Codegen
         Value* CreateSub(Value* left, Value* right);
         Value* CreateMul(Value* left, Value* right);
 
+        CallInst* CreateCall(Function* callee, std::vector<Value*> args);
+
+        AllocaInst* CreateAlloca();
+        StoreInst* CreateStore(Value* value, Value* ptr);
+        LoadInst* CreateLoad(Value* ptr);
+
     protected:
         Value* CreateBinOp(Value* left, Instruction::Instructions op, Value* right);
     
     private:
         Module& _module;
         BasicBlock* _insertPoint;
+        int _allocaOffset;
     };
 }
 

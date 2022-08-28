@@ -1,4 +1,6 @@
-@main() -> int32
+extern @putchar(int64 c) -> int64;
+
+@main() -> int64
 {
-    return 1 + 2 * 3;
+    return putchar(65);
 }

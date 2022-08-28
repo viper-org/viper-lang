@@ -1,8 +1,10 @@
+#include <iostream>
 #include <parsing/ast/topLevel/function.hh>
 #include <codegen/value/global/function.hh>
+#include <globals.hh>
 
-ASTFunction::ASTFunction(std::string name, std::vector<std::unique_ptr<ASTNode>> body)
-    :_name(name), _body(std::move(body))
+ASTFunction::ASTFunction(std::string name, std::vector<std::string> args, std::vector<std::unique_ptr<ASTNode>> body)
+    :_name(name), _args(args), _body(std::move(body))
 {
 }
 
@@ -18,17 +20,30 @@ void ASTFunction::Print(std::ostream& stream) const
 
 Codegen::Global* ASTFunction::Generate(Codegen::Module& module, Codegen::Builder& builder)
 {
-    Codegen::Function* function = Codegen::Function::Create(_name, module);
-
-    Codegen::BasicBlock* entryBlock = Codegen::BasicBlock::Create(module, _name, function);
-    builder.SetInsertPoint(entryBlock);
-
-    for(std::unique_ptr<ASTNode>& node : _body)
+    Codegen::Function* function;
+    if(_body.size())
     {
-        node->Generate(module, builder);
-        if(node->GetNodeType() == ASTNodeType::ReturnStatement)
-            break;
+        function = Codegen::Function::Create(_name, false, module);
+
+        Codegen::BasicBlock* entryBlock = Codegen::BasicBlock::Create(module, _name, function);
+        builder.SetInsertPoint(entryBlock);
+
+        for(std::string arg : _args)
+        {
+            Codegen::AllocaInst* alloca = builder.CreateAlloca();
+            function->GetArgList().push_back(alloca);
+            namedValues[arg] = alloca;
+        }
+
+        for(std::unique_ptr<ASTNode>& node : _body)
+        {
+            node->Generate(module, builder);
+            if(node->GetNodeType() == ASTNodeType::ReturnStatement)
+                break;
+        }
     }
+    else
+        function = Codegen::Function::Create(_name, true, module);
 
     return function;
 }

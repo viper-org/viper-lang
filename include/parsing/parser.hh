@@ -28,6 +28,7 @@ namespace Parsing
 
         std::unique_ptr<ASTTopLevel> ParseTopLevel();
         std::unique_ptr<ASTTopLevel> ParseFunction();
+        std::unique_ptr<ASTTopLevel> ParseExtern();
 
         std::unique_ptr<ASTNode> ParseExpression(int precedence = 1);
         std::unique_ptr<ASTNode> ParsePrimary();
@@ -35,6 +36,11 @@ namespace Parsing
         std::unique_ptr<ASTNode> ParseIntegerLiteral();
         
         std::unique_ptr<ASTNode> ParseReturnStatement();
+
+        std::unique_ptr<ASTNode> ParseCall();
+        
+        std::unique_ptr<ASTNode> ParseVariableDeclaration();
+        std::unique_ptr<ASTNode> ParseVariable();
     };
 }
 

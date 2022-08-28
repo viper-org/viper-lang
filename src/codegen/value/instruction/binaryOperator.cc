@@ -14,21 +14,22 @@ namespace Codegen
     {
     }
 
-    const std::string BinaryOperator::Generate()
+    const std::pair<std::string, Register*> BinaryOperator::Generate(Register* reg)
     {
-        std::string result = _lhs->Generate();
-        result += _rhs->Generate();
-        result += "\n\tpopq %rax\n\tpopq %rdx";
+        std::pair<std::string, Register*> left  = _lhs->Generate();
+        std::pair<std::string, Register*> right = _rhs->Generate();
+        std::string result = left.first + right.first;
+
         switch(_operator)
         {
             case Instruction::Add:
-                result += "\n\taddl %edx, %eax";
+                result += "\n\taddq ";
                 break;
             case Instruction::Sub:
-                result += "\n\tsubl %edx, %eax";
+                result += "\n\tsubq ";
                 break;
             case Instruction::Mul:
-                result += "\n\timull %edx, %eax";
+                result += "\n\timulq ";
                 break;
             case Instruction::Div:
                 throw; // TODO: Implement division
@@ -38,6 +39,28 @@ namespace Codegen
         delete _lhs;
         delete _rhs;
 
-        return result + "\n\tpushq %rax";
+        if(!reg)
+        {
+            if(left.second->GetID() == "%rax")
+            {
+                result += right.second->GetID() + ", " + left.second->GetID();
+                Register::FreeRegister(right.second);
+                reg = left.second;
+            }
+            else
+            {
+                result += left.second->GetID() + ", " + right.second->GetID();
+                Register::FreeRegister(left.second);
+                reg = right.second;
+            }
+        }
+        else
+        {
+            result += right.second->GetID() + ", " + left.second->GetID();
+            Register::FreeRegister(left.second);
+            Register::FreeRegister(right.second);
+        }
+
+        return std::make_pair(result, reg);
     }
 }

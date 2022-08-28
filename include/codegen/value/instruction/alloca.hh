@@ -1,18 +1,18 @@
-#ifndef VIPER_CODEGEN_RET_HH
-#define VIPER_CODEGEN_RET_HH
+#ifndef VIPER_CODEGEN_ALLOCA_HH
+#define VIPER_CODEGEN_ALLOCA_HH
 #include <codegen/value/instruction/instruction.hh>
 
 namespace Codegen
 {
-    class RetInst : public Instruction
+    class AllocaInst : public Instruction
     {
     friend class Builder;
     public:
         const std::pair<std::string, Register*> Generate(Register* reg = nullptr) override;
     protected:
-        RetInst(Value* value, const Module& module);
+        AllocaInst(int offset, const Module& module);
     private:
-        Value* _value;
+        int _offset;
     };
 }
 

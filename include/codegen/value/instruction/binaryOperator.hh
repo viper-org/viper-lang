@@ -8,7 +8,7 @@ namespace Codegen
     {
     public:
         static BinaryOperator* Create(Value* lhs, Instruction::Instructions op, Value* rhs, const Module& module);
-        const std::string Generate() override;
+        const std::pair<std::string, Register*> Generate(Register* reg = nullptr) override;
     protected:
         BinaryOperator(Value* lhs, Instruction::Instructions op, Value* rhs, const Module& module);
     private:

@@ -8,7 +8,7 @@ namespace Codegen
     {
     public:
         IntegerLiteral(const long long value, const Module& module);
-        const std::string Generate() override;
+        const std::pair<std::string, Register*> Generate(Register* reg = nullptr) override;
     private:
         long long _value;
     };

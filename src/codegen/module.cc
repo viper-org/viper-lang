@@ -2,6 +2,7 @@
 #include <codegen/value/value.hh>
 #include <codegen/value/global/global.hh>
 #include <codegen/value/global/function.hh>
+#include <algorithm>
 
 namespace Codegen
 {
@@ -20,9 +21,14 @@ namespace Codegen
         std::string result = "\t.file   \"" + _id;
         result += "\"\n\t.text";
         for(Global* global : _globals)
-            result += global->Generate();
+            result += global->Generate().first;
 
         result += "\n\t.section\t.note.GNU-stack,\"\",@progbits";
+
+        for(Global* global : _globals)
+            delete global;
+        
+        Register::DestroyRegisters();
 
         return result;
     }
@@ -32,8 +38,15 @@ namespace Codegen
         return _globals;
     }
 
-    std::map<Function*, std::vector<Value*>>& Module::GetFunctionBodies()
+    Function* Module::GetFunction(const std::string& name) const
     {
-        return _functionBodies;
+        for(Global* global : _globals)
+        {
+            Function* func = dynamic_cast<Function*>(global);
+            if(func)
+                if(func->GetName() == name)
+                    return func;
+        }
+        return nullptr;
     }
 }

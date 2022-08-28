@@ -1,17 +1,19 @@
-#ifndef VIPER_AST_INTEGER_HH
-#define VIPER_AST_INTEGER_HH
+#ifndef VIPER_AST_VARIABLE_HH
+#define VIPER_AST_VARIABLE_HH
 #include <parsing/ast/astNode.hh>
 
-class IntegerLiteral : public ASTNode
+class Variable : public ASTNode
 {
 public:
-    IntegerLiteral(long long value);
+    Variable(const std::string& name);
 
     void Print(std::ostream& stream, int indent) const override;
 
     Codegen::Value* Generate(Codegen::Module& module, Codegen::Builder& builder) override;
+
+    std::string GetName() const;
 private:
-    long long _value;
+    std::string _name;
 };
 
 #endif

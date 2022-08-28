@@ -7,7 +7,9 @@
 enum class BinaryOperator
 {
     Addition, Subtraction,
-    Multiplication, Division
+    Multiplication, Division,
+
+    Assignment
 };
 
 class BinaryExpression : public ASTNode

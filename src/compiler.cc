@@ -1,9 +1,13 @@
+#include "codegen/value/instruction/alloca.hh"
 #include <compiler.hh>
 #include <diagnostics.hh>
 #include <lexing/lexer.hh>
 #include <parsing/parser.hh>
+#include <globals.hh>
 #include <sstream>
 #include <iostream>
+
+std::map<std::string, Codegen::AllocaInst*> namedValues;
 
 Compiler::Compiler(OutputType outputType, const std::string& inputFileName)
     :_outputType(outputType), _module(inputFileName), _builder(_module)
@@ -29,4 +33,6 @@ void Compiler::Compile()
         node->Generate(_module, _builder);
     
     std::cout << _module.Generate() << std::endl;
+    for(std::pair<std::string, Codegen::AllocaInst*> alloca : namedValues)
+        delete alloca.second;
 }

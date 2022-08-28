@@ -7,7 +7,8 @@ namespace Lexing
 {
     std::unordered_map<std::string_view, TokenType> keywords = {
         { "return", TokenType::Return },
-        { "int32", TokenType::Type }, // TODO: Add proper type support
+        { "extern", TokenType::Extern },
+        { "int64", TokenType::Type }, // TODO: Add proper type support
     };
 
     Lexer::Lexer(const std::string& text)
@@ -118,9 +119,14 @@ namespace Lexing
             case '/':
                 return Token(Lexing::TokenType::Slash, "/", _position, _position + 1, _lineNumber, _colNumber);
 
+            case '=':
+                return Token(Lexing::TokenType::Equals, "=", _position, _position + 1, _lineNumber, _colNumber);
+
 
             case ';':
                 return Token(Lexing::TokenType::Semicolon, ";", _position, _position + 1, _lineNumber, _colNumber);
+            case ',':
+                return Token(Lexing::TokenType::Comma, ",", _position, _position + 1, _lineNumber, _colNumber);
 
 
             case '@':

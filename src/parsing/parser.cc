@@ -35,6 +35,9 @@ namespace Parsing
             case Lexing::TokenType::Minus:
                 return 35;
 
+            case Lexing::TokenType::Equals:
+                return 10;
+
             default:
                 return 0;
         }
@@ -79,6 +82,8 @@ namespace Parsing
         {
             case Lexing::TokenType::Asperand:
                 return ParseFunction();
+            case Lexing::TokenType::Extern:
+                return ParseExtern();
             default:
                 ParserError("Expected top-level expression, found '" + Current().GetText() + "'");
         }
@@ -93,8 +98,19 @@ namespace Parsing
 
         ExpectToken(Lexing::TokenType::LeftParen);
         Consume();
-        // TODO: Parse args
-        ExpectToken(Lexing::TokenType::RightParen);
+        std::vector<std::string> args;
+        while(Current().GetType() != Lexing::TokenType::RightParen)
+        {
+            ExpectToken(Lexing::TokenType::Type);
+            Consume();
+
+            args.push_back(Consume().GetText());
+            if(Current().GetType() == Lexing::TokenType::RightParen)
+                break;
+
+            ExpectToken(Lexing::TokenType::Comma);
+            Consume();
+        }
         Consume();
 
         ExpectToken(Lexing::TokenType::RightArrow);
@@ -115,7 +131,45 @@ namespace Parsing
         }
         Consume();
 
-        return std::make_unique<ASTFunction>(name, std::move(body));
+        return std::make_unique<ASTFunction>(name, args, std::move(body));
+    }
+
+    std::unique_ptr<ASTTopLevel> Parser::ParseExtern()
+    {
+        Consume();
+        ExpectToken(Lexing::TokenType::Asperand);
+        Consume();
+        
+        ExpectToken(Lexing::TokenType::Identifier);
+        std::string name = Consume().GetText();
+
+        ExpectToken(Lexing::TokenType::LeftParen);
+        Consume();
+        std::vector<std::string> args;
+        while(Current().GetType() != Lexing::TokenType::RightParen)
+        {
+            ExpectToken(Lexing::TokenType::Type);
+            Consume();
+
+            args.push_back(Consume().GetText());
+            if(Current().GetType() == Lexing::TokenType::RightParen)
+                break;
+
+            ExpectToken(Lexing::TokenType::Comma);
+            Consume();
+        }
+        Consume();
+
+        ExpectToken(Lexing::TokenType::RightArrow);
+        Consume();
+
+        ExpectToken(Lexing::TokenType::Type);
+        Consume(); // TODO: Parse type
+
+        ExpectToken(Lexing::TokenType::Semicolon);
+        Consume();
+
+        return std::make_unique<ASTFunction>(name, args, std::vector<std::unique_ptr<ASTNode>>());
     }
 
     std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)
@@ -143,6 +197,14 @@ namespace Parsing
                 return ParseIntegerLiteral();
             case Lexing::TokenType::Return:
                 return ParseReturnStatement();
+            case Lexing::TokenType::Type:
+                return ParseVariableDeclaration();
+            case Lexing::TokenType::Identifier:
+            {
+                if(Peek(1).GetType() == Lexing::TokenType::LeftParen)
+                    return ParseCall();
+                return ParseVariable();
+            }
             default:
                 ParserError("Expected primary expression, found '" + Current().GetText() + "'");
         }
@@ -163,5 +225,43 @@ namespace Parsing
             return std::make_unique<ReturnStatement>(nullptr);
 
         return std::make_unique<ReturnStatement>(ParseExpression());
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseVariableDeclaration()
+    {
+        Consume();
+        std::string name = Consume().GetText();
+
+        if(Current().GetType() != Lexing::TokenType::Equals)
+            return std::make_unique<VariableDeclaration>(name, nullptr);
+
+        Consume();
+
+        return std::make_unique<VariableDeclaration>(name, ParseExpression());
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseVariable()
+    {
+        return std::make_unique<Variable>(Consume().GetText());
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseCall()
+    {
+        std::string callee = Consume().GetText();
+
+        Consume();
+        std::vector<std::unique_ptr<ASTNode>> args;
+        while(Current().GetType() != Lexing::TokenType::RightParen)
+        {
+            args.push_back(ParseExpression());
+            if(Current().GetType() == Lexing::TokenType::RightParen)
+                break;
+
+            ExpectToken(Lexing::TokenType::Comma);
+            Consume();
+        }
+        Consume();
+
+        return std::make_unique<CallExpr>(callee, std::move(args));
     }
 }

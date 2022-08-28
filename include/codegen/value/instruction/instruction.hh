@@ -6,6 +6,7 @@ namespace Codegen
 {
     class Instruction : public Value
     {
+    friend class Builder;
     public:
         enum Instructions
         {

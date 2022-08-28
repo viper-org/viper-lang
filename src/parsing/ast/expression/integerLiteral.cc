@@ -15,8 +15,3 @@ Codegen::Value* IntegerLiteral::Generate(Codegen::Module&, Codegen::Builder& bui
 {
     return builder.CreateIntLiteral(_value);
 }
-
-long long IntegerLiteral::GetValue() const
-{
-    return _value;
-}

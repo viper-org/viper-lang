@@ -7,8 +7,11 @@ namespace Codegen
     {
     }
 
-    const std::string IntegerLiteral::Generate()
+    const std::pair<std::string, Register*> IntegerLiteral::Generate(Register* reg)
     {
-        return "\n\tpush $" + std::to_string(_value);
+        if(!reg)
+            reg = Register::GetRegister();
+        std::string result = "\n\tmovq $" + std::to_string(_value) + ", " + reg->GetID();
+        return std::make_pair(result, reg);
     }
 }

@@ -3,7 +3,7 @@
 namespace Codegen
 {
     Builder::Builder(Module& module)
-        :_module(module)
+        :_module(module), _allocaOffset(-8)
     {
     }
 
@@ -21,7 +21,7 @@ namespace Codegen
 
     Value* Builder::CreateRet(Value* value)
     {
-        RetVal* ret = new RetVal(value, _module);
+        RetInst* ret = new RetInst(value, _module);
 
         _insertPoint->GetInstrList().push_back(ret);
 
@@ -47,5 +47,39 @@ namespace Codegen
     Value* Builder::CreateMul(Value *left, Value *right)
     {
         return CreateBinOp(left, Instruction::Mul, right);
+    }
+
+
+    CallInst* Builder::CreateCall(Function* callee, std::vector<Value*> args)
+    {
+        CallInst* call = new CallInst(callee, args, _module);
+
+        return call;
+    }
+
+
+    AllocaInst* Builder::CreateAlloca()
+    {
+        AllocaInst* alloca = new AllocaInst(_allocaOffset, _module);
+
+        _allocaOffset -= 8;
+
+        return alloca;
+    }
+
+    StoreInst* Builder::CreateStore(Value* value, Value* ptr)
+    {
+        StoreInst* store = new StoreInst(value, ptr, _module);
+
+        _insertPoint->GetInstrList().push_back(store);
+
+        return store;
+    }
+
+    LoadInst* Builder::CreateLoad(Value* ptr)
+    {
+        LoadInst* load = new LoadInst(ptr, _module);
+
+        return load;
     }
 }

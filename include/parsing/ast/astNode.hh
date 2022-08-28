@@ -9,6 +9,9 @@ enum class ASTNodeType
 {
     Integer,
 
+    Variable,
+    VariableDeclaration,
+
     BinaryExpression,
 
     ReturnStatement,
