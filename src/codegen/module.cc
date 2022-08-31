@@ -2,15 +2,11 @@
 #include <codegen/value/value.hh>
 #include <codegen/value/global/global.hh>
 #include <codegen/value/global/function.hh>
+#include <codegen/value/instruction/alloca.hh>
 #include <algorithm>
 
 namespace Codegen
 {
-    Module::Module(const std::string& id)
-        :_id(id)
-    {
-    }
-
     const std::string& Module::GetID() const
     {
         return _id;

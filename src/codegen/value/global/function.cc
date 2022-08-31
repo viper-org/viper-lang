@@ -1,10 +1,17 @@
 #include <codegen/value/global/function.hh>
 #include <codegen/value/instruction/alloca.hh>
+#include <algorithm>
 
 namespace Codegen
 {
+    std::vector<AllocaInst*> allocas;
+    Module::Module(const std::string& id)
+        :_id(id)
+    {
+    }
+
     Function::Function(const std::string& name, bool isDecl, Module& module)
-        :Global(module), _name(name), _isDecl(isDecl)
+        :Global(module), _name(name), _isDecl(isDecl), _returnType(types.at("int8"))
     {
     }
 
@@ -12,6 +19,7 @@ namespace Codegen
     {
         if(!_isDecl)
         {
+            SortAllocas();
             const std::string argRegs[] = { "di", "si", "dx", "cx", "8", "9" };
             std::string result = "\n\t.globl  " + _name;
             result += "\n\t.type   " + _name + ", @function\n";
@@ -63,8 +71,32 @@ namespace Codegen
         return _name;
     }
 
+    Type* Function::GetReturnType() const
+    {
+        return _returnType;
+    }
+
     bool Function::IsDecl() const
     {
         return _isDecl;
+    }
+    
+
+    void Function::AddAlloca(AllocaInst* alloca)
+    {
+        allocas.push_back(alloca);
+    }
+
+    void Function::SortAllocas()
+    {
+        std::sort(allocas.begin(), allocas.end(), [](AllocaInst* lhs, AllocaInst* rhs) {
+            return lhs->GetType()->GetSize() > rhs->GetType()->GetSize();
+        });
+        int offset = 0;
+        for(AllocaInst* alloca : allocas)
+        {
+            offset -= alloca->GetType()->GetSize() / 8;
+            alloca->_offset = offset;
+        }
     }
 }

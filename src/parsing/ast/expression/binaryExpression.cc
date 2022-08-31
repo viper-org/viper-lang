@@ -1,3 +1,4 @@
+#include <iostream>
 #include <parsing/ast/expression/binaryExpression.hh>
 #include <parsing/ast/expression/variable.hh>
 #include <globals.hh>
@@ -6,6 +7,7 @@ BinaryExpression::BinaryExpression(std::unique_ptr<ASTNode> lhs, Lexing::Token t
     :_lhs(std::move(lhs)), _rhs(std::move(rhs))
 {
     _nodeType = ASTNodeType::BinaryExpression;
+    _type = _lhs->GetType();
     switch(token.GetType())
     {
         case Lexing::TokenType::Plus:
@@ -56,19 +58,23 @@ void BinaryExpression::Print(std::ostream& stream, int indent) const
     _rhs->Print(stream, indent + 2);
 }
 
-Codegen::Value* BinaryExpression::Generate(Codegen::Module& module, Codegen::Builder& builder)
+Codegen::Value* BinaryExpression::Generate(Codegen::Module& module, Codegen::Builder& builder, bool isStatement)
 {
     Codegen::Value* right = _rhs->Generate(module, builder);
+    if(right->GetType() != _type)
+        right = Type::Convert(right, _type, builder);
     if(_operator == BinaryOperator::Assignment)
     {
         Variable* left = static_cast<Variable*>(_lhs.get());
 
         Codegen::AllocaInst* alloca = namedValues.at(left->GetName());
 
-        return builder.CreateStore(right, alloca);
+        return builder.CreateStore(right, alloca, isStatement);
     }
 
     Codegen::Value* left = _lhs->Generate(module, builder);
+    if(left->GetType() != _type)
+        left = Type::Convert(left, _type, builder);
 
     switch(_operator)
     {

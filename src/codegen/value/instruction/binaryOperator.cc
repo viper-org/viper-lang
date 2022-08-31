@@ -1,4 +1,5 @@
 #include <codegen/value/instruction/binaryOperator.hh>
+#include <iostream>
 
 namespace Codegen
 {
@@ -23,43 +24,44 @@ namespace Codegen
         switch(_operator)
         {
             case Instruction::Add:
-                result += "\n\taddq ";
+                result += "\n\tadd";
                 break;
             case Instruction::Sub:
-                result += "\n\tsubq ";
+                result += "\n\tsub";
                 break;
             case Instruction::Mul:
-                result += "\n\timulq ";
+                result += "\n\timul";
                 break;
             case Instruction::Div:
                 throw; // TODO: Implement division
                 break;
         }
-
-        delete _lhs;
-        delete _rhs;
+        result += _type->GetSuffix() + ' ';
 
         if(!reg)
         {
-            if(left.second->GetID() == "%rax")
+            if(left.second->GetID(64) == "%rax")
             {
-                result += right.second->GetID() + ", " + left.second->GetID();
+                result += right.second->GetID(_type->GetSize()) + ", " + left.second->GetID(_type->GetSize());
                 Register::FreeRegister(right.second);
                 reg = left.second;
             }
             else
             {
-                result += left.second->GetID() + ", " + right.second->GetID();
+                result += left.second->GetID(_type->GetSize()) + ", " + right.second->GetID(_type->GetSize());
                 Register::FreeRegister(left.second);
                 reg = right.second;
             }
         }
         else
         {
-            result += right.second->GetID() + ", " + left.second->GetID();
+            result += right.second->GetID(_lhs->GetType()->GetSize()) + ", " + left.second->GetID(_lhs->GetType()->GetSize());
             Register::FreeRegister(left.second);
             Register::FreeRegister(right.second);
         }
+
+        delete _lhs;
+        delete _rhs;
 
         return std::make_pair(result, reg);
     }

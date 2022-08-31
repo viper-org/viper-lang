@@ -2,9 +2,10 @@
 
 namespace Codegen
 {
-    AllocaInst::AllocaInst(int offset, const Module& module)
+    AllocaInst::AllocaInst(Type* type, int offset, const Module& module)
         :Instruction(module), _offset(offset)
     {
+        SetType(type);
     }
 
     const std::pair<std::string, Register*> AllocaInst::Generate(Register*)

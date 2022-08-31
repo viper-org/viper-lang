@@ -19,16 +19,19 @@ enum class ASTNodeType
 
 class ASTNode
 {
+friend class ASTFunction;
 public:
     virtual ~ASTNode() {  }
 
     virtual void Print(std::ostream& stream, int indent) const = 0;
 
     ASTNodeType GetNodeType() const { return _nodeType; }
+    Type* GetType() const { return _type; }
 
-    virtual Codegen::Value* Generate(Codegen::Module& module, Codegen::Builder& builder) = 0;
+    virtual Codegen::Value* Generate(Codegen::Module& module, Codegen::Builder& builder, bool isStatement = false) = 0;
 protected:
     ASTNodeType _nodeType;
+    Type* _type;
 };
 
 #endif

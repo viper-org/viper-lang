@@ -9,11 +9,13 @@ namespace Codegen
 
     const std::pair<std::string, Register*> StoreInst::Generate(Register*)
     {
+        _value->SetType(_ptr->GetType());
         std::pair<std::string, Register*> valueCodegen = _value->Generate();
         std::string result = valueCodegen.first;
-        delete _value;
 
-        result += "\n\tmovq " + valueCodegen.second->GetID() + ", " + _ptr->Generate().first;
+        result += "\n\tmov" + _value->GetType()->GetSuffix() + " " + valueCodegen.second->GetID(_value->GetType()->GetSize()) + ", " + _ptr->Generate().first;
+
+        delete _value;
         Register::FreeRegister(valueCodegen.second);
 
         return std::make_pair(result, nullptr);

@@ -1,4 +1,5 @@
 #include <lexing/lexer.hh>
+#include <type/types.hh>
 #include <diagnostics.hh>
 #include <optional>
 #include <unordered_map>
@@ -8,7 +9,6 @@ namespace Lexing
     std::unordered_map<std::string_view, TokenType> keywords = {
         { "return", TokenType::Return },
         { "extern", TokenType::Extern },
-        { "int64", TokenType::Type }, // TODO: Add proper type support
     };
 
     Lexer::Lexer(const std::string& text)
@@ -59,6 +59,9 @@ namespace Lexing
                 consume();
                 value += current();
             }
+
+            if(auto it = types.find(value); it != types.end())
+                return Token(TokenType::Type, value, start, _position + 1, _lineNumber, _colNumber);
 
             if(auto it = keywords.find(value); it != keywords.end())
                 return Token(keywords.find(value)->second, value, start, _position + 1, _lineNumber, _colNumber);

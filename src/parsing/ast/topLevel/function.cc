@@ -3,8 +3,8 @@
 #include <codegen/value/global/function.hh>
 #include <globals.hh>
 
-ASTFunction::ASTFunction(std::string name, std::vector<std::string> args, std::vector<std::unique_ptr<ASTNode>> body)
-    :_name(name), _args(args), _body(std::move(body))
+ASTFunction::ASTFunction(std::string name, std::vector<std::string> args, std::vector<std::unique_ptr<ASTNode>> body, Type* returnType)
+    :_name(name), _args(args), _body(std::move(body)), _returnType(returnType)
 {
 }
 
@@ -28,16 +28,18 @@ Codegen::Global* ASTFunction::Generate(Codegen::Module& module, Codegen::Builder
         Codegen::BasicBlock* entryBlock = Codegen::BasicBlock::Create(module, _name, function);
         builder.SetInsertPoint(entryBlock);
 
-        for(std::string arg : _args)
+        /*for(std::string arg : _args)
         {
             Codegen::AllocaInst* alloca = builder.CreateAlloca();
             function->GetArgList().push_back(alloca);
             namedValues[arg] = alloca;
-        }
+        }*/
 
         for(std::unique_ptr<ASTNode>& node : _body)
         {
-            node->Generate(module, builder);
+            if(node->GetNodeType() == ASTNodeType::ReturnStatement)
+                node->_type = _returnType;
+            node->Generate(module, builder, true);
             if(node->GetNodeType() == ASTNodeType::ReturnStatement)
                 break;
         }

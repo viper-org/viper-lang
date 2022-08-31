@@ -1,3 +1,4 @@
+#include <iostream>
 #include <parsing/ast/statement/return.hh>
 
 ReturnStatement::ReturnStatement(std::unique_ptr<ASTNode> value)
@@ -16,10 +17,15 @@ void ReturnStatement::Print(std::ostream& stream, int indent) const
     }
 }
 
-Codegen::Value* ReturnStatement::Generate(Codegen::Module& module, Codegen::Builder& builder)
+Codegen::Value* ReturnStatement::Generate(Codegen::Module& module, Codegen::Builder& builder, bool)
 {
     if(_value)
-        return builder.CreateRet(_value->Generate(module, builder));
+    {
+        Codegen::Value* valueCodegen =_value->Generate(module, builder);
+        if(valueCodegen->GetType() != _type)
+            valueCodegen = Type::Convert(valueCodegen, _type, builder);
+        return builder.CreateRet(valueCodegen);
+    }
 
     return builder.CreateRet(nullptr);
 }

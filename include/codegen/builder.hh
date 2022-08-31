@@ -13,6 +13,7 @@
 #include <codegen/value/instruction/store.hh>
 #include <codegen/value/instruction/load.hh>
 #include <codegen/value/instruction/call.hh>
+#include <codegen/value/instruction/sext.hh>
 
 namespace Codegen
 {
@@ -23,7 +24,7 @@ namespace Codegen
 
         void SetInsertPoint(BasicBlock* insertPoint);
 
-        Value* CreateIntLiteral(long long value);
+        Value* CreateIntLiteral(long long value, Type* type);
 
         Value* CreateRet(Value* value);
 
@@ -32,11 +33,13 @@ namespace Codegen
         Value* CreateSub(Value* left, Value* right);
         Value* CreateMul(Value* left, Value* right);
 
-        CallInst* CreateCall(Function* callee, std::vector<Value*> args);
+        CallInst* CreateCall(Function* callee, std::vector<Value*> args, bool isStatement);
 
-        AllocaInst* CreateAlloca();
-        StoreInst* CreateStore(Value* value, Value* ptr);
+        AllocaInst* CreateAlloca(Type* type);
+        StoreInst* CreateStore(Value* value, Value* ptr, bool isStatement);
         LoadInst* CreateLoad(Value* ptr);
+
+        SExtInst* CreateSExt(Value* value, Type* dstType);
 
     protected:
         Value* CreateBinOp(Value* left, Instruction::Instructions op, Value* right);
@@ -44,7 +47,6 @@ namespace Codegen
     private:
         Module& _module;
         BasicBlock* _insertPoint;
-        int _allocaOffset;
     };
 }
 

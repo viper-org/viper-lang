@@ -1,3 +1,4 @@
+#include <iostream>
 #include <parsing/ast/expression/variable.hh>
 #include <globals.hh>
 
@@ -13,8 +14,9 @@ void Variable::Print(std::ostream& stream, int indent) const
     stream << std::string(indent, ' ') << "Name: " << _name;
 }
 
-Codegen::Value* Variable::Generate(Codegen::Module&, Codegen::Builder& builder)
+Codegen::Value* Variable::Generate(Codegen::Module&, Codegen::Builder& builder, bool)
 {
+    _type = namedValues.at(_name)->GetType();
     return builder.CreateLoad(namedValues.at(_name));
 }
 

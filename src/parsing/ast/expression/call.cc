@@ -13,7 +13,7 @@ void CallExpr::Print(std::ostream& stream, int indent) const
     stream << std::string(indent, ' ') << "Callee: " << _callee;
 }
 
-Codegen::Value* CallExpr::Generate(Codegen::Module& module, Codegen::Builder& builder)
+Codegen::Value* CallExpr::Generate(Codegen::Module& module, Codegen::Builder& builder, bool isStatement)
 {
     Codegen::Function* function = module.GetFunction(_callee);
 
@@ -22,7 +22,7 @@ Codegen::Value* CallExpr::Generate(Codegen::Module& module, Codegen::Builder& bu
         argValues.push_back(arg->Generate(module, builder));
 
     if(function)
-        return builder.CreateCall(function, argValues);
+        return builder.CreateCall(function, argValues, isStatement);
 
     return nullptr;
 }

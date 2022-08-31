@@ -1,6 +1,6 @@
-extern @putchar(int64 c) -> int64;
-
-@main() -> int64
+@main() -> int8
 {
-    return putchar(65);
+    int8 a = 4;
+    int8 b = 2;
+    return a + b;
 }

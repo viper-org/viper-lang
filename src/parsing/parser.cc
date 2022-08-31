@@ -116,8 +116,7 @@ namespace Parsing
         ExpectToken(Lexing::TokenType::RightArrow);
         Consume();
 
-        ExpectToken(Lexing::TokenType::Type);
-        Consume(); // TODO: Parse type
+        Type* type = ParseType();
 
         ExpectToken(Lexing::TokenType::LeftBracket);
         Consume();
@@ -131,7 +130,7 @@ namespace Parsing
         }
         Consume();
 
-        return std::make_unique<ASTFunction>(name, args, std::move(body));
+        return std::make_unique<ASTFunction>(name, args, std::move(body), type);
     }
 
     std::unique_ptr<ASTTopLevel> Parser::ParseExtern()
@@ -163,13 +162,17 @@ namespace Parsing
         ExpectToken(Lexing::TokenType::RightArrow);
         Consume();
 
-        ExpectToken(Lexing::TokenType::Type);
-        Consume(); // TODO: Parse type
+        Type* type = ParseType();
 
         ExpectToken(Lexing::TokenType::Semicolon);
         Consume();
 
-        return std::make_unique<ASTFunction>(name, args, std::vector<std::unique_ptr<ASTNode>>());
+        return std::make_unique<ASTFunction>(name, args, std::vector<std::unique_ptr<ASTNode>>(), type);
+    }
+
+    Type* Parser::ParseType()
+    {
+        return types.at(Consume().GetText());
     }
 
     std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)
@@ -229,15 +232,15 @@ namespace Parsing
 
     std::unique_ptr<ASTNode> Parser::ParseVariableDeclaration()
     {
-        Consume();
+        Type* type = ParseType();
         std::string name = Consume().GetText();
 
         if(Current().GetType() != Lexing::TokenType::Equals)
-            return std::make_unique<VariableDeclaration>(name, nullptr);
+            return std::make_unique<VariableDeclaration>(type, name, nullptr);
 
         Consume();
 
-        return std::make_unique<VariableDeclaration>(name, ParseExpression());
+        return std::make_unique<VariableDeclaration>(type, name, ParseExpression());
     }
 
     std::unique_ptr<ASTNode> Parser::ParseVariable()

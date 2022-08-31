@@ -35,4 +35,6 @@ void Compiler::Compile()
     std::cout << _module.Generate() << std::endl;
     for(std::pair<std::string, Codegen::AllocaInst*> alloca : namedValues)
         delete alloca.second;
+    for(std::pair<std::string, Type*> type : types)
+        delete type.second;
 }

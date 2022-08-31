@@ -22,10 +22,7 @@ namespace Codegen
         result += "\n\tcall " + _callee->GetName();
         if(_callee->IsDecl())
             result += "@PLT";
-        if(!reg)
-            reg = Register::GetRegister();
-        if(reg->GetID() != "%rax")
-            result += "\n\tmovq %rax, " + reg->GetID();
+        reg = Register::FindRegister("%rax");
         
         return std::make_pair(result, reg);
     }

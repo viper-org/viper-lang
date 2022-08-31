@@ -3,7 +3,7 @@
 namespace Codegen
 {
     Builder::Builder(Module& module)
-        :_module(module), _allocaOffset(-8)
+        :_module(module)
     {
     }
 
@@ -12,9 +12,10 @@ namespace Codegen
         _insertPoint = insertPoint;
     }
 
-    Value* Builder::CreateIntLiteral(long long value)
+    Value* Builder::CreateIntLiteral(long long value, Type* type)
     {
-        IntegerLiteral* literal = new IntegerLiteral(value, _module);
+        IntegerLiteral* literal = new IntegerLiteral(value, type, _module);
+        
         return literal;
     }
 
@@ -50,28 +51,32 @@ namespace Codegen
     }
 
 
-    CallInst* Builder::CreateCall(Function* callee, std::vector<Value*> args)
+    CallInst* Builder::CreateCall(Function* callee, std::vector<Value*> args, bool isStatement)
     {
         CallInst* call = new CallInst(callee, args, _module);
+
+        if(isStatement)
+            _insertPoint->GetInstrList().push_back(call);
 
         return call;
     }
 
 
-    AllocaInst* Builder::CreateAlloca()
+    AllocaInst* Builder::CreateAlloca(Type* type)
     {
-        AllocaInst* alloca = new AllocaInst(_allocaOffset, _module);
+        AllocaInst* alloca = new AllocaInst(type, 0, _module);
 
-        _allocaOffset -= 8;
+        _insertPoint->GetParent()->AddAlloca(alloca);
 
         return alloca;
     }
 
-    StoreInst* Builder::CreateStore(Value* value, Value* ptr)
+    StoreInst* Builder::CreateStore(Value* value, Value* ptr, bool isStatement)
     {
         StoreInst* store = new StoreInst(value, ptr, _module);
 
-        _insertPoint->GetInstrList().push_back(store);
+        if(isStatement)
+            _insertPoint->GetInstrList().push_back(store);
 
         return store;
     }
@@ -81,5 +86,12 @@ namespace Codegen
         LoadInst* load = new LoadInst(ptr, _module);
 
         return load;
+    }
+
+    SExtInst* Builder::CreateSExt(Value* value, Type* dstType)
+    {
+        SExtInst* sext = new SExtInst(value, dstType, _module);
+
+        return sext;
     }
 }

@@ -19,7 +19,7 @@ public:
 
     void Print(std::ostream& stream, int indent) const override;
 
-    Codegen::Value* Generate(Codegen::Module& module, Codegen::Builder& builder) override;
+    Codegen::Value* Generate(Codegen::Module& module, Codegen::Builder& builder, bool isStatement = false) override;
 private:
     std::unique_ptr<ASTNode> _lhs;
     BinaryOperator _operator;

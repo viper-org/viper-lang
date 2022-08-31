@@ -12,12 +12,15 @@ namespace Codegen
         static Register* FindRegister(const std::string& id);
         static void FreeRegister(Register* reg);
         static void DestroyRegisters();
-        std::string GetID() const;
+        std::string GetID(int bits) const;
     
-        Register(const std::string& id);
+        Register(const std::string& id64, const std::string& id32, const std::string& id16, const std::string& id8);
     
     private:
-        std::string _id;
+        std::string _id64;
+        std::string _id32;
+        std::string _id16;
+        std::string _id8;
     };
 }
 

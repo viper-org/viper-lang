@@ -30,6 +30,8 @@ namespace Parsing
         std::unique_ptr<ASTTopLevel> ParseFunction();
         std::unique_ptr<ASTTopLevel> ParseExtern();
 
+        Type* ParseType();
+
         std::unique_ptr<ASTNode> ParseExpression(int precedence = 1);
         std::unique_ptr<ASTNode> ParsePrimary();
 

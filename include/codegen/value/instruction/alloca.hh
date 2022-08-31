@@ -7,10 +7,11 @@ namespace Codegen
     class AllocaInst : public Instruction
     {
     friend class Builder;
+    friend class Function;
     public:
         const std::pair<std::string, Register*> Generate(Register* reg = nullptr) override;
     protected:
-        AllocaInst(int offset, const Module& module);
+        AllocaInst(Type* type, int offset, const Module& module);
     private:
         int _offset;
     };

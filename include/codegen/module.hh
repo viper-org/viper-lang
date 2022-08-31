@@ -3,12 +3,14 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <set>
 
 namespace Codegen
 {
     class Value;
     class Global;
     class Function;
+    class AllocaInst;
     class Module
     {
     public:
