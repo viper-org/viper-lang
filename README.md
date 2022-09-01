@@ -30,5 +30,5 @@ If the build is taking a long time, you can use make's `-j` flag to speed up the
 ---
 
 ## Examples
-There is an [example](example.vip) of a viper program in the repository
+There is an [example](example.vpr) of a viper program in the repository
 More examples will be added in future
