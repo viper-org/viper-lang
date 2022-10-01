@@ -7,11 +7,7 @@ namespace Lexing
 {
     std::unordered_map<std::string_view, TokenType> keywords = {
         { "return", TokenType::Return },
-        { "extern", TokenType::Extern },
-        { "if",     TokenType::If },
-        { "else",   TokenType::Else },
-        { "while", TokenType::While },
-        { "decay", TokenType::Decay },
+        { "let", TokenType::Let },
     };
 
     Lexer::Lexer(const std::string& text)
@@ -69,7 +65,7 @@ namespace Lexing
             if(auto it = keywords.find(value); it != keywords.end())
                 return Token(keywords.find(value)->second, value, start, _position + 1, _lineNumber, _colNumber);
             
-            return Token(Lexing::TokenType::Identifier, value, start, _position + 1, _lineNumber, _colNumber);
+            return Token(TokenType::Identifier, value, start, _position + 1, _lineNumber, _colNumber);
         }
 
         if(isdigit(Current()))
@@ -83,7 +79,7 @@ namespace Lexing
                 value += Current();
             }
 
-            return Token(Lexing::TokenType::Integer, value, start, _position + 1, _lineNumber, _colNumber);
+            return Token(TokenType::Integer, value, start, _position + 1, _lineNumber, _colNumber);
         }
 
         switch(Current())
@@ -100,66 +96,54 @@ namespace Lexing
             
 
             case '(':
-                return Token(Lexing::TokenType::LeftParen, "(", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::LeftParen, "(", _position, _position + 1, _lineNumber, _colNumber);
             case ')':
-                return Token(Lexing::TokenType::RightParen, ")", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::RightParen, ")", _position, _position + 1, _lineNumber, _colNumber);
 
             case '{':
-                return Token(Lexing::TokenType::LeftBracket, "{", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::LeftBracket, "{", _position, _position + 1, _lineNumber, _colNumber);
             case '}':
-                return Token(Lexing::TokenType::RightBracket, "}", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::RightBracket, "}", _position, _position + 1, _lineNumber, _colNumber);
 
             case '[':
-                return Token(Lexing::TokenType::LeftSquareBracket, "[", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::LeftSquareBracket, "[", _position, _position + 1, _lineNumber, _colNumber);
             case ']':
-                return Token(Lexing::TokenType::RightSquareBracket, "]", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::RightSquareBracket, "]", _position, _position + 1, _lineNumber, _colNumber);
 
             case '<':
-                return Token(Lexing::TokenType::LeftAngleBracket, "<", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::LeftAngleBracket, "<", _position, _position + 1, _lineNumber, _colNumber);
             case '>':
-                return Token(Lexing::TokenType::RightAngleBracket, ">", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::RightAngleBracket, ">", _position, _position + 1, _lineNumber, _colNumber);
 
 
             case '+':
-                return Token(Lexing::TokenType::Plus, "+", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::Plus, "+", _position, _position + 1, _lineNumber, _colNumber);
             case '-':
-            {
-                if(Peek(1) == '>')
-                {
-                    Consume();
-                    return Token(Lexing::TokenType::RightArrow, "->", _position - 1, _position + 1, _lineNumber, _colNumber);
-                }
-                return Token(Lexing::TokenType::Minus, "-", _position, _position + 1, _lineNumber, _colNumber);
-            }
+                return Token(TokenType::Minus, "-", _position, _position + 1, _lineNumber, _colNumber);
             case '*':
-                return Token(Lexing::TokenType::Star, "*", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::Star, "*", _position, _position + 1, _lineNumber, _colNumber);
             case '/':
-                return Token(Lexing::TokenType::Slash, "/", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::Slash, "/", _position, _position + 1, _lineNumber, _colNumber);
 
             case '=':
             {
                 if(Peek(1) == '=')
                 {
                     Consume();
-                    return Token(Lexing::TokenType::DoubleEquals, "==", _position - 1, _position + 1, _lineNumber, _colNumber);
+                    return Token(TokenType::DoubleEquals, "==", _position - 1, _position + 1, _lineNumber, _colNumber);
                 }
-                return Token(Lexing::TokenType::Equals, "=", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::Equals, "=", _position, _position + 1, _lineNumber, _colNumber);
             }
 
 
             case ';':
-                return Token(Lexing::TokenType::Semicolon, ";", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::Semicolon, ";", _position, _position + 1, _lineNumber, _colNumber);
             case ',':
-                return Token(Lexing::TokenType::Comma, ",", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::Comma, ",", _position, _position + 1, _lineNumber, _colNumber);
 
 
-            case '@':
-                return Token(Lexing::TokenType::Asperand, "@", _position, _position + 1, _lineNumber, _colNumber);
             case '#':
-                return Token(Lexing::TokenType::Hash, "#", _position, _position + 1, _lineNumber, _colNumber);
-
-            case '.':
-                return Token(Lexing::TokenType::Dot, ".", _position, _position + 1, _lineNumber, _colNumber);
+                return Token(TokenType::Hash, "#", _position, _position + 1, _lineNumber, _colNumber);
 
             
             case '"':

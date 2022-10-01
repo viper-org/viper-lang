@@ -39,20 +39,16 @@ namespace Lexing
                 return "Identifier";
             case Lexing::TokenType::Return:
                 return "Return";
+            case Lexing::TokenType::Let:
+                return "Let";
             case Lexing::TokenType::Type:
                 return "Type";
-            case Lexing::TokenType::Asperand:
-                return "Asperand";
-            case Lexing::TokenType::RightArrow:
-                return "RightArrow";
             case Lexing::TokenType::Semicolon:
                 return "Semicolon";
             case Lexing::TokenType::Equals:
                 return "Equals";
             case Lexing::TokenType::Comma:
                 return "Comma";
-            case Lexing::TokenType::Extern:
-                return "Extern";
             case TokenType::DoubleEquals:
                 return "DoubleEquals";
             case TokenType::Hash:
@@ -65,12 +61,6 @@ namespace Lexing
                 return "BangEquals";
             case TokenType::String:
                 return "String";
-            case TokenType::If:
-                return "If";
-            case Lexing::TokenType::Else:
-                return "Else";
-            case TokenType::While:
-                return "While";
             case TokenType::PlusEquals:
                 return "PlusEquals";
             case TokenType::MinusEquals:
@@ -79,10 +69,6 @@ namespace Lexing
                 return "StarEquals";
             case TokenType::SlashEquals:
                 return "SlashEquals";
-            case Lexing::TokenType::Dot:
-                return "Dot";
-            case Lexing::TokenType::Decay:
-                return "Decay";
         }
     }
 

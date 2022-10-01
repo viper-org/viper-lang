@@ -26,20 +26,11 @@ namespace Lexing
         Identifier,
 
         Return,
-
-        If,
-        Else,
-        While,
+        Let,
 
         Type,
-        Extern,
 
-        Decay,
-
-        Asperand, RightArrow,
         Hash,
-
-        Dot,
 
         Semicolon, Comma,
     };
