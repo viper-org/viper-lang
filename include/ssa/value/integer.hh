@@ -10,6 +10,8 @@ namespace SSA
         IntegerLiteral(long long value);
 
         void Print(std::ostream& stream, int indent) const override;
+
+        std::unique_ptr<Codegen::Value> Emit(Codegen::Assembly& assembly) override;
     private:
         long long _value;
     };

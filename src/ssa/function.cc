@@ -13,4 +13,12 @@ namespace SSA
         _body->Print(stream, indent + 2);
         stream << std::string(indent, ' ') << "}";
     }
+
+    std::unique_ptr<Codegen::Value> Function::Emit(Codegen::Assembly& assembly)
+    {
+        assembly.CreateGlobal(_name);
+        assembly.CreateLabel(_name);
+
+        return _body->Emit(assembly);
+    }
 }

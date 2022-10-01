@@ -11,6 +11,8 @@ namespace SSA
         Return(std::unique_ptr<Value>& value);
 
         void Print(std::ostream& stream, int indent) const override;
+
+        std::unique_ptr<Codegen::Value> Emit(Codegen::Assembly& assembly) override;
     private:
         std::unique_ptr<Value> _value;
     };

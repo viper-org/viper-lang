@@ -17,4 +17,19 @@ namespace SSA
         
         stream << '\n';
     }
+
+    std::unique_ptr<Codegen::Value> Return::Emit(Codegen::Assembly& assembly)
+    {
+        if(_value)
+        {
+            std::unique_ptr<Codegen::Value> value = _value->Emit(assembly);
+            std::unique_ptr<Codegen::Value> rax = std::make_unique<Codegen::Register>(Codegen::Registers::RAX);
+
+            assembly.CreateMov(std::move(rax), std::move(value));
+        }
+        
+        assembly.CreateRet();
+
+        return nullptr;
+    }
 }

@@ -1,6 +1,7 @@
 #include <compiler.hh>
 #include <lexing/lexer.hh>
 #include <parsing/parser.hh>
+#include <codegen/assembly.hh>
 #include <diagnostics.hh>
 #include <sstream>
 #include <iostream>
@@ -25,10 +26,13 @@ void Compiler::Compile()
 {
     Lexing::Lexer lexer(_contents);
     Parsing::Parser parser(lexer.Lex(), _contents);
+    Codegen::Assembly assembly;
 
     for(std::unique_ptr<Parsing::ASTNode>& node : parser.Parse())
     {
-        node->Emit()->Print(std::cout, 0);
-        std::cout << std::endl;
+        node->Emit()->Emit(assembly);
+        //node->Emit()->Print(std::cout, 0);
+        //std::cout << std::endl;
     }
+    assembly.Emit(std::cout);
 }

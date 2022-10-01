@@ -11,4 +11,9 @@ namespace SSA
     {
         stream << "int32 " << _value;
     }
+
+    std::unique_ptr<Codegen::Value> IntegerLiteral::Emit(Codegen::Assembly&)
+    {
+        return std::make_unique<Codegen::ImmediateValue>(_value);
+    }
 }
