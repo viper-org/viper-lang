@@ -1,3 +1,4 @@
+#include "lexing/token.hh"
 #include <lexing/lexer.hh>
 #include <diagnostics.hh>
 #include <optional>
@@ -8,6 +9,7 @@ namespace Lexing
     std::unordered_map<std::string_view, TokenType> keywords = {
         { "return", TokenType::Return },
         { "let", TokenType::Let },
+        { "int32", TokenType::Type },
     };
 
     Lexer::Lexer(const std::string& text)
