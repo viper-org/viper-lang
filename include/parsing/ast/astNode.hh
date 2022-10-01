@@ -1,5 +1,6 @@
 #ifndef VIPER_AST_ASTNODE_HH
 #define VIPER_AST_ASTNODE_HH
+#include <ssa/ssa.hh>
 #include <ostream>
 
 namespace Parsing
@@ -23,6 +24,8 @@ namespace Parsing
         virtual void Print(std::ostream& stream, int indent) const = 0;
 
         ASTNodeType GetNodeType() const { return _nodeType; }
+
+        virtual std::unique_ptr<SSA::Value> Emit() = 0;
     protected:
         ASTNodeType _nodeType;
     };

@@ -11,6 +11,8 @@ namespace Parsing
         ReturnStatement(std::unique_ptr<ASTNode> value);
 
         void Print(std::ostream& stream, int indent) const override;
+
+        std::unique_ptr<SSA::Value> Emit() override;
     private:
         std::unique_ptr<ASTNode> _value;
     };

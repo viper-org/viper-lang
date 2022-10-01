@@ -23,4 +23,13 @@ namespace Parsing
     {
         return _isFunction;
     }
+
+    std::unique_ptr<SSA::Value> VariableDeclaration::Emit()
+    {
+        std::unique_ptr<SSA::Value> initVal = _initVal->Emit();
+        if(_isFunction)
+            return std::make_unique<SSA::Function>(_name, initVal);
+        
+        return nullptr; // TODO: Add variables
+    }
 }

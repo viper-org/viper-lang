@@ -1,3 +1,4 @@
+#include "ssa/value/integer.hh"
 #include <parsing/ast/expression/integerLiteral.hh>
 
 namespace Parsing
@@ -16,5 +17,10 @@ namespace Parsing
     long long IntegerLiteral::GetValue() const
     {
         return _value;
+    }
+
+    std::unique_ptr<SSA::Value> IntegerLiteral::Emit()
+    {
+        return std::make_unique<SSA::IntegerLiteral>(_value);
     }
 }

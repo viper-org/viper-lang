@@ -12,6 +12,8 @@ namespace Parsing
         void Print(std::ostream& stream, int indent) const override;
 
         long long GetValue() const;
+
+        std::unique_ptr<SSA::Value> Emit() override;
     private:
         long long _value;
     };

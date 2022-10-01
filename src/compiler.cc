@@ -28,7 +28,7 @@ void Compiler::Compile()
 
     for(std::unique_ptr<Parsing::ASTNode>& node : parser.Parse())
     {
-        node->Print(std::cout, 0);
+        node->Emit()->Print(std::cout, 0);
         std::cout << std::endl;
     }
 }

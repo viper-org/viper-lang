@@ -17,4 +17,11 @@ namespace Parsing
             _value->Print(stream, indent + 2);
         }
     }
+
+    std::unique_ptr<SSA::Value> ReturnStatement::Emit()
+    {
+        std::unique_ptr<SSA::Value> value = _value->Emit();
+
+        return std::make_unique<SSA::Return>(value);
+    }
 }

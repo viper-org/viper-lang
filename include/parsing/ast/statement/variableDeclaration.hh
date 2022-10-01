@@ -15,6 +15,8 @@ namespace Parsing
         void Print(std::ostream& stream, int indent) const override;
 
         bool IsFunction() const;
+        
+        std::unique_ptr<SSA::Value> Emit() override;
     private:
         std::string _name;
         std::unique_ptr<ASTNode> _initVal;
