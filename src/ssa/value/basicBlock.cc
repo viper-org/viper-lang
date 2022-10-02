@@ -40,7 +40,7 @@ namespace SSA
         for(Instruction* inst : _instList)
         {
             inst->Print(stream, indent);
-            if(inst->GetInstType() == InstType::Return)
+            if(inst->GetInstType() == InstType::Ret)
                 break;
         }
     }
@@ -50,7 +50,7 @@ namespace SSA
         for(Instruction* inst : _instList)
         {
             inst->Emit(assembly);
-            if(inst->GetInstType() == InstType::Return)
+            if(inst->GetInstType() == InstType::Ret)
                 break;
         }
 

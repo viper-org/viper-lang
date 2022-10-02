@@ -6,7 +6,8 @@ namespace SSA
 {
     enum class InstType
     {
-        Return,
+        Ret,
+        Alloca,
     };
 
     class Instruction : public Value

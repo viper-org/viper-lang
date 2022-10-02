@@ -27,12 +27,20 @@ namespace SSA
 
     Value* Builder::CreateRet(Value* value)
     {
-        Return* ret = new Return(_module, value);
+        RetInst* ret = new RetInst(_module, value);
 
-        if(_insertPoint)
-            _insertPoint->GetInstList().push_back(ret);
+        _insertPoint->GetInstList().push_back(ret);
 
         return ret;
+    }
+
+    AllocaInst* Builder::CreateAlloca(const std::string& name)
+    {
+        AllocaInst* alloca = new AllocaInst(_module, name);
+
+        _insertPoint->GetInstList().push_back(alloca);
+
+        return alloca;
     }
 
     Module& Builder::GetModule() const

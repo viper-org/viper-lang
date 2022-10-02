@@ -2,13 +2,13 @@
 
 namespace SSA
 {
-    Return::Return(Module& module, Value* value)
+    RetInst::RetInst(Module& module, Value* value)
         :Instruction(module), _value(value)
     {
-        _instType = InstType::Return;
+        _instType = InstType::Ret;
     }
 
-    void Return::Print(std::ostream& stream, int indent) const
+    void RetInst::Print(std::ostream& stream, int indent) const
     {
         stream << std::string(indent, ' ') << "ret ";
         if(_value)
@@ -19,7 +19,7 @@ namespace SSA
         stream << '\n';
     }
 
-    Codegen::Value* Return::Emit(Codegen::Assembly& assembly)
+    Codegen::Value* RetInst::Emit(Codegen::Assembly& assembly)
     {
         if(_value)
         {
@@ -37,7 +37,7 @@ namespace SSA
         return nullptr;
     }
 
-    void Return::Dispose()
+    void RetInst::Dispose()
     {
         _value->Dispose();
         delete this;

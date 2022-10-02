@@ -6,6 +6,7 @@
 #include <ssa/value/constant/integer.hh>
 #include <ssa/value/instruction/instruction.hh>
 #include <ssa/value/instruction/return.hh>
+#include <ssa/value/instruction/alloca.hh>
 #include <ssa/value/basicBlock.hh>
 
 namespace SSA
@@ -21,6 +22,8 @@ namespace SSA
         Value* CreateRet(Value* value);
 
         Value* CreateConstantInt(long long value);
+
+        AllocaInst* CreateAlloca(const std::string& name = "");
 
         Module& GetModule() const;
     private:

@@ -1,14 +1,14 @@
-#ifndef VIPER_SSA_INSTRUCTION_RETURN_HH
-#define VIPER_SSA_INSTRUCTION_RETURN_HH
+#ifndef VIPER_SSA_INSTRUCTION_ALLOCA_HH
+#define VIPER_SSA_INSTRUCTION_ALLOCA_HH
 #include <ssa/value/instruction/instruction.hh>
 #include <memory>
 
 namespace SSA
 {
-    class RetInst : public Instruction
+    class AllocaInst : public Instruction
     {
     public:
-        RetInst(Module& module, Value* value);
+        AllocaInst(Module& module, const std::string& name);
 
         void Print(std::ostream& stream, int indent) const override;
 
@@ -16,7 +16,7 @@ namespace SSA
 
         void Dispose() override;
     private:
-        Value* _value;
+        std::string _name;
     };
 }
 

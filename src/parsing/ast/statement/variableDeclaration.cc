@@ -37,7 +37,8 @@ namespace Parsing
 
             return func;
         }
+        SSA::AllocaInst* alloca = builder.CreateAlloca();
         
-        return nullptr; // TODO: Add variables
+        return alloca; // TODO: Add variables
     }
 }

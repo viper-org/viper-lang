@@ -35,12 +35,12 @@ void Compiler::Compile()
     {
         SSA::Value* value = node->Emit(builder);
 
-        //value->Print(std::cout, 0);
-        //std::cout << std::endl;
-        value->Emit(assembly);
+        value->Print(std::cout, 0);
+        std::cout << std::endl;
+        //value->Emit(assembly);
 
         value->Dispose();
 
     }
-    assembly.Emit(std::cout);
+    //assembly.Emit(std::cout);
 }
