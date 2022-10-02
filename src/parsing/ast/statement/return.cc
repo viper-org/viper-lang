@@ -18,10 +18,10 @@ namespace Parsing
         }
     }
 
-    std::unique_ptr<SSA::Value> ReturnStatement::Emit()
+    SSA::Value* ReturnStatement::Emit(SSA::Builder& builder)
     {
-        std::unique_ptr<SSA::Value> value = _value->Emit();
+        SSA::Value* value = _value->Emit(builder);
 
-        return std::make_unique<SSA::Return>(value);
+        return builder.CreateRet(value);
     }
 }

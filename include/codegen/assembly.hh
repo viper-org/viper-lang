@@ -17,13 +17,13 @@ namespace Codegen
         void CreateGlobal(std::string_view ident);
         void CreateLabel(std::string_view ident);
 
-        void CreateMov(std::unique_ptr<Value> left, std::unique_ptr<Value> right);
+        void CreateMov(Value* left, Value*right);
 
         void CreateRet();
     private:
         std::ostringstream _output;
 
-        void VerifyArgs(std::unique_ptr<Value>& left, std::unique_ptr<Value>& right);
+        void VerifyArgs(Value* left, Value* right);
     };
 }
 

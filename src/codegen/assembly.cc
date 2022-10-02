@@ -21,7 +21,7 @@ namespace Codegen
         _output << "\n" << ident << ":";
     }
 
-    void Assembly::CreateMov(std::unique_ptr<Value> left, std::unique_ptr<Value> right)
+    void Assembly::CreateMov(Value* left, Value* right)
     {
         VerifyArgs(left, right);
 
@@ -33,7 +33,7 @@ namespace Codegen
         _output << "\n\tret";
     }
 
-    void Assembly::VerifyArgs(std::unique_ptr<Value>&, std::unique_ptr<Value>&)
+    void Assembly::VerifyArgs(Value*, Value*)
     {
         // TODO: Verify args
     }

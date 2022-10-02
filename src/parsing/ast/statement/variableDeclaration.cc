@@ -1,3 +1,4 @@
+#include "ssa/value/basicBlock.hh"
 #include <parsing/ast/statement/variableDeclaration.hh>
 
 namespace Parsing
@@ -24,11 +25,18 @@ namespace Parsing
         return _isFunction;
     }
 
-    std::unique_ptr<SSA::Value> VariableDeclaration::Emit()
+    SSA::Value* VariableDeclaration::Emit(SSA::Builder& builder)
     {
-        std::unique_ptr<SSA::Value> initVal = _initVal->Emit();
+        //SSA::Value* initVal = _initVal->Emit(builder);
         if(_isFunction)
-            return std::make_unique<SSA::Function>(_name, initVal);
+        {
+            SSA::Function* func = new SSA::Function(builder.GetModule(), _name);
+            SSA::BasicBlock* entryBB = SSA::BasicBlock::Create(builder.GetModule(), func);
+            builder.SetInsertPoint(entryBB);
+            _initVal->Emit(builder);
+
+            return func;
+        }
         
         return nullptr; // TODO: Add variables
     }

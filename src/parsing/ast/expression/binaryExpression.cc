@@ -52,14 +52,14 @@ namespace Parsing
         _rhs->Print(stream, indent + 2);
     }
 
-    std::unique_ptr<SSA::Value> BinaryExpression::Emit()
+    SSA::Value* BinaryExpression::Emit(SSA::Builder& builder)
     {
-        std::unique_ptr<SSA::Value> left = _lhs->Emit();
-        std::unique_ptr<SSA::Value> right = _rhs->Emit();
+        SSA::Value* left = _lhs->Emit(builder);
+        SSA::Value* right = _rhs->Emit(builder);
 
-        if(SSA::IntegerLiteral* leftI = dynamic_cast<SSA::IntegerLiteral*>(left.get()))
+        if(SSA::IntegerLiteral* leftI = dynamic_cast<SSA::IntegerLiteral*>(left))
         {
-            if(SSA::IntegerLiteral* rightI = dynamic_cast<SSA::IntegerLiteral*>(right.get()))
+            if(SSA::IntegerLiteral* rightI = dynamic_cast<SSA::IntegerLiteral*>(right))
             {
                 long long total;
                 switch (_operator)
@@ -77,9 +77,13 @@ namespace Parsing
                         total = leftI->GetValue() / rightI->GetValue();
                         break;
                 }
-                return std::make_unique<SSA::IntegerLiteral>(total);
+                delete left;
+                delete right;
+                return builder.CreateConstantInt(total);
             }
         }
+        delete left;
+        delete right;
         return nullptr;
     }
 }

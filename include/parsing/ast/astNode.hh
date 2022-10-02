@@ -11,6 +11,7 @@ namespace Parsing
         BinaryExpression,
 
         ReturnStatement,
+        CompoundStatement,
         
         VariableDeclaration,
         Function,
@@ -25,7 +26,7 @@ namespace Parsing
 
         ASTNodeType GetNodeType() const { return _nodeType; }
 
-        virtual std::unique_ptr<SSA::Value> Emit() = 0;
+        virtual SSA::Value* Emit(SSA::Builder& builder) = 0;
     protected:
         ASTNodeType _nodeType;
     };

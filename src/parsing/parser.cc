@@ -1,3 +1,5 @@
+#include "lexing/token.hh"
+#include <memory>
 #include <parsing/parser.hh>
 #include <diagnostics.hh>
 
@@ -110,6 +112,8 @@ namespace Parsing
                 return ParseIntegerLiteral();
             case Lexing::TokenType::LeftParen:
                 return ParseParenthesizedExpression();
+            case Lexing::TokenType::LeftBracket:
+                return ParseCompoundExpression();
             default:
                 ParserError("Expected primary expression, found '" + Current().GetText() + "'");
         }
@@ -170,5 +174,24 @@ namespace Parsing
         Consume();
 
         return expr;
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseCompoundExpression()
+    {
+        Consume();
+
+        std::vector<std::unique_ptr<ASTNode>> exprs;
+
+        while(Current().GetType() != Lexing::TokenType::RightBracket)
+        {
+            exprs.push_back(ParseExpression());
+            ExpectToken(Lexing::TokenType::Semicolon);
+            Consume();
+        }
+        Consume();
+
+        _tokens.insert(_tokens.begin() + _position, Lexing::Token(Lexing::TokenType::Semicolon, "", 0, 0, 0, 0));
+
+        return std::make_unique<CompoundStatement>(exprs);
     }
 }

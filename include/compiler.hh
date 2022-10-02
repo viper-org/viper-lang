@@ -20,7 +20,7 @@ private:
     OutputType _outputType;
 
     std::ifstream _inputHandle;
-    const std::string& _inputFileName;
+    std::string _inputFileName;
     std::string _contents;
 };
 

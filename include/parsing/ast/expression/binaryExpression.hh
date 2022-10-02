@@ -18,7 +18,7 @@ namespace Parsing
 
         void Print(std::ostream& stream, int indent) const override;
 
-        std::unique_ptr<SSA::Value> Emit() override;
+        SSA::Value* Emit(SSA::Builder& builder) override;
     private:
         std::unique_ptr<ASTNode>_lhs;
         BinaryOperator _operator;

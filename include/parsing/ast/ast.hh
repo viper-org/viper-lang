@@ -4,6 +4,7 @@
 #include <parsing/ast/astNode.hh>
 #include <parsing/ast/statement/variableDeclaration.hh>
 #include <parsing/ast/statement/return.hh>
+#include <parsing/ast/statement/compound.hh>
 #include <parsing/ast/expression/integerLiteral.hh>
 #include <parsing/ast/expression/binaryExpression.hh>
 

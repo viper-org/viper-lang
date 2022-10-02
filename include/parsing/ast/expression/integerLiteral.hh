@@ -13,7 +13,7 @@ namespace Parsing
 
         long long GetValue() const;
 
-        std::unique_ptr<SSA::Value> Emit() override;
+        SSA::Value* Emit(SSA::Builder& builder) override;
     private:
         long long _value;
     };

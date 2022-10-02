@@ -1,19 +1,19 @@
 #ifndef VIPER_SSA_VALUE_INTEGER_HH
 #define VIPER_SSA_VALUE_INTEGER_HH
-#include <ssa/value.hh>
+#include <ssa/value/value.hh>
 
 namespace SSA
 {
     class IntegerLiteral : public Value
     {
     public:
-        IntegerLiteral(long long value);
+        IntegerLiteral(Module& module, long long value);
 
         void Print(std::ostream& stream, int indent) const override;
 
         long long GetValue() const;
 
-        std::unique_ptr<Codegen::Value> Emit(Codegen::Assembly& assembly) override;
+        Codegen::Value* Emit(Codegen::Assembly& assembly) override;
     private:
         long long _value;
     };

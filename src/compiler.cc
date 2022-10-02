@@ -1,3 +1,4 @@
+#include "ssa/value/value.hh"
 #include <compiler.hh>
 #include <lexing/lexer.hh>
 #include <parsing/parser.hh>
@@ -26,13 +27,20 @@ void Compiler::Compile()
 {
     Lexing::Lexer lexer(_contents);
     Parsing::Parser parser(lexer.Lex(), _contents);
+    SSA::Module module(_inputFileName);
+    SSA::Builder builder(module);
     Codegen::Assembly assembly;
 
     for(std::unique_ptr<Parsing::ASTNode>& node : parser.Parse())
     {
-        node->Emit()->Emit(assembly);
-        //node->Emit()->Print(std::cout, 0);
+        SSA::Value* value = node->Emit(builder);
+
+        //value->Print(std::cout, 0);
         //std::cout << std::endl;
+        value->Emit(assembly);
+
+        value->Dispose();
+
     }
     assembly.Emit(std::cout);
 }

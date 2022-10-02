@@ -1,4 +1,3 @@
-#include "ssa/value/integer.hh"
 #include <parsing/ast/expression/integerLiteral.hh>
 
 namespace Parsing
@@ -19,8 +18,8 @@ namespace Parsing
         return _value;
     }
 
-    std::unique_ptr<SSA::Value> IntegerLiteral::Emit()
+    SSA::Value* IntegerLiteral::Emit(SSA::Builder& builder)
     {
-        return std::make_unique<SSA::IntegerLiteral>(_value);
+        return builder.CreateConstantInt(_value);
     }
 }
