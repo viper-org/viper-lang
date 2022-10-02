@@ -11,6 +11,8 @@ namespace SSA
 
         void Print(std::ostream& stream, int indent) const override;
 
+        long long GetValue() const;
+
         std::unique_ptr<Codegen::Value> Emit(Codegen::Assembly& assembly) override;
     private:
         long long _value;

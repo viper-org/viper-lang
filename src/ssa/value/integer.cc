@@ -1,3 +1,4 @@
+#include <bits/iterator_concepts.h>
 #include <ssa/value/integer.hh>
 
 namespace SSA
@@ -10,6 +11,11 @@ namespace SSA
     void IntegerLiteral::Print(std::ostream& stream, int) const
     {
         stream << "int32 " << _value;
+    }
+
+    long long IntegerLiteral::GetValue() const
+    {
+        return _value;
     }
 
     std::unique_ptr<Codegen::Value> IntegerLiteral::Emit(Codegen::Assembly&)

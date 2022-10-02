@@ -21,6 +21,8 @@ namespace Parsing
         Lexing::Token Consume();
         Lexing::Token Peek(const int offset) const;
 
+        int GetBinOpPrecedence(Lexing::TokenType type);
+
         void ExpectToken(Lexing::TokenType tokenType);
         [[noreturn]] void ParserError(std::string message);
 
@@ -32,6 +34,8 @@ namespace Parsing
         std::unique_ptr<ASTNode> ParseIntegerLiteral();
 
         std::unique_ptr<ASTNode> ParseReturnStatement();
+
+        std::unique_ptr<ASTNode> ParseParenthesizedExpression();
     };
 }
 

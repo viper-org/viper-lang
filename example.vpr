@@ -1,1 +1,1 @@
-let int32 main() = return 6;
+let int32 main() = return (1 + 2) * 3;

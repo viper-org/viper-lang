@@ -8,6 +8,7 @@ namespace Parsing
     enum class ASTNodeType
     {
         Integer,
+        BinaryExpression,
 
         ReturnStatement,
         
@@ -17,7 +18,6 @@ namespace Parsing
 
     class ASTNode
     {
-    friend class ASTFunction;
     public:
         virtual ~ASTNode() {  }
 
