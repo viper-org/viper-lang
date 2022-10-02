@@ -10,6 +10,7 @@ namespace SSA
         IntegerLiteral(Module& module, long long value);
 
         void Print(std::ostream& stream, int indent) const override;
+        std::string GetID() const override;
 
         long long GetValue() const;
 

@@ -14,6 +14,7 @@ namespace SSA
         virtual ~Value() {  }
 
         virtual void Print(std::ostream& stream, int indent) const = 0;
+        virtual std::string GetID() const { return ""; }
 
         virtual Codegen::Value* Emit(Codegen::Assembly& assembly) = 0;
 

@@ -1,3 +1,4 @@
+#include "environment.hh"
 #include "ssa/value/basicBlock.hh"
 #include <parsing/ast/statement/variableDeclaration.hh>
 
@@ -27,10 +28,9 @@ namespace Parsing
 
     SSA::Value* VariableDeclaration::Emit(SSA::Builder& builder)
     {
-        //SSA::Value* initVal = _initVal->Emit(builder);
         if(_isFunction)
         {
-            SSA::Function* func = new SSA::Function(builder.GetModule(), _name);
+            SSA::Function* func = SSA::Function::Create(builder.GetModule(), _name);
             SSA::BasicBlock* entryBB = SSA::BasicBlock::Create(builder.GetModule(), func);
             builder.SetInsertPoint(entryBB);
             _initVal->Emit(builder);
@@ -38,7 +38,14 @@ namespace Parsing
             return func;
         }
         SSA::AllocaInst* alloca = builder.CreateAlloca();
+        if(_initVal)
+        {
+            SSA::Value* initVal = _initVal->Emit(builder);
+            builder.CreateStore(alloca, initVal);
+        }
+
+        namedValues[_name] = alloca;
         
-        return alloca; // TODO: Add variables
+        return alloca;
     }
 }

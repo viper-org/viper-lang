@@ -12,6 +12,11 @@ namespace SSA
         stream << "int32 " << _value;
     }
 
+    std::string IntegerLiteral::GetID() const
+    {
+        return "int32 " + std::to_string(_value);
+    }
+
     long long IntegerLiteral::GetValue() const
     {
         return _value;

@@ -14,6 +14,11 @@ namespace SSA
         stream << std::string(indent, ' ') << "%" << _name << " = alloca int32\n";
     }
 
+    std::string AllocaInst::GetID() const
+    {
+        return "int32* %" + _name;
+    }
+
     Codegen::Value* AllocaInst::Emit(Codegen::Assembly&)
     {
         return nullptr;

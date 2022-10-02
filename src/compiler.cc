@@ -1,9 +1,9 @@
-#include "ssa/value/value.hh"
 #include <compiler.hh>
 #include <lexing/lexer.hh>
 #include <parsing/parser.hh>
 #include <codegen/assembly.hh>
 #include <diagnostics.hh>
+#include <environment.hh>
 #include <sstream>
 #include <iostream>
 
@@ -44,3 +44,5 @@ void Compiler::Compile()
     }
     //assembly.Emit(std::cout);
 }
+
+std::map<std::string, SSA::AllocaInst*> namedValues;

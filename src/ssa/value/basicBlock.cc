@@ -45,6 +45,11 @@ namespace SSA
         }
     }
 
+    std::string BasicBlock::GetID() const
+    {
+        return _name;
+    }
+
     Codegen::Value* BasicBlock::Emit(Codegen::Assembly& assembly)
     {
         for(Instruction* inst : _instList)

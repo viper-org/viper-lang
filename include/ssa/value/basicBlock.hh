@@ -17,12 +17,15 @@ namespace SSA
         std::vector<Instruction*>& GetInstList();
 
         void Print(std::ostream& stream, int indent) const override;
+        std::string GetID() const override;
 
         Codegen::Value* Emit(Codegen::Assembly& assembly) override;
 
         void Dispose() override;
+
     protected:
         BasicBlock(Module& module, Function* parent, const std::string& name = "");
+        
     private:
         std::string _name;
         Function* _parent;

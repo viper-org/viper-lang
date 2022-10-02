@@ -1,28 +1,26 @@
-#ifndef VIPER_SSA_INSTRUCTION_ALLOCA_HH
-#define VIPER_SSA_INSTRUCTION_ALLOCA_HH
+#ifndef VIPER_SSA_INSTRUCTION_STORE_HH
+#define VIPER_SSA_INSTRUCTION_STORE_HH
 #include <ssa/value/instruction/instruction.hh>
 #include <memory>
 
 namespace SSA
 {
-    class AllocaInst : public Instruction
+    class StoreInst : public Instruction
     {
     friend class Builder;
-    friend class Function;
     public:
         void Print(std::ostream& stream, int indent) const override;
-        std::string GetID() const override;
 
         Codegen::Value* Emit(Codegen::Assembly& assembly) override;
 
         void Dispose() override;
 
     protected:
-        AllocaInst(Module& module, const std::string& name);
-    
+        StoreInst(Module& module, Value* ptr, Value* value);
+        
     private:
-        std::string _name;
-        int _offset;
+        Value* _ptr;
+        Value* _value;
     };
 }
 
