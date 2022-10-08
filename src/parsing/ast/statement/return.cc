@@ -20,7 +20,9 @@ namespace Parsing
 
     SSA::Value* ReturnStatement::Emit(SSA::Builder& builder)
     {
-        SSA::Value* value = _value->Emit(builder);
+        SSA::Value* value = nullptr;
+        if(_value)
+            value = _value->Emit(builder);
 
         return builder.CreateRet(value);
     }
