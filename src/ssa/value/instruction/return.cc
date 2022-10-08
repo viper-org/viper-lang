@@ -34,7 +34,7 @@ namespace SSA
             delete value;
         }
         
-        assembly.CreateRet();
+        assembly.CreateJmp(".ret");
 
         return nullptr;
     }

@@ -27,6 +27,7 @@ namespace SSA
 
     private:
         std::string _name;
+        int _totalAllocaOffset;
         std::vector<BasicBlock*> _basicBlockList;
         std::vector<AllocaInst*> _allocaList;
 

@@ -14,6 +14,8 @@ namespace Codegen
         virtual bool IsImmediate() { return false; }
         virtual bool IsRegister() { return false; }
         virtual bool IsMemory() { return false; }
+
+        virtual bool RequiresSize() { return false; }
     };
 }
 

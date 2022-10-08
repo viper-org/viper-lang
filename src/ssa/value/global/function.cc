@@ -11,7 +11,7 @@ namespace SSA
     }
 
     Function::Function(Module& module, const std::string& name)
-        :Value(module), _name(name)
+        :Value(module), _name(name), _totalAllocaOffset(0)
     {
     }
 
@@ -44,8 +44,28 @@ namespace SSA
         assembly.CreateGlobal(_name);
         assembly.CreateLabel(_name);
 
+        if(_totalAllocaOffset)
+        {
+            Codegen::Register* rbp = new Codegen::Register(Codegen::Registers::RBP);
+            Codegen::Register* rsp = new Codegen::Register(Codegen::Registers::RSP);
+            Codegen::ImmediateValue* rspOffset = new Codegen::ImmediateValue(_totalAllocaOffset);
+
+            assembly.CreatePush(rbp);
+            assembly.CreateMov(rbp, rsp);
+            assembly.CreateSub(rsp, rspOffset);
+
+            delete rbp;
+            delete rsp;
+            delete rspOffset;
+        }
+
         for(BasicBlock* bb : _basicBlockList)
             bb->Emit(assembly);
+
+        assembly.CreateLabel(".ret");
+        if(_totalAllocaOffset)
+            assembly.CreateLeave();
+        assembly.CreateRet();
 
         return nullptr;
     }
@@ -70,5 +90,6 @@ namespace SSA
             offset += 4; // TODO: Calculate proper size and offset
             alloca->_offset = offset;
         }
+        _totalAllocaOffset = offset + 15 & ~15;
     }
 }
