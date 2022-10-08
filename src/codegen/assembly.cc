@@ -55,8 +55,8 @@ namespace Codegen
 
         if(left->RequiresSize() || right->RequiresSize())
             _output << "\n\t" << op << ' ' << op_sizes[2] << ' ' << left->Emit() << ", " << right->Emit();
-
-        _output << "\n\t" << op << ' ' << left->Emit() << ", " << right->Emit();
+        else
+            _output << "\n\t" << op << ' ' << left->Emit() << ", " << right->Emit();
     }
 
 

@@ -16,4 +16,9 @@ namespace Codegen
     {
         return true;
     }
+
+    bool ImmediateValue::RequiresSize()
+    {
+        return true;
+    }
 }

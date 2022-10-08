@@ -12,6 +12,7 @@ namespace Codegen
         std::string Emit() override;
 
         bool IsImmediate() override;
+        bool RequiresSize() override;
     private:
         long long _value;
     };
