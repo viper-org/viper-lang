@@ -21,7 +21,8 @@ namespace SSA
 
     Codegen::Value* AllocaInst::Emit(Codegen::Assembly&)
     {
-        return nullptr;
+        Codegen::MemoryValue* memory = new Codegen::MemoryValue(_offset, false);
+        return memory;
     }
 
     void AllocaInst::Dispose()

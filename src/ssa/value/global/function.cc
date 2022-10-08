@@ -40,6 +40,7 @@ namespace SSA
 
     Codegen::Value* Function::Emit(Codegen::Assembly& assembly)
     {
+        SortAllocas();
         assembly.CreateGlobal(_name);
         assembly.CreateLabel(_name);
 
@@ -53,6 +54,10 @@ namespace SSA
     {
         for(BasicBlock* basicBlock : _basicBlockList)
             basicBlock->Dispose();
+        for(AllocaInst* alloca : _allocaList)
+        {
+            alloca->Dispose();
+        }
 
         delete this;
     }
@@ -62,7 +67,7 @@ namespace SSA
         int offset = 0;
         for(AllocaInst* alloca : _allocaList)
         {
-            offset -= 4; // TODO: Calculate proper size and offset
+            offset += 4; // TODO: Calculate proper size and offset
             alloca->_offset = offset;
         }
     }

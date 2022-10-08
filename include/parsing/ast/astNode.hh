@@ -10,6 +10,8 @@ namespace Parsing
         Integer,
         BinaryExpression,
 
+        Variable,
+
         ReturnStatement,
         CompoundStatement,
         

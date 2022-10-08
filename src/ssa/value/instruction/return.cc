@@ -10,9 +10,11 @@ namespace SSA
 
     void RetInst::Print(std::ostream& stream, int indent) const
     {
-        stream << std::string(indent, ' ') << "ret ";
         if(_value)
             _value->Print(stream, indent);
+        stream << std::string(indent, ' ') << "ret ";
+        if(_value)
+            stream << _value->GetID();
         else
             stream << "void";
         

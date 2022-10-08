@@ -1,4 +1,5 @@
 #include <ssa/value/instruction/store.hh>
+#include <environment.hh>
 
 namespace SSA
 {
@@ -12,9 +13,16 @@ namespace SSA
         stream << std::string(indent, ' ') << "store " << _value->GetID() << ", " << _ptr->GetID() << '\n';
     }
 
-    Codegen::Value* StoreInst::Emit(Codegen::Assembly&)
+    Codegen::Value* StoreInst::Emit(Codegen::Assembly& assembly)
     {
-        return nullptr;
+        Codegen::Value* ptr = _ptr->Emit(assembly);
+        Codegen::Value* value = _value->Emit(assembly);
+        assembly.CreateMov(ptr, value);
+
+        delete ptr;
+        delete value;
+
+        return value;
     }
 
     void StoreInst::Dispose()

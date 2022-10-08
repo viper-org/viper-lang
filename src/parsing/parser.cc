@@ -106,6 +106,8 @@ namespace Parsing
         {
             case Lexing::TokenType::Let:
                 return ParseVariableDeclaration();
+            case Lexing::TokenType::Identifier:
+                return ParseVariable();
             case Lexing::TokenType::Return:
                 return ParseReturnStatement();
             case Lexing::TokenType::Integer:
@@ -145,6 +147,11 @@ namespace Parsing
         Consume();
         
         return std::make_unique<VariableDeclaration>(name, ParseExpression(), isFunction);
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseVariable()
+    {
+        return std::make_unique<Variable>(Consume().GetText());
     }
 
     std::unique_ptr<ASTNode> Parser::ParseIntegerLiteral()

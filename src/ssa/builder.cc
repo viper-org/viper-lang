@@ -1,4 +1,3 @@
-#include "ssa/value/instruction/store.hh"
 #include <ssa/builder.hh>
 
 namespace SSA
@@ -39,7 +38,6 @@ namespace SSA
     {
         AllocaInst* alloca = new AllocaInst(_module, name);
 
-        _insertPoint->GetInstList().push_back(alloca);
         _insertPoint->GetParent()->GetAllocaList().push_back(alloca);
 
         return alloca;
@@ -52,6 +50,13 @@ namespace SSA
         _insertPoint->GetInstList().push_back(store);
 
         return store;
+    }
+
+    LoadInst* Builder::CreateLoad(Value* ptr, const std::string& name)
+    {
+        LoadInst* load = new LoadInst(_module, ptr, name);
+
+        return load;
     }
 
     Module& Builder::GetModule() const

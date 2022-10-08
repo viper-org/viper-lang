@@ -2,6 +2,7 @@
 #define VIPER_CODEGEN_ASSEMBLY_HH
 #include <codegen/value/immediate.hh>
 #include <codegen/value/register.hh>
+#include <codegen/value/memory.hh>
 #include <sstream>
 #include <memory>
 

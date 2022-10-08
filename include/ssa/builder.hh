@@ -8,6 +8,7 @@
 #include <ssa/value/instruction/return.hh>
 #include <ssa/value/instruction/alloca.hh>
 #include <ssa/value/instruction/store.hh>
+#include <ssa/value/instruction/load.hh>
 #include <ssa/value/basicBlock.hh>
 
 namespace SSA
@@ -26,6 +27,7 @@ namespace SSA
 
         AllocaInst* CreateAlloca(const std::string& name = "");
         StoreInst* CreateStore(Value* ptr, Value* value);
+        LoadInst* CreateLoad(Value* ptr, const std::string& name = "");
 
         Module& GetModule() const;
     private:
