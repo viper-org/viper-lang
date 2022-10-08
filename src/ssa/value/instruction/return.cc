@@ -41,7 +41,8 @@ namespace SSA
 
     void RetInst::Dispose()
     {
-        _value->Dispose();
+        if(_value)
+            _value->Dispose();
         delete this;
     }
 }
