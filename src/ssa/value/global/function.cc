@@ -1,4 +1,3 @@
-#include "ssa/value/instruction/alloca.hh"
 #include <ssa/value/global/function.hh>
 
 namespace SSA
@@ -28,6 +27,8 @@ namespace SSA
     void Function::Print(std::ostream& stream, int indent) const
     {
         stream << std::string(indent, ' ') << "define int32 " << _name << "() {\n";
+        for(AllocaInst* alloca : _allocaList)
+            alloca->Print(stream, indent + 2);
         for(BasicBlock* bb : _basicBlockList)
             bb->Print(stream, indent + 2);
         stream << std::string(indent, ' ') << "}";
@@ -46,16 +47,14 @@ namespace SSA
 
         if(_totalAllocaOffset)
         {
-            Codegen::Register* rbp = new Codegen::Register(Codegen::Registers::RBP);
-            Codegen::Register* rsp = new Codegen::Register(Codegen::Registers::RSP);
+            Codegen::Register* rbp = Codegen::Register::GetRegister("rbp");
+            Codegen::Register* rsp = Codegen::Register::GetRegister("rsp");
             Codegen::ImmediateValue* rspOffset = new Codegen::ImmediateValue(_totalAllocaOffset);
 
             assembly.CreatePush(rbp);
             assembly.CreateMov(rbp, rsp);
             assembly.CreateSub(rsp, rspOffset);
 
-            delete rbp;
-            delete rsp;
             delete rspOffset;
         }
 
@@ -75,9 +74,7 @@ namespace SSA
         for(BasicBlock* basicBlock : _basicBlockList)
             basicBlock->Dispose();
         for(AllocaInst* alloca : _allocaList)
-        {
             alloca->Dispose();
-        }
 
         delete this;
     }

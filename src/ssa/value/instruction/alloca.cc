@@ -3,20 +3,20 @@
 namespace SSA
 {
     AllocaInst::AllocaInst(Module& module, const std::string& name)
-        :Instruction(module), _name(name)
+        :Instruction(module), _name(new TempValue(module, name))
     {
-        if(_name == "")
-            _name = std::to_string(module.GetNextInstName());
+        _instType = Instruction::Alloca;
     }
 
     void AllocaInst::Print(std::ostream& stream, int indent) const
     {
-        stream << std::string(indent, ' ') << "%" << _name << " = alloca int32\n";
+        _name->Print(stream, indent);
+        stream << "alloca int32\n";
     }
 
     std::string AllocaInst::GetID() const
     {
-        return "int32* %" + _name;
+        return "int32* " + _name->GetID();
     }
 
     Codegen::Value* AllocaInst::Emit(Codegen::Assembly&)
@@ -27,6 +27,7 @@ namespace SSA
 
     void AllocaInst::Dispose()
     {
+        _name->Dispose();
         delete this;
     }
 }

@@ -7,9 +7,8 @@ namespace SSA
     {
     }
 
-    void IntegerLiteral::Print(std::ostream& stream, int) const
+    void IntegerLiteral::Print(std::ostream&, int) const
     {
-        stream << "int32 " << _value;
     }
 
     std::string IntegerLiteral::GetID() const

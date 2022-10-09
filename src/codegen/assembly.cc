@@ -51,9 +51,11 @@ namespace Codegen
 
     void Assembly::CreateBinOp(Value* left, Value* right, std::string_view op)
     {
+        if(left == right)
+            return;
         VerifyArgs(left, right);
 
-        if(left->RequiresSize() || right->RequiresSize())
+        if(left->IsMemory() && right->IsImmediate())
             _output << "\n\t" << op << ' ' << op_sizes[2] << ' ' << left->Emit() << ", " << right->Emit();
         else
             _output << "\n\t" << op << ' ' << left->Emit() << ", " << right->Emit();

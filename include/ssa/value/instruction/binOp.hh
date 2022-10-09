@@ -1,15 +1,14 @@
-#ifndef VIPER_SSA_INSTRUCTION_ALLOCA_HH
-#define VIPER_SSA_INSTRUCTION_ALLOCA_HH
+#ifndef VIPER_SSA_INSTRUCTION_BINOP_HH
+#define VIPER_SSA_INSTRUCTION_BINOP_HH
 #include <ssa/value/instruction/instruction.hh>
 #include <ssa/value/tmpValue.hh>
 #include <memory>
 
 namespace SSA
 {
-    class AllocaInst : public Instruction
+    class BinOp : public Instruction
     {
     friend class Builder;
-    friend class Function;
     public:
         void Print(std::ostream& stream, int indent) const override;
         std::string GetID() const override;
@@ -19,11 +18,12 @@ namespace SSA
         void Dispose() override;
 
     protected:
-        AllocaInst(Module& module, const std::string& name = "");
-    
+        BinOp(Module& module, InstType type, Value* lhs, Value* rhs, const std::string& name = "");
+        
     private:
         TempValue* _name;
-        int _offset;
+        Value* _lhs;
+        Value* _rhs;
     };
 }
 

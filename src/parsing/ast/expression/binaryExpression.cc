@@ -82,8 +82,23 @@ namespace Parsing
                 return builder.CreateConstantInt(total);
             }
         }
-        delete left;
-        delete right;
-        return nullptr;
+        SSA::Value* retval = nullptr;
+        switch(_operator)
+        {
+            case BinaryOperator::Addition:
+                retval = builder.CreateAdd(left, right);
+                break;
+            case BinaryOperator::Subtraction:
+                retval = builder.CreateSub(left, right);
+                break;
+            case BinaryOperator::Multiplication:
+                retval = builder.CreateMul(left, right);
+                break;
+            case BinaryOperator::Division:
+                retval = builder.CreateDiv(left, right);
+                break;
+        }
+
+        return retval;
     }
 }

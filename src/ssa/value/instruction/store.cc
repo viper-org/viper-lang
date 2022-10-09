@@ -6,6 +6,7 @@ namespace SSA
     StoreInst::StoreInst(Module& module, Value* ptr, Value* value)
         :Instruction(module), _ptr(ptr), _value(value)
     {
+        _instType = Instruction::Store;
     }
 
     void StoreInst::Print(std::ostream& stream, int indent) const

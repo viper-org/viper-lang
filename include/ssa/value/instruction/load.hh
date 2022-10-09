@@ -2,6 +2,7 @@
 #ifndef VIPER_SSA_INSTRUCTION_LOAD_HH
 #define VIPER_SSA_INSTRUCTION_LOAD_HH
 #include <ssa/value/instruction/instruction.hh>
+#include <ssa/value/tmpValue.hh>
 #include <memory>
 
 namespace SSA
@@ -18,11 +19,11 @@ namespace SSA
         void Dispose() override;
 
     protected:
-        LoadInst(Module& module, Value* ptr, const std::string& name);
+        LoadInst(Module& module, Value* ptr, const std::string& name = "");
         
     private:
+        TempValue* _name;
         Value* _ptr;
-        std::string _name;
     };
 }
 

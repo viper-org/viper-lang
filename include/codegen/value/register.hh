@@ -40,16 +40,31 @@ namespace Codegen
         XMM15,
     };
 
+    enum class RegisterType
+    {
+        Integral,
+        Floating,
+    };
+
     class Register : public Value
     {
     public:
-        Register(Registers id);
+        Register(std::string_view id8, std::string_view id16, std::string_view id32, std::string_view id64, RegisterType type);
 
         std::string Emit() override;
+        std::string_view GetID(int bits) const;
+
+        static Register* AllocRegister(RegisterType type);
+        static void FreeRegister(Register* reg);
+        static Register* GetRegister(std::string_view id);
 
         bool IsRegister() override;
     private:
-        Registers _id;
+        RegisterType _type;
+        std::string_view _id8;
+        std::string_view _id16;
+        std::string_view _id32;
+        std::string_view _id64;
     };
 }
 

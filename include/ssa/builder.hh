@@ -9,6 +9,7 @@
 #include <ssa/value/instruction/alloca.hh>
 #include <ssa/value/instruction/store.hh>
 #include <ssa/value/instruction/load.hh>
+#include <ssa/value/instruction/binOp.hh>
 #include <ssa/value/basicBlock.hh>
 
 namespace SSA
@@ -25,12 +26,19 @@ namespace SSA
 
         Value* CreateConstantInt(long long value);
 
+        Value* CreateAdd(Value* lhs, Value* rhs);
+        Value* CreateSub(Value* lhs, Value* rhs);
+        Value* CreateMul(Value* lhs, Value* rhs);
+        Value* CreateDiv(Value* lhs, Value* rhs);
+
         AllocaInst* CreateAlloca(const std::string& name = "");
         StoreInst* CreateStore(Value* ptr, Value* value);
         LoadInst* CreateLoad(Value* ptr, const std::string& name = "");
 
         Module& GetModule() const;
     private:
+        Value* CreateBinOp(Instruction::InstType op, Value* lhs, Value* rhs);
+
         Module& _module;
         BasicBlock* _insertPoint;
     };

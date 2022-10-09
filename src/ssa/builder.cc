@@ -34,6 +34,26 @@ namespace SSA
         return ret;
     }
 
+    Value* Builder::CreateAdd(Value* lhs, Value* rhs)
+    {
+        return CreateBinOp(Instruction::Add, lhs, rhs);
+    }
+
+    Value* Builder::CreateSub(Value* lhs, Value* rhs)
+    {
+        return CreateBinOp(Instruction::Sub, lhs, rhs);
+    }
+
+    Value* Builder::CreateMul(Value* lhs, Value* rhs)
+    {
+        return CreateBinOp(Instruction::Mul, lhs, rhs);
+    }
+
+    Value* Builder::CreateDiv(Value* lhs, Value* rhs)
+    {
+        return CreateBinOp(Instruction::Div, lhs, rhs);
+    }
+
     AllocaInst* Builder::CreateAlloca(const std::string& name)
     {
         AllocaInst* alloca = new AllocaInst(_module, name);
@@ -62,5 +82,12 @@ namespace SSA
     Module& Builder::GetModule() const
     {
         return _module;
+    }
+
+    Value* Builder::CreateBinOp(Instruction::InstType op, Value* lhs, Value* rhs)
+    {
+        BinOp* binop = new BinOp(_module, op, lhs, rhs);
+
+        return binop;
     }
 }

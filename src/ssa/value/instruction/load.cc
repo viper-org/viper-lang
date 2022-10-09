@@ -4,20 +4,20 @@
 namespace SSA
 {
     LoadInst::LoadInst(Module& module, Value* ptr, const std::string& name)
-        :Instruction(module), _ptr(ptr), _name(name)
+        :Instruction(module), _name(new TempValue(module, name)), _ptr(ptr)
     {
-        if(_name == "")
-            _name = std::to_string(module.GetNextInstName());
+        _instType = Instruction::Load;
     }
 
     std::string LoadInst::GetID() const
     {
-        return "%" + _name;
+        return _name->GetID();
     }
 
     void LoadInst::Print(std::ostream& stream, int indent) const
     {
-        stream << std::string(indent, ' ') << "%" << _name << " = load int32, " << _ptr->GetID() << '\n';
+        _name->Print(stream, indent);
+        stream << "load int32, " << _ptr->GetID() << '\n';
     }
 
     Codegen::Value* LoadInst::Emit(Codegen::Assembly& assembly)
@@ -33,6 +33,7 @@ namespace SSA
 
     void LoadInst::Dispose()
     {
+        _name->Dispose();
         delete this;
     }
 }

@@ -4,15 +4,23 @@
 
 namespace SSA
 {
-    enum class InstType
-    {
-        Ret,
-        Alloca,
-    };
-
     class Instruction : public Value
     {
     public:
+        enum InstType
+        {
+            Ret,
+
+            Alloca,
+            Load,
+            Store,
+
+            Add,
+            Sub,
+            Mul,
+            Div,
+        };
+
         Instruction(Module& module) : Value(module) {  }
         virtual ~Instruction() {  }
 
