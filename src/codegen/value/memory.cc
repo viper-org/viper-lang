@@ -21,4 +21,9 @@ namespace Codegen
     {
         return true;
     }
+
+    void MemoryValue::Dispose()
+    {
+        return;
+    }
 }

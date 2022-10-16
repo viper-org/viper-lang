@@ -31,7 +31,7 @@ namespace SSA
 
             assembly.CreateMov(rax, std::move(value));
 
-            delete value;
+            value->Dispose();
         }
         
         assembly.CreateJmp(".ret");

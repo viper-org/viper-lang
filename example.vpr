@@ -1,4 +1,6 @@
 let int32 main() = {
-    let int32 qwerty = 1 + 2 * 3;
-    return qwerty - 2;
+    let int32 a = 1;
+    let int32 b = a * 2;
+    let int32 c = a + b;
+    return a + b * c;
 }

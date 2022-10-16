@@ -21,13 +21,14 @@ namespace SSA
 
     Codegen::Value* AllocaInst::Emit(Codegen::Assembly&)
     {
-        Codegen::MemoryValue* memory = new Codegen::MemoryValue(_offset, false);
-        return memory;
+        _memory = new Codegen::MemoryValue(_offset, false);
+        return _memory;
     }
 
     void AllocaInst::Dispose()
     {
         _name->Dispose();
+        delete _memory;
         delete this;
     }
 }

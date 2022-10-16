@@ -39,6 +39,21 @@ namespace SSA
         stream << InstTypeToString(_instType) << " " << _lhs->GetID() << ", " << _rhs->GetID() << "\n";
     }
 
+    constexpr bool IsNoAssoc(BinOp::InstType type)
+    {
+        switch(type)
+        {
+            case BinOp::Add:
+            case BinOp::Mul:
+                return true;
+            case BinOp::Sub:
+            case BinOp::Div:
+                return false;
+            default:
+                throw;
+        }
+    }
+
     Codegen::Value* BinOp::Emit(Codegen::Assembly& assembly)
     {
         Codegen::Value* lhs = _lhs->Emit(assembly);
@@ -48,7 +63,7 @@ namespace SSA
         {
             Codegen::Register* reg = Codegen::Register::AllocRegister(Codegen::RegisterType::Integral);
             assembly.CreateMov(reg, lhs);
-            delete lhs;
+            lhs->Dispose();
             lhs = reg;
         }
 
@@ -69,7 +84,7 @@ namespace SSA
                 break;
         }
 
-        delete rhs;
+        rhs->Dispose();
 
         return result;
     }

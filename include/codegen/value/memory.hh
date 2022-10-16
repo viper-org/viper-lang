@@ -13,6 +13,8 @@ namespace Codegen
         std::string Emit() override;
 
         bool IsMemory() override;
+
+        void Dispose() override;
     private:
         int _offset;
         bool _isReference;

@@ -45,7 +45,12 @@ namespace Codegen
         if(operand->RequiresSize())
             _output << "\n\tpush " << op_sizes[2] << ' ' << operand->Emit();
         else
-            _output << "\n\tpush " << operand->Emit();
+        {
+            if(operand->IsRegister())
+                _output << "\n\tpush " << static_cast<Register*>(operand)->GetID(64);
+            else
+                _output << "\n\tpush " << operand->Emit();
+        }
     }
 
 
@@ -57,6 +62,12 @@ namespace Codegen
 
         if(left->IsMemory() && right->IsImmediate())
             _output << "\n\t" << op << ' ' << op_sizes[2] << ' ' << left->Emit() << ", " << right->Emit();
+        else if (left->IsRegister() && right->IsRegister())
+        {
+            Register* lhs = static_cast<Register*>(left);
+            Register* rhs = static_cast<Register*>(right);
+            _output << "\n\t" << op << ' ' << lhs->GetID(64) << ", " << rhs->GetID(64);
+        }
         else
             _output << "\n\t" << op << ' ' << left->Emit() << ", " << right->Emit();
     }

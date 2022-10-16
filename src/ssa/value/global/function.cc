@@ -55,7 +55,7 @@ namespace SSA
             assembly.CreateMov(rbp, rsp);
             assembly.CreateSub(rsp, rspOffset);
 
-            delete rspOffset;
+            rspOffset->Dispose();
         }
 
         for(BasicBlock* bb : _basicBlockList)

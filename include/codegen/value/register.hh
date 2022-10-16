@@ -59,6 +59,8 @@ namespace Codegen
         static Register* GetRegister(std::string_view id);
 
         bool IsRegister() override;
+
+        void Dispose() override;
     private:
         RegisterType _type;
         std::string_view _id8;

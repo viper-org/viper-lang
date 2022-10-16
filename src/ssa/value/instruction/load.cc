@@ -23,17 +23,17 @@ namespace SSA
     Codegen::Value* LoadInst::Emit(Codegen::Assembly& assembly)
     {
         Codegen::Value* ptr = _ptr->Emit(assembly);
-        Codegen::MemoryValue* mem = static_cast<Codegen::MemoryValue*>(ptr);
-        Codegen::MemoryValue* ref = new Codegen::MemoryValue(mem, true);
+        _memory = new Codegen::MemoryValue(static_cast<Codegen::MemoryValue*>(ptr), true);
 
-        delete ptr;
+        ptr->Dispose();
 
-        return ref;
+        return _memory;
     }
 
     void LoadInst::Dispose()
     {
         _name->Dispose();
+        delete _memory;
         delete this;
     }
 }
