@@ -9,6 +9,8 @@ namespace Parsing
     {
         Addition, Subtraction,
         Multiplication, Division,
+
+        Assignment,
     };
 
     class BinaryExpression : public ASTNode

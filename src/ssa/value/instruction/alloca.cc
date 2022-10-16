@@ -1,9 +1,9 @@
 #include <ssa/value/instruction/alloca.hh>
-
+#include <iostream>
 namespace SSA
 {
     AllocaInst::AllocaInst(Module& module, const std::string& name)
-        :Instruction(module), _name(new TempValue(module, name))
+        :Instruction(module), _name(new TempValue(module, name)), _memory(nullptr)
     {
         _instType = Instruction::Alloca;
     }
@@ -21,7 +21,8 @@ namespace SSA
 
     Codegen::Value* AllocaInst::Emit(Codegen::Assembly&)
     {
-        _memory = new Codegen::MemoryValue(_offset, false);
+        if(!_memory)
+            _memory = new Codegen::MemoryValue(_offset, false);
         return _memory;
     }
 

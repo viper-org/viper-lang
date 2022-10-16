@@ -19,4 +19,9 @@ namespace Parsing
         SSA::AllocaInst* ptr = namedValues[_name];
         return builder.CreateLoad(ptr, "");
     }
+
+    std::string Variable::GetName() const
+    {
+        return _name;
+    }
 }

@@ -1,5 +1,7 @@
 #include <parsing/ast/expression/binaryExpression.hh>
 #include <parsing/ast/expression/integerLiteral.hh>
+#include <parsing/ast/expression/variable.hh>
+#include <environment.hh>
 #include <diagnostics.hh>
 
 namespace Parsing
@@ -22,6 +24,8 @@ namespace Parsing
             case Lexing::TokenType::Slash:
                 _operator = BinaryOperator::Division;
                 break;
+            case Lexing::TokenType::Equals:
+                _operator = BinaryOperator::Assignment;
             default:
                 break;
         }
@@ -39,7 +43,10 @@ namespace Parsing
                 return "Multiplication";
             case BinaryOperator::Division:
                 return "Division";
+            case BinaryOperator::Assignment:
+                return "Assignment";
         }
+        return "";
     }
 
     void BinaryExpression::Print(std::ostream& stream, int indent) const
@@ -54,8 +61,18 @@ namespace Parsing
 
     SSA::Value* BinaryExpression::Emit(SSA::Builder& builder)
     {
-        SSA::Value* left = _lhs->Emit(builder);
         SSA::Value* right = _rhs->Emit(builder);
+        if(_operator == BinaryOperator::Assignment)
+        {
+            if(Variable* left = dynamic_cast<Variable*>(_lhs.get()))
+            {
+                SSA::AllocaInst* alloca = namedValues[left->GetName()];
+                builder.CreateStore(alloca, right);
+                return right;
+            }
+        }
+
+        SSA::Value* left = _lhs->Emit(builder);
 
         if(SSA::IntegerLiteral* leftI = dynamic_cast<SSA::IntegerLiteral*>(left))
         {
@@ -76,6 +93,8 @@ namespace Parsing
                     case BinaryOperator::Division:
                         total = leftI->GetValue() / rightI->GetValue();
                         break;
+                    default:
+                        throw; // Unreachable
                 }
                 delete left;
                 delete right;
@@ -96,6 +115,8 @@ namespace Parsing
                 break;
             case BinaryOperator::Division:
                 retval = builder.CreateDiv(left, right);
+                break;
+            default:
                 break;
         }
 

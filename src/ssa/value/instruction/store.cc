@@ -20,7 +20,6 @@ namespace SSA
         Codegen::Value* value = _value->Emit(assembly);
         assembly.CreateMov(ptr, value);
 
-        ptr->Dispose();
         value->Dispose();
 
         return value;

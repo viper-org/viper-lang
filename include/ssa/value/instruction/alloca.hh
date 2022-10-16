@@ -23,7 +23,7 @@ namespace SSA
     
     private:
         TempValue* _name;
-        Codegen::Value* _memory;
+        Codegen::MemoryValue* _memory;
         int _offset;
     };
 }
