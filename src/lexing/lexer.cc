@@ -124,7 +124,15 @@ namespace Lexing
             case '*':
                 return Token(TokenType::Star, "*", _position, _position + 1, _lineNumber, _colNumber);
             case '/':
+            {
+                if(Peek(1) == '/')
+                {
+                    while(Current() != '\n')
+                        Consume();
+                    return std::nullopt;
+                }
                 return Token(TokenType::Slash, "/", _position, _position + 1, _lineNumber, _colNumber);
+            }
 
             case '=':
             {
