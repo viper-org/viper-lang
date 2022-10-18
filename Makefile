@@ -11,7 +11,7 @@ TESTDIR=$(EXEC_PREFIX)/tests
 CXXC=g++
 LD=g++
 
-CXX_FLAGS=-fsanitize=address,undefined -O0 -ggdb3 -I$(INCLUDEDIR) -std=c++2a -Wall -Wextra -Wpedantic
+CXX_FLAGS=-fsanitize=address,undefined -O0 -ggdb3 -I$(INCLUDEDIR) -std=c++20 -Wall -Wextra -Wpedantic
 LD_FLAGS=-fsanitize=address,undefined
 
 CXX_SRCS:=$(shell find $(SRCDIR) -name '*.cc')
