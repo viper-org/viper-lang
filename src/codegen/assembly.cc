@@ -29,7 +29,7 @@ namespace Codegen
 
     void Assembly::Emit(std::ostream& stream)
     {
-        stream << _output.view() << "\n";
+        stream << _output.str() << "\n";
     }
 
 
