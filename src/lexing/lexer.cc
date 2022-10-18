@@ -131,6 +131,14 @@ namespace Lexing
                         Consume();
                     return std::nullopt;
                 }
+                else if(Peek(1) == '*')
+                {
+                    _position += 2;
+                    while(Current() != '*' && Peek(1) != '/')
+                        Consume();
+                    Consume();
+                    return std::nullopt;
+                }
                 return Token(TokenType::Slash, "/", _position, _position + 1, _lineNumber, _colNumber);
             }
 

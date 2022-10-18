@@ -1,5 +1,8 @@
 let int32 main() = { // Entry point function
     let int16 a = 1;
-    let int32 b = a;
+    let /* inline comment */ int32 b = a;
     return b;
 }
+/* multi
+line
+comment */
