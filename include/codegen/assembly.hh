@@ -29,6 +29,8 @@ namespace Codegen
         void CreateMul(Value* left, Value* right);
         void CreateDiv(Value* left, Value* right);
 
+        void CreateCall(std::string_view label);
+
         void CreateLeave();
         void CreateRet();
     private:

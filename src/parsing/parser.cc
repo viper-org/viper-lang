@@ -1,3 +1,4 @@
+#include "lexing/token.hh"
 #include <parsing/parser.hh>
 #include <symbol/symbols.hh>
 #include <type/types.hh>
@@ -122,7 +123,7 @@ namespace Parsing
             case Lexing::TokenType::Let:
                 return ParseVariableDeclaration();
             case Lexing::TokenType::Identifier:
-                return ParseVariable();
+                return ParseIdentifier();
             case Lexing::TokenType::Return:
                 return ParseReturnStatement();
             case Lexing::TokenType::Integer:
@@ -133,6 +134,17 @@ namespace Parsing
                 return ParseCompoundExpression();
             default:
                 ParserError("Expected primary expression, found '" + Current().GetText() + "'");
+        }
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseIdentifier()
+    {
+        switch(Peek(1).GetType())
+        {
+            case Lexing::TokenType::LeftParen:
+                return ParseCallExpression();
+            default:
+                return ParseVariable();
         }
     }
 
@@ -183,6 +195,18 @@ namespace Parsing
         std::string name = Consume().GetText();
         VarSymbol* symbol = FindSymbol(name);
         return std::make_unique<Variable>(name, symbol->GetType());
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseCallExpression()
+    {
+        std::string callee = Consume().GetText();
+        ExpectToken(Lexing::TokenType::LeftParen);
+        Consume();
+        // TODO: Parse args
+        ExpectToken(Lexing::TokenType::RightParen);
+        Consume();
+
+        return std::make_unique<CallExpr>(callee);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseIntegerLiteral()

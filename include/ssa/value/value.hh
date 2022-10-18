@@ -25,7 +25,7 @@ namespace SSA
         void SetType(std::shared_ptr<Type> newType) { _type = newType; }
         std::shared_ptr<Type> _type;
     private:
-        Module& _module;
+        [[maybe_unused]] Module& _module;
     };
 }
 

@@ -1,3 +1,4 @@
+#include "ssa/value/instruction/call.hh"
 #include <ssa/builder.hh>
 
 namespace SSA
@@ -52,6 +53,13 @@ namespace SSA
     Value* Builder::CreateDiv(Value* lhs, Value* rhs)
     {
         return CreateBinOp(Instruction::Div, lhs, rhs);
+    }
+
+    CallInst* Builder::CreateCall(Function* callee, const std::string& name)
+    {
+        CallInst* call = new CallInst(_module, callee, name);
+
+        return call;
     }
 
     AllocaInst* Builder::CreateAlloca(std::shared_ptr<Type> allocatedType, const std::string& name)

@@ -8,5 +8,6 @@
 #include <parsing/ast/expression/integerLiteral.hh>
 #include <parsing/ast/expression/binaryExpression.hh>
 #include <parsing/ast/expression/variable.hh>
+#include <parsing/ast/expression/call.hh>
 
 #endif

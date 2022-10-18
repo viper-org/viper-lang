@@ -43,8 +43,6 @@ void Compiler::Compile()
         //std::cout << std::endl;
         value->Emit(assembly);
 
-        value->Dispose();
-
     }
     assembly.Emit(std::cout);
 }

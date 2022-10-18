@@ -17,6 +17,7 @@ namespace SSA
 
         void Print(std::ostream& stream, int indent) const override;
         std::string GetID() const override;
+        std::string_view GetName() const;
 
         Codegen::Value* Emit(Codegen::Assembly& assembly) override;
 

@@ -11,6 +11,7 @@
 #include <ssa/value/instruction/load.hh>
 #include <ssa/value/instruction/binOp.hh>
 #include <ssa/value/basicBlock.hh>
+#include <ssa/value/instruction/call.hh>
 
 namespace SSA
 {
@@ -30,6 +31,8 @@ namespace SSA
         Value* CreateSub(Value* lhs, Value* rhs);
         Value* CreateMul(Value* lhs, Value* rhs);
         Value* CreateDiv(Value* lhs, Value* rhs);
+
+        CallInst* CreateCall(Function* callee, const std::string& name = "");
 
         AllocaInst* CreateAlloca(std::shared_ptr<Type> allocatedType, const std::string& name = "");
         StoreInst* CreateStore(Value* ptr, Value* value);

@@ -5,7 +5,9 @@ namespace SSA
     Function* Function::Create(Module& module, const std::string& name)
     {
         Function* func = new Function(module, name);
-        
+
+        module.GetGlobals().push_back(func);
+
         return func;
     }
 
@@ -35,6 +37,11 @@ namespace SSA
     }
 
     std::string Function::GetID() const
+    {
+        return "%" + _name;
+    }
+
+    std::string_view Function::GetName() const
     {
         return _name;
     }

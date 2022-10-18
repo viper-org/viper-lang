@@ -6,13 +6,20 @@
 
 namespace SSA
 {
+    class Value;
+    class Function;
     class Module
     {
     public:
         Module(const std::string& id);
+        ~Module();
 
         int GetNextInstName();
+
+        std::vector<Value*>& GetGlobals();
+        Function* GetFunction(std::string_view name) const;
     private:
+        std::vector<Value*> _globals;
         std::string _id;
         int _instNameCount;
     };

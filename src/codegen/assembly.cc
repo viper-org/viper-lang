@@ -95,6 +95,12 @@ namespace Codegen
     }
 
 
+    void Assembly::CreateCall(std::string_view label)
+    {
+        _output << "\n\tcall " << label;
+    }
+
+
     void Assembly::CreateLeave()
     {
         _output << "\n\tleave";

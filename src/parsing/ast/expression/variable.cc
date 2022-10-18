@@ -12,7 +12,7 @@ namespace Parsing
 
     void Variable::Print(std::ostream& stream, int indent) const
     {
-        stream << std::string(indent, ' ') << "<Variable: " << _name;
+        stream << std::string(indent, ' ') << "<Variable>: " << _name;
     }
 
     SSA::Value* Variable::Emit(SSA::Builder& builder)
