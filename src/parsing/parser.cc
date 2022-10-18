@@ -189,6 +189,11 @@ namespace Parsing
     {
         std::string name = Consume().GetText();
         VarSymbol* symbol = FindSymbol(name);
+        if(!symbol)
+        {
+            --_position;
+            ParserError("Undeclared identifier: `" + name + "'.");
+        }
         return std::make_unique<Variable>(name, symbol->GetType());
     }
 
