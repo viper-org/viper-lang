@@ -7,15 +7,28 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  Build:
 
     runs-on: ubuntu-latest
 
     steps:
+    - name: Set up GCC
+      uses: egor-tensin/setup-gcc@v1
+      with:
+        version: latest
+        platform: x64
+        
     - uses: actions/checkout@v3
       
     - name: Build Project
       run: make
-      
+    
+  Test:
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
     - name: Run tests
       run: make test
