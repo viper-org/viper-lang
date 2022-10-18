@@ -176,15 +176,11 @@ namespace Parsing
 
         Consume();
         
-        int savePos = _position;
         std::unique_ptr<ASTNode> initVal = ParseExpression();
         if(isFunction)
         {
             if(initVal->GetNodeType() != ASTNodeType::CompoundStatement && initVal->GetNodeType() != ASTNodeType::ReturnStatement)
-            {
-                _position = savePos;
-                ParserError("One line function body must be a return statement");
-            }
+                initVal = std::make_unique<ReturnStatement>(std::move(initVal), _currentReturnType);
         }
         
         return std::make_unique<VariableDeclaration>(name, type, std::move(initVal), isFunction);
