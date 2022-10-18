@@ -98,6 +98,6 @@ namespace SSA
             offset += alloca->GetAllocatedType()->GetScalarSize() / 8;
             alloca->_offset = offset;
         }
-        _totalAllocaOffset = offset + 15 & ~15;
+        _totalAllocaOffset = (offset + 15) & ~15;
     }
 }

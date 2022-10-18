@@ -1,4 +1,3 @@
-#include "lexing/token.hh"
 #include <parsing/parser.hh>
 #include <symbol/symbols.hh>
 #include <type/types.hh>

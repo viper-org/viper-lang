@@ -1,0 +1,7 @@
+let int32 test() = {
+    return 0;
+}
+
+let int32 main() = {
+    return test();
+}

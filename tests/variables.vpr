@@ -1,0 +1,8 @@
+let int32 main() = {
+    let int8 a = 2;
+    let int16 b = 3;
+    let int32 c = 4;
+    let int64 d = 5;
+
+    return a + b * c - d;
+}
