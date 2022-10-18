@@ -1,3 +1,5 @@
-let int32 test() = 1;
-
-let int32 main() = test();
+let int32 main() = {
+    let int64 x = 12;
+    let int8 y = x - 4;
+    return y;
+}

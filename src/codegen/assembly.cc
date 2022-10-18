@@ -117,6 +117,5 @@ namespace Codegen
             Diagnostics::Error("viper", "Attempt to create binary operation with multiple memory references");
         if(left->IsImmediate())
             Diagnostics::Error("viper", "Attempt to create binary operation with immediate LHS");
-        // TODO: Verify args
     }
 }

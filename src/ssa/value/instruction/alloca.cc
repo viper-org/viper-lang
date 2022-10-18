@@ -32,4 +32,9 @@ namespace SSA
         delete _memory;
         delete this;
     }
+
+    std::shared_ptr<Type> AllocaInst::GetAllocatedType() const
+    {
+        return _allocatedType;
+    }
 }

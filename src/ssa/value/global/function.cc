@@ -1,4 +1,5 @@
 #include <ssa/value/global/function.hh>
+#include <algorithm>
 
 namespace SSA
 {
@@ -88,10 +89,13 @@ namespace SSA
 
     void Function::SortAllocas()
     {
+        std::sort(_allocaList.begin(), _allocaList.end(), [](AllocaInst* lhs, AllocaInst* rhs) {
+            return lhs->GetAllocatedType()->GetScalarSize() > rhs->GetAllocatedType()->GetScalarSize();
+        });
         int offset = 0;
         for(AllocaInst* alloca : _allocaList)
         {
-            offset += 4; // TODO: Calculate proper size and offset
+            offset += alloca->GetAllocatedType()->GetScalarSize() / 8;
             alloca->_offset = offset;
         }
         _totalAllocaOffset = offset + 15 & ~15;

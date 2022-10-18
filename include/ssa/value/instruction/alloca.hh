@@ -18,6 +18,8 @@ namespace SSA
 
         void Dispose() override;
 
+        std::shared_ptr<Type> GetAllocatedType() const;
+
     protected:
         AllocaInst(Module& module, std::shared_ptr<Type> allocatedType, const std::string& name = "");
     
