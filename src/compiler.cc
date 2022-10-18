@@ -18,7 +18,7 @@ Compiler::Compiler(OutputType outputType, const std::string& inputFileName)
     
     std::stringstream buf;
     buf << _inputHandle.rdbuf();
-    _contents = buf.str();
+    _contents = buf.str() + '\n';
 
     _inputHandle.close();
 }

@@ -3,3 +3,5 @@ let int32 main() = {
     let int32 b = a;
     return b;
 }
+
+let int32 test() = 23;

@@ -75,13 +75,18 @@ namespace Parsing
         std::vector<std::unique_ptr<ASTNode>> result;
         while(_position < _tokens.size())
         {
+            int savePos = _position;
             std::unique_ptr<ASTNode> expr = ParseExpression();
             ExpectToken(Lexing::TokenType::Semicolon);
             Consume();
 
             if(expr->GetNodeType() == ASTNodeType::Function)
                 result.push_back(std::move(expr));
-            else; // TODO: Error
+            else
+            {
+                _position = savePos;
+                ParserError("Expected top-level expression");
+            }
         }
         return result;
     }
@@ -159,7 +164,18 @@ namespace Parsing
 
         Consume();
         
-        return std::make_unique<VariableDeclaration>(name, type, ParseExpression(), isFunction);
+        int savePos = _position;
+        std::unique_ptr<ASTNode> initVal = ParseExpression();
+        if(isFunction)
+        {
+            if(initVal->GetNodeType() != ASTNodeType::CompoundStatement && initVal->GetNodeType() != ASTNodeType::ReturnStatement)
+            {
+                _position = savePos;
+                ParserError("One line function body must be a return statement");
+            }
+        }
+        
+        return std::make_unique<VariableDeclaration>(name, type, std::move(initVal), isFunction);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseVariable()
