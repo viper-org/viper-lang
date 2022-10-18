@@ -7,9 +7,8 @@
 namespace Parsing
 {
     BinaryExpression::BinaryExpression(std::unique_ptr<ASTNode> lhs, Lexing::Token op, std::unique_ptr<ASTNode> rhs)
-        :_lhs(std::move(lhs)), _rhs(std::move(rhs))
+        :ASTNode(ASTNodeType::BinaryExpression), _lhs(std::move(lhs)), _rhs(std::move(rhs))
     {
-        _nodeType = ASTNodeType::BinaryExpression;
         switch(op.GetType())
         {
             case Lexing::TokenType::Plus:

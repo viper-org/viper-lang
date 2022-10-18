@@ -49,7 +49,7 @@ namespace SSA
         {
             Codegen::Register* rbp = Codegen::Register::GetRegister("rbp");
             Codegen::Register* rsp = Codegen::Register::GetRegister("rsp");
-            Codegen::ImmediateValue* rspOffset = new Codegen::ImmediateValue(_totalAllocaOffset);
+            Codegen::ImmediateValue* rspOffset = new Codegen::ImmediateValue(_totalAllocaOffset, types.at("int64"));
 
             assembly.CreatePush(rbp);
             assembly.CreateMov(rbp, rsp);

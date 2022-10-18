@@ -2,17 +2,17 @@
 
 namespace Codegen
 {
-    MemoryValue::MemoryValue(int offset, bool isReference)
-        :_offset(offset), _isReference(isReference)
+    MemoryValue::MemoryValue(int offset, bool isReference, std::shared_ptr<Type> type)
+        :_offset(offset), _isReference(isReference), _type(type)
     {
     }
 
     MemoryValue::MemoryValue(MemoryValue* other, bool isReference)
-        :_offset(other->_offset), _isReference(isReference)
+        :_offset(other->_offset), _isReference(isReference), _type(other->_type)
     {
     }
 
-    std::string MemoryValue::Emit()
+    std::string MemoryValue::Emit(int)
     {
         return "[rbp-" + std::to_string(_offset) + "]";
     }
@@ -25,5 +25,10 @@ namespace Codegen
     void MemoryValue::Dispose()
     {
         return;
+    }
+
+    int MemoryValue::GetSize() const
+    {
+        return _type->GetPrimitiveSize();
     }
 }

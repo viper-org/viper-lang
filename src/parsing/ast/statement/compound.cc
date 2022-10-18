@@ -3,9 +3,8 @@
 namespace Parsing
 {
     CompoundStatement::CompoundStatement(std::vector<std::unique_ptr<ASTNode>>& statements)
-        :_statements(std::move(statements))
+        :ASTNode(ASTNodeType::CompoundStatement), _statements(std::move(statements))
     {
-        _nodeType = ASTNodeType::CompoundStatement;
     }
 
     void CompoundStatement::Print(std::ostream& stream, int indent) const

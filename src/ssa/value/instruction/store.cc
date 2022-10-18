@@ -18,6 +18,14 @@ namespace SSA
     {
         Codegen::Value* ptr = _ptr->Emit(assembly);
         Codegen::Value* value = _value->Emit(assembly);
+        if(value->IsMemory())
+        {
+            Codegen::Register* reg = Codegen::Register::AllocRegister(Codegen::RegisterType::Integral);
+            assembly.CreateMov(reg, value);
+            value->Dispose();
+            value = reg;
+        }
+        
         assembly.CreateMov(ptr, value);
 
         value->Dispose();

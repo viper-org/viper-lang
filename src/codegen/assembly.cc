@@ -1,17 +1,27 @@
 #include <codegen/assembly.hh>
 #include <diagnostics.hh>
-#include <array>
+#include <unordered_map>
 
 namespace Codegen
 {
     using namespace std::literals;
 
-    constexpr std::array op_sizes {
-        "BYTE"sv,
-        "WORD"sv,
-        "DWORD"sv,
-        "QWORD"sv,
-    };
+    constexpr std::string_view GetOpSize(int bits)
+    {
+        switch(bits)
+        {
+            case 8:
+                return "BYTE";
+            case 16:
+                return "WORD";
+            case 32:
+                return "DWORD";
+            case 64:
+                return "QWORD";
+            default:
+                Diagnostics::Error("viper", "Invalid bits for operation size: " + std::to_string(bits));
+        }
+    }
 
     Assembly::Assembly()
     {
@@ -42,15 +52,7 @@ namespace Codegen
 
     void Assembly::CreatePush(Value* operand)
     {
-        if(operand->RequiresSize())
-            _output << "\n\tpush " << op_sizes[2] << ' ' << operand->Emit();
-        else
-        {
-            if(operand->IsRegister())
-                _output << "\n\tpush " << static_cast<Register*>(operand)->GetID(64);
-            else
-                _output << "\n\tpush " << operand->Emit();
-        }
+        _output << "\n\tpush " << GetOpSize(operand->GetSize()) << " " << operand->Emit(64);
     }
 
 
@@ -60,16 +62,9 @@ namespace Codegen
             return;
         VerifyArgs(left, right);
 
-        if(left->IsMemory() && right->IsImmediate())
-            _output << "\n\t" << op << ' ' << op_sizes[2] << ' ' << left->Emit() << ", " << right->Emit();
-        else if (left->IsRegister() && right->IsRegister())
-        {
-            Register* lhs = static_cast<Register*>(left);
-            Register* rhs = static_cast<Register*>(right);
-            _output << "\n\t" << op << ' ' << lhs->GetID(64) << ", " << rhs->GetID(64);
-        }
-        else
-            _output << "\n\t" << op << ' ' << left->Emit() << ", " << right->Emit();
+        int smallerSize = left->GetSize() > right->GetSize() ? right->GetSize() : left->GetSize();
+
+        _output << "\n\t" << op << ' ' << GetOpSize(smallerSize) << ' ' << left->Emit(smallerSize) << ", " << right->Emit(smallerSize);
     }
 
 

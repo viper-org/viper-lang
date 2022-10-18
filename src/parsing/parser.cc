@@ -1,12 +1,13 @@
-#include "lexing/token.hh"
-#include <memory>
 #include <parsing/parser.hh>
+#include <symbol/symbols.hh>
+#include <type/types.hh>
+#include <environment.hh>
 #include <diagnostics.hh>
 
 namespace Parsing
 {
     Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text)
-        :_text(text), _tokens(tokens), _position(0)
+        :_text(text), _tokens(tokens), _position(0), _currentReturnType(nullptr)
     {
     }
 
@@ -84,6 +85,12 @@ namespace Parsing
         }
         return result;
     }
+
+    std::shared_ptr<Type> Parser::ParseType()
+    {
+        ExpectToken(Lexing::TokenType::Type);
+        return types.at(Consume().GetText());
+    }
     
     std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)
     {
@@ -128,8 +135,7 @@ namespace Parsing
     {
         Consume();
 
-        ExpectToken(Lexing::TokenType::Type);
-        Consume();
+        std::shared_ptr<Type> type = ParseType();
 
         ExpectToken(Lexing::TokenType::Identifier);
         std::string name = Consume().GetText();
@@ -142,19 +148,25 @@ namespace Parsing
             // TODO: Parse args
             ExpectToken(Lexing::TokenType::RightParen);
             Consume();
+            _currentReturnType = type;
         }
 
+        if(!isFunction)
+            varSymbols.push_back(new VarSymbol(name, type));
+
         if(Current().GetType() != Lexing::TokenType::Equals)
-            return std::make_unique<VariableDeclaration>(name, nullptr, isFunction);
+            return std::make_unique<VariableDeclaration>(name, type, nullptr, isFunction);
 
         Consume();
         
-        return std::make_unique<VariableDeclaration>(name, ParseExpression(), isFunction);
+        return std::make_unique<VariableDeclaration>(name, type, ParseExpression(), isFunction);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseVariable()
     {
-        return std::make_unique<Variable>(Consume().GetText());
+        std::string name = Consume().GetText();
+        VarSymbol* symbol = FindSymbol(name);
+        return std::make_unique<Variable>(name, symbol->GetType());
     }
 
     std::unique_ptr<ASTNode> Parser::ParseIntegerLiteral()
@@ -169,9 +181,9 @@ namespace Parsing
         Consume();
 
         if(Current().GetType() == Lexing::TokenType::Semicolon)
-            return std::make_unique<ReturnStatement>(nullptr);
+            return std::make_unique<ReturnStatement>(nullptr, _currentReturnType);
 
-        return std::make_unique<ReturnStatement>(ParseExpression());
+        return std::make_unique<ReturnStatement>(ParseExpression(), _currentReturnType);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseParenthesizedExpression()

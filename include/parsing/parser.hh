@@ -16,6 +16,7 @@ namespace Parsing
         std::string _text;
         std::vector<Lexing::Token> _tokens;
         unsigned int _position;
+        std::shared_ptr<Type> _currentReturnType;
 
         Lexing::Token Current() const;
         Lexing::Token Consume();
@@ -25,6 +26,8 @@ namespace Parsing
 
         void ExpectToken(Lexing::TokenType tokenType);
         [[noreturn]] void ParserError(std::string message);
+        
+        std::shared_ptr<Type> ParseType();
 
         std::unique_ptr<ASTNode> ParseExpression(int precedence = 1);
         std::unique_ptr<ASTNode> ParsePrimary();

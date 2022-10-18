@@ -5,6 +5,7 @@ namespace SSA
     IntegerLiteral::IntegerLiteral(Module& module, long long value)
         :Value(module), _value(value)
     {
+        _type = types.at("int64");
     }
 
     void IntegerLiteral::Print(std::ostream&, int) const
@@ -23,6 +24,6 @@ namespace SSA
 
     Codegen::Value* IntegerLiteral::Emit(Codegen::Assembly&)
     {
-        return new Codegen::ImmediateValue(_value);
+        return new Codegen::ImmediateValue(_value, _type);
     }
 }

@@ -4,10 +4,11 @@
 
 namespace Parsing
 {
-    VariableDeclaration::VariableDeclaration(const std::string& name, std::unique_ptr<ASTNode> initVal, bool isFunction)
-        :_name(name), _initVal(std::move(initVal)), _isFunction(isFunction)
+    VariableDeclaration::VariableDeclaration(const std::string& name, std::shared_ptr<Type> type, std::unique_ptr<ASTNode> initVal, bool isFunction)
+        :ASTNode(ASTNodeType::VariableDeclaration), _name(name), _initVal(std::move(initVal)), _isFunction(isFunction)
     {
         _nodeType = (_isFunction ? ASTNodeType::Function : ASTNodeType::VariableDeclaration);
+        _type = type;
     }
 
     void VariableDeclaration::Print(std::ostream& stream, int indent) const
@@ -37,7 +38,7 @@ namespace Parsing
 
             return func;
         }
-        SSA::AllocaInst* alloca = builder.CreateAlloca();
+        SSA::AllocaInst* alloca = builder.CreateAlloca(_type);
         if(_initVal)
         {
             SSA::Value* initVal = _initVal->Emit(builder);

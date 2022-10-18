@@ -1,12 +1,13 @@
+#include <memory>
 #include <parsing/ast/expression/variable.hh>
 #include <environment.hh>
 
 namespace Parsing
 {
-    Variable::Variable(std::string name)
-        :_name(name)
+    Variable::Variable(std::string name, std::shared_ptr<Type> type)
+        :ASTNode(ASTNodeType::Variable), _name(name)
     {
-        _nodeType = ASTNodeType::Variable;
+        _type = type;
     }
 
     void Variable::Print(std::ostream& stream, int indent) const

@@ -1,5 +1,5 @@
 let int32 main() = {
-    let int32 a = 1;
-    a = a + 3;
-    return a;
+    let int16 a = 1;
+    let int32 b = a;
+    return b;
 }

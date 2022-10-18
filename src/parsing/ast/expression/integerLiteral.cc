@@ -3,9 +3,9 @@
 namespace Parsing
 {
     IntegerLiteral::IntegerLiteral(long long value)
-        :_value(value)
+        :ASTNode(ASTNodeType::Integer), _value(value)
     {
-        _nodeType = ASTNodeType::Integer;
+        _type = types.at("int64");
     }
 
     void IntegerLiteral::Print(std::ostream& stream, int indent) const

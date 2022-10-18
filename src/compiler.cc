@@ -25,6 +25,10 @@ Compiler::Compiler(OutputType outputType, const std::string& inputFileName)
 
 void Compiler::Compile()
 {
+    std::atexit([](){
+        for(VarSymbol* symbol : varSymbols)
+            delete symbol;
+    });
     Lexing::Lexer lexer(_contents);
     Parsing::Parser parser(lexer.Lex(), _contents);
     SSA::Module module(_inputFileName);

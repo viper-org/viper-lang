@@ -8,13 +8,16 @@ namespace Parsing
     class ReturnStatement : public ASTNode
     {
     public:
-        ReturnStatement(std::unique_ptr<ASTNode> value);
+        ReturnStatement(std::unique_ptr<ASTNode> value, std::shared_ptr<Type> returnType);
 
         void Print(std::ostream& stream, int indent) const override;
+
+        std::shared_ptr<Type> GetReturnType() const;
 
         SSA::Value* Emit(SSA::Builder& builder) override;
     private:
         std::unique_ptr<ASTNode> _value;
+        std::shared_ptr<Type> _returnType;
     };
 }
 

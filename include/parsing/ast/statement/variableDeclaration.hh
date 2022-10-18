@@ -10,7 +10,7 @@ namespace Parsing
     class VariableDeclaration : public ASTNode
     {
     public:
-        VariableDeclaration(const std::string& name, std::unique_ptr<ASTNode> initVal, bool isFunction = false);
+        VariableDeclaration(const std::string& name, std::shared_ptr<Type> type, std::unique_ptr<ASTNode> initVal, bool isFunction = false);
 
         void Print(std::ostream& stream, int indent) const override;
 

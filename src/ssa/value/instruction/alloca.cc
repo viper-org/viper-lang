@@ -2,8 +2,8 @@
 #include <iostream>
 namespace SSA
 {
-    AllocaInst::AllocaInst(Module& module, const std::string& name)
-        :Instruction(module), _name(new TempValue(module, name)), _memory(nullptr)
+    AllocaInst::AllocaInst(Module& module, std::shared_ptr<Type> allocatedType, const std::string& name)
+        :Instruction(module), _name(new TempValue(module, name)), _memory(nullptr), _allocatedType(allocatedType)
     {
         _instType = Instruction::Alloca;
     }
@@ -22,7 +22,7 @@ namespace SSA
     Codegen::Value* AllocaInst::Emit(Codegen::Assembly&)
     {
         if(!_memory)
-            _memory = new Codegen::MemoryValue(_offset, false);
+            _memory = new Codegen::MemoryValue(_offset, false, _allocatedType);
         return _memory;
     }
 

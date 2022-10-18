@@ -81,9 +81,9 @@ namespace Codegen
         Diagnostics::Error("viper", "Unknown register '"s + id.data() + "'");
     }
 
-    std::string Register::Emit()
+    std::string Register::Emit(int bits)
     {
-        return std::string(_id32.data());
+        return std::string(GetID(bits).data());
     }
 
     std::string_view Register::GetID(int bits) const
@@ -111,5 +111,10 @@ namespace Codegen
     void Register::Dispose()
     {
         FreeRegister(this);
+    }
+
+    int Register::GetSize() const
+    {
+        return 64;
     }
 }

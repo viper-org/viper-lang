@@ -54,9 +54,9 @@ namespace SSA
         return CreateBinOp(Instruction::Div, lhs, rhs);
     }
 
-    AllocaInst* Builder::CreateAlloca(const std::string& name)
+    AllocaInst* Builder::CreateAlloca(std::shared_ptr<Type> allocatedType, const std::string& name)
     {
-        AllocaInst* alloca = new AllocaInst(_module, name);
+        AllocaInst* alloca = new AllocaInst(_module, allocatedType, name);
 
         _insertPoint->GetParent()->GetAllocaList().push_back(alloca);
 

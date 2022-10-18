@@ -51,7 +51,7 @@ namespace Codegen
     public:
         Register(std::string_view id8, std::string_view id16, std::string_view id32, std::string_view id64, RegisterType type);
 
-        std::string Emit() override;
+        std::string Emit(int bits) override;
         std::string_view GetID(int bits) const;
 
         static Register* AllocRegister(RegisterType type);
@@ -61,6 +61,8 @@ namespace Codegen
         bool IsRegister() override;
 
         void Dispose() override;
+
+        int GetSize() const override;
     private:
         RegisterType _type;
         std::string_view _id8;

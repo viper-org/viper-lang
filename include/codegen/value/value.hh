@@ -9,7 +9,7 @@ namespace Codegen
     public:
         virtual ~Value() {  }
 
-        virtual std::string Emit() = 0;
+        virtual std::string Emit(int bits) = 0;
 
         virtual bool IsImmediate() { return false; }
         virtual bool IsRegister() { return false; }
@@ -18,6 +18,8 @@ namespace Codegen
         virtual bool RequiresSize() { return false; }
 
         virtual void Dispose() { delete this; }
+
+        virtual int GetSize() const = 0;
     };
 }
 

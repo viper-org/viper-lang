@@ -19,12 +19,13 @@ namespace SSA
         void Dispose() override;
 
     protected:
-        AllocaInst(Module& module, const std::string& name = "");
+        AllocaInst(Module& module, std::shared_ptr<Type> allocatedType, const std::string& name = "");
     
     private:
         TempValue* _name;
         Codegen::MemoryValue* _memory;
         int _offset;
+        std::shared_ptr<Type> _allocatedType;
     };
 }
 
