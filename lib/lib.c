@@ -7,3 +7,7 @@ void WriteChar(char c)
 {
     putchar(c);
 }
+void WriteString(char* str)
+{
+    puts(str);
+}

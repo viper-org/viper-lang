@@ -1,12 +1,6 @@
-import void WriteInt(int32 n);
-import void WriteChar(int8 c);
+import void WriteString(int8* str);
 
 let int32 main() = {
-    WriteChar('H');
-    WriteChar('e');
-    WriteChar('l');
-    WriteChar('l');
-    WriteChar('o');
-    WriteChar('\n');
+    WriteString("Hello World!");
     return 0;
 }

@@ -165,6 +165,8 @@ namespace Parsing
                 return ParseReturnStatement();
             case Lexing::TokenType::Integer:
                 return ParseIntegerLiteral();
+            case Lexing::TokenType::String:
+                return ParseStringLiteral();
             case Lexing::TokenType::LeftParen:
                 return ParseParenthesizedExpression();
             case Lexing::TokenType::LeftBracket:
@@ -283,6 +285,13 @@ namespace Parsing
         long long value = std::stoll(Consume().GetText());
 
         return std::make_unique<IntegerLiteral>(value);
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseStringLiteral()
+    {
+        std::string value = Consume().GetText();
+
+        return std::make_unique<StringLiteral>(value);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseReturnStatement()

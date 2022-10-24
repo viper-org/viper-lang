@@ -13,7 +13,6 @@ namespace Codegen
         std::string Emit(int bits) override;
 
         bool IsImmediate() override;
-        bool RequiresSize() override;
 
         int GetSize() const override;
     private:

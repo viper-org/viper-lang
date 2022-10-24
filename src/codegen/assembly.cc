@@ -24,12 +24,26 @@ namespace Codegen
     }
 
     Assembly::Assembly()
+        :_stringCount(0)
     {
     }
 
     void Assembly::Emit(std::ostream& stream)
     {
-        stream << _output.str() << "\n";
+        stream << _output.str();
+        stream << "\n\tsection .rodata";
+        for(StringLiteral* str : _strings)
+        {
+            stream << "\n" << str->GetName() << ": db ";
+            std::string_view data = str->GetValue();
+
+            for(size_t i = 0; i < data.size(); i++)
+                stream << std::to_string(data[i]) + ", ";
+            
+            stream << '0';
+
+            delete str;
+        }
     }
 
 
@@ -46,6 +60,16 @@ namespace Codegen
     void Assembly::CreateExtern(std::string_view ident)
     {
         _output << "\n\t[extern " << ident << "]";
+    }
+
+
+    StringLiteral* Assembly::CreateString(const std::string& value)
+    {
+        StringLiteral* str = new StringLiteral(value, "LC" + std::to_string(_stringCount++));
+
+        _strings.push_back(str);
+
+        return str;
     }
 
 
@@ -117,7 +141,7 @@ namespace Codegen
             CreateSet(static_cast<Compare*>(src)->GetOperator(), dest);
             return;
         }
-        if(MemoryValue* mem; (mem = dynamic_cast<MemoryValue*>(src)) && !mem->IsReference())
+        if(MemoryValue* mem; ((mem = dynamic_cast<MemoryValue*>(src)) && !mem->IsReference()) || dynamic_cast<StringLiteral*>(src))
             CreateBinOp(dest, src, "lea");
         else
             CreateBinOp(dest, src, "mov");

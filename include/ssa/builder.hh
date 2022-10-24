@@ -3,6 +3,7 @@
 #include <ssa/module.hh>
 #include <ssa/value/value.hh>
 #include <ssa/value/global/function.hh>
+#include <ssa/value/global/string.hh>
 #include <ssa/value/constant/integer.hh>
 #include <ssa/value/instruction/instruction.hh>
 #include <ssa/value/instruction/return.hh>

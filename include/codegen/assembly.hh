@@ -4,8 +4,10 @@
 #include <codegen/value/register.hh>
 #include <codegen/value/memory.hh>
 #include <codegen/value/cmp.hh>
+#include <codegen/value/string.hh>
 #include <sstream>
 #include <memory>
+#include <vector>
 
 namespace Codegen
 {
@@ -19,6 +21,8 @@ namespace Codegen
         void CreateGlobal(std::string_view ident);
         void CreateExtern(std::string_view ident);
         void CreateLabel(std::string_view label);
+
+        StringLiteral* CreateString(const std::string& value);
 
 
         void CreateIndirect(Value* dest, Value* src);
@@ -45,10 +49,11 @@ namespace Codegen
         void CreateRet();
     private:
         void CreateBinOp(Value* left, Value* right, std::string_view op);
+        void VerifyArgs(Value* left, Value* right);
 
         std::ostringstream _output;
-
-        void VerifyArgs(Value* left, Value* right);
+        int _stringCount;
+        std::vector<StringLiteral*> _strings;
     };
 }
 

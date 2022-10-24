@@ -54,7 +54,9 @@ namespace SSA
     {
         for(Instruction* inst : _instList)
         {
-            inst->Emit(assembly);
+            Codegen::Value* instValue = inst->Emit(assembly);
+            if(instValue)
+                instValue->Dispose();
             if(inst->GetInstType() == Instruction::Ret)
                 break;
         }

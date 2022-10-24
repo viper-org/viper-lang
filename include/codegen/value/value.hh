@@ -16,8 +16,6 @@ namespace Codegen
         virtual bool IsMemory() { return false; }
         virtual bool IsCompare() { return false; }
 
-        virtual bool RequiresSize() { return false; }
-
         virtual void Dispose() { delete this; }
 
         virtual int GetSize() const = 0;

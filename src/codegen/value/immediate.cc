@@ -17,11 +17,6 @@ namespace Codegen
         return true;
     }
 
-    bool ImmediateValue::RequiresSize()
-    {
-        return true;
-    }
-
     int ImmediateValue::GetSize() const
     {
         return _type->GetPrimitiveSize();

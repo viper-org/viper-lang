@@ -10,6 +10,7 @@ namespace Parsing
     enum class ASTNodeType
     {
         Integer,
+        String,
         BinaryExpression,
 
         Variable,
