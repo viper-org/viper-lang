@@ -1,20 +1,23 @@
 #include <ssa/value/global/function.hh>
 #include <algorithm>
+#include <array>
 
 namespace SSA
 {
-    Function* Function::Create(Module& module, const std::string& name)
+    Function* Function::Create(Module& module, const std::string& name, const std::vector<AllocaInst*>& args)
     {
-        Function* func = new Function(module, name);
+        Function* func = new Function(module, name, args);
 
         module.GetGlobals().push_back(func);
 
         return func;
     }
 
-    Function::Function(Module& module, const std::string& name)
-        :Value(module), _name(name), _totalAllocaOffset(0)
+    Function::Function(Module& module, const std::string& name, const std::vector<AllocaInst*>& args)
+        :Value(module), _name(name), _args(args), _totalAllocaOffset(0)
     {
+        _args.reserve(_args.size());
+        std::copy(_args.begin(), _args.end(), std::back_inserter(_allocaList));
     }
 
     std::vector<BasicBlock*>& Function::GetBasicBlockList()
@@ -64,6 +67,20 @@ namespace SSA
             assembly.CreateSub(rsp, rspOffset);
 
             rspOffset->Dispose();
+        }
+
+        const std::array argRegs = {
+            Codegen::Register::GetRegister("rdi"),
+            Codegen::Register::GetRegister("rsi"),
+            Codegen::Register::GetRegister("rdx"),
+            Codegen::Register::GetRegister("rcx"),
+        };
+        unsigned int index = 0;
+        for(AllocaInst* arg : _args)
+        {
+            Codegen::Value* argValue = arg->Emit(assembly);
+            assembly.CreateMov(argValue, argRegs[index++]);
+            argValue->Dispose();
         }
 
         for(BasicBlock* bb : _basicBlockList)

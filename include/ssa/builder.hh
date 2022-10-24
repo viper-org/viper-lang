@@ -32,9 +32,9 @@ namespace SSA
         Value* CreateMul(Value* lhs, Value* rhs);
         Value* CreateDiv(Value* lhs, Value* rhs);
 
-        CallInst* CreateCall(Function* callee, const std::string& name = "");
+        CallInst* CreateCall(Function* callee, const std::vector<Value*>& args, const std::string& name = "");
 
-        AllocaInst* CreateAlloca(std::shared_ptr<Type> allocatedType, const std::string& name = "");
+        AllocaInst* CreateAlloca(std::shared_ptr<Type> allocatedType, const std::string& name = "", bool isArg = false);
         StoreInst* CreateStore(Value* ptr, Value* value);
         LoadInst* CreateLoad(Value* ptr, const std::string& name = "");
 

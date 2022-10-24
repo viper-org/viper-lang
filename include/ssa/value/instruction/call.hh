@@ -18,11 +18,12 @@ namespace SSA
         void Dispose() override;
 
     protected:
-        CallInst(Module& module, Function* callee, const std::string& name = "");
+        CallInst(Module& module, Function* callee, const std::vector<Value*>& args, const std::string& name = "");
         
     private:
         TempValue* _name;
         Function* _callee;
+        std::vector<Value*> _args;
     };
 }
 

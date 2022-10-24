@@ -55,18 +55,19 @@ namespace SSA
         return CreateBinOp(Instruction::Div, lhs, rhs);
     }
 
-    CallInst* Builder::CreateCall(Function* callee, const std::string& name)
+    CallInst* Builder::CreateCall(Function* callee, const std::vector<Value*>& args, const std::string& name)
     {
-        CallInst* call = new CallInst(_module, callee, name);
+        CallInst* call = new CallInst(_module, callee, args, name);
 
         return call;
     }
 
-    AllocaInst* Builder::CreateAlloca(std::shared_ptr<Type> allocatedType, const std::string& name)
+    AllocaInst* Builder::CreateAlloca(std::shared_ptr<Type> allocatedType, const std::string& name, bool isArg)
     {
         AllocaInst* alloca = new AllocaInst(_module, allocatedType, name);
 
-        _insertPoint->GetParent()->GetAllocaList().push_back(alloca);
+        if(!isArg)
+            _insertPoint->GetParent()->GetAllocaList().push_back(alloca);
 
         return alloca;
     }

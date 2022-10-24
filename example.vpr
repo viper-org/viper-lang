@@ -1,5 +1,3 @@
-let int32 main() = {
-    let int64 x = 12;
-    let int8 y = x - 4;
-    return y;
-}
+let int32 mul(int32 a, int32 b) = a * b;
+
+let int32 main() = mul(2, 6);

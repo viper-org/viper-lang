@@ -18,6 +18,7 @@ namespace Parsing
         
         VariableDeclaration,
         Function,
+        Call,
     };
 
     class ASTNode

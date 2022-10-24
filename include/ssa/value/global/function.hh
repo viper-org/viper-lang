@@ -10,7 +10,7 @@ namespace SSA
     class Function : public Value
     {
     public:
-        static Function* Create(Module& module, const std::string& name);
+        static Function* Create(Module& module, const std::string& name, const std::vector<AllocaInst*>& args);
 
         std::vector<BasicBlock*>& GetBasicBlockList();
         std::vector<AllocaInst*>& GetAllocaList();
@@ -24,10 +24,11 @@ namespace SSA
         void Dispose() override;
 
     protected:
-        Function(Module& module, const std::string& name);
+        Function(Module& module, const std::string& name, const std::vector<AllocaInst*>& args);
 
     private:
         std::string _name;
+        std::vector<AllocaInst*> _args;
         int _totalAllocaOffset;
         std::vector<BasicBlock*> _basicBlockList;
         std::vector<AllocaInst*> _allocaList;

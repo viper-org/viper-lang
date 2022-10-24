@@ -1,5 +1,5 @@
 #include <ssa/value/instruction/alloca.hh>
-#include <iostream>
+
 namespace SSA
 {
     AllocaInst::AllocaInst(Module& module, std::shared_ptr<Type> allocatedType, const std::string& name)

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <ssa/value/instruction/return.hh>
 
 namespace SSA

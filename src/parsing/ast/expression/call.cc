@@ -3,8 +3,8 @@
 
 namespace Parsing
 {
-    CallExpr::CallExpr(const std::string& callee)
-        :ASTNode(ASTNodeType::Variable), _callee(callee)
+    CallExpr::CallExpr(const std::string& callee, std::vector<std::unique_ptr<ASTNode>>& args)
+        :ASTNode(ASTNodeType::Call), _callee(callee), _args(std::move(args))
     {
     }
 
@@ -17,7 +17,12 @@ namespace Parsing
     {
         SSA::Function* function = builder.GetModule().GetFunction(_callee);
         if(function)
-            return builder.CreateCall(function);
+        {
+            std::vector<SSA::Value*> args;
+            for(std::unique_ptr<ASTNode>& arg : _args)
+                args.push_back(arg->Emit(builder));
+            return builder.CreateCall(function, args);
+        }
         
         return nullptr;
     }

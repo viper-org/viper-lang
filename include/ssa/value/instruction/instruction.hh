@@ -15,6 +15,8 @@ namespace SSA
             Load,
             Store,
 
+            Call,
+
             Add,
             Sub,
             Mul,
