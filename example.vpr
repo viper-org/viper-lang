@@ -1,3 +1,6 @@
 let int32 mul(int32 a, int32 b) = a * b;
 
-let int32 main() = mul(2, 6);
+let int32 main() = {
+    mul(1, 2);
+    return 0;
+}

@@ -22,7 +22,7 @@ namespace Parsing
         return _returnType;
     }
 
-    SSA::Value* ReturnStatement::Emit(SSA::Builder& builder)
+    SSA::Value* ReturnStatement::Emit(SSA::Builder& builder, bool)
     {
         SSA::Value* value = nullptr;
         if(_value)

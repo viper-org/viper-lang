@@ -15,7 +15,7 @@ namespace Parsing
         stream << std::string(indent, ' ') << "<Variable>: " << _name;
     }
 
-    SSA::Value* Variable::Emit(SSA::Builder& builder)
+    SSA::Value* Variable::Emit(SSA::Builder& builder, bool)
     {
         SSA::AllocaInst* ptr = namedValues[_name];
         return builder.CreateLoad(ptr, "");

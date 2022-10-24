@@ -58,7 +58,7 @@ namespace Parsing
         _rhs->Print(stream, indent + 2);
     }
 
-    SSA::Value* BinaryExpression::Emit(SSA::Builder& builder)
+    SSA::Value* BinaryExpression::Emit(SSA::Builder& builder, bool)
     {
         SSA::Value* right = _rhs->Emit(builder);
         if(_operator == BinaryOperator::Assignment)

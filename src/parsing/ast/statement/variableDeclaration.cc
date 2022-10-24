@@ -26,7 +26,7 @@ namespace Parsing
         return _args.has_value();
     }
 
-    SSA::Value* VariableDeclaration::Emit(SSA::Builder& builder)
+    SSA::Value* VariableDeclaration::Emit(SSA::Builder& builder, bool)
     {
         if(_isFunction)
         {
@@ -40,7 +40,7 @@ namespace Parsing
             SSA::Function* func = SSA::Function::Create(builder.GetModule(), _name, args);
             SSA::BasicBlock* entryBB = SSA::BasicBlock::Create(builder.GetModule(), func);
             builder.SetInsertPoint(entryBB);
-            _initVal->Emit(builder);
+            _initVal->Emit(builder, true);
 
             return func;
         }

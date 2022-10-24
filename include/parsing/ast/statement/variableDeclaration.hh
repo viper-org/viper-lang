@@ -17,7 +17,7 @@ namespace Parsing
 
         bool IsFunction() const;
         
-        SSA::Value* Emit(SSA::Builder& builder) override;
+        SSA::Value* Emit(SSA::Builder& builder, bool isStatement) override;
     private:
         std::string _name;
         std::unique_ptr<ASTNode> _initVal;

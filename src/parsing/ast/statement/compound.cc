@@ -17,10 +17,10 @@ namespace Parsing
         }
     }
 
-    SSA::Value* CompoundStatement::Emit(SSA::Builder& builder)
+    SSA::Value* CompoundStatement::Emit(SSA::Builder& builder, bool isStatement)
     {
         for(std::unique_ptr<ASTNode>& statement : _statements)
-            statement->Emit(builder);
+            statement->Emit(builder, isStatement);
 
         return nullptr;
     }

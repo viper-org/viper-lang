@@ -32,7 +32,7 @@ namespace Parsing
         ASTNodeType GetNodeType() const { return _nodeType; }
         std::shared_ptr<Type> GetType() const { return _type; }
 
-        virtual SSA::Value* Emit(SSA::Builder& builder) = 0;
+        virtual SSA::Value* Emit(SSA::Builder& builder, bool isStatement = false) = 0;
     protected:
         ASTNodeType _nodeType;
         std::shared_ptr<Type> _type;

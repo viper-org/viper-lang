@@ -13,7 +13,7 @@ namespace Parsing
 
         long long GetValue() const;
 
-        SSA::Value* Emit(SSA::Builder& builder) override;
+        SSA::Value* Emit(SSA::Builder& builder, bool isStatement) override;
     private:
         long long _value;
     };

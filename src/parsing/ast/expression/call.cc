@@ -13,7 +13,7 @@ namespace Parsing
         stream << std::string(indent, ' ') << "<Call>: " << _callee;
     }
 
-    SSA::Value* CallExpr::Emit(SSA::Builder& builder)
+    SSA::Value* CallExpr::Emit(SSA::Builder& builder, bool isStatement)
     {
         SSA::Function* function = builder.GetModule().GetFunction(_callee);
         if(function)
@@ -21,7 +21,7 @@ namespace Parsing
             std::vector<SSA::Value*> args;
             for(std::unique_ptr<ASTNode>& arg : _args)
                 args.push_back(arg->Emit(builder));
-            return builder.CreateCall(function, args);
+            return builder.CreateCall(function, args, isStatement);
         }
         
         return nullptr;

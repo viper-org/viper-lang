@@ -11,7 +11,7 @@ namespace Parsing
 
         void Print(std::ostream& stream, int indent) const override;
 
-        SSA::Value* Emit(SSA::Builder& builder) override;
+        SSA::Value* Emit(SSA::Builder& builder, bool isStatement) override;
     private:
         std::string _callee;
         std::vector<std::unique_ptr<ASTNode>> _args;
