@@ -21,6 +21,11 @@ namespace SSA
             Sub,
             Mul,
             Div,
+
+            EQ,
+            NE,
+            LT,
+            GT,
         };
 
         Instruction(Module& module) : Value(module) {  }

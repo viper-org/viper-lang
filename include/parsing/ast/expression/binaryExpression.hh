@@ -10,6 +10,9 @@ namespace Parsing
         Addition, Subtraction,
         Multiplication, Division,
 
+        Equal, NotEqual,
+        LessThan, GreaterThan,
+
         Assignment,
     };
 
@@ -30,4 +33,4 @@ namespace Parsing
     };
 }
 
-#endif  
+#endif

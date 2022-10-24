@@ -23,6 +23,18 @@ namespace Parsing
             case Lexing::TokenType::Slash:
                 _operator = BinaryOperator::Division;
                 break;
+            case Lexing::TokenType::DoubleEquals:
+                _operator = BinaryOperator::Equal;
+                break;
+            case Lexing::TokenType::BangEquals:
+                _operator = BinaryOperator::NotEqual;
+                break;
+            case Lexing::TokenType::LeftAngleBracket:
+                _operator = BinaryOperator::LessThan;
+                break;
+            case Lexing::TokenType::RightAngleBracket:
+                _operator = BinaryOperator::GreaterThan;
+                break;
             case Lexing::TokenType::Equals:
                 _operator = BinaryOperator::Assignment;
             default:
@@ -42,6 +54,14 @@ namespace Parsing
                 return "Multiplication";
             case BinaryOperator::Division:
                 return "Division";
+            case BinaryOperator::Equal:
+                return "Equal";
+            case BinaryOperator::NotEqual:
+                return "NotEqual";
+            case BinaryOperator::LessThan:
+                return "LessThan";
+            case BinaryOperator::GreaterThan:
+                return "GreaterThan";
             case BinaryOperator::Assignment:
                 return "Assignment";
         }
@@ -115,6 +135,21 @@ namespace Parsing
             case BinaryOperator::Division:
                 retval = builder.CreateDiv(left, right);
                 break;
+            case BinaryOperator::Equal:
+                retval = builder.CreateCmp(SSA::Instruction::EQ, left, right);
+                break;
+            case BinaryOperator::NotEqual:
+                retval = builder.CreateCmp(SSA::Instruction::NE, left, right);
+                break;
+            case BinaryOperator::LessThan:
+                retval = builder.CreateCmp(SSA::Instruction::LT, left, right);
+                break;
+            case BinaryOperator::GreaterThan:
+                retval = builder.CreateCmp(SSA::Instruction::GT, left, right);
+                break;
+            case BinaryOperator::Assignment:
+                builder.CreateStore(left, right);
+                retval = left;
             default:
                 break;
         }

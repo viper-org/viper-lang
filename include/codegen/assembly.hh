@@ -3,6 +3,7 @@
 #include <codegen/value/immediate.hh>
 #include <codegen/value/register.hh>
 #include <codegen/value/memory.hh>
+#include <codegen/value/cmp.hh>
 #include <sstream>
 #include <memory>
 
@@ -22,12 +23,16 @@ namespace Codegen
     
         void CreatePush(Value* operand);
 
+        void CreateSet(CompareOperator op, Value* operand);
+
         void CreateMov(Value* left, Value*right);
 
         void CreateAdd(Value* left, Value* right);
         void CreateSub(Value* left, Value* right);
         void CreateMul(Value* left, Value* right);
         void CreateDiv(Value* left, Value* right);
+
+        void CreateCmp(Value* left, Value* right);
 
         void CreateCall(std::string_view label);
 

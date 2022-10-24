@@ -1,5 +1,5 @@
-let int32 Square(int32 num) = num * num;
-
 let int32 main() = {
-    return Square(2);
+    let int32 a = 2;
+    a = a != 5;
+    return a;
 }

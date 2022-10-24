@@ -38,6 +38,14 @@ namespace Parsing
             case Lexing::TokenType::Minus:
                 return 35;
 
+            case Lexing::TokenType::LeftAngleBracket:
+            case Lexing::TokenType::RightAngleBracket:
+                return 30;
+                
+            case Lexing::TokenType::DoubleEquals:
+            case Lexing::TokenType::BangEquals:
+                return 25;            
+        
             case Lexing::TokenType::Equals:
                 return 10;
             

@@ -18,7 +18,7 @@ namespace Codegen
                 return "DWORD";
             case 64:
                 return "QWORD";
-            default:
+            default: throw;
                 Diagnostics::Error("viper", "Invalid bits for operation size: " + std::to_string(bits));
         }
     }
@@ -54,6 +54,34 @@ namespace Codegen
     {
         _output << "\n\tpush " << GetOpSize(operand->GetSize()) << " " << operand->Emit(64);
     }
+    
+
+    void Assembly::CreateSet(CompareOperator op, Value* operand)
+    {
+        _output << "\n\tset";
+        switch(op)
+        {
+            case CompareOperator::EQ:
+                _output << "e";
+                break;
+            case CompareOperator::NE:
+                _output << "ne";
+                break;
+            case CompareOperator::LT:
+                _output << "l";
+                break;
+            case CompareOperator::GT:
+                _output << "g";
+                break;
+            case CompareOperator::LE:
+                _output << "le";
+                break;
+            case CompareOperator::GE:
+                _output << "ge";
+                break;
+        }
+        _output << " " << operand->Emit(8);
+    }
 
 
     void Assembly::CreateBinOp(Value* left, Value* right, std::string_view op)
@@ -70,6 +98,11 @@ namespace Codegen
 
     void Assembly::CreateMov(Value* left, Value* right)
     {
+        if(right->IsCompare())
+        {
+            CreateSet(static_cast<Compare*>(right)->GetOperator(), left);
+            return;
+        }
         CreateBinOp(left, right, "mov");
     }
 
@@ -92,6 +125,12 @@ namespace Codegen
     void Assembly::CreateDiv(Value*, Value*)
     {
         Diagnostics::Error("viper", "Unimplemented feature: Division");
+    }
+
+
+    void Assembly::CreateCmp(Value* left, Value* right)
+    {
+        CreateBinOp(left, right, "cmp");
     }
 
 

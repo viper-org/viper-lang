@@ -99,7 +99,7 @@ namespace Codegen
             case 8:
             case 1:
                 return _id8;
-            default:
+            default: throw 123;
                 Diagnostics::Error("viper", "Invalid bits for register: " + std::to_string(bits));
         }
     }

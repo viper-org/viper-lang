@@ -55,6 +55,11 @@ namespace SSA
         return CreateBinOp(Instruction::Div, lhs, rhs);
     }
 
+    Value* Builder::CreateCmp(Instruction::InstType op, Value* lhs, Value* rhs)
+    {
+        return CreateBinOp(op, lhs, rhs);
+    }
+
     CallInst* Builder::CreateCall(Function* callee, const std::vector<Value*>& args, bool isStatement, const std::string& name)
     {
         CallInst* call = new CallInst(_module, callee, args, name);

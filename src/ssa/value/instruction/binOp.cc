@@ -20,6 +20,14 @@ namespace SSA
                 return "div";
             case Instruction::Mul:
                 return "mul";
+            case Instruction::EQ:
+                return "cmp eq";
+            case Instruction::NE:
+                return "cmp ne";
+            case Instruction::LT:
+                return "cmp lt";
+            case Instruction::GT:
+                return "cmp gt";
             default:
                 return "";
         }
@@ -37,21 +45,6 @@ namespace SSA
 
         _name->Print(stream, indent);
         stream << InstTypeToString(_instType) << " " << _lhs->GetID() << ", " << _rhs->GetID() << "\n";
-    }
-
-    constexpr bool IsNoAssoc(BinOp::InstType type)
-    {
-        switch(type)
-        {
-            case BinOp::Add:
-            case BinOp::Mul:
-                return true;
-            case BinOp::Sub:
-            case BinOp::Div:
-                return false;
-            default:
-                throw;
-        }
     }
 
     Codegen::Value* BinOp::Emit(Codegen::Assembly& assembly)
@@ -80,6 +73,31 @@ namespace SSA
             case Instruction::Mul:
                 assembly.CreateMul(lhs, rhs);
                 break;
+            case Instruction::EQ:
+            {
+                assembly.CreateCmp(lhs, rhs);
+                result = new Codegen::Compare(Codegen::CompareOperator::EQ);
+                lhs->Dispose();
+                break;
+            }
+            case Instruction::NE:
+            {
+                assembly.CreateCmp(lhs, rhs);
+                result = new Codegen::Compare(Codegen::CompareOperator::NE);
+                break;
+            }
+            case Instruction::LT:
+            {
+                assembly.CreateCmp(lhs, rhs);
+                result = new Codegen::Compare(Codegen::CompareOperator::LT);
+                break;
+            }
+            case Instruction::GT:
+            {
+                assembly.CreateCmp(lhs, rhs);
+                result = new Codegen::Compare(Codegen::CompareOperator::GT);
+                break;
+            }
             default:
                 break;
         }

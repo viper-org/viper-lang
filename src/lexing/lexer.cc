@@ -154,6 +154,16 @@ namespace Lexing
                 return Token(TokenType::Equals, "=", _position, _position + 1, _lineNumber, _colNumber);
             }
 
+            case '!':
+            {
+                if(Peek(1) == '=')
+                {
+                    Consume();
+                    return Token(TokenType::BangEquals, "!=", _position - 1, _position + 1, _lineNumber, _colNumber);
+                }
+                throw; // TODO: Implement logical negation
+            }
+
 
             case ';':
                 return Token(TokenType::Semicolon, ";", _position, _position + 1, _lineNumber, _colNumber);

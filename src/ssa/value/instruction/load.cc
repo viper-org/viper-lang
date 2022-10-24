@@ -11,7 +11,7 @@ namespace SSA
 
     std::string LoadInst::GetID() const
     {
-        return _name->GetID();
+        return "int32 " + _name->GetID();
     }
 
     void LoadInst::Print(std::ostream& stream, int indent) const
