@@ -43,6 +43,11 @@ namespace Codegen
         _output << "\n" << ident << ":";
     }
 
+    void Assembly::CreateExtern(std::string_view ident)
+    {
+        _output << "\n\t[extern " << ident << "]";
+    }
+
 
     void Assembly::CreateJmp(std::string_view label)
     {

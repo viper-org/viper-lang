@@ -17,6 +17,7 @@ namespace Codegen
         void Emit(std::ostream& stream);
 
         void CreateGlobal(std::string_view ident);
+        void CreateExtern(std::string_view ident);
         void CreateLabel(std::string_view label);
 
         void CreateJmp(std::string_view label);

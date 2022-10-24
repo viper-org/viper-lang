@@ -88,7 +88,7 @@ namespace Parsing
             ExpectToken(Lexing::TokenType::Semicolon);
             Consume();
 
-            if(expr->GetNodeType() == ASTNodeType::Function)
+            if(expr->GetNodeType() == ASTNodeType::Function || expr->GetNodeType() == ASTNodeType::ImportStatement)
                 result.push_back(std::move(expr));
             else
             {
@@ -129,6 +129,8 @@ namespace Parsing
         {
             case Lexing::TokenType::Let:
                 return ParseVariableDeclaration();
+            case Lexing::TokenType::Import:
+                return ParseImportStatement();
             case Lexing::TokenType::Identifier:
                 return ParseIdentifier();
             case Lexing::TokenType::Return:
@@ -298,5 +300,35 @@ namespace Parsing
         _currentScope = scope->GetOuter();
 
         return std::make_unique<CompoundStatement>(exprs, scope);
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseImportStatement()
+    {
+        Consume();
+
+        std::shared_ptr<Type> type = ParseType();
+
+        std::string name = Consume().GetText();
+
+        std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
+        ExpectToken(Lexing::TokenType::LeftParen);
+        Consume();
+        while(Current().GetType() != Lexing::TokenType::RightParen)
+        {
+            std::shared_ptr<Type> type = ParseType();
+
+            ExpectToken(Lexing::TokenType::Identifier);
+            std::string argName = Consume().GetText();
+            
+            args.push_back(std::make_pair(type, argName));
+            if(Current().GetType() == Lexing::TokenType::RightParen)
+                break;
+
+            ExpectToken(Lexing::TokenType::Comma);
+            Consume();
+        }
+        Consume();
+
+        return std::make_unique<ImportStatement>(name, type, std::move(args));
     }
 }

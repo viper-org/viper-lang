@@ -1,3 +1,4 @@
+#include "lexing/token.hh"
 #include <lexing/lexer.hh>
 #include <type/types.hh>
 #include <diagnostics.hh>
@@ -10,7 +11,8 @@ namespace Lexing
         { "return", TokenType::Return },
         { "let", TokenType::Let },
         { "true", TokenType::True },
-        { "false", TokenType::False }
+        { "false", TokenType::False },
+        { "import", TokenType::Import }
     };
 
     Lexer::Lexer(const std::string& text)

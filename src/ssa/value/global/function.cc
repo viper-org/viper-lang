@@ -52,6 +52,12 @@ namespace SSA
 
     Codegen::Value* Function::Emit(Codegen::Assembly& assembly)
     {
+        if(_basicBlockList.size() == 0)
+        {
+            assembly.CreateExtern(_name);
+            return nullptr;
+        }
+
         SortAllocas();
         assembly.CreateGlobal(_name);
         assembly.CreateLabel(_name);

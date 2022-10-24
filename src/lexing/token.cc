@@ -73,6 +73,8 @@ namespace Lexing
                 return "True";
             case TokenType::False:
                 return "False";
+            case Lexing::TokenType::Import:
+                return "Import";
         }
     }
 

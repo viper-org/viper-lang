@@ -1,5 +1,5 @@
+import int32 WriteInt(int32 n);
+
 let int32 main() = {
-    let int32 a = 2;
-    a = a != 5;
-    return a;
+    return WriteInt(23);
 }
