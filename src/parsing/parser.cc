@@ -102,7 +102,13 @@ namespace Parsing
     std::shared_ptr<Type> Parser::ParseType()
     {
         ExpectToken(Lexing::TokenType::Type);
-        return types.at(Consume().GetText());
+        std::shared_ptr<Type> type = types.at(Consume().GetText());
+        while(Current().GetType() == Lexing::TokenType::Star)
+        {
+            Consume();
+            type = std::make_shared<PointerType>(type);
+        }
+        return type;
     }
     
     std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)

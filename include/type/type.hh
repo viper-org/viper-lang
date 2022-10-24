@@ -20,6 +20,7 @@ public:
 
     
     virtual bool IsIntegerTy() const { return false; }
+    virtual bool IsPointerTy() const { return false; }
     virtual bool IsVoidTy()    const { return false; }
 protected:
     int _size;

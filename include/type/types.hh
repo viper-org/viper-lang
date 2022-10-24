@@ -4,6 +4,7 @@
 #include <type/type.hh>
 #include <type/integerType.hh>
 #include <type/voidType.hh>
+#include <type/pointerType.hh>
 #include <map>
 #include <memory>
 
