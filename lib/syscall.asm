@@ -1,13 +1,9 @@
 [section .text]
 [global SystemCall]
 SystemCall:
-    push rdi
-    push rsi
-    push rdx
-    push rcx
-    pop rdx
-    pop rsi
-    pop rdi
-    pop rax
+    mov rax, rdi
+    mov rdi, rsi
+    mov rsi, rdx
+    mov rdx, rcx
     syscall
     ret
