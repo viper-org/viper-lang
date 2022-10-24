@@ -131,6 +131,12 @@ namespace Parsing
                 return ParseParenthesizedExpression();
             case Lexing::TokenType::LeftBracket:
                 return ParseCompoundExpression();
+            case Lexing::TokenType::True:
+                Consume();
+                return std::make_unique<IntegerLiteral>(1);
+            case Lexing::TokenType::False:
+                Consume();
+                return std::make_unique<IntegerLiteral>(0);
             default:
                 ParserError("Expected primary expression, found '" + Current().GetText() + "'");
         }

@@ -28,6 +28,8 @@ namespace Lexing
         Return,
         Let,
 
+        True, False,
+
         Type,
 
         Hash,

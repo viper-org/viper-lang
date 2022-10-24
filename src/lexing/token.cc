@@ -69,6 +69,10 @@ namespace Lexing
                 return "StarEquals";
             case TokenType::SlashEquals:
                 return "SlashEquals";
+            case TokenType::True:
+                return "True";
+            case TokenType::False:
+                return "False";
         }
     }
 

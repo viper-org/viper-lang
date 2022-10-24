@@ -9,6 +9,8 @@ namespace Lexing
     std::unordered_map<std::string_view, TokenType> keywords = {
         { "return", TokenType::Return },
         { "let", TokenType::Let },
+        { "true", TokenType::True },
+        { "false", TokenType::False }
     };
 
     Lexer::Lexer(const std::string& text)
