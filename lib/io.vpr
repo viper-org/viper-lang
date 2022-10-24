@@ -1,0 +1,5 @@
+import int64 SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
+
+let void WriteString(int8* str, int32 size) = {
+    SystemCall(1, 1, str, size);
+}

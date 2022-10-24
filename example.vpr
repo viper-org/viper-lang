@@ -1,6 +1,6 @@
-import void WriteString(int8* str);
+import void WriteString(int8* str, int32 size);
 
-let int32 main() = {
-    WriteString("Hello World!");
+let int32 Main() = {
+    WriteString("Hello World!\n", 13);
     return 0;
 }

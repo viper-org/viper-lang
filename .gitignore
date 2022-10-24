@@ -2,5 +2,7 @@
 
 *.json
 *.o
+*.a
+*.vpr.asm
 
 viper
