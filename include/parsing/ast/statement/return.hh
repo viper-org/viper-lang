@@ -14,7 +14,7 @@ namespace Parsing
 
         std::shared_ptr<Type> GetReturnType() const;
 
-        SSA::Value* Emit(SSA::Builder& builder, bool isStatement) override;
+        SSA::Value* Emit(SSA::Builder& builder, Environment* scope, bool isStatement) override;
     private:
         std::unique_ptr<ASTNode> _value;
         std::shared_ptr<Type> _returnType;

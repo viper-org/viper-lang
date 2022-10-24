@@ -1,10 +1,9 @@
 #include <parsing/ast/statement/variableDeclaration.hh>
-#include <environment.hh>
 
 namespace Parsing
 {
-    VariableDeclaration::VariableDeclaration(const std::string& name, std::shared_ptr<Type> type, std::unique_ptr<ASTNode> initVal, bool isFunction, std::optional<std::vector<std::pair<std::shared_ptr<Type>, std::string>>> args)
-        :ASTNode(ASTNodeType::VariableDeclaration), _name(name), _initVal(std::move(initVal)), _isFunction(isFunction), _args(std::move(args))
+    VariableDeclaration::VariableDeclaration(const std::string& name, std::shared_ptr<Type> type, std::unique_ptr<ASTNode> initVal, Environment* scope, std::optional<std::vector<std::pair<std::shared_ptr<Type>, std::string>>> args)
+        :ASTNode(ASTNodeType::VariableDeclaration), _name(name), _initVal(std::move(initVal)), _scope(scope), _args(std::move(args))
     {
         _nodeType = (_args.has_value() ? ASTNodeType::Function : ASTNodeType::VariableDeclaration);
         _type = type;
@@ -23,35 +22,37 @@ namespace Parsing
 
     bool VariableDeclaration::IsFunction() const
     {
-        return _args.has_value();
+        return _scope != nullptr;
     }
 
-    SSA::Value* VariableDeclaration::Emit(SSA::Builder& builder, bool)
+    SSA::Value* VariableDeclaration::Emit(SSA::Builder& builder, Environment* scope, bool)
     {
-        if(_isFunction)
+        if(_scope)
         {
             std::vector<SSA::AllocaInst*> args;
             for(std::pair<std::shared_ptr<Type>, std::string> arg : _args.value())
             {
                 SSA::AllocaInst* alloca = builder.CreateAlloca(arg.first, "", true);
                 args.push_back(alloca);
-                namedValues[arg.second] = alloca;
+                _scope->GetNamedValues()[arg.second] = alloca;
             }
             SSA::Function* func = SSA::Function::Create(builder.GetModule(), _name, args);
             SSA::BasicBlock* entryBB = SSA::BasicBlock::Create(builder.GetModule(), func);
             builder.SetInsertPoint(entryBB);
-            _initVal->Emit(builder, true);
+            _initVal->Emit(builder, _scope, true);
+
+            delete _scope;
 
             return func;
         }
         SSA::AllocaInst* alloca = builder.CreateAlloca(_type);
         if(_initVal)
         {
-            SSA::Value* initVal = _initVal->Emit(builder);
+            SSA::Value* initVal = _initVal->Emit(builder, scope);
             builder.CreateStore(alloca, initVal);
         }
 
-        namedValues[_name] = alloca;
+        scope->GetNamedValues()[_name] = alloca;
         
         return alloca;
     }

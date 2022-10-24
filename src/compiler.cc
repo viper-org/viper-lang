@@ -33,7 +33,7 @@ void Compiler::Compile()
 
     for(std::unique_ptr<Parsing::ASTNode>& node : parser.Parse())
     {
-        SSA::Value* value = node->Emit(builder);
+        SSA::Value* value = node->Emit(builder, nullptr);
 
         //value->Print(std::cout, 0);
         //std::cout << std::endl;
@@ -41,8 +41,6 @@ void Compiler::Compile()
 
     }
     assembly.Emit(std::cout);
-    for(VarSymbol* symbol : varSymbols)
-        delete symbol;
 }
 
 std::map<std::string, SSA::AllocaInst*> namedValues;

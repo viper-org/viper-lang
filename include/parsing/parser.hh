@@ -17,6 +17,7 @@ namespace Parsing
         std::vector<Lexing::Token> _tokens;
         unsigned int _position;
         std::shared_ptr<Type> _currentReturnType;
+        Environment* _currentScope;
 
         Lexing::Token Current() const;
         Lexing::Token Consume();

@@ -7,7 +7,7 @@
 namespace Parsing
 {
     Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text)
-        :_text(text), _tokens(tokens), _position(0), _currentReturnType(nullptr)
+        :_text(text), _tokens(tokens), _position(0), _currentReturnType(nullptr), _currentScope(nullptr)
     {
     }
 
@@ -157,20 +157,21 @@ namespace Parsing
         std::string name = Consume().GetText();
 
         std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
-        bool isFunction = false;
+        Environment* scope = nullptr;
         if(Current().GetType() == Lexing::TokenType::LeftParen)
         {
-            isFunction = true;
             Consume();
+            scope = new Environment(_currentScope);
+            _currentScope = scope;
             while(Current().GetType() != Lexing::TokenType::RightParen)
             {
                 std::shared_ptr<Type> type = ParseType();
 
                 ExpectToken(Lexing::TokenType::Identifier);
-                std::string name = Consume().GetText();
-
-                args.push_back(std::make_pair(type, name));
-                varSymbols.push_back(new VarSymbol(name, type));
+                std::string argName = Consume().GetText();
+                
+                args.push_back(std::make_pair(type, argName));
+                _currentScope->GetVarSymbols().push_back(new VarSymbol(argName, type));
                 if(Current().GetType() == Lexing::TokenType::RightParen)
                     break;
 
@@ -181,28 +182,30 @@ namespace Parsing
             _currentReturnType = type;
         }
 
-        if(!isFunction)
-            varSymbols.push_back(new VarSymbol(name, type));
+        if(!scope)
+            _currentScope->GetVarSymbols().push_back(new VarSymbol(name, type));
 
         if(Current().GetType() != Lexing::TokenType::Equals)
-            return std::make_unique<VariableDeclaration>(name, type, nullptr, isFunction, args);
+            return std::make_unique<VariableDeclaration>(name, type, nullptr, scope, args);
 
         Consume();
         
         std::unique_ptr<ASTNode> initVal = ParseExpression();
-        if(isFunction)
+        if(scope)
         {
             if(initVal->GetNodeType() != ASTNodeType::CompoundStatement && initVal->GetNodeType() != ASTNodeType::ReturnStatement)
                 initVal = std::make_unique<ReturnStatement>(std::move(initVal), _currentReturnType);
         }
+        if(scope)
+            _currentScope = scope->GetOuter();
         
-        return std::make_unique<VariableDeclaration>(name, type, std::move(initVal), isFunction, args);
+        return std::make_unique<VariableDeclaration>(name, type, std::move(initVal), scope, args);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseVariable()
     {
         std::string name = Consume().GetText();
-        VarSymbol* symbol = FindSymbol(name);
+        VarSymbol* symbol = _currentScope->FindVarSymbol(name);
         if(!symbol)
         {
             --_position;
@@ -263,6 +266,8 @@ namespace Parsing
     std::unique_ptr<ASTNode> Parser::ParseCompoundExpression()
     {
         Consume();
+        Environment* scope = new Environment(_currentScope);
+        _currentScope = scope;
 
         std::vector<std::unique_ptr<ASTNode>> exprs;
 
@@ -276,6 +281,8 @@ namespace Parsing
 
         _tokens.insert(_tokens.begin() + _position, Lexing::Token(Lexing::TokenType::Semicolon, "", 0, 0, 0, 0));
 
-        return std::make_unique<CompoundStatement>(exprs);
+        _currentScope = scope->GetOuter();
+
+        return std::make_unique<CompoundStatement>(exprs, scope);
     }
 }

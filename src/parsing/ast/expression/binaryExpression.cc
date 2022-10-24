@@ -58,20 +58,20 @@ namespace Parsing
         _rhs->Print(stream, indent + 2);
     }
 
-    SSA::Value* BinaryExpression::Emit(SSA::Builder& builder, bool)
+    SSA::Value* BinaryExpression::Emit(SSA::Builder& builder, Environment* scope, bool)
     {
-        SSA::Value* right = _rhs->Emit(builder);
+        SSA::Value* right = _rhs->Emit(builder, scope);
         if(_operator == BinaryOperator::Assignment)
         {
             if(Variable* left = dynamic_cast<Variable*>(_lhs.get()))
             {
-                SSA::AllocaInst* alloca = namedValues[left->GetName()];
+                SSA::AllocaInst* alloca = scope->FindNamedValue(left->GetName());
                 builder.CreateStore(alloca, right);
                 return right;
             }
         }
 
-        SSA::Value* left = _lhs->Emit(builder);
+        SSA::Value* left = _lhs->Emit(builder, scope);
 
         if(SSA::IntegerLiteral* leftI = dynamic_cast<SSA::IntegerLiteral*>(left))
         {

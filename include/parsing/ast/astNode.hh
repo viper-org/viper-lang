@@ -2,6 +2,7 @@
 #define VIPER_AST_ASTNODE_HH
 #include <ssa/ssa.hh>
 #include <type/types.hh>
+#include <environment.hh>
 #include <ostream>
 
 namespace Parsing
@@ -32,7 +33,7 @@ namespace Parsing
         ASTNodeType GetNodeType() const { return _nodeType; }
         std::shared_ptr<Type> GetType() const { return _type; }
 
-        virtual SSA::Value* Emit(SSA::Builder& builder, bool isStatement = false) = 0;
+        virtual SSA::Value* Emit(SSA::Builder& builder, Environment* scope, bool isStatement = false) = 0;
     protected:
         ASTNodeType _nodeType;
         std::shared_ptr<Type> _type;

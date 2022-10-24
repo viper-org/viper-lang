@@ -2,8 +2,8 @@
 
 namespace Parsing
 {
-    CompoundStatement::CompoundStatement(std::vector<std::unique_ptr<ASTNode>>& statements)
-        :ASTNode(ASTNodeType::CompoundStatement), _statements(std::move(statements))
+    CompoundStatement::CompoundStatement(std::vector<std::unique_ptr<ASTNode>>& statements, Environment* scope)
+        :ASTNode(ASTNodeType::CompoundStatement), _statements(std::move(statements)), _scope(scope)
     {
     }
 
@@ -17,10 +17,12 @@ namespace Parsing
         }
     }
 
-    SSA::Value* CompoundStatement::Emit(SSA::Builder& builder, bool isStatement)
+    SSA::Value* CompoundStatement::Emit(SSA::Builder& builder, Environment*, bool isStatement)
     {
         for(std::unique_ptr<ASTNode>& statement : _statements)
-            statement->Emit(builder, isStatement);
+            statement->Emit(builder, _scope, isStatement);
+        
+        delete _scope;
 
         return nullptr;
     }

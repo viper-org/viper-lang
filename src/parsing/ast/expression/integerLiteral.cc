@@ -18,7 +18,7 @@ namespace Parsing
         return _value;
     }
 
-    SSA::Value* IntegerLiteral::Emit(SSA::Builder& builder, bool)
+    SSA::Value* IntegerLiteral::Emit(SSA::Builder& builder, Environment*, bool)
     {
         return builder.CreateConstantInt(_value);
     }

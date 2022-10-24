@@ -11,7 +11,7 @@ namespace Parsing
 
         void Print(std::ostream& stream, int indent) const override;
 
-        SSA::Value* Emit(SSA::Builder& builder, bool isStatement) override;
+        SSA::Value* Emit(SSA::Builder& builder, Environment* scope, bool isStatement) override;
 
         std::string GetName() const;
     private:

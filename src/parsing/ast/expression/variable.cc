@@ -1,4 +1,3 @@
-#include <memory>
 #include <parsing/ast/expression/variable.hh>
 #include <environment.hh>
 
@@ -15,9 +14,9 @@ namespace Parsing
         stream << std::string(indent, ' ') << "<Variable>: " << _name;
     }
 
-    SSA::Value* Variable::Emit(SSA::Builder& builder, bool)
+    SSA::Value* Variable::Emit(SSA::Builder& builder, Environment* scope, bool)
     {
-        SSA::AllocaInst* ptr = namedValues[_name];
+        SSA::AllocaInst* ptr = scope->FindNamedValue(_name);
         return builder.CreateLoad(ptr, "");
     }
 

@@ -1,6 +1,5 @@
-let int32 mul(int32 a, int32 b) = a * b;
+let int32 Square(int32 num) = num * num;
 
 let int32 main() = {
-    mul(1, 2);
-    return 0;
+    return Square(2);
 }

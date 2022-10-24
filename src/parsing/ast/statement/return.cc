@@ -22,11 +22,11 @@ namespace Parsing
         return _returnType;
     }
 
-    SSA::Value* ReturnStatement::Emit(SSA::Builder& builder, bool)
+    SSA::Value* ReturnStatement::Emit(SSA::Builder& builder, Environment* scope, bool)
     {
         SSA::Value* value = nullptr;
         if(_value)
-            value = _value->Emit(builder);
+            value = _value->Emit(builder, scope);
 
         return builder.CreateRet(value);
     }
