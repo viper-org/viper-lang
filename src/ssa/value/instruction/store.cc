@@ -30,7 +30,7 @@ namespace SSA
 
         value->Dispose();
 
-        return value;
+        return nullptr;
     }
 
     void StoreInst::Dispose()
