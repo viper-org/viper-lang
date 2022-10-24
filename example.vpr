@@ -1,5 +1,6 @@
-import int32 WriteInt(int32 n);
+import void WriteInt(int32 n);
 
 let int32 main() = {
-    return WriteInt(23);
+    WriteInt(23);
+    return 0;
 }
