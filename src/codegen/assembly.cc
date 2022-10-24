@@ -49,6 +49,13 @@ namespace Codegen
     }
 
 
+    void Assembly::CreateIndirect(Value* dest, Value* src)
+    {
+        int smallerSize = src->GetSize() > dest->GetSize() ? dest->GetSize() : src->GetSize();
+        _output << "\n\tmov " << GetOpSize(smallerSize) << " " << dest->Emit(smallerSize) << ", [" << src->Emit(smallerSize) << "]";
+    }
+
+
     void Assembly::CreateJmp(std::string_view label)
     {
         _output << "\n\tjmp " << label;
@@ -96,35 +103,40 @@ namespace Codegen
         VerifyArgs(left, right);
 
         int smallerSize = left->GetSize() > right->GetSize() ? right->GetSize() : left->GetSize();
+        if(op == "lea")
+            smallerSize = 64;
 
         _output << "\n\t" << op << ' ' << GetOpSize(smallerSize) << ' ' << left->Emit(smallerSize) << ", " << right->Emit(smallerSize);
     }
 
 
-    void Assembly::CreateMov(Value* left, Value* right)
+    void Assembly::CreateMov(Value* dest, Value* src)
     {
-        if(right->IsCompare())
+        if(src->IsCompare())
         {
-            CreateSet(static_cast<Compare*>(right)->GetOperator(), left);
+            CreateSet(static_cast<Compare*>(src)->GetOperator(), dest);
             return;
         }
-        CreateBinOp(left, right, "mov");
+        if(MemoryValue* mem; (mem = dynamic_cast<MemoryValue*>(src)) && !mem->IsReference())
+            CreateBinOp(dest, src, "lea");
+        else
+            CreateBinOp(dest, src, "mov");
     }
 
 
-    void Assembly::CreateAdd(Value* left, Value* right)
+    void Assembly::CreateAdd(Value* dest, Value* src)
     {
-        CreateBinOp(left, right, "add");
+        CreateBinOp(dest, src, "add");
     }
 
-    void Assembly::CreateSub(Value* left, Value* right)
+    void Assembly::CreateSub(Value* dest, Value* src)
     {
-        CreateBinOp(left, right, "sub");
+        CreateBinOp(dest, src, "sub");
     }
 
-    void Assembly::CreateMul(Value* left, Value* right)
+    void Assembly::CreateMul(Value* dest, Value* src)
     {
-        CreateBinOp(left, right, "imul");
+        CreateBinOp(dest, src, "imul");
     }
 
     void Assembly::CreateDiv(Value*, Value*)

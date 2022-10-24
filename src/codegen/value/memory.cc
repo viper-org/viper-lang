@@ -22,6 +22,11 @@ namespace Codegen
         return true;
     }
 
+    bool MemoryValue::IsReference() const
+    {
+        return _isReference;
+    }
+
     void MemoryValue::Dispose()
     {
         return;

@@ -54,6 +54,19 @@ namespace Parsing
         }
     }
 
+    int Parser::GetUnOpPrecedence(Lexing::TokenType type)
+    {
+        switch(type)
+        {
+            case Lexing::TokenType::Minus:
+            case Lexing::TokenType::Hash:
+            case Lexing::TokenType::Asperand:
+                return 50;
+            default:
+                return 0;
+        }
+    }
+
     void Parser::ExpectToken(Lexing::TokenType tokenType)
     {
         if(Current().GetType() != tokenType)
@@ -113,7 +126,16 @@ namespace Parsing
     
     std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)
     {
-        std::unique_ptr<ASTNode> lhs = ParsePrimary();
+        
+        std::unique_ptr<ASTNode> lhs;
+        int unOpPrecedence = GetUnOpPrecedence(Current().GetType());
+        if(unOpPrecedence && unOpPrecedence >= precedence)
+        {
+            Lexing::Token operatorToken = Consume();
+            lhs = std::make_unique<UnaryExpression>(ParseExpression(unOpPrecedence), operatorToken);
+        }
+        else
+            lhs = ParsePrimary();
 
         while(true)
         {

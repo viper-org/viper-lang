@@ -105,7 +105,7 @@ namespace SSA
         for(BasicBlock* basicBlock : _basicBlockList)
             basicBlock->Dispose();
         for(AllocaInst* alloca : _allocaList)
-            alloca->Dispose();
+            delete alloca;
 
         delete this;
     }

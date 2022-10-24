@@ -24,6 +24,7 @@ namespace Parsing
         Lexing::Token Peek(const int offset) const;
 
         int GetBinOpPrecedence(Lexing::TokenType type);
+        int GetUnOpPrecedence(Lexing::TokenType type);
 
         void ExpectToken(Lexing::TokenType tokenType);
         [[noreturn]] void ParserError(std::string message);

@@ -8,6 +8,12 @@ namespace SSA
         _instType = Instruction::Alloca;
     }
 
+    AllocaInst::~AllocaInst()
+    {
+        _name->Dispose();
+        delete _memory;
+    }
+
     void AllocaInst::Print(std::ostream& stream, int indent) const
     {
         _name->Print(stream, indent);
@@ -28,13 +34,15 @@ namespace SSA
 
     void AllocaInst::Dispose()
     {
-        _name->Dispose();
-        delete _memory;
-        delete this;
     }
 
     std::shared_ptr<Type> AllocaInst::GetAllocatedType() const
     {
         return _allocatedType;
+    }
+
+    std::shared_ptr<Type> AllocaInst::GetType() const
+    {
+        return std::make_shared<PointerType>(_allocatedType);
     }
 }

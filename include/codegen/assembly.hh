@@ -20,18 +20,22 @@ namespace Codegen
         void CreateExtern(std::string_view ident);
         void CreateLabel(std::string_view label);
 
+
+        void CreateIndirect(Value* dest, Value* src);
+
+
         void CreateJmp(std::string_view label);
     
         void CreatePush(Value* operand);
 
         void CreateSet(CompareOperator op, Value* operand);
 
-        void CreateMov(Value* left, Value*right);
+        void CreateMov(Value* dest, Value* src);
 
-        void CreateAdd(Value* left, Value* right);
-        void CreateSub(Value* left, Value* right);
-        void CreateMul(Value* left, Value* right);
-        void CreateDiv(Value* left, Value* right);
+        void CreateAdd(Value* dest, Value* src);
+        void CreateSub(Value* dest, Value* src);
+        void CreateMul(Value* dest, Value* src);
+        void CreateDiv(Value* dest, Value* src);
 
         void CreateCmp(Value* left, Value* right);
 

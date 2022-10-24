@@ -14,6 +14,8 @@ namespace Lexing
 
         Plus, Minus, Star, Slash,
 
+        Asperand,
+
         Equals,
         PlusEquals, MinusEquals,
         StarEquals, SlashEquals,

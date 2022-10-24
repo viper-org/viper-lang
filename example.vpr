@@ -1,6 +1,8 @@
 import void WriteInt(int32 n);
 
 let int32 main() = {
-    WriteInt(23);
+    let int32 test = 23;
+    let int32* testPtr = #test;
+    WriteInt(@testPtr);
     return 0;
 }

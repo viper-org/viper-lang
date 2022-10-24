@@ -175,6 +175,8 @@ namespace Lexing
 
             case '#':
                 return Token(TokenType::Hash, "#", _position, _position + 1, _lineNumber, _colNumber);
+            case '@':
+                return Token(TokenType::Asperand, "@", _position, _position + 1, _lineNumber, _colNumber);
 
             
             case '"':

@@ -16,7 +16,7 @@ namespace SSA
 
         virtual void Print(std::ostream& stream, int indent) const = 0;
         virtual std::string GetID() const { return ""; }
-        std::shared_ptr<Type> GetType() const { return _type; }
+        virtual std::shared_ptr<Type> GetType() const { return _type; }
 
         virtual Codegen::Value* Emit(Codegen::Assembly& assembly) = 0;
 

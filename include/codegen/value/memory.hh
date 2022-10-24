@@ -14,6 +14,7 @@ namespace Codegen
         std::string Emit(int bits) override;
 
         bool IsMemory() override;
+        bool IsReference() const;
 
         void Dispose() override;
 
