@@ -1,8 +1,12 @@
 import void WriteInt(int32 n);
+import void WriteChar(int8 c);
 
 let int32 main() = {
-    let int32 test = 23;
-    let int32* testPtr = #test;
-    WriteInt(@testPtr);
+    WriteChar('H');
+    WriteChar('e');
+    WriteChar('l');
+    WriteChar('l');
+    WriteChar('o');
+    WriteChar('\n');
     return 0;
 }
