@@ -14,6 +14,7 @@ Viper
 Viper is a C like programming language that aims to be fast and reliable.
 
 New to Viper? Check out the [Viper Wiki](https://github.com/viper-org/viper-lang/wiki) for documentation and help.
+
 ---
 
 ## Installation
