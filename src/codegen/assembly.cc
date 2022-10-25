@@ -30,6 +30,7 @@ namespace Codegen
 
     void Assembly::Emit(std::ostream& stream)
     {
+        stream << "section .text";
         stream << _output.str();
         stream << "\n\tsection .rodata";
         for(StringLiteral* str : _strings)

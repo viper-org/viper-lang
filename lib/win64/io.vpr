@@ -1,0 +1,5 @@
+import int32 _write(int32 fd, int8* str, int32 size);
+
+let void WriteString(int8* str, int32 size) = {
+    _write(1, str, size);
+}

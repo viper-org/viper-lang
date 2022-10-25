@@ -25,10 +25,17 @@ namespace SSA
     Codegen::Value* CallInst::Emit(Codegen::Assembly& assembly)
     {
         const std::array argRegs = {
+#ifdef __linux
             Codegen::Register::GetRegister("rdi"),
             Codegen::Register::GetRegister("rsi"),
             Codegen::Register::GetRegister("rdx"),
             Codegen::Register::GetRegister("rcx"),
+#elif _WIN64
+            Codegen::Register::GetRegister("rcx"),
+            Codegen::Register::GetRegister("rdx"),
+            Codegen::Register::GetRegister("r8"),
+            Codegen::Register::GetRegister("r9"),
+#endif
         };
         std::vector<Codegen::Value*> argValues;
         for(Value* arg : _args)

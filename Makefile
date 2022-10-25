@@ -11,8 +11,8 @@ TESTDIR=$(EXEC_PREFIX)/tests
 CXXC=g++
 LD=g++
 
-CXX_FLAGS=-fsanitize=address,undefined -O0 -ggdb3 -I$(INCLUDEDIR) -std=c++17 -Wall -Wextra -Wpedantic
-LD_FLAGS=-fsanitize=address,undefined
+CXX_FLAGS=-O0 -ggdb3 -I$(INCLUDEDIR) -std=c++17 -Wall -Wextra -Wpedantic
+LD_FLAGS=
 
 CXX_SRCS:=$(shell find $(SRCDIR) -name '*.cc')
 OBJS:=${CXX_SRCS:.cc=.o}
