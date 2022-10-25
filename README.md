@@ -18,7 +18,7 @@ Viper is a C like programming language that aims to be fast and reliable.
 ## Installation
 ### Prerequisites
 To build viper, you will need:
-* Any g++ version with c++20
+* Any g++ version with c++17
 * Make
 ### Downloading the code
 To download the code, clone the github repository `git clone https://github.com/viper-org/viper-lang`
