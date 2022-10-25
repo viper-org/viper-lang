@@ -1,6 +1,9 @@
 import void WriteString(int8* str, int32 size);
 
 let int32 Main() = {
-    WriteString("Hello World!\n", 13);
+    if(1 == 1)
+        WriteString("Hello World!\n", 13);
+    else
+        WriteString("False\n", 6);
     return 0;
 }

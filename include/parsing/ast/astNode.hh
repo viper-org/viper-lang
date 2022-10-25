@@ -23,6 +23,7 @@ namespace Parsing
         Call,
 
         ImportStatement,
+        IfStatement,
     };
 
     class ASTNode

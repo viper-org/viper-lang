@@ -29,6 +29,8 @@ namespace Codegen
 
 
         void CreateJmp(std::string_view label);
+        void CreateCndJmp(std::string_view label, Value* cnd);
+        void CreateNCndJmp(std::string_view label, Value* cnd);
     
         void CreatePush(Value* operand);
 

@@ -75,6 +75,12 @@ namespace Lexing
                 return "False";
             case Lexing::TokenType::Import:
                 return "Import";
+            case Lexing::TokenType::If:
+                return "If";
+            case Lexing::TokenType::Else:
+                return "Else";
+            case Lexing::TokenType::Asperand:
+                return "Asperand";
         }
     }
 

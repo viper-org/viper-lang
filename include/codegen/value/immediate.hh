@@ -15,6 +15,7 @@ namespace Codegen
         bool IsImmediate() override;
 
         int GetSize() const override;
+        long long GetValue() const;
     private:
         long long _value;
         std::shared_ptr<Type> _type;

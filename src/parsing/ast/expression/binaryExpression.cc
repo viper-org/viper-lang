@@ -92,34 +92,7 @@ namespace Parsing
         }
 
         SSA::Value* left = _lhs->Emit(builder, scope);
-
-        if(SSA::IntegerLiteral* leftI = dynamic_cast<SSA::IntegerLiteral*>(left))
-        {
-            if(SSA::IntegerLiteral* rightI = dynamic_cast<SSA::IntegerLiteral*>(right))
-            {
-                long long total;
-                switch (_operator)
-                {
-                    case BinaryOperator::Addition:
-                        total = leftI->GetValue() + rightI->GetValue();
-                        break;
-                    case BinaryOperator::Subtraction:
-                        total = leftI->GetValue() - rightI->GetValue();
-                        break;
-                    case BinaryOperator::Multiplication:
-                        total = leftI->GetValue() * rightI->GetValue();
-                        break;
-                    case BinaryOperator::Division:
-                        total = leftI->GetValue() / rightI->GetValue();
-                        break;
-                    default:
-                        throw; // Unreachable
-                }
-                delete left;
-                delete right;
-                return builder.CreateConstantInt(total);
-            }
-        }
+        
         SSA::Value* retval = nullptr;
         switch(_operator)
         {

@@ -21,4 +21,9 @@ namespace Codegen
     {
         return _type->GetPrimitiveSize();
     }
+
+    long long ImmediateValue::GetValue() const
+    {
+        return _value;
+    }
 }

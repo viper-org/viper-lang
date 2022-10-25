@@ -5,10 +5,14 @@ EXEC_PREFIX=$(PREFIX)
 
 SRCDIR=$(EXEC_PREFIX)
 
+PLATFORM_ASFLAGS=
+
 ifeq ($(OS),Windows_NT)
 	SRCDIR = $(EXEC_PREFIX)/win64/
+	PLATFORM_ASFLAGS=-fwin64
 else
 	SRCDIR = $(EXEC_PREFIX)/linux64/
+	PLATFORM_ASFLAGS=-felf64
 endif
 
 VPR=../viper
@@ -17,7 +21,7 @@ AS=nasm
 
 VPRFLAGS=
 ARFLAGS=-rcs
-ASFLAGS=-fwin64
+ASFLAGS=$(PLATFORM_ASFLAGS)
 
 VPR_SRCS:=$(shell find $(SRCDIR) -name '*.vpr')
 ASM_SRCS:=$(shell find $(SRCDIR) -name '*.asm')

@@ -13,6 +13,7 @@
 #include <ssa/value/instruction/binOp.hh>
 #include <ssa/value/basicBlock.hh>
 #include <ssa/value/instruction/call.hh>
+#include <ssa/value/instruction/branch.hh>
 
 namespace SSA
 {
@@ -40,6 +41,9 @@ namespace SSA
         AllocaInst* CreateAlloca(std::shared_ptr<Type> allocatedType, const std::string& name = "", bool isArg = false);
         StoreInst* CreateStore(Value* ptr, Value* value);
         LoadInst* CreateLoad(Value* ptr, const std::string& name = "");
+
+        BranchInst* CreateCondJmp(Value* cond, BasicBlock* trueBranch, BasicBlock* falseBranch);
+        BranchInst* CreateJmp(BasicBlock* branch);
 
         Module& GetModule() const;
     private:

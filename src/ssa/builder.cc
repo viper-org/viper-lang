@@ -96,6 +96,24 @@ namespace SSA
         return load;
     }
 
+    BranchInst* Builder::CreateCondJmp(Value* cond, BasicBlock* trueBranch, BasicBlock* falseBranch)
+    {
+        BranchInst* branch = new BranchInst(_module, cond, trueBranch, falseBranch);
+
+        _insertPoint->GetInstList().push_back(branch);
+
+        return branch;
+    }
+
+    BranchInst* Builder::CreateJmp(BasicBlock* trueBranch)
+    {
+        BranchInst* branch = new BranchInst(_module, trueBranch);
+
+        _insertPoint->GetInstList().push_back(branch);
+
+        return branch;
+    }
+
     Module& Builder::GetModule() const
     {
         return _module;

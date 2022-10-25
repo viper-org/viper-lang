@@ -29,6 +29,7 @@ namespace Lexing
 
         Return,
         Let,
+        If, Else,
 
         Import,
 

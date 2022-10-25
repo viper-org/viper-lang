@@ -85,6 +85,66 @@ namespace Codegen
     {
         _output << "\n\tjmp " << label;
     }
+    void Assembly::CreateCndJmp(std::string_view label, Value* cnd)
+    {
+        Compare* cmp = static_cast<Compare*>(cnd);
+        _output << "\n\tj";
+        switch(cmp->GetOperator())
+        {
+            case CompareOperator::EQ:
+                _output << "e";
+                break;
+            case CompareOperator::NE:
+                _output << "ne";
+                break;
+            case CompareOperator::LT:
+                _output << "l";
+                break;
+            case CompareOperator::GT:
+                _output << "g";
+                break;
+            case CompareOperator::LE:
+                _output << "le";
+                break;
+            case CompareOperator::GE:
+                _output << "ge";
+                break;
+        }
+        _output << " " << label;
+    }
+    void Assembly::CreateNCndJmp(std::string_view label, Value* cnd)
+    {
+        if(cnd->IsImmediate())
+        {
+            if(dynamic_cast<ImmediateValue*>(cnd)->GetValue())
+                _output << "\n\tjmp " << label;
+            return;
+        }
+        Compare* cmp = static_cast<Compare*>(cnd);
+        _output << "\n\tj";
+        switch(cmp->GetOperator())
+        {
+            case CompareOperator::EQ:
+                _output << "ne";
+                break;
+            case CompareOperator::NE:
+                _output << "e";
+                break;
+            case CompareOperator::LT:
+                _output << "ge";
+                break;
+            case CompareOperator::GT:
+                _output << "le";
+                break;
+            case CompareOperator::LE:
+                _output << "g";
+                break;
+            case CompareOperator::GE:
+                _output << "l";
+                break;
+        }
+        _output << " " << label;
+    }
 
 
     void Assembly::CreatePush(Value* operand)

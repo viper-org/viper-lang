@@ -12,5 +12,6 @@
 #include <parsing/ast/statement/import.hh>
 #include <parsing/ast/expression/unaryExpression.hh>
 #include <parsing/ast/expression/string.hh>
+#include <parsing/ast/statement/if.hh>
 
 #endif

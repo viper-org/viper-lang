@@ -1,4 +1,6 @@
+#include "codegen/value/immediate.hh"
 #include <ssa/value/instruction/binOp.hh>
+#include <ssa/value/constant/integer.hh>
 
 namespace SSA
 {
@@ -51,6 +53,43 @@ namespace SSA
     {
         Codegen::Value* lhs = _lhs->Emit(assembly);
         Codegen::Value* rhs = _rhs->Emit(assembly);
+
+        if(lhs->IsImmediate() && rhs->IsImmediate())
+        {
+            long long left = dynamic_cast<Codegen::ImmediateValue*>(lhs)->GetValue();
+            long long right = dynamic_cast<Codegen::ImmediateValue*>(rhs)->GetValue();
+
+            Codegen::ImmediateValue* result;
+            switch(_instType)
+            {
+                case Instruction::Add:
+                    result = new Codegen::ImmediateValue(left + right, _lhs->GetType());
+                    break;
+                case Instruction::Sub:
+                    result = new Codegen::ImmediateValue(left - right, _lhs->GetType());
+                    break;
+                case Instruction::Mul:
+                    result = new Codegen::ImmediateValue(left * right, _lhs->GetType());
+                    break;
+                case Instruction::EQ:
+                    result = new Codegen::ImmediateValue(left == right, _lhs->GetType());
+                    break;
+                case Instruction::NE:
+                    result = new Codegen::ImmediateValue(left != right, _lhs->GetType());
+                    break;
+                case Instruction::LT:
+                    result = new Codegen::ImmediateValue(left < right, _lhs->GetType());
+                    break;
+                case Instruction::GT:
+                    result = new Codegen::ImmediateValue(left > right, _lhs->GetType());
+                    break;
+                default:
+                    return nullptr;
+            }
+            lhs->Dispose();
+            rhs->Dispose();
+            return result;
+        }
 
         if(!lhs->IsRegister())
         {

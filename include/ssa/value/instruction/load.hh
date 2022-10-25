@@ -3,7 +3,6 @@
 #define VIPER_SSA_INSTRUCTION_LOAD_HH
 #include <ssa/value/instruction/instruction.hh>
 #include <ssa/value/tmpValue.hh>
-#include <memory>
 
 namespace SSA
 {

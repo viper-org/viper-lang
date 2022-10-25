@@ -177,6 +177,8 @@ namespace Parsing
             case Lexing::TokenType::False:
                 Consume();
                 return std::make_unique<IntegerLiteral>(0);
+            case Lexing::TokenType::If:
+                return ParseIfStatement();
             default:
                 ParserError("Expected primary expression, found '" + Current().GetText() + "'");
         }
@@ -367,5 +369,30 @@ namespace Parsing
         Consume();
 
         return std::make_unique<ImportStatement>(name, type, std::move(args));
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseIfStatement()
+    {
+        Consume();
+
+        ExpectToken(Lexing::TokenType::LeftParen);
+        Consume();
+
+        std::unique_ptr<ASTNode> cond = ParseExpression();
+
+        ExpectToken(Lexing::TokenType::RightParen);
+        Consume();
+
+        std::unique_ptr<ASTNode> body = ParseExpression();
+
+        if(Peek(1).GetType() == Lexing::TokenType::Else)
+        {
+            ExpectToken(Lexing::TokenType::Semicolon);
+            Consume();
+            Consume();
+            return std::make_unique<IfStatement>(std::move(cond), std::move(body), ParseExpression());
+        }
+
+        return std::make_unique<IfStatement>(std::move(cond), std::move(body), nullptr);
     }
 }

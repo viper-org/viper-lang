@@ -49,6 +49,8 @@ namespace Parsing
 
         std::unique_ptr<ASTNode> ParseParenthesizedExpression();
         std::unique_ptr<ASTNode> ParseCompoundExpression();
+
+        std::unique_ptr<ASTNode> ParseIfStatement();
     };
 }
 
