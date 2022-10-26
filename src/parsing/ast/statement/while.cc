@@ -26,13 +26,11 @@ namespace Parsing
 
         builder.CreateJmp(condBB);
         builder.SetInsertPoint(bodyBB);
-        SSA::Value* bodyValue = _body->Emit(builder, scope, true);
-        if(bodyValue)
-            bodyValue->Dispose();
+        _body->Emit(builder, scope, true);
 
         builder.SetInsertPoint(condBB);
         SSA::Value* condValue = _cond->Emit(builder, scope, true);
-        builder.CreateCondJmp(condValue, nullptr, bodyBB);
+        builder.CreateCondJmp(condValue, bodyBB, nullptr);
 
         return nullptr;
     }
