@@ -36,13 +36,13 @@ namespace Parsing
         SSA::BasicBlock* mergeBB = SSA::BasicBlock::Create(builder.GetModule(), func);
 
         if(hasElse)
-            builder.CreateCondJmp(condValue, elseBB, thenBB);
+            builder.CreateCondJmp(condValue, thenBB, elseBB);
         else
-            builder.CreateCondJmp(condValue, mergeBB, thenBB);
-        //if(hasElse)
-        //    builder.CreateJmp(elseBB);
-        //else
-        //    builder.CreateJmp(mergeBB);
+            builder.CreateCondJmp(condValue, thenBB, mergeBB);
+        if(hasElse)
+           builder.CreateJmp(elseBB);
+        else
+            builder.CreateJmp(mergeBB);
 
         builder.SetInsertPoint(thenBB);
         _body->Emit(builder, scope, true);
