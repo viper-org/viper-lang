@@ -40,7 +40,7 @@ namespace SSA
             condValue->Dispose();
             condValue = cmp;
         }
-        assembly.CreateNCndJmp(_true->GetName(), condValue);
+        assembly.CreateCndJmp(_true->GetName(), condValue);
         condValue->Dispose();
         return nullptr;
     }

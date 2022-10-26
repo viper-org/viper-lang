@@ -3,7 +3,7 @@ import void WriteString(int8* str, int32 size);
 let int32 Main() = {
     let int32 x = 1;
     if(x)
-        WriteString("Hello World!\n", 13);
+        WriteString("True\n", 5);
     else
         WriteString("False\n", 6);
     return 0;
