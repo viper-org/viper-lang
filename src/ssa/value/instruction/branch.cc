@@ -31,6 +31,15 @@ namespace SSA
             return nullptr;
         }
         Codegen::Value* condValue = _cond->Emit(assembly);
+        if(!condValue->IsCompare())
+        {
+            Codegen::ImmediateValue* zero = new Codegen::ImmediateValue(0, types.at("int64"));
+            assembly.CreateCmp(condValue, zero);
+            zero->Dispose();
+            Codegen::Compare* cmp = new Codegen::Compare(Codegen::CompareOperator::NE);
+            condValue->Dispose();
+            condValue = cmp;
+        }
         assembly.CreateNCndJmp(_true->GetName(), condValue);
         condValue->Dispose();
         return nullptr;

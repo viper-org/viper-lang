@@ -87,6 +87,12 @@ namespace Codegen
     }
     void Assembly::CreateCndJmp(std::string_view label, Value* cnd)
     {
+        if(cnd->IsImmediate())
+        {
+            if(dynamic_cast<ImmediateValue*>(cnd)->GetValue())
+                _output << "\n\tjmp " << label;
+            return;
+        }
         Compare* cmp = static_cast<Compare*>(cnd);
         _output << "\n\tj";
         switch(cmp->GetOperator())
@@ -116,7 +122,7 @@ namespace Codegen
     {
         if(cnd->IsImmediate())
         {
-            if(dynamic_cast<ImmediateValue*>(cnd)->GetValue())
+            if(!dynamic_cast<ImmediateValue*>(cnd)->GetValue())
                 _output << "\n\tjmp " << label;
             return;
         }
