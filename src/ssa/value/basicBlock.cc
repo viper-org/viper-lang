@@ -53,12 +53,12 @@ namespace SSA
     using namespace std::literals;
     std::string BasicBlock::GetName() const
     {
-        return _parent->GetName().data() + "."s + _name;
+        return "." + _name;
     }
 
     Codegen::Value* BasicBlock::Emit(Codegen::Assembly& assembly)
     {
-        assembly.CreateLabel(_parent->GetName().data() + "."s + _name);
+        assembly.CreateLabel("." + _name);
         for(Instruction* inst : _instList)
         {
             Codegen::Value* instValue = inst->Emit(assembly);

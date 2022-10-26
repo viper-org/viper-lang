@@ -29,7 +29,9 @@ namespace Lexing
 
         Return,
         Let,
+        
         If, Else,
+        While,
 
         Import,
 

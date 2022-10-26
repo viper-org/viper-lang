@@ -41,6 +41,8 @@ namespace SSA
             condValue = cmp;
         }
         assembly.CreateNCndJmp(_true->GetName(), condValue);
+        if(_false)
+            assembly.CreateJmp(_false->GetName());
         condValue->Dispose();
         return nullptr;
     }

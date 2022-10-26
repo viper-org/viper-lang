@@ -13,5 +13,6 @@
 #include <parsing/ast/expression/unaryExpression.hh>
 #include <parsing/ast/expression/string.hh>
 #include <parsing/ast/statement/if.hh>
+#include <parsing/ast/statement/while.hh>
 
 #endif

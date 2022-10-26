@@ -1,10 +1,11 @@
 import void WriteString(int8* str, int32 size);
 
 let int32 Main() = {
-    let int32 x = 1;
-    if(x)
-        WriteString("Hello World!\n", 13);
-    else
-        WriteString("False\n", 6);
+    let int32 x = 5;
+    while(x)
+    {
+        x = x - 1;
+        WriteString("A\n", 2);
+    }
     return 0;
 }

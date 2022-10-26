@@ -15,6 +15,7 @@ namespace Lexing
         { "import", TokenType::Import },
         { "if",     TokenType::If },
         { "else",   TokenType::Else },
+        { "while",  TokenType::While },
     };
 
     Lexer::Lexer(const std::string& text)

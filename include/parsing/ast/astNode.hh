@@ -24,6 +24,7 @@ namespace Parsing
 
         ImportStatement,
         IfStatement,
+        WhileStatement,
     };
 
     class ASTNode

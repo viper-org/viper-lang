@@ -179,6 +179,8 @@ namespace Parsing
                 return std::make_unique<IntegerLiteral>(0);
             case Lexing::TokenType::If:
                 return ParseIfStatement();
+            case Lexing::TokenType::While:
+                return ParseWhileStatement();
             default:
                 ParserError("Expected primary expression, found '" + Current().GetText() + "'");
         }
@@ -394,5 +396,20 @@ namespace Parsing
         }
 
         return std::make_unique<IfStatement>(std::move(cond), std::move(body), nullptr);
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseWhileStatement()
+    {
+        Consume();
+
+        ExpectToken(Lexing::TokenType::LeftParen);
+        Consume();
+
+        std::unique_ptr<ASTNode> cond = ParseExpression();
+
+        ExpectToken(Lexing::TokenType::RightParen);
+        Consume();
+
+        return std::make_unique<WhileStatement>(std::move(cond), ParseExpression());
     }
 }

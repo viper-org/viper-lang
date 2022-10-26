@@ -81,6 +81,8 @@ namespace Lexing
                 return "Else";
             case Lexing::TokenType::Asperand:
                 return "Asperand";
+            case Lexing::TokenType::While:
+                return "While";
         }
     }
 
