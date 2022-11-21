@@ -18,8 +18,8 @@ endif
 CXXC=g++
 LD=g++
 
-CXX_FLAGS=$(PLATFORM_CXXFLAGS) -O0 -ggdb3 `llvm-config --cxxflags --ldflags --system-libs --libs core` -I$(INCLUDEDIR) -std=c++17 -Wall -Wextra -Wpedantic
-LD_FLAGS=`llvm-config --cxxflags --ldflags --system-libs --libs core` $(PLATFORM_LDFLAGS)
+CXX_FLAGS=$(PLATFORM_CXXFLAGS) -O0 -ggdb3 -lLLVM -I$(INCLUDEDIR) -std=c++17 -Wall -Wextra -Wpedantic
+LD_FLAGS=-lLLVM $(PLATFORM_LDFLAGS)
 
 CXX_SRCS:=$(shell find $(SRCDIR) -name '*.cc')
 OBJS:=${CXX_SRCS:.cc=.o}

@@ -109,9 +109,22 @@ namespace Parsing
         return result;
     }
     
-    std::unique_ptr<ASTNode> Parser::ParseExpression(int)
+    std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)
     {
-        return ParsePrimary();
+        std::unique_ptr<ASTNode> lhs = ParsePrimary();
+
+        while(true)
+        {
+            int binOpPrecedence = GetBinOpPrecedence(Current().GetType());
+            if(binOpPrecedence < precedence)
+                break;
+
+            Lexing::Token operatorToken = Consume();
+            std::unique_ptr<ASTNode> rhs = ParseExpression(binOpPrecedence);
+            lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
+        }
+
+        return lhs;
     }
 
     std::unique_ptr<ASTNode> Parser::ParsePrimary()
@@ -124,6 +137,10 @@ namespace Parsing
                 return ParseReturnStatement();
             case Lexing::TokenType::Integer:
                 return ParseIntegerLiteral();
+            case Lexing::TokenType::LeftBracket:
+                return ParseCompoundExpression();
+            case Lexing::TokenType::LeftParen:
+                return ParseParenthesizedExpression();
             default:
                 ParserError("Expected primary expression, found '" + Current().GetText() + "'");
         }
@@ -168,5 +185,36 @@ namespace Parsing
             return std::make_unique<ReturnStatement>(nullptr);
 
         return std::make_unique<ReturnStatement>(ParseExpression());
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseCompoundExpression()
+    {
+        Consume();
+
+        std::vector<std::unique_ptr<ASTNode>> exprs;
+
+        while(Current().GetType() != Lexing::TokenType::RightBracket)
+        {
+            exprs.push_back(ParseExpression());
+            ExpectToken(Lexing::TokenType::Semicolon);
+            Consume();
+        }
+        Consume();
+
+        _tokens.insert(_tokens.begin() + _position, Lexing::Token(Lexing::TokenType::Semicolon, "", 0, 0, 0, 0));
+
+        return std::make_unique<CompoundStatement>(exprs);
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseParenthesizedExpression()
+    {
+        Consume();
+
+        std::unique_ptr<ASTNode> expr = ParseExpression();
+
+        ExpectToken(Lexing::TokenType::RightParen);
+        Consume();
+
+        return expr;
     }
 }

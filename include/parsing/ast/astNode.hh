@@ -11,9 +11,13 @@ namespace Parsing
         Integer,
 
         ReturnStatement,
+
+        BinaryExpression,
         
         VariableDeclaration,
         Function,
+
+        CompoundStatement,
     };
 
     class ASTNode
