@@ -1,7 +1,8 @@
+#include <parsing/ast/statement/variableDeclaration.hh>
+#include <environment.hh>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Function.h>
-#include <parsing/ast/statement/variableDeclaration.hh>
 
 namespace Parsing
 {
@@ -37,8 +38,12 @@ namespace Parsing
             return func;
         }
         llvm::AllocaInst* alloca = builder.CreateAlloca(builder.getInt32Ty(), nullptr, _name);
-        llvm::Value* initVal = _initVal->Emit(ctx, mod, builder);
-        builder.CreateStore(initVal, alloca);
+        if(_initVal)
+        {
+            llvm::Value* initVal = _initVal->Emit(ctx, mod, builder);
+            builder.CreateStore(initVal, alloca);
+        }
+        namedValues[_name] = alloca;
         return nullptr;
     }
 }

@@ -36,3 +36,5 @@ void Compiler::Compile()
 
     llvm::outs() << mod << "\n";
 }
+
+std::unordered_map<std::string, llvm::AllocaInst*> namedValues;
