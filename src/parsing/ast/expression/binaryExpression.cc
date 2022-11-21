@@ -1,3 +1,4 @@
+#include <llvm/IR/Instructions.h>
 #include <parsing/ast/expression/binaryExpression.hh>
 #include <diagnostics.hh>
 
@@ -77,14 +78,6 @@ namespace Parsing
 
     llvm::Value* BinaryExpression::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder)
     {
-        if(_operator == BinaryOperator::Assignment)
-        {
-            llvm::LoadInst* left = static_cast<llvm::LoadInst*>(_lhs->Emit(ctx, mod, builder));
-            llvm::Value* ptr = left->getPointerOperand();
-            llvm::Value* val = _rhs->Emit(ctx, mod, builder);
-            left->eraseFromParent();
-            return builder.CreateStore(val, ptr);
-        }
         llvm::Value* left = _lhs->Emit(ctx, mod, builder);
         llvm::Value* right = _rhs->Emit(ctx, mod, builder);
         
@@ -98,6 +91,13 @@ namespace Parsing
                 return builder.CreateMul(left, right);
             case BinaryOperator::Division:
                 return builder.CreateSDiv(left, right);
+            case BinaryOperator::Assignment:
+            {
+                llvm::LoadInst* load = static_cast<llvm::LoadInst*>(left);
+                llvm::Value* ptr = load->getPointerOperand();
+                load->eraseFromParent();
+                return builder.CreateStore(right, ptr);
+            }
             default:
                 return nullptr;
         }
