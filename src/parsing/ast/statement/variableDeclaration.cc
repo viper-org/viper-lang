@@ -36,6 +36,9 @@ namespace Parsing
 
             return func;
         }
-        throw; // Unreachable for now
+        llvm::AllocaInst* alloca = builder.CreateAlloca(builder.getInt32Ty(), nullptr, _name);
+        llvm::Value* initVal = _initVal->Emit(ctx, mod, builder);
+        builder.CreateStore(initVal, alloca);
+        return nullptr;
     }
 }

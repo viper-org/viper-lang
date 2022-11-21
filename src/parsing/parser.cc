@@ -156,18 +156,22 @@ namespace Parsing
         ExpectToken(Lexing::TokenType::Identifier);
         std::string name = Consume().GetText();
 
-        ExpectToken(Lexing::TokenType::LeftParen);
-        Consume();
-        // TODO: Parse args
-        ExpectToken(Lexing::TokenType::RightParen);
-        Consume();
+        bool isFunction = false;
+        if(Current().GetType() == Lexing::TokenType::LeftParen)
+        {
+            Consume();
+            // TODO: Parse args
+            ExpectToken(Lexing::TokenType::RightParen);
+            Consume();
+            isFunction = true;
+        }
 
         ExpectToken(Lexing::TokenType::Equals);
         Consume();
         
         std::unique_ptr<ASTNode> initVal = ParseExpression();
 
-        return std::make_unique<VariableDeclaration>(name, std::move(initVal), true);
+        return std::make_unique<VariableDeclaration>(name, std::move(initVal), isFunction);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseIntegerLiteral()
