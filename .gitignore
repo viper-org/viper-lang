@@ -1,0 +1,8 @@
+.cache/*
+
+*.json
+*.o
+*.a
+*.vpr.asm
+
+vprc

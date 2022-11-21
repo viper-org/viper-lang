@@ -6,7 +6,6 @@ EXEC_PREFIX=$(PREFIX)
 INCLUDEDIR=$(EXEC_PREFIX)/include
 LIBDIR=$(EXEC_PREFIX)/lib
 SRCDIR=$(EXEC_PREFIX)/src
-TESTDIR=$(EXEC_PREFIX)/tests
 
 PLATFORM_CXXFLAGS=
 PLATFORM_LDFLAGS=
@@ -24,12 +23,10 @@ LD_FLAGS=-Lllvm $(PLATFORM_LDFLAGS)
 
 CXX_SRCS:=$(shell find $(SRCDIR) -name '*.cc')
 OBJS:=${CXX_SRCS:.cc=.o}
-TESTS:=$(shell find $(TESTDIR) -name '*.vpr')
-TEST_OBJS:=${TESTS:.vpr=.asm}
 
 TARGET=vprc
 
-.PHONY: all test clean
+.PHONY: all clean
 
 all: $(TARGET)
 
@@ -41,8 +38,6 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	$(LD) $(LD_FLAGS) $^ -o $@
-
-test: $(TARGET) $(TEST_OBJS)
 
 clean:
 	rm -rf $(TARGET) $(OBJS)
