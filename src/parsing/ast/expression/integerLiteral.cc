@@ -18,7 +18,7 @@ namespace Parsing
         return _value;
     }
 
-    llvm::Value* IntegerLiteral::Emit(llvm::LLVMContext& ctx, llvm::Module&, llvm::IRBuilder<>&, std::shared_ptr<Environment> scope)
+    llvm::Value* IntegerLiteral::Emit(llvm::LLVMContext& ctx, llvm::Module&, llvm::IRBuilder<>&, std::shared_ptr<Environment>)
     {
         return llvm::ConstantInt::get(ctx, llvm::APInt(32, _value));
     }
