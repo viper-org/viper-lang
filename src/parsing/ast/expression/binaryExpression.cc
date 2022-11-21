@@ -77,28 +77,29 @@ namespace Parsing
 
     llvm::Value* BinaryExpression::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder)
     {
+        if(_operator == BinaryOperator::Assignment)
+        {
+            llvm::LoadInst* left = static_cast<llvm::LoadInst*>(_lhs->Emit(ctx, mod, builder));
+            llvm::Value* ptr = left->getPointerOperand();
+            llvm::Value* val = _rhs->Emit(ctx, mod, builder);
+            left->eraseFromParent();
+            return builder.CreateStore(val, ptr);
+        }
         llvm::Value* left = _lhs->Emit(ctx, mod, builder);
         llvm::Value* right = _rhs->Emit(ctx, mod, builder);
         
-        llvm::Value* retval = nullptr;
         switch(_operator)
         {
             case BinaryOperator::Addition:
-                retval = builder.CreateAdd(left, right);
-                break;
+                return builder.CreateAdd(left, right);
             case BinaryOperator::Subtraction:
-                retval = builder.CreateSub(left, right);
-                break;
+                return builder.CreateSub(left, right);
             case BinaryOperator::Multiplication:
-                retval = builder.CreateMul(left, right);
-                break;
+                return builder.CreateMul(left, right);
             case BinaryOperator::Division:
-                retval = builder.CreateSDiv(left, right);
-                break;
+                return builder.CreateSDiv(left, right);
             default:
-                break;
+                return nullptr;
         }
-
-        return retval;
     }
 }

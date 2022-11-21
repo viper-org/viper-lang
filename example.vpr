@@ -1,4 +1,5 @@
 let int32 Main() = {
     let int32 a = 2;
-    return a * 4;
+    a = 6;
+    return a;
 }
