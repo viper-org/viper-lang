@@ -1,4 +1,5 @@
 #include <parsing/ast/expression/integerLiteral.hh>
+#include <llvm/IR/Constants.h>
 
 namespace Parsing
 {
@@ -15,5 +16,10 @@ namespace Parsing
     long long IntegerLiteral::GetValue() const
     {
         return _value;
+    }
+
+    llvm::Value* IntegerLiteral::Emit(llvm::LLVMContext& ctx, llvm::Module&, llvm::IRBuilder<>&)
+    {
+        return llvm::ConstantInt::get(ctx, llvm::APInt(32, _value));
     }
 }

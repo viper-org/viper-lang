@@ -1,3 +1,6 @@
+#include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/Function.h>
 #include <parsing/ast/statement/variableDeclaration.hh>
 
 namespace Parsing
@@ -17,5 +20,22 @@ namespace Parsing
             stream << "\n" << std::string(indent, ' ') << "Value: \n";
             _initVal->Print(stream, indent + 2);
         }
+    }
+
+    llvm::Value* VariableDeclaration::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder)
+    {
+        if(_isFunction)
+        {
+            llvm::FunctionType* funcTy = llvm::FunctionType::get(builder.getInt32Ty(), {}, false);
+            llvm::Function* func = llvm::Function::Create(funcTy, llvm::GlobalValue::ExternalLinkage, _name, mod);
+
+            llvm::BasicBlock* bb = llvm::BasicBlock::Create(ctx, _name, func);
+            builder.SetInsertPoint(bb);
+
+            _initVal->Emit(ctx, mod, builder);
+
+            return func;
+        }
+        throw; // Unreachable for now
     }
 }

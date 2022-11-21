@@ -1,5 +1,6 @@
 #include <compiler.hh>
 #include <lexing/lexer.hh>
+#include <llvm/Support/raw_ostream.h>
 #include <parsing/parser.hh>
 #include <diagnostics.hh>
 #include <sstream>
@@ -25,11 +26,13 @@ void Compiler::Compile()
 {
     Lexing::Lexer* lexer = new Lexing::Lexer(_contents);
     Parsing::Parser* parser = new Parsing::Parser(lexer->Lex(), _contents);
+    llvm::LLVMContext ctx;
+    llvm::IRBuilder<> builder = llvm::IRBuilder(ctx);
+    llvm::Module mod(_inputFileName, ctx);
     for(std::unique_ptr<Parsing::ASTNode>& node : parser->Parse())
-    {
-        node->Print(std::cout, 0);
-        std::cout << '\n';
-    }
+        node->Emit(ctx, mod, builder);
     delete parser;
     delete lexer;
+
+    llvm::outs() << mod << "\n";
 }

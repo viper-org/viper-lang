@@ -11,6 +11,8 @@ namespace Parsing
         ReturnStatement(std::unique_ptr<ASTNode> value);
 
         void Print(std::ostream& stream, int indent) const override;
+
+        llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder) override;
     private:
         std::unique_ptr<ASTNode> _value;
     };

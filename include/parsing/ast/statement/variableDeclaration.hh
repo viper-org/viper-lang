@@ -16,6 +16,8 @@ namespace Parsing
         void Print(std::ostream& stream, int indent) const override;
 
         bool IsFunction() const;
+
+        llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder) override;
     private:
         std::string _name;
         std::unique_ptr<ASTNode> _initVal;

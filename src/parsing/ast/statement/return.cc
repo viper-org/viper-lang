@@ -16,4 +16,11 @@ namespace Parsing
             _value->Print(stream, indent + 2);
         }
     }
+
+    llvm::Value* ReturnStatement::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder)
+    {
+        llvm::Value* value = _value->Emit(ctx, mod, builder);
+
+        return builder.CreateRet(value);
+    }
 }
