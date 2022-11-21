@@ -2,8 +2,8 @@
 
 namespace Parsing
 {
-    CompoundStatement::CompoundStatement(std::vector<std::unique_ptr<ASTNode>>& statements)
-        :ASTNode(ASTNodeType::CompoundStatement), _statements(std::move(statements))
+    CompoundStatement::CompoundStatement(std::vector<std::unique_ptr<ASTNode>>& statements, std::shared_ptr<Environment> scope)
+        :ASTNode(ASTNodeType::CompoundStatement), _statements(std::move(statements)), _scope(scope)
     {
     }
 
@@ -17,10 +17,10 @@ namespace Parsing
         }
     }
 
-    llvm::Value* CompoundStatement::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder)
+    llvm::Value* CompoundStatement::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment>)
     {
         for(std::unique_ptr<ASTNode>& statement : _statements)
-            statement->Emit(ctx, mod, builder);
+            statement->Emit(ctx, mod, builder, _scope);
 
         return nullptr;
     }

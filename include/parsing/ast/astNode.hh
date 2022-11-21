@@ -2,6 +2,7 @@
 #define VIPER_AST_ASTNODE_HH
 #include <llvm/IR/Value.h>
 #include <llvm/IR/IRBuilder.h>
+#include <environment.hh>
 #include <ostream>
 
 namespace Parsing
@@ -31,7 +32,7 @@ namespace Parsing
 
         ASTNodeType GetNodeType() const { return _nodeType; }
 
-        virtual llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder) = 0;
+        virtual llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope) = 0;
     protected:
         ASTNodeType _nodeType;
     };

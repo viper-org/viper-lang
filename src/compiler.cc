@@ -30,7 +30,7 @@ void Compiler::Compile()
     llvm::IRBuilder<> builder = llvm::IRBuilder(ctx);
     llvm::Module mod(_inputFileName, ctx);
     for(std::unique_ptr<Parsing::ASTNode>& node : parser->Parse())
-        node->Emit(ctx, mod, builder);
+        node->Emit(ctx, mod, builder, nullptr);
     delete parser;
     delete lexer;
 

@@ -11,7 +11,7 @@ namespace Parsing
 
         void Print(std::ostream& stream, int indent) const override;
 
-        llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder) override;
+        llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope) override;
 
         std::string GetName() const;
     private:

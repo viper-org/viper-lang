@@ -76,10 +76,10 @@ namespace Parsing
         _rhs->Print(stream, indent + 2);
     }
 
-    llvm::Value* BinaryExpression::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder)
+    llvm::Value* BinaryExpression::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
     {
-        llvm::Value* left = _lhs->Emit(ctx, mod, builder);
-        llvm::Value* right = _rhs->Emit(ctx, mod, builder);
+        llvm::Value* left = _lhs->Emit(ctx, mod, builder, scope);
+        llvm::Value* right = _rhs->Emit(ctx, mod, builder, scope);
         
         switch(_operator)
         {

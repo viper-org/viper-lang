@@ -1,10 +1,11 @@
+#include "environment.hh"
 #include <parsing/parser.hh>
 #include <diagnostics.hh>
 
 namespace Parsing
 {
     Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text)
-        :_text(text), _tokens(tokens), _position(0)
+        :_text(text), _tokens(tokens), _position(0), _currentScope(nullptr)
     {
     }
 
@@ -159,9 +160,12 @@ namespace Parsing
         std::string name = Consume().GetText();
 
         bool isFunction = false;
+        std::shared_ptr<Environment> scope = nullptr;
         if(Current().GetType() == Lexing::TokenType::LeftParen)
         {
             Consume();
+            scope = std::make_shared<Environment>(_currentScope);
+            _currentScope = scope;
             // TODO: Parse args
             ExpectToken(Lexing::TokenType::RightParen);
             Consume();
@@ -173,7 +177,10 @@ namespace Parsing
         
         std::unique_ptr<ASTNode> initVal = ParseExpression();
 
-        return std::make_unique<VariableDeclaration>(name, std::move(initVal), isFunction);
+        if(isFunction)
+            _currentScope = _currentScope->GetOuter();
+
+        return std::make_unique<VariableDeclaration>(name, std::move(initVal), isFunction, scope);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseVariable()
@@ -204,6 +211,9 @@ namespace Parsing
     {
         Consume();
 
+        std::shared_ptr<Environment> scope = std::make_shared<Environment>(_currentScope);
+        _currentScope = scope;
+
         std::vector<std::unique_ptr<ASTNode>> exprs;
 
         while(Current().GetType() != Lexing::TokenType::RightBracket)
@@ -216,7 +226,9 @@ namespace Parsing
 
         _tokens.insert(_tokens.begin() + _position, Lexing::Token(Lexing::TokenType::Semicolon, "", 0, 0, 0, 0));
 
-        return std::make_unique<CompoundStatement>(exprs);
+        _currentScope = scope->GetOuter();
+
+        return std::make_unique<CompoundStatement>(exprs, scope);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseParenthesizedExpression()

@@ -13,9 +13,9 @@ namespace Parsing
         stream << std::string(indent, ' ') << "<Variable>: " << _name;
     }
 
-    llvm::Value* Variable::Emit(llvm::LLVMContext&, llvm::Module&, llvm::IRBuilder<>& builder)
+    llvm::Value* Variable::Emit(llvm::LLVMContext&, llvm::Module&, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
     {
-        llvm::AllocaInst* alloca = namedValues.at(_name);
+        llvm::AllocaInst* alloca = scope->GetNamedValues().at(_name);
 
         return builder.CreateLoad(alloca->getAllocatedType(), alloca);
     }

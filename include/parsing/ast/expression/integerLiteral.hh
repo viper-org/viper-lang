@@ -13,7 +13,7 @@ namespace Parsing
 
         long long GetValue() const;
 
-        llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder) override;
+        llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope) override;
     private:
         long long _value;
     };

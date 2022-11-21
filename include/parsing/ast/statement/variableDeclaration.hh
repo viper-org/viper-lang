@@ -11,17 +11,18 @@ namespace Parsing
     class VariableDeclaration : public ASTNode
     {
     public:
-        VariableDeclaration(const std::string& name, std::unique_ptr<ASTNode> initVal, bool isFunction);
+        VariableDeclaration(const std::string& name, std::unique_ptr<ASTNode> initVal, bool isFunction, std::shared_ptr<Environment> scope);
 
         void Print(std::ostream& stream, int indent) const override;
 
         bool IsFunction() const;
 
-        llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder) override;
+        llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope) override;
     private:
         std::string _name;
         std::unique_ptr<ASTNode> _initVal;
         bool _isFunction;
+        std::shared_ptr<Environment> _scope;
     };
 }
 

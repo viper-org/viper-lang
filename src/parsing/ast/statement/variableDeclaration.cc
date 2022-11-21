@@ -6,8 +6,8 @@
 
 namespace Parsing
 {
-    VariableDeclaration::VariableDeclaration(const std::string& name, std::unique_ptr<ASTNode> initVal, bool isFunction)
-        :ASTNode(ASTNodeType::VariableDeclaration), _name(name), _initVal(std::move(initVal)), _isFunction(isFunction)
+    VariableDeclaration::VariableDeclaration(const std::string& name, std::unique_ptr<ASTNode> initVal, bool isFunction, std::shared_ptr<Environment> scope)
+        :ASTNode(ASTNodeType::VariableDeclaration), _name(name), _initVal(std::move(initVal)), _isFunction(isFunction), _scope(scope)
     {
         _nodeType = (isFunction ? ASTNodeType::Function : ASTNodeType::VariableDeclaration);
     }
@@ -23,7 +23,7 @@ namespace Parsing
         }
     }
 
-    llvm::Value* VariableDeclaration::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder)
+    llvm::Value* VariableDeclaration::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
     {
         if(_isFunction)
         {
@@ -33,17 +33,17 @@ namespace Parsing
             llvm::BasicBlock* bb = llvm::BasicBlock::Create(ctx, _name, func);
             builder.SetInsertPoint(bb);
 
-            _initVal->Emit(ctx, mod, builder);
+            _initVal->Emit(ctx, mod, builder, _scope);
 
             return func;
         }
         llvm::AllocaInst* alloca = builder.CreateAlloca(builder.getInt32Ty(), nullptr, _name);
         if(_initVal)
         {
-            llvm::Value* initVal = _initVal->Emit(ctx, mod, builder);
+            llvm::Value* initVal = _initVal->Emit(ctx, mod, builder, scope);
             builder.CreateStore(initVal, alloca);
         }
-        namedValues[_name] = alloca;
+        scope->GetNamedValues()[_name] = alloca;
         return nullptr;
     }
 }

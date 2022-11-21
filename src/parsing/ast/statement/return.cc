@@ -17,9 +17,9 @@ namespace Parsing
         }
     }
 
-    llvm::Value* ReturnStatement::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder)
+    llvm::Value* ReturnStatement::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
     {
-        llvm::Value* value = _value->Emit(ctx, mod, builder);
+        llvm::Value* value = _value->Emit(ctx, mod, builder, scope);
 
         return builder.CreateRet(value);
     }
