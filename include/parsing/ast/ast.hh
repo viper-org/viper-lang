@@ -7,5 +7,6 @@
 #include <parsing/ast/expression/integerLiteral.hh>
 #include <parsing/ast/expression/binaryExpression.hh>
 #include <parsing/ast/statement/compound.hh>
+#include <parsing/ast/expression/variable.hh>
 
 #endif

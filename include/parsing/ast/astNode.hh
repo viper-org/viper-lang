@@ -16,6 +16,7 @@ namespace Parsing
         
         VariableDeclaration,
         Function,
+        Variable,
 
         CompoundStatement,
     };
