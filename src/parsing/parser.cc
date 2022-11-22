@@ -1,6 +1,7 @@
 #include <parsing/parser.hh>
 #include <diagnostics.hh>
 #include <type/types.hh>
+#include <charconv>
 
 namespace Parsing
 {
@@ -28,6 +29,8 @@ namespace Parsing
     {
         switch(type)
         {
+            case Lexing::TokenType::LeftSquareBracket:
+                return 55;
             case Lexing::TokenType::Star:
             case Lexing::TokenType::Slash:
                 return 40;
@@ -131,6 +134,11 @@ namespace Parsing
             Lexing::Token operatorToken = Consume();
             std::unique_ptr<ASTNode> rhs = ParseExpression(binOpPrecedence);
             lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
+            if(operatorToken.GetType() == Lexing::TokenType::LeftSquareBracket)
+            {
+                ExpectToken(Lexing::TokenType::RightSquareBracket);
+                Consume();
+            }
         }
 
         if(Current().GetType() == Lexing::TokenType::LeftParen)
@@ -168,10 +176,19 @@ namespace Parsing
     {
         ExpectToken(Lexing::TokenType::Type);
         std::shared_ptr<Type> type = types.at(Consume().GetText());
-        while(Current().GetType() == Lexing::TokenType::Star)
+        while(Current().GetType() == Lexing::TokenType::Star || Current().GetType() == Lexing::TokenType::LeftSquareBracket)
         {
             Consume();
-            type = std::make_shared<PointerType>(type);
+            if(Current().GetType() == Lexing::TokenType::Star)
+                type = std::make_shared<PointerType>(type);
+            else
+            {
+                int length = std::stoi(Consume().GetText());
+                type = std::make_shared<ArrayType>(length, type);
+
+                ExpectToken(Lexing::TokenType::RightSquareBracket);
+                Consume();
+            }
         }
         return type;
     }
@@ -184,6 +201,8 @@ namespace Parsing
 
         ExpectToken(Lexing::TokenType::Identifier);
         std::string name = Consume().GetText();
+        
+        _currentScope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(name, type));
 
         std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
         std::shared_ptr<Environment> scope = nullptr;
@@ -211,15 +230,20 @@ namespace Parsing
             _currentReturnType = type;
         }
 
-        ExpectToken(Lexing::TokenType::Equals);
+        if(Current().GetType() != Lexing::TokenType::Equals)
+        {
+            if(scope)
+                _currentScope = _currentScope->GetOuter();
+
+            return std::make_unique<VariableDeclaration>(name, nullptr, scope, type, args);
+        }
+
         Consume();
         
         std::unique_ptr<ASTNode> initVal = ParseExpression();
 
         if(scope)
             _currentScope = _currentScope->GetOuter();
-        
-        _currentScope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(name, type));
 
         return std::make_unique<VariableDeclaration>(name, std::move(initVal), scope, type, args);
     }

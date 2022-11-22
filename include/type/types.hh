@@ -4,6 +4,7 @@
 #include <type/integerType.hh>
 #include <type/voidType.hh>
 #include <type/pointerType.hh>
+#include <type/arrayType.hh>
 #include <llvm/IR/LLVMContext.h>
 #include <map>
 #include <memory>

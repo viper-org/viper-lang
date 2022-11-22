@@ -14,6 +14,7 @@ namespace Parsing
         LessThan, GreaterThan,
 
         Assignment,
+        Subscript,
     };
 
     class BinaryExpression : public ASTNode

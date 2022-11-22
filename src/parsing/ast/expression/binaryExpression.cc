@@ -1,3 +1,4 @@
+#include <llvm/IR/Instruction.h>
 #include <llvm/IR/Instructions.h>
 #include <parsing/ast/expression/binaryExpression.hh>
 #include <diagnostics.hh>
@@ -35,11 +36,17 @@ namespace Parsing
                 break;
             case Lexing::TokenType::Equals:
                 _operator = BinaryOperator::Assignment;
+                break;
+            case Lexing::TokenType::LeftSquareBracket:
+                _operator = BinaryOperator::Subscript;
+                break;
             default:
                 break;
         }
         if(_operator == BinaryOperator::Assignment)
             _type = _lhs->GetType();
+        else if(_operator == BinaryOperator::Subscript)
+            _type = _lhs->GetType()->GetBase();
         else
         {
             if(_lhs->GetType()->IsPointerTy())
@@ -73,6 +80,8 @@ namespace Parsing
                 return "GreaterThan";
             case BinaryOperator::Assignment:
                 return "Assignment";
+            case BinaryOperator::Subscript:
+                return "Subscript";
         }
         return "";
     }
@@ -92,7 +101,7 @@ namespace Parsing
         llvm::Value* left = _lhs->Emit(ctx, mod, builder, scope);
         llvm::Value* right = _rhs->Emit(ctx, mod, builder, scope);
 
-        if(!_type->IsPointerTy())
+        if(!_type->IsPointerTy() && _operator != BinaryOperator::Subscript)
         {
             if(_operator != BinaryOperator::Assignment)
                 left = Type::Convert(left, _type->GetLLVMType(), builder);
@@ -128,6 +137,20 @@ namespace Parsing
                 llvm::Value* ptr = llvm::getPointerOperand(left);
                 inst->eraseFromParent();
                 return builder.CreateStore(right, ptr);
+            }
+            case BinaryOperator::Subscript:
+            {
+                llvm::Instruction* inst = static_cast<llvm::Instruction*>(left);
+                llvm::Value* ptr = llvm::getPointerOperand(inst);
+
+                right = Type::Convert(right, types.at("int64")->GetLLVMType(), builder);
+
+                llvm::Value* gep = builder.CreateInBoundsGEP(left->getType(), ptr, {llvm::ConstantInt::get(ctx, llvm::APInt(64, 0)), right});
+                llvm::Value* load = builder.CreateLoad(gep->getType()->getPointerElementType(), gep);
+
+                inst->eraseFromParent();
+
+                return load;
             }
             default:
                 return nullptr;

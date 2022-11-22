@@ -1,8 +1,6 @@
 let int32 main() = {
-    let int32 y = 2;
-    let int32* x = #y;
-
-    @x = 6;
-
-    return @x;
+    let int32[4] x;
+    let int32 b = 2;
+    x[b] = 4;
+    return x[2];
 }

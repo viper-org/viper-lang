@@ -8,8 +8,6 @@ public:
     PointerType(std::shared_ptr<Type> base);
     bool IsPointerTy() const override;
 
-    int GetPrimitiveSize() const override;
-
     std::shared_ptr<Type> GetBase() override;
 private:
     std::shared_ptr<Type> _base;
