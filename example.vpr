@@ -1,4 +1,6 @@
 let int8 Main() = {
-    let int32 a = 2;
+    let int16 a = 2;
+    let int8 b = 4;
+    a = a + b;
     return a;
 }

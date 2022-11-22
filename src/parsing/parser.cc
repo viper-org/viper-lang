@@ -185,6 +185,8 @@ namespace Parsing
 
         if(isFunction)
             _currentScope = _currentScope->GetOuter();
+        else
+            _currentScope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(name, type));
 
         return std::make_unique<VariableDeclaration>(name, std::move(initVal), isFunction, scope, type);
     }
@@ -193,7 +195,9 @@ namespace Parsing
     {
         std::string name = Consume().GetText();
 
-        return std::make_unique<Variable>(name);
+        std::shared_ptr<VarSymbol> symbol = _currentScope->FindVarSymbol(name);
+
+        return std::make_unique<Variable>(name, symbol->GetType());
     }
 
     std::unique_ptr<ASTNode> Parser::ParseIntegerLiteral()

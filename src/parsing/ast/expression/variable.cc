@@ -3,9 +3,10 @@
 
 namespace Parsing
 {
-    Variable::Variable(std::string name)
+    Variable::Variable(std::string name, std::shared_ptr<Type> type)
         :ASTNode(ASTNodeType::Variable), _name(name)
     {
+        _type = type;
     }
 
     void Variable::Print(std::ostream& stream, int indent) const
@@ -17,7 +18,7 @@ namespace Parsing
     {
         llvm::AllocaInst* alloca = scope->GetNamedValues().at(_name);
 
-        return builder.CreateLoad(alloca->getAllocatedType(), alloca);
+        return builder.CreateLoad(_type->GetLLVMType(), alloca);
     }
 
     std::string Variable::GetName() const

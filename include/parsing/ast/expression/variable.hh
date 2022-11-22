@@ -7,7 +7,7 @@ namespace Parsing
     class Variable : public ASTNode
     {
     public:
-        Variable(std::string name);
+        Variable(std::string name, std::shared_ptr<Type> type);
 
         void Print(std::ostream& stream, int indent) const override;
 

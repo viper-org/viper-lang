@@ -38,7 +38,10 @@ namespace Parsing
             default:
                 break;
         }
-        _type = _lhs->GetType();
+        if(_operator == BinaryOperator::Assignment)
+            _type = _lhs->GetType();
+        else
+            _type = (_lhs->GetType()->GetScalarSize() > _rhs->GetType()->GetScalarSize()) ? _lhs->GetType() : _rhs->GetType();
     }
 
     std::string BinaryExpression::OperatorToString() const
@@ -81,6 +84,10 @@ namespace Parsing
     {
         llvm::Value* left = _lhs->Emit(ctx, mod, builder, scope);
         llvm::Value* right = _rhs->Emit(ctx, mod, builder, scope);
+
+        if(_operator != BinaryOperator::Assignment)
+            left = Type::Convert(left, _type, builder);
+        right = Type::Convert(right, _type, builder);
         
         switch(_operator)
         {
