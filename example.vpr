@@ -1,4 +1,7 @@
-let int8 Main() = {
-    let bool x = 1;
-    return x;
+let int32 Add(int32 lhs, int32 rhs) = {
+    lhs + rhs;
+}
+
+let int32 main() = {
+    return 0;
 }

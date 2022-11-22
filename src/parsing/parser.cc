@@ -164,17 +164,29 @@ namespace Parsing
         ExpectToken(Lexing::TokenType::Identifier);
         std::string name = Consume().GetText();
 
-        bool isFunction = false;
+        std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
         std::shared_ptr<Environment> scope = nullptr;
         if(Current().GetType() == Lexing::TokenType::LeftParen)
         {
             Consume();
             scope = std::make_shared<Environment>(_currentScope);
             _currentScope = scope;
-            // TODO: Parse args
-            ExpectToken(Lexing::TokenType::RightParen);
+            while(Current().GetType() != Lexing::TokenType::RightParen)
+            {
+                std::shared_ptr<Type> type = ParseType();
+
+                ExpectToken(Lexing::TokenType::Identifier);
+                std::string argName = Consume().GetText();
+                
+                args.push_back(std::make_pair(type, argName));
+                _currentScope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(argName, type));
+                if(Current().GetType() == Lexing::TokenType::RightParen)
+                    break;
+
+                ExpectToken(Lexing::TokenType::Comma);
+                Consume();
+            }
             Consume();
-            isFunction = true;
             _currentReturnType = type;
         }
 
@@ -183,12 +195,12 @@ namespace Parsing
         
         std::unique_ptr<ASTNode> initVal = ParseExpression();
 
-        if(isFunction)
+        if(scope)
             _currentScope = _currentScope->GetOuter();
         else
             _currentScope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(name, type));
 
-        return std::make_unique<VariableDeclaration>(name, std::move(initVal), isFunction, scope, type);
+        return std::make_unique<VariableDeclaration>(name, std::move(initVal), scope, type, args);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseVariable()

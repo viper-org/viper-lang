@@ -16,7 +16,7 @@ namespace Parsing
 
     llvm::Value* Variable::Emit(llvm::LLVMContext&, llvm::Module&, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
     {
-        llvm::AllocaInst* alloca = scope->GetNamedValues().at(_name);
+        llvm::AllocaInst* alloca = scope->FindNamedValue(_name);
 
         return builder.CreateLoad(_type->GetLLVMType(), alloca);
     }
