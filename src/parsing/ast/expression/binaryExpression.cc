@@ -99,6 +99,17 @@ namespace Parsing
                 return builder.CreateMul(left, right);
             case BinaryOperator::Division:
                 return builder.CreateSDiv(left, right);
+
+            case BinaryOperator::Equal:
+                return builder.CreateICmpEQ(left, right);
+            case BinaryOperator::NotEqual:
+                return builder.CreateICmpNE(left, right);
+            
+            case BinaryOperator::LessThan:
+                return builder.CreateICmpSLT(left, right);
+            case BinaryOperator::GreaterThan:
+                return builder.CreateICmpSGT(left, right);
+            
             case BinaryOperator::Assignment:
             {
                 llvm::LoadInst* load = static_cast<llvm::LoadInst*>(left);

@@ -1,6 +1,6 @@
 let int32 main() = {
     let int32 x = 50;
-    while(x)
+    while(x > 25)
     {
         x = x - 1;
     }
