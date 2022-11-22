@@ -1,6 +1,7 @@
 #include <parsing/ast/statement/variableDeclaration.hh>
 #include <environment.hh>
 #include <llvm/IR/BasicBlock.h>
+#include <llvm/Transforms/Utils/BasicBlockUtils.h>
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Function.h>
 
@@ -50,6 +51,8 @@ namespace Parsing
             }
 
             _initVal->Emit(ctx, mod, builder, _scope);
+
+            llvm::EliminateUnreachableBlocks(*func);
 
             return func;
         }

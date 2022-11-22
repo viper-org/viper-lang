@@ -18,6 +18,9 @@ llvm::Value* Type::Convert(llvm::Value* src, llvm::Type* dst, llvm::IRBuilder<>&
 {
     if(src->getType() == dst)
         return src;
+
+    if(src->getType()->isIntegerTy() && dst->isIntegerTy(1))
+        return builder.CreateIsNotNull(src);
     
     if(src->getType()->isIntegerTy() && dst->isIntegerTy())
         return builder.CreateSExtOrTrunc(src, dst);

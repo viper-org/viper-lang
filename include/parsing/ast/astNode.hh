@@ -13,6 +13,7 @@ namespace Parsing
         Integer,
 
         ReturnStatement,
+        IfStatement,
 
         BinaryExpression,
         

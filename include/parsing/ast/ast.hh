@@ -9,5 +9,6 @@
 #include <parsing/ast/statement/compound.hh>
 #include <parsing/ast/expression/variable.hh>
 #include <parsing/ast/expression/call.hh>
+#include <parsing/ast/statement/if.hh>
 
 #endif

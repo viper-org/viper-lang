@@ -22,7 +22,6 @@ std::vector<std::shared_ptr<VarSymbol>>& Environment::GetVarSymbols()
     return _varSymbols;
 }
 
-
 llvm::AllocaInst* Environment::FindNamedValue(const std::string& name)
 {
     Environment* env = this;

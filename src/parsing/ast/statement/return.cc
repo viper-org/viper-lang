@@ -26,7 +26,6 @@ namespace Parsing
 
             value = Type::Convert(value, _returnType->GetLLVMType(), builder);
         }
-
         return builder.CreateRet(value);
     }
 }
