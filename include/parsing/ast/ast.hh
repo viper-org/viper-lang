@@ -10,5 +10,6 @@
 #include <parsing/ast/expression/variable.hh>
 #include <parsing/ast/expression/call.hh>
 #include <parsing/ast/statement/if.hh>
+#include <parsing/ast/statement/while.hh>
 
 #endif
