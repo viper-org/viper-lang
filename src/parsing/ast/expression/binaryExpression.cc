@@ -38,6 +38,7 @@ namespace Parsing
             default:
                 break;
         }
+        _type = _lhs->GetType();
     }
 
     std::string BinaryExpression::OperatorToString() const

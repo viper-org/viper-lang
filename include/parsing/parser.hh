@@ -17,6 +17,7 @@ namespace Parsing
         std::vector<Lexing::Token> _tokens;
         unsigned int _position;
         std::shared_ptr<Environment> _currentScope;
+        std::shared_ptr<Type> _currentReturnType;
 
         Lexing::Token Current() const;
         Lexing::Token Consume();
@@ -31,6 +32,8 @@ namespace Parsing
         std::unique_ptr<ASTNode> ParseExpression(int precedence = 1);
         std::unique_ptr<ASTNode> ParsePrimary();
         std::unique_ptr<ASTNode> ParseIdentifier();
+
+        std::shared_ptr<Type> ParseType();
 
         std::unique_ptr<ASTNode> ParseVariableDeclaration();
         std::unique_ptr<ASTNode> ParseVariable();

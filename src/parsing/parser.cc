@@ -1,11 +1,11 @@
-#include "environment.hh"
 #include <parsing/parser.hh>
 #include <diagnostics.hh>
+#include <type/types.hh>
 
 namespace Parsing
 {
     Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text)
-        :_text(text), _tokens(tokens), _position(0), _currentScope(nullptr)
+        :_text(text), _tokens(tokens), _position(0), _currentScope(nullptr), _currentReturnType(nullptr)
     {
     }
 
@@ -149,12 +149,17 @@ namespace Parsing
         }
     }
 
+    std::shared_ptr<Type> Parser::ParseType()
+    {
+        ExpectToken(Lexing::TokenType::Type);
+        return types.at(Consume().GetText());
+    }
+
     std::unique_ptr<ASTNode> Parser::ParseVariableDeclaration()
     {
         Consume();
 
-        ExpectToken(Lexing::TokenType::Type);
-        Consume();
+        std::shared_ptr<Type> type = ParseType();
 
         ExpectToken(Lexing::TokenType::Identifier);
         std::string name = Consume().GetText();
@@ -170,6 +175,7 @@ namespace Parsing
             ExpectToken(Lexing::TokenType::RightParen);
             Consume();
             isFunction = true;
+            _currentReturnType = type;
         }
 
         ExpectToken(Lexing::TokenType::Equals);
@@ -180,7 +186,7 @@ namespace Parsing
         if(isFunction)
             _currentScope = _currentScope->GetOuter();
 
-        return std::make_unique<VariableDeclaration>(name, std::move(initVal), isFunction, scope);
+        return std::make_unique<VariableDeclaration>(name, std::move(initVal), isFunction, scope, type);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseVariable()
@@ -202,9 +208,9 @@ namespace Parsing
         Consume();
 
         if(Current().GetType() == Lexing::TokenType::Semicolon)
-            return std::make_unique<ReturnStatement>(nullptr);
+            return std::make_unique<ReturnStatement>(nullptr, _currentReturnType);
 
-        return std::make_unique<ReturnStatement>(ParseExpression());
+        return std::make_unique<ReturnStatement>(ParseExpression(), _currentReturnType);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseCompoundExpression()

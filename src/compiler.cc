@@ -1,3 +1,4 @@
+#include "type/types.hh"
 #include <compiler.hh>
 #include <lexing/lexer.hh>
 #include <llvm/Support/raw_ostream.h>
@@ -24,11 +25,15 @@ Compiler::Compiler(OutputType outputType, const std::string& inputFileName)
 
 void Compiler::Compile()
 {
-    Lexing::Lexer* lexer = new Lexing::Lexer(_contents);
-    Parsing::Parser* parser = new Parsing::Parser(lexer->Lex(), _contents);
     llvm::LLVMContext ctx;
     llvm::IRBuilder<> builder = llvm::IRBuilder(ctx);
     llvm::Module mod(_inputFileName, ctx);
+
+    InitBuiltinTypes(ctx);
+
+    Lexing::Lexer* lexer = new Lexing::Lexer(_contents);
+    Parsing::Parser* parser = new Parsing::Parser(lexer->Lex(), _contents);
+
     for(std::unique_ptr<Parsing::ASTNode>& node : parser->Parse())
         node->Emit(ctx, mod, builder, nullptr);
     delete parser;
