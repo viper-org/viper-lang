@@ -24,7 +24,7 @@ namespace Parsing
         {
             value = _value->Emit(ctx, mod, builder, scope);
 
-            value = Type::Convert(value, _returnType, builder);
+            value = Type::Convert(value, _returnType->GetLLVMType(), builder);
         }
 
         return builder.CreateRet(value);

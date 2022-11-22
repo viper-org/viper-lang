@@ -17,8 +17,9 @@ namespace Parsing
         BinaryExpression,
         
         VariableDeclaration,
-        Function,
         Variable,
+        Function,
+        Call,
 
         CompoundStatement,
     };

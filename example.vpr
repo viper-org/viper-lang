@@ -1,7 +1,7 @@
-let int32 Add(int32 lhs, int32 rhs) = {
-    lhs + rhs;
+let int32 Add(int64 lhs, int64 rhs) = {
+    return lhs + rhs;
 }
 
 let int32 main() = {
-    return 0;
+    return Add(1, 3);
 }

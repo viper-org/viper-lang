@@ -5,7 +5,7 @@
 namespace Parsing
 {
     Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text)
-        :_text(text), _tokens(tokens), _position(0), _currentScope(nullptr), _currentReturnType(nullptr)
+        :_text(text), _tokens(tokens), _position(0), _currentScope(std::make_shared<Environment>(nullptr)), _currentReturnType(nullptr)
     {
     }
 
@@ -125,6 +125,9 @@ namespace Parsing
             lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
         }
 
+        if(Current().GetType() == Lexing::TokenType::LeftParen)
+            lhs = ParseCallExpression(std::move(lhs));
+
         return lhs;
     }
 
@@ -197,8 +200,8 @@ namespace Parsing
 
         if(scope)
             _currentScope = _currentScope->GetOuter();
-        else
-            _currentScope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(name, type));
+        
+        _currentScope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(name, type));
 
         return std::make_unique<VariableDeclaration>(name, std::move(initVal), scope, type, args);
     }
@@ -210,6 +213,24 @@ namespace Parsing
         std::shared_ptr<VarSymbol> symbol = _currentScope->FindVarSymbol(name);
 
         return std::make_unique<Variable>(name, symbol->GetType());
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseCallExpression(std::unique_ptr<ASTNode> callee)
+    {
+        Consume();
+        std::vector<std::unique_ptr<ASTNode>> args;
+        while(Current().GetType() != Lexing::TokenType::RightParen)
+        {
+            args.push_back(ParseExpression());
+            if(Current().GetType() == Lexing::TokenType::RightParen)
+                break;
+
+            ExpectToken(Lexing::TokenType::Comma);
+            Consume();
+        }
+        Consume();
+
+        return std::make_unique<CallExpr>(std::move(callee), std::move(args));
     }
 
     std::unique_ptr<ASTNode> Parser::ParseIntegerLiteral()

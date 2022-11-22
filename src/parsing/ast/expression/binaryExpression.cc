@@ -86,8 +86,8 @@ namespace Parsing
         llvm::Value* right = _rhs->Emit(ctx, mod, builder, scope);
 
         if(_operator != BinaryOperator::Assignment)
-            left = Type::Convert(left, _type, builder);
-        right = Type::Convert(right, _type, builder);
+            left = Type::Convert(left, _type->GetLLVMType(), builder);
+        right = Type::Convert(right, _type->GetLLVMType(), builder);
         
         switch(_operator)
         {

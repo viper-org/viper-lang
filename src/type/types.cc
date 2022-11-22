@@ -14,14 +14,14 @@ void InitBuiltinTypes(llvm::LLVMContext& ctx)
     types["bool"]  = std::make_shared<IntegerType>(1, ctx);
 }
 
-llvm::Value* Type::Convert(llvm::Value* src, std::shared_ptr<Type> dst, llvm::IRBuilder<>& builder)
+llvm::Value* Type::Convert(llvm::Value* src, llvm::Type* dst, llvm::IRBuilder<>& builder)
 {
-    if(src->getType() == dst->GetLLVMType())
+    if(src->getType() == dst)
         return src;
     
-    if(src->getType()->isIntegerTy() && dst->IsIntegerTy())
-        return builder.CreateSExtOrTrunc(src, dst->GetLLVMType());
+    if(src->getType()->isIntegerTy() && dst->isIntegerTy())
+        return builder.CreateSExtOrTrunc(src, dst);
 
-    src->mutateType(dst->GetLLVMType()); // If all else fails
+    src->mutateType(dst); // If all else fails
     return src;
 }

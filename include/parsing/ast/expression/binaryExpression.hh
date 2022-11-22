@@ -25,7 +25,7 @@ namespace Parsing
 
         llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope) override;
     private:
-        std::unique_ptr<ASTNode>_lhs;
+        std::unique_ptr<ASTNode> _lhs;
         BinaryOperator _operator;
         std::unique_ptr<ASTNode> _rhs;
 
