@@ -25,6 +25,9 @@ llvm::Value* Type::Convert(llvm::Value* src, llvm::Type* dst, llvm::IRBuilder<>&
     if(src->getType()->isIntegerTy() && dst->isIntegerTy())
         return builder.CreateSExtOrTrunc(src, dst);
 
+    if(src->getType()->isIntegerTy() && dst->isPointerTy())
+        return builder.CreateIntToPtr(src, dst);
+
     src->mutateType(dst); // If all else fails
     return src;
 }

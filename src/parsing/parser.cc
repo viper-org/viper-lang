@@ -112,7 +112,15 @@ namespace Parsing
     
     std::unique_ptr<ASTNode> Parser::ParseExpression(int precedence)
     {
-        std::unique_ptr<ASTNode> lhs = ParsePrimary();
+        std::unique_ptr<ASTNode> lhs;
+        int unOpPrecedence = GetUnOpPrecedence(Current().GetType());
+        if(unOpPrecedence && unOpPrecedence >= precedence)
+        {
+            Lexing::Token operatorToken = Consume();
+            lhs = std::make_unique<UnaryExpression>(ParseExpression(unOpPrecedence), operatorToken);
+        }
+        else
+            lhs = ParsePrimary();
 
         while(true)
         {
@@ -159,7 +167,13 @@ namespace Parsing
     std::shared_ptr<Type> Parser::ParseType()
     {
         ExpectToken(Lexing::TokenType::Type);
-        return types.at(Consume().GetText());
+        std::shared_ptr<Type> type = types.at(Consume().GetText());
+        while(Current().GetType() == Lexing::TokenType::Star)
+        {
+            Consume();
+            type = std::make_shared<PointerType>(type);
+        }
+        return type;
     }
 
     std::unique_ptr<ASTNode> Parser::ParseVariableDeclaration()

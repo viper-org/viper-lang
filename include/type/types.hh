@@ -3,6 +3,7 @@
 #include <type/type.hh>
 #include <type/integerType.hh>
 #include <type/voidType.hh>
+#include <type/pointerType.hh>
 #include <llvm/IR/LLVMContext.h>
 #include <map>
 #include <memory>

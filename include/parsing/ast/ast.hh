@@ -11,5 +11,6 @@
 #include <parsing/ast/expression/call.hh>
 #include <parsing/ast/statement/if.hh>
 #include <parsing/ast/statement/while.hh>
+#include <parsing/ast/expression/unaryExpression.hh>
 
 #endif

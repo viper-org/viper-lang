@@ -41,7 +41,14 @@ namespace Parsing
         if(_operator == BinaryOperator::Assignment)
             _type = _lhs->GetType();
         else
-            _type = (_lhs->GetType()->GetScalarSize() > _rhs->GetType()->GetScalarSize()) ? _lhs->GetType() : _rhs->GetType();
+        {
+            if(_lhs->GetType()->IsPointerTy())
+                _type = _lhs->GetType();
+            else if(_rhs->GetType()->IsPointerTy())
+                _type = _rhs->GetType();
+            else
+                _type = (_lhs->GetType()->GetScalarSize() > _rhs->GetType()->GetScalarSize()) ? _lhs->GetType() : _rhs->GetType();
+        }
     }
 
     std::string BinaryExpression::OperatorToString() const
@@ -85,13 +92,18 @@ namespace Parsing
         llvm::Value* left = _lhs->Emit(ctx, mod, builder, scope);
         llvm::Value* right = _rhs->Emit(ctx, mod, builder, scope);
 
-        if(_operator != BinaryOperator::Assignment)
-            left = Type::Convert(left, _type->GetLLVMType(), builder);
-        right = Type::Convert(right, _type->GetLLVMType(), builder);
+        if(!_type->IsPointerTy())
+        {
+            if(_operator != BinaryOperator::Assignment)
+                left = Type::Convert(left, _type->GetLLVMType(), builder);
+            right = Type::Convert(right, _type->GetLLVMType(), builder);
+        }
         
         switch(_operator)
         {
             case BinaryOperator::Addition:
+                if(_type->IsPointerTy())
+                    return builder.CreateInBoundsGEP(_type->GetLLVMType()->getPointerElementType(), left, right);
                 return builder.CreateAdd(left, right);
             case BinaryOperator::Subtraction:
                 return builder.CreateSub(left, right);
@@ -112,9 +124,9 @@ namespace Parsing
             
             case BinaryOperator::Assignment:
             {
-                llvm::LoadInst* load = static_cast<llvm::LoadInst*>(left);
-                llvm::Value* ptr = load->getPointerOperand();
-                load->eraseFromParent();
+                llvm::Instruction* inst = static_cast<llvm::Instruction*>(left);
+                llvm::Value* ptr = llvm::getPointerOperand(left);
+                inst->eraseFromParent();
                 return builder.CreateStore(right, ptr);
             }
             default:
