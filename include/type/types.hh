@@ -2,6 +2,7 @@
 #define VIPER_TYPES_HH
 #include <type/type.hh>
 #include <type/integerType.hh>
+#include <type/voidType.hh>
 #include <llvm/IR/LLVMContext.h>
 #include <map>
 #include <memory>

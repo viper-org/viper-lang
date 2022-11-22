@@ -8,6 +8,8 @@ void InitBuiltinTypes(llvm::LLVMContext& ctx)
     types["int16"] = std::make_shared<IntegerType>(16, ctx);
     types["int32"] = std::make_shared<IntegerType>(32, ctx);
     types["int64"] = std::make_shared<IntegerType>(64, ctx);
+
+    types["void"]  = std::make_shared<VoidType>(ctx);
 }
 
 llvm::Value* Type::Convert(llvm::Value* src, std::shared_ptr<Type> dst, llvm::IRBuilder<>& builder)

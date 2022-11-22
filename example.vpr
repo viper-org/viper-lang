@@ -4,3 +4,7 @@ let int8 Main() = {
     a = a + b;
     return a;
 }
+
+let void Test() = {
+    return;
+}
