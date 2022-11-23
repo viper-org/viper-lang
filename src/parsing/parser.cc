@@ -157,6 +157,8 @@ namespace Parsing
                 return ParseReturnStatement();
             case Lexing::TokenType::Integer:
                 return ParseIntegerLiteral();
+            case Lexing::TokenType::String:
+                return ParseStringLiteral();
             case Lexing::TokenType::Identifier:
                 return ParseVariable();
             case Lexing::TokenType::LeftBracket:
@@ -178,11 +180,14 @@ namespace Parsing
         std::shared_ptr<Type> type = types.at(Consume().GetText());
         while(Current().GetType() == Lexing::TokenType::Star || Current().GetType() == Lexing::TokenType::LeftSquareBracket)
         {
-            Consume();
             if(Current().GetType() == Lexing::TokenType::Star)
+            {
+                Consume();
                 type = std::make_shared<PointerType>(type);
+            }
             else
             {
+                Consume();
                 int length = std::stoi(Consume().GetText());
                 type = std::make_shared<ArrayType>(length, type);
 
@@ -280,6 +285,13 @@ namespace Parsing
         long long value = std::stoll(Consume().GetText());
 
         return std::make_unique<IntegerLiteral>(value);
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseStringLiteral()
+    {
+        std::string value = Consume().GetText();
+
+        return std::make_unique<StringLiteral>(value);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseReturnStatement()

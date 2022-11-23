@@ -11,6 +11,7 @@ namespace Parsing
     enum class ASTNodeType
     {
         Integer,
+        String,
 
         ReturnStatement,
         IfStatement,

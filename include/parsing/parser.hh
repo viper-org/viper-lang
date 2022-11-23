@@ -41,6 +41,7 @@ namespace Parsing
         std::unique_ptr<ASTNode> ParseCallExpression(std::unique_ptr<ASTNode> callee);
 
         std::unique_ptr<ASTNode> ParseIntegerLiteral();
+        std::unique_ptr<ASTNode> ParseStringLiteral();
 
         std::unique_ptr<ASTNode> ParseReturnStatement();
 

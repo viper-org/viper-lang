@@ -1,10 +1,12 @@
 #include <compiler.hh>
 #include <lexing/lexer.hh>
+#include <llvm/MC/MCExpr.h>
 #include <llvm/Support/CodeGen.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/Host.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/MC/TargetRegistry.h>
+#include <llvm/MC/MCContext.h>
 #include <llvm/Target/TargetOptions.h>
 #include <llvm/Target/TargetMachine.h>
 #include <llvm/Support/FileSystem.h>
@@ -13,7 +15,6 @@
 #include <diagnostics.hh>
 #include <sstream>
 #include <iostream>
-
 
 Compiler::Compiler(OutputType outputType, const std::string& inputFileName, const std::optional<std::string>& outputFileName)
     :_outputType(outputType), _inputFileName(inputFileName)
