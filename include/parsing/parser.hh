@@ -38,6 +38,8 @@ namespace Parsing
         std::unique_ptr<ASTNode> ParseVariableDeclaration();
         std::unique_ptr<ASTNode> ParseVariable();
 
+        std::unique_ptr<ASTNode> ParseImportStatement();
+
         std::unique_ptr<ASTNode> ParseCallExpression(std::unique_ptr<ASTNode> callee);
 
         std::unique_ptr<ASTNode> ParseIntegerLiteral();

@@ -102,7 +102,7 @@ namespace Parsing
             ExpectToken(Lexing::TokenType::Semicolon);
             Consume();
 
-            if(expr->GetNodeType() == ASTNodeType::Function)
+            if(expr->GetNodeType() == ASTNodeType::Function || expr->GetNodeType() == ASTNodeType::ImportStatement)
                 result.push_back(std::move(expr));
             else
             {
@@ -169,6 +169,8 @@ namespace Parsing
                 return ParseIfStatement();
             case Lexing::TokenType::While:
                 return ParseWhileStatement();
+            case Lexing::TokenType::Import:
+                return ParseImportStatement();
             default:
                 ParserError("Expected primary expression, found '" + Current().GetText() + "'");
         }
@@ -260,6 +262,38 @@ namespace Parsing
         std::shared_ptr<VarSymbol> symbol = _currentScope->FindVarSymbol(name);
 
         return std::make_unique<Variable>(name, symbol->GetType());
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseImportStatement()
+    {
+        Consume();
+
+        std::shared_ptr<Type> type = ParseType();
+
+        std::string name = Consume().GetText();
+
+        _currentScope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(name, type));
+
+        std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
+        ExpectToken(Lexing::TokenType::LeftParen);
+        Consume();
+        while(Current().GetType() != Lexing::TokenType::RightParen)
+        {
+            std::shared_ptr<Type> type = ParseType();
+
+            ExpectToken(Lexing::TokenType::Identifier);
+            std::string argName = Consume().GetText();
+            
+            args.push_back(std::make_pair(type, argName));
+            if(Current().GetType() == Lexing::TokenType::RightParen)
+                break;
+
+            ExpectToken(Lexing::TokenType::Comma);
+            Consume();
+        }
+        Consume();
+
+        return std::make_unique<ImportStatement>(name, type, std::move(args));
     }
 
     std::unique_ptr<ASTNode> Parser::ParseCallExpression(std::unique_ptr<ASTNode> callee)
