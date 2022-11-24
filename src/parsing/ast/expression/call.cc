@@ -1,3 +1,4 @@
+#include <iostream>
 #include <parsing/ast/expression/call.hh>
 #include <parsing/ast/expression/variable.hh>
 #include <environment.hh>
@@ -33,20 +34,25 @@ namespace Parsing
             type = callee->getType();
         }
 
+        _type = std::make_shared<Type>(type);
+        
+        std::vector<llvm::Value*> argValues;
+        unsigned int i = 0;
+        for(std::unique_ptr<ASTNode>& arg : _args)
+        {
+            llvm::Value* value = arg->Emit(ctx, mod, builder, scope);
+            argValues.push_back(value);
+        }
+
         std::vector<llvm::Type*> argTypes;
         for(std::unique_ptr<ASTNode>& arg : _args)
             argTypes.push_back(arg->GetType()->GetLLVMType());
 
         llvm::FunctionType* funcTy = llvm::FunctionType::get(type, argTypes, false);
 
-        std::vector<llvm::Value*> argValues;
-        unsigned int i = 0;
-        for(std::unique_ptr<ASTNode>& arg : _args)
-        {
-            llvm::Value* value = arg->Emit(ctx, mod, builder, scope);
-            value = Type::Convert(value, funcTy->getParamType(i++), builder);
-            argValues.push_back(value);
-        }
+        i = 0;
+        for(llvm::Value*& arg : argValues)
+            arg = Type::Convert(arg, funcTy->getFunctionParamType(i), builder);
 
         return builder.CreateCall(funcTy, callee, argValues);
     }

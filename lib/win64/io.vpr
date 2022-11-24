@@ -1,0 +1,14 @@
+import void* GetStdHandle(int32 nStdHandle);
+import bool WriteConsole(void* hConsoleOutput, int8* lpBuffer, int32 nNumberOfCharsToWrite);
+
+let int32 StrLen(int8* str) = {
+    let int32 size = 0;
+    while(@(str + size))
+        size = size + 1;
+    return size;
+}
+
+let void WriteString(int8* str) = {
+    void* handle = GetStdHandle(0-11);
+    WriteConsole(handle, str, StrLen(str));
+}

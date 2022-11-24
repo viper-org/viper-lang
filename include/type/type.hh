@@ -13,6 +13,11 @@ public:
         :_size(size), _llvmType(llvmType)
     {
     }
+    Type(llvm::Type* llvmType)
+        :_size(llvmType->getScalarSizeInBits()), _llvmType(llvmType)
+    {
+    }
+
     virtual ~Type() {  }
 
     llvm::Type* GetLLVMType() const { return _llvmType; }

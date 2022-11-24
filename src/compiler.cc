@@ -51,6 +51,9 @@ void Compiler::Compile()
     llvm::IRBuilder<> builder = llvm::IRBuilder(ctx);
     llvm::Module mod(_inputFileName, ctx);
 
+    mod.setPIELevel(llvm::PIELevel::Level::Large);
+    mod.setPICLevel(llvm::PICLevel::Level::BigPIC);
+
     InitBuiltinTypes(ctx);
 
     Lexing::Lexer* lexer = new Lexing::Lexer(_contents);

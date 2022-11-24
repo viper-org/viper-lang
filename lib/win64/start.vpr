@@ -1,0 +1,5 @@
+import int32 Main();
+
+let int32 WinMain() = {
+    return Main();
+}

@@ -1,7 +1,7 @@
 import int32 Print(int8* data);
 
-let int32 main() = {
-    let int8* y = "Hello World!";
-    Print(y);
+let int32 Main() = {
+    Print("Hello World!\n");
+
     return 0;
 }

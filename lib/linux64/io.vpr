@@ -1,0 +1,13 @@
+import int64 SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
+
+let int32 StrLen(int8* str) = {
+    let int32 len = 0;
+    while(@(str + len))
+        len = len + 1;
+    return len;
+}
+
+let void Print(int8* str) = {
+    SystemCall(1, 1, str, StrLen(str));
+    return;
+}
