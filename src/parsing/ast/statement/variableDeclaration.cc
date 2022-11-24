@@ -54,6 +54,9 @@ namespace Parsing
 
             llvm::EliminateUnreachableBlocks(*func);
 
+            if(func->getBasicBlockList().back().getInstList().size() == 0 || !func->getBasicBlockList().back().getInstList().back().isTerminator())
+                builder.CreateRet(llvm::Constant::getNullValue(_type->GetLLVMType()));
+
             return func;
         }
         llvm::AllocaInst* alloca = builder.CreateAlloca(_type->GetLLVMType(), nullptr, _name);

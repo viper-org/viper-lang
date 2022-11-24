@@ -2,6 +2,4 @@ import int32 Print(int8* data);
 
 let int32 Main() = {
     Print("Hello World!\n");
-
-    return 0;
 }

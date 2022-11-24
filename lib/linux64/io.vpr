@@ -9,5 +9,4 @@ let int32 StrLen(int8* str) = {
 
 let void Print(int8* str) = {
     SystemCall(1, 1, str, StrLen(str));
-    return;
 }
