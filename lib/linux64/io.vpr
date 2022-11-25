@@ -1,4 +1,4 @@
-import int64 SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
+import int64 _SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
 
 let int32 _StrLen(int8* str) = {
     let int32 len = 0;
@@ -8,5 +8,5 @@ let int32 _StrLen(int8* str) = {
 }
 
 let void Print(int8* str) = {
-    SystemCall(1, 1, str, _StrLen(str));
+    _SystemCall(1, 1, str, _StrLen(str));
 }
