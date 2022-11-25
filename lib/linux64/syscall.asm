@@ -1,6 +1,6 @@
 [section .text]
-[global SystemCall]
-SystemCall:
+[global _SystemCall]
+_SystemCall:
     mov rax, rdi
     mov rdi, rsi
     mov rsi, rdx

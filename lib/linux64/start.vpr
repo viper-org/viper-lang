@@ -1,6 +1,6 @@
-import int64 SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
+import int64 _SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
 import int32 Main();
 
 let void _start() = {
-    SystemCall(60, Main());
+    _SystemCall(60, Main());
 }

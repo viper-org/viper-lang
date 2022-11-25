@@ -96,8 +96,7 @@ void Compiler::Compile()
     auto features = "";
 
     llvm::TargetOptions opt;
-    auto RM = llvm::Optional<llvm::Reloc::Model>();
-    llvm::TargetMachine* targetMachine = target->createTargetMachine(targetTriple, CPU, features, opt, RM);
+    llvm::TargetMachine* targetMachine = target->createTargetMachine(targetTriple, CPU, features, opt, llvm::Reloc::PIC_);
 
     mod.setDataLayout(targetMachine->createDataLayout());
     mod.setTargetTriple(targetTriple);
