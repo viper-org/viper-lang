@@ -1,7 +1,7 @@
 #include <type/voidType.hh>
 
 VoidType::VoidType(llvm::LLVMContext& ctx)
-    :Type(0, llvm::Type::getVoidTy(ctx))
+    :Type(llvm::Type::getVoidTy(ctx))
 {
 }
 

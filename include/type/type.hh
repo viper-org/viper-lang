@@ -9,22 +9,14 @@
 class Type
 {
 public:
-    Type(int size, llvm::Type* llvmType)
-        :_size(size), _llvmType(llvmType)
-    {
-    }
     Type(llvm::Type* llvmType)
-        :_size(llvmType->getScalarSizeInBits()), _llvmType(llvmType)
+        :_llvmType(llvmType)
     {
     }
 
     virtual ~Type() {  }
 
     llvm::Type* GetLLVMType() const { return _llvmType; }
-
-    int         GetScalarSize()    const { return _size; }
-
-    virtual int GetPrimitiveSize() const { return _size; }
 
     virtual std::shared_ptr<Type> GetBase() { return std::shared_ptr<Type>(this); }
 
@@ -35,7 +27,6 @@ public:
     virtual bool IsVoidTy()    const { return false; }
     virtual bool IsArrayTy()   const { return false; }
 protected:
-    int _size;
     llvm::Type* _llvmType;
 };
 

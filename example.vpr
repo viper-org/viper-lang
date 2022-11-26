@@ -1,5 +1,11 @@
 import int32 Print(int8* data);
 
+struct MyStruct {
+    int32 a;
+    int8* b;
+}
+
 let int32 Main() = {
+    let MyStruct a;
     Print("Hello World!\n");
 }

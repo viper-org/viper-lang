@@ -1,7 +1,7 @@
 #include <type/pointerType.hh>
 
 PointerType::PointerType(std::shared_ptr<Type> base)
-    :Type(64, llvm::PointerType::get(base->GetLLVMType(), 0)), _base(base)
+    :Type(llvm::PointerType::get(base->GetLLVMType(), 0)), _base(base)
 {
 }
 

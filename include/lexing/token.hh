@@ -35,6 +35,8 @@ namespace Lexing
 
         Import,
 
+        Struct,
+
         True, False,
 
         Type,

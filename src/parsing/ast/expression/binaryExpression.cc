@@ -54,7 +54,7 @@ namespace Parsing
             else if(_rhs->GetType()->IsPointerTy())
                 _type = _rhs->GetType();
             else
-                _type = (_lhs->GetType()->GetScalarSize() > _rhs->GetType()->GetScalarSize()) ? _lhs->GetType() : _rhs->GetType();
+                _type = (_lhs->GetType()->GetLLVMType()->getScalarSizeInBits() > _rhs->GetType()->GetLLVMType()->getScalarSizeInBits()) ? _lhs->GetType() : _rhs->GetType();
         }
     }
 

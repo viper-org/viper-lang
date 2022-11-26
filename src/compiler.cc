@@ -57,7 +57,7 @@ void Compiler::Compile()
     InitBuiltinTypes(ctx);
 
     Lexing::Lexer* lexer = new Lexing::Lexer(_contents);
-    Parsing::Parser* parser = new Parsing::Parser(lexer->Lex(), _contents);
+    Parsing::Parser* parser = new Parsing::Parser(lexer->Lex(), _contents, ctx);
 
     for(std::unique_ptr<Parsing::ASTNode>& node : parser->Parse())
         node->Emit(ctx, mod, builder, nullptr);

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <parsing/parser.hh>
 #include <diagnostics.hh>
 #include <type/types.hh>
@@ -5,8 +6,8 @@
 
 namespace Parsing
 {
-    Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text)
-        :_text(text), _tokens(tokens), _position(0), _currentScope(std::make_shared<Environment>(nullptr)), _currentReturnType(nullptr)
+    Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, llvm::LLVMContext& ctx)
+        :_text(text), _tokens(tokens), _position(0), _ctx(ctx), _currentScope(std::make_shared<Environment>(nullptr)), _currentReturnType(nullptr)
     {
     }
 
@@ -171,6 +172,8 @@ namespace Parsing
                 return ParseWhileStatement();
             case Lexing::TokenType::Import:
                 return ParseImportStatement();
+            case Lexing::TokenType::Struct:
+                return ParseStructDeclaration();
             default:
                 ParserError("Expected primary expression, found '" + Current().GetText() + "'");
         }
@@ -178,7 +181,7 @@ namespace Parsing
 
     std::shared_ptr<Type> Parser::ParseType()
     {
-        ExpectToken(Lexing::TokenType::Type);
+        //ExpectToken(Lexing::TokenType::Type); Add struct definition table
         std::shared_ptr<Type> type = types.at(Consume().GetText());
         while(Current().GetType() == Lexing::TokenType::Star || Current().GetType() == Lexing::TokenType::LeftSquareBracket)
         {
@@ -294,6 +297,30 @@ namespace Parsing
         Consume();
 
         return std::make_unique<ImportStatement>(name, type, std::move(args));
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseStructDeclaration()
+    {
+        Consume();
+        ExpectToken(Lexing::TokenType::Identifier);
+        std::string name = Consume().GetText();
+
+        ExpectToken(Lexing::TokenType::LeftBracket);
+        Consume();
+        std::vector<std::pair<std::shared_ptr<Type>, std::string>> fields;
+        while(Current().GetType() != Lexing::TokenType::RightBracket)
+        {
+            std::shared_ptr<Type> type = ParseType();
+            std::string name = Consume().GetText();
+            ExpectToken(Lexing::TokenType::Semicolon);
+            Consume();
+            fields.push_back(std::make_pair(type, name));
+        }
+        Consume();
+
+        types[name] = std::make_shared<StructType>(name, fields, _ctx);
+
+        return ParseExpression();
     }
 
     std::unique_ptr<ASTNode> Parser::ParseCallExpression(std::unique_ptr<ASTNode> callee)

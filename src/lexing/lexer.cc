@@ -1,3 +1,4 @@
+#include "lexing/token.hh"
 #include <lexing/lexer.hh>
 #include <type/types.hh>
 #include <diagnostics.hh>
@@ -14,6 +15,7 @@ namespace Lexing
         { "if",     TokenType::If },
         { "else",   TokenType::Else },
         { "while",  TokenType::While },
+        { "struct", TokenType::Struct },
     };
 
     Lexer::Lexer(const std::string& text)
