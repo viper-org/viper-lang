@@ -26,6 +26,8 @@ namespace Parsing
         CompoundStatement,
 
         ImportStatement,
+
+        ClassDefinition,
     };
 
     class ASTNode

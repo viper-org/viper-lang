@@ -25,7 +25,7 @@ namespace Parsing
             argTypes.push_back(param.first);
         }
 
-        std::string mangledName = MangleFunction(_name, argTypes, _type);
+        std::string mangledName = MangleFunction({_name}, argTypes, _type);
 
         llvm::FunctionType* funcType = llvm::FunctionType::get(_type->GetLLVMType(), paramTypes, false);
         llvm::Function* func = llvm::Function::Create(funcType, llvm::GlobalValue::ExternalLinkage, mangledName, mod);

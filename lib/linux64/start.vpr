@@ -2,5 +2,6 @@ import int64 _SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
 import int32 Main();
 
 let void _start() = {
-    _SystemCall(60, Main(), 0, 0);
+    let int64 exitCode = Main();
+    _SystemCall(60, exitCode, 0, 0);
 }

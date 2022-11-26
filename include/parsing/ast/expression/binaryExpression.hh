@@ -25,10 +25,13 @@ namespace Parsing
 
     class BinaryExpression : public ASTNode
     {
+    friend class CallExpr;
     public:
         BinaryExpression(std::unique_ptr<ASTNode> lhs, Lexing::Token op, std::unique_ptr<ASTNode> rhs);
 
         void Print(std::ostream& stream, int indent) const override;
+
+        BinaryOperator GetOperator() const;
 
         llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope) override;
     private:

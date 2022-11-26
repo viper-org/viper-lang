@@ -20,7 +20,7 @@ private:
     std::vector<std::shared_ptr<VarSymbol>> _varSymbols;
 };
 
-std::string MangleFunction(std::string name, std::vector<std::shared_ptr<Type>> params, std::shared_ptr<Type> returnType);
-std::string GetMangledFunction(std::string name, std::vector<std::shared_ptr<Type>> params);
+std::string MangleFunction(std::vector<std::string> identifiers, std::vector<std::shared_ptr<Type>> params, std::shared_ptr<Type> returnType);
+std::string GetMangledFunction(std::vector<std::string> identifiers, std::vector<std::shared_ptr<Type>> params);
 
 #endif

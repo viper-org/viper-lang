@@ -57,25 +57,31 @@ std::shared_ptr<VarSymbol> Environment::FindVarSymbol(const std::string& name)
 
 struct FunctionSignature
 {
-    FunctionSignature(std::string name,
+    FunctionSignature(std::vector<std::string> identifiers,
     std::vector<std::shared_ptr<Type>> params,
-    std::shared_ptr<Type> returnType) : name(name), params(params), returnType(returnType) {}
-    std::string name;
+    std::shared_ptr<Type> returnType) : identifiers(identifiers), params(params), returnType(returnType) {}
+    std::vector<std::string> identifiers;
     std::vector<std::shared_ptr<Type>> params;
     std::shared_ptr<Type> returnType;
 };
 
 std::vector<FunctionSignature> mangledFunctions;
 
-std::string MangleFunction(std::string name, std::vector<std::shared_ptr<Type>> params, std::shared_ptr<Type> returnType)
+std::string MangleFunction(std::vector<std::string> identifiers, std::vector<std::shared_ptr<Type>> params, std::shared_ptr<Type> returnType)
 {
-    if(name == "_start" || name == "Main")
+    if(identifiers[0] == "_start" || identifiers[0] == "Main")
     {
-        mangledFunctions.push_back({name, params, returnType});
-        return name;
+        mangledFunctions.push_back({identifiers, params, returnType});
+        return identifiers[0];
     }
     std::string res = "_Z";
-    res += std::to_string(name.length());
+
+    std::string name;
+    for(std::string_view ident : identifiers)
+    {
+        name += std::to_string(ident.length());
+        name += ident;
+    }
     res += name;
 
     res += std::to_string(params.size());
@@ -85,7 +91,7 @@ std::string MangleFunction(std::string name, std::vector<std::shared_ptr<Type>> 
     res += "E";
     res += returnType->GetMangleID();
 
-    mangledFunctions.push_back({name, params, returnType});
+    mangledFunctions.push_back({identifiers, params, returnType});
 
     return res;
 }
@@ -93,8 +99,11 @@ std::string MangleFunction(std::string name, std::vector<std::shared_ptr<Type>> 
 std::string MangleFunction(FunctionSignature func)
 {
     std::string res = "_Z";
-    res += std::to_string(func.name.length());
-    res += func.name;
+    for(std::string_view ident : func.identifiers)
+    {
+        res += std::to_string(ident.length());
+        res += ident;
+    }
 
     res += std::to_string(func.params.size());
     for(std::shared_ptr<Type> param : func.params)
@@ -106,14 +115,33 @@ std::string MangleFunction(FunctionSignature func)
     return res;
 }
 
-std::string GetMangledFunction(std::string name, std::vector<std::shared_ptr<Type>> params)
+std::string GetMangledFunction(std::vector<std::string> identifiers, std::vector<std::shared_ptr<Type>> params)
 {
-    if(name == "Main" || name == "_start")
-        return name;
+    if(identifiers[0] == "Main" || identifiers[0] == "_start")
+        return identifiers[0];
+    std::string name;
+    for(std::string_view ident : identifiers)
+    {
+        name += std::to_string(ident.length());
+        name += ident;
+    }
+    
     for(FunctionSignature func : mangledFunctions)
     {
-        if(func.name == name && func.params.size() == params.size())
-            return MangleFunction(func);
+        if(func.identifiers == identifiers && func.params.size() == params.size())
+        {
+            bool found = true;
+            for(size_t i = 0; i < params.size(); i++)
+            {
+                if(func.params[i]->GetLLVMType() != params[i]->GetLLVMType())
+                {
+                    found = false;
+                    break;
+                }
+            }
+            if(found)
+                return MangleFunction(func);
+        }
     }
     return "ERROR";
 }

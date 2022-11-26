@@ -1,3 +1,4 @@
+#include <iostream>
 #include <parsing/ast/expression/binaryExpression.hh>
 #include <parsing/ast/expression/variable.hh>
 #include <llvm/IR/Instruction.h>
@@ -123,6 +124,11 @@ namespace Parsing
         return "";
     }
 
+    BinaryOperator BinaryExpression::GetOperator() const
+    {
+        return _operator;
+    }
+
     void BinaryExpression::Print(std::ostream& stream, int indent) const
     {
         stream << std::string(indent, ' ') << "<Binary-Expression>:\n";
@@ -141,10 +147,10 @@ namespace Parsing
             std::pair field = static_cast<StructType*>(_lhs->GetType().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName());
             llvm::Instruction* inst = static_cast<llvm::Instruction*>(left);
             llvm::Value* ptr = llvm::getPointerOperand(left);
-
+            
             llvm::Value* gep = builder.CreateStructGEP(ptr->getType()->getNonOpaquePointerElementType(), ptr, field.first);
 
-            llvm::Value* load = builder.CreateLoad(_type->GetLLVMType(), gep);
+            llvm::Value* load = builder.CreateLoad(gep->getType()->getNonOpaquePointerElementType(), gep);
 
             inst->eraseFromParent();
 

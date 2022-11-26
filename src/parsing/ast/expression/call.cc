@@ -1,4 +1,6 @@
+#include "parsing/ast/expression/binaryExpression.hh"
 #include <iostream>
+#include <llvm/IR/Instructions.h>
 #include <parsing/ast/expression/call.hh>
 #include <parsing/ast/expression/variable.hh>
 #include <environment.hh>
@@ -40,11 +42,26 @@ namespace Parsing
         if(_callee->GetNodeType() == ASTNodeType::Variable)
         {
             std::string name = static_cast<Variable*>(_callee.get())->GetName();
-            std::string mangledName = GetMangledFunction(name, paramTypes);
+            std::string mangledName = GetMangledFunction({name}, paramTypes);
             llvm::Function* func = mod.getFunction(mangledName);
-            std::cout << mangledName << std::endl;
             type = func->getReturnType();
             callee = func;
+        }
+        else if(_callee->GetNodeType() == ASTNodeType::BinaryExpression)
+        {
+            BinaryExpression* binOp = static_cast<BinaryExpression*>(_callee.get());
+            if(binOp->GetOperator() == BinaryOperator::MemberAccess)
+            {
+                std::string className = binOp->_lhs->GetType()->GetLLVMType()->getStructName().str();
+                std::string methodName = static_cast<Variable*>(binOp->_rhs.get())->GetName();
+                std::string mangledName = GetMangledFunction({className, methodName}, paramTypes);
+                llvm::Function* func = mod.getFunction(mangledName);
+                type = func->getReturnType();
+                callee = func;
+                _args.insert(_args.begin(), std::move(binOp->_lhs));
+                argValues.insert(argValues.begin(), llvm::getPointerOperand(_args[0]->Emit(ctx, mod, builder, scope)));
+                argTypes.insert(argTypes.begin(), llvm::PointerType::get(_args[0]->GetType()->GetLLVMType(), 0));
+            }
         }
         else
         {

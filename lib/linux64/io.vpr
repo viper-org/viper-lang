@@ -1,12 +1,13 @@
 import int64 _SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
 
-let int32 _StrLen(int8* str) = {
-    let int32 len = 0;
+let int64 _StrLen(int8* str) = {
+    let int64 len = 0;
     while(@(str + len))
         len = len + 1;
     return len;
 }
 
 let void Print(int8* str) = {
-    _SystemCall(1, 1, str, _StrLen(str));
+    let int64 strData = str;
+    _SystemCall(1, 1, strData, _StrLen(str));
 }

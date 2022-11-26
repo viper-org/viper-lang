@@ -39,7 +39,7 @@ namespace Lexing
 
         Import,
 
-        Struct,
+        Struct, Class,
 
         True, False,
 

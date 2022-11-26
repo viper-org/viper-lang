@@ -1,9 +1,11 @@
 import void Print(int8* data);
-import int32 _StrLen(int8* data);
+import int64 _StrLen(int8* data);
 
-struct String {
+class String {
     int8* cStr;
     int32 size;
+
+    int32 GetSize() = return (@this).size;
 }
 
 let String String(int8* cStr) = {
@@ -21,4 +23,6 @@ let void Print(String str) = {
 let int32 Main() = {
     let String myStr = String("Hello World!\n");
     Print(myStr);
+
+    return myStr.GetSize();
 }

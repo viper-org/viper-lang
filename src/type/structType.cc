@@ -11,6 +11,15 @@ StructType::StructType(const std::string name, const std::vector<std::pair<std::
     _llvmType = structType;
 }
 
+void StructType::SetBody(const std::vector<std::pair<std::shared_ptr<Type>, std::string>>& fields)
+{
+    _fields = fields;
+    std::vector<llvm::Type*> fieldTypes;
+    for(auto field : _fields)
+        fieldTypes.push_back(field.first->GetLLVMType());
+    static_cast<llvm::StructType*>(_llvmType)->setBody(fieldTypes);
+}
+
 std::pair<unsigned int, llvm::Type*> StructType::GetMemberIndex(std::string member)
 {
     unsigned int i;

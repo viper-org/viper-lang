@@ -1,3 +1,6 @@
+#include "environment.hh"
+#include "lexing/token.hh"
+#include "parsing/ast/astNode.hh"
 #include <iostream>
 #include <parsing/parser.hh>
 #include <diagnostics.hh>
@@ -115,7 +118,7 @@ namespace Parsing
             ExpectToken(Lexing::TokenType::Semicolon);
             Consume();
 
-            if(expr->GetNodeType() == ASTNodeType::Function || expr->GetNodeType() == ASTNodeType::ImportStatement)
+            if(expr->GetNodeType() == ASTNodeType::Function || expr->GetNodeType() == ASTNodeType::ImportStatement || expr->GetNodeType() == ASTNodeType::ClassDefinition)
                 result.push_back(std::move(expr));
             else
             {
@@ -191,6 +194,8 @@ namespace Parsing
                 return ParseImportStatement();
             case Lexing::TokenType::Struct:
                 return ParseStructDeclaration();
+            case Lexing::TokenType::Class:
+                return ParseClassDefinition();
             default:
                 ParserError("Expected primary expression, found '" + Current().GetText() + "'");
         }
@@ -314,6 +319,83 @@ namespace Parsing
         Consume();
 
         return std::make_unique<ImportStatement>(name, type, std::move(args));
+    }
+
+    std::unique_ptr<ASTNode> Parser::ParseClassDefinition()
+    {
+        Consume();
+        ExpectToken(Lexing::TokenType::Identifier);
+        std::string name = Consume().GetText();
+        
+        std::shared_ptr<StructType> structType = std::make_shared<StructType>(name, std::vector<std::pair<std::shared_ptr<Type>, std::string>>(), _ctx);
+        types[name] = structType;
+
+        ExpectToken(Lexing::TokenType::LeftBracket);
+        Consume();
+        std::vector<std::pair<std::shared_ptr<Type>, std::string>> structTypeFields;
+        std::vector<ClassField> classFields;
+        std::vector<ClassMethod> classMethods;
+        while(Current().GetType() != Lexing::TokenType::RightBracket)
+        {
+            std::shared_ptr<Type> type = ParseType();
+            std::string name = Consume().GetText();
+            if(Current().GetType() == Lexing::TokenType::LeftParen)
+            {
+                std::shared_ptr<Environment> scope = std::make_shared<Environment>(_currentScope);
+                _currentScope = scope;
+                _currentReturnType = type;
+                std::vector<std::pair<std::shared_ptr<Type>, std::string>> params;
+                Consume();
+                while(Current().GetType() != Lexing::TokenType::RightParen)
+                {
+                    std::shared_ptr<Type> type = ParseType();
+
+                    ExpectToken(Lexing::TokenType::Identifier);
+                    std::string argName = Consume().GetText();
+                    
+                    params.push_back(std::make_pair(type, argName));
+                    if(Current().GetType() == Lexing::TokenType::RightParen)
+                        break;
+
+                    ExpectToken(Lexing::TokenType::Comma);
+                    Consume();
+                }
+                Consume();
+
+                ExpectToken(Lexing::TokenType::Equals);
+                Consume();
+
+                scope->GetVarSymbols().push_back(std::make_shared<VarSymbol>("this", std::make_shared<PointerType>(structType)));
+
+                std::unique_ptr<ASTNode> body = ParseExpression();
+
+                _currentScope = scope->GetOuter();
+
+                ExpectToken(Lexing::TokenType::Semicolon);
+                Consume();
+
+                classMethods.push_back({
+                    AccessLevel::Public, type, name,
+                    params, scope, std::move(body)
+                });
+            }
+            else
+            {
+                ExpectToken(Lexing::TokenType::Semicolon);
+                Consume();
+                structTypeFields.push_back(std::make_pair(type, name));
+                classFields.push_back({
+                    AccessLevel::Public, type, name
+                });
+            }
+        }
+        Consume();
+        
+        static_cast<StructType*>(structType.get())->SetBody(structTypeFields);
+
+        _tokens.insert(_tokens.begin() + _position, Lexing::Token(Lexing::TokenType::Semicolon, "", 0, 0, 0, 0));
+
+        return std::make_unique<ClassDefinition>(name, classFields, std::move(classMethods));
     }
 
     std::unique_ptr<ASTNode> Parser::ParseStructDeclaration()
