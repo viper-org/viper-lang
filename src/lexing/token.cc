@@ -87,6 +87,16 @@ namespace Lexing
                 return "Struct";
             case Lexing::TokenType::Dot:
                 return "Dot";
+            case TokenType::Bang:
+                return "Bang";
+            case TokenType::Pipe:
+                return "Pipe";
+            case TokenType::DoublePipe:
+                return "DoublePipe";
+            case TokenType::Ampersand:
+                return "Ampersand";
+            case TokenType::DoubleAmpersand:
+                return "DoubleAmpersand";
         }
     }
 

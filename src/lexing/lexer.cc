@@ -125,11 +125,32 @@ namespace Lexing
 
 
             case '+':
+            {
+                if(Peek(1) == '=')
+                {
+                    Consume();
+                    return Token(TokenType::PlusEquals, "+=", _position - 1, _position + 1, _lineNumber, _colNumber);
+                }
                 return Token(TokenType::Plus, "+", _position, _position + 1, _lineNumber, _colNumber);
+            }
             case '-':
+            {
+                if(Peek(1) == '=')
+                {
+                    Consume();
+                    return Token(TokenType::MinusEquals, "-=", _position - 1, _position + 1, _lineNumber, _colNumber);
+                }
                 return Token(TokenType::Minus, "-", _position, _position + 1, _lineNumber, _colNumber);
+            }
             case '*':
+            {
+                if(Peek(1) == '=')
+                {
+                    Consume();
+                    return Token(TokenType::StarEquals, "*=", _position - 1, _position + 1, _lineNumber, _colNumber);
+                }
                 return Token(TokenType::Star, "*", _position, _position + 1, _lineNumber, _colNumber);
+            }
             case '/':
             {
                 if(Peek(1) == '/')
@@ -146,7 +167,31 @@ namespace Lexing
                     Consume();
                     return std::nullopt;
                 }
+                else if(Peek(1) == '=')
+                {
+                    Consume();
+                    return Token(TokenType::SlashEquals, "/=", _position - 1, _position + 1, _lineNumber, _colNumber);
+                }
                 return Token(TokenType::Slash, "/", _position, _position + 1, _lineNumber, _colNumber);
+            }
+
+            case '|':
+            {
+                if(Peek(1) == '|')
+                {
+                    Consume();
+                    return Token(TokenType::DoublePipe, "||", _position - 1, _position + 1, _lineNumber, _colNumber);
+                }
+                return Token(TokenType::Pipe, "|", _position, _position + 1, _lineNumber, _colNumber);
+            }
+            case '&':
+            {
+                if(Peek(1) == '&')
+                {
+                    Consume();
+                    return Token(TokenType::DoubleAmpersand, "&&", _position - 1, _position + 1, _lineNumber, _colNumber);
+                }
+                return Token(TokenType::Ampersand, "&", _position, _position + 1, _lineNumber, _colNumber);
             }
 
             case '=':
@@ -166,7 +211,7 @@ namespace Lexing
                     Consume();
                     return Token(TokenType::BangEquals, "!=", _position - 1, _position + 1, _lineNumber, _colNumber);
                 }
-                throw; // TODO: Implement logical negation
+                return Token(TokenType::Bang, "!", _position, _position + 1, _lineNumber, _colNumber);
             }
 
 

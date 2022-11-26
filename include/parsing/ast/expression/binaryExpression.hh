@@ -10,10 +10,15 @@ namespace Parsing
         Addition, Subtraction,
         Multiplication, Division,
 
+        LogicalAnd, LogicalOr,
+
         Equal, NotEqual,
         LessThan, GreaterThan,
 
         Assignment,
+        AddAssign, SubAssign,
+        MulAssign, DivAssign,
+        
         Subscript,
         MemberAccess,
     };

@@ -11,7 +11,7 @@ let int32 Main() = {
     a.b = "Hello World!\n";
     Print(a.b);
     let MyStruct* aPtr = #a;
-    (@aPtr).a = 22;
+    (@aPtr).a += 22;
 
     return a.a;
 }

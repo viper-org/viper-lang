@@ -13,6 +13,10 @@ namespace Lexing
         LeftAngleBracket, RightAngleBracket,
 
         Plus, Minus, Star, Slash,
+        Bang,
+
+        Pipe, DoublePipe,
+        Ampersand, DoubleAmpersand,
 
         Asperand,
 

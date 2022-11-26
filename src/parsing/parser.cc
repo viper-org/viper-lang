@@ -48,9 +48,18 @@ namespace Parsing
                 
             case Lexing::TokenType::DoubleEquals:
             case Lexing::TokenType::BangEquals:
-                return 25;            
+                return 25;
+            
+            case Lexing::TokenType::DoubleAmpersand:
+                return 20;
+            case Lexing::TokenType::DoublePipe:
+                return 15;
         
             case Lexing::TokenType::Equals:
+            case Lexing::TokenType::PlusEquals:
+            case Lexing::TokenType::MinusEquals:
+            case Lexing::TokenType::StarEquals:
+            case Lexing::TokenType::SlashEquals:
                 return 10;
             
             default:
@@ -62,6 +71,7 @@ namespace Parsing
     {
         switch(type)
         {
+            case Lexing::TokenType::Bang:
             case Lexing::TokenType::Minus:
             case Lexing::TokenType::Hash:
             case Lexing::TokenType::Asperand:
@@ -140,7 +150,7 @@ namespace Parsing
                 rhs = std::make_unique<Variable>(Consume().GetText(), nullptr);
             else
                 rhs = ParseExpression(binOpPrecedence);
-                
+
             lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
             if(operatorToken.GetType() == Lexing::TokenType::LeftSquareBracket)
             {

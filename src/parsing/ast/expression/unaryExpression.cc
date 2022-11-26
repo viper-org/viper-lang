@@ -13,6 +13,9 @@ namespace Parsing
             case Lexing::TokenType::Minus:
                 _operator = UnaryOperator::IntegralNegation;
                 break;
+            case Lexing::TokenType::Bang:
+                _operator = UnaryOperator::LogicalNegation;
+                break;
             case Lexing::TokenType::Hash:
                 _operator = UnaryOperator::AddressOf;
                 break;
@@ -66,6 +69,10 @@ namespace Parsing
                 
                 return ptr;
             }
+            case UnaryOperator::IntegralNegation:
+                return builder.CreateNeg(operand);
+            case UnaryOperator::LogicalNegation:
+                return builder.CreateNot(operand);
             default:
                 return nullptr;
         }

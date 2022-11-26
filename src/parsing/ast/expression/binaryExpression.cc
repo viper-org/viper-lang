@@ -1,7 +1,7 @@
-#include "parsing/ast/expression/variable.hh"
+#include <parsing/ast/expression/binaryExpression.hh>
+#include <parsing/ast/expression/variable.hh>
 #include <llvm/IR/Instruction.h>
 #include <llvm/IR/Instructions.h>
-#include <parsing/ast/expression/binaryExpression.hh>
 #include <diagnostics.hh>
 
 namespace Parsing
@@ -23,21 +23,37 @@ namespace Parsing
             case Lexing::TokenType::Slash:
                 _operator = BinaryOperator::Division;
                 break;
+
             case Lexing::TokenType::DoubleEquals:
                 _operator = BinaryOperator::Equal;
                 break;
             case Lexing::TokenType::BangEquals:
                 _operator = BinaryOperator::NotEqual;
                 break;
+
             case Lexing::TokenType::LeftAngleBracket:
                 _operator = BinaryOperator::LessThan;
                 break;
             case Lexing::TokenType::RightAngleBracket:
                 _operator = BinaryOperator::GreaterThan;
                 break;
+
             case Lexing::TokenType::Equals:
                 _operator = BinaryOperator::Assignment;
                 break;
+            case Lexing::TokenType::PlusEquals:
+                _operator = BinaryOperator::AddAssign;
+                break;
+            case Lexing::TokenType::MinusEquals:
+                _operator = BinaryOperator::SubAssign;
+                break;
+            case Lexing::TokenType::StarEquals:
+                _operator = BinaryOperator::MulAssign;
+                break;
+            case Lexing::TokenType::SlashEquals:
+                _operator = BinaryOperator::DivAssign;
+                break;
+                
             case Lexing::TokenType::LeftSquareBracket:
                 _operator = BinaryOperator::Subscript;
                 break;
@@ -90,6 +106,19 @@ namespace Parsing
                 return "Subscript";
             case BinaryOperator::MemberAccess:
                 return "MemberAccess";
+            case BinaryOperator::LogicalAnd:
+                return "LogicalAnd";
+            case BinaryOperator::LogicalOr:
+                return "LogicalOr";
+            case BinaryOperator::AddAssign:
+                return "AddAssign";
+            case BinaryOperator::SubAssign:
+                return "SubAssign";
+            case BinaryOperator::MulAssign:
+                return "MulAssign";
+            case BinaryOperator::DivAssign:
+                return "DivAssign";
+              break;
         }
         return "";
     }
@@ -126,7 +155,9 @@ namespace Parsing
 
         if(!_type->IsPointerTy() && _operator != BinaryOperator::Subscript)
         {
-            if(_operator != BinaryOperator::Assignment)
+            if(_operator != BinaryOperator::Assignment && _operator != BinaryOperator::AddAssign
+            && _operator != BinaryOperator::SubAssign  && _operator != BinaryOperator::MulAssign
+            && _operator != BinaryOperator::DivAssign)
                 left = Type::Convert(left, _type->GetLLVMType(), builder);
             right = Type::Convert(right, _type->GetLLVMType(), builder);
         }
@@ -143,6 +174,11 @@ namespace Parsing
                 return builder.CreateMul(left, right);
             case BinaryOperator::Division:
                 return builder.CreateSDiv(left, right);
+
+            case BinaryOperator::LogicalAnd:
+                return builder.CreateLogicalAnd(left, right);
+            case BinaryOperator::LogicalOr:
+                return builder.CreateLogicalOr(left, right);
 
             case BinaryOperator::Equal:
                 return builder.CreateICmpEQ(left, right);
@@ -161,6 +197,31 @@ namespace Parsing
                 inst->eraseFromParent();
                 return builder.CreateStore(right, ptr);
             }
+            case BinaryOperator::AddAssign:
+            {
+                llvm::Value* ptr = llvm::getPointerOperand(left);
+                llvm::Value* add = builder.CreateNSWAdd(left, right);
+                return builder.CreateStore(add, ptr);
+            }
+            case BinaryOperator::SubAssign:
+            {
+                llvm::Value* ptr = llvm::getPointerOperand(left);
+                llvm::Value* add = builder.CreateNSWSub(left, right);
+                return builder.CreateStore(add, ptr);
+            }
+            case BinaryOperator::MulAssign:
+            {
+                llvm::Value* ptr = llvm::getPointerOperand(left);
+                llvm::Value* add = builder.CreateNSWMul(left, right);
+                return builder.CreateStore(add, ptr);
+            }
+            case BinaryOperator::DivAssign:
+            {
+                llvm::Value* ptr = llvm::getPointerOperand(left);
+                llvm::Value* add = builder.CreateSDiv(left, right);
+                return builder.CreateStore(add, ptr);
+            }
+
             case BinaryOperator::Subscript:
             {
                 llvm::Instruction* inst = static_cast<llvm::Instruction*>(left);
