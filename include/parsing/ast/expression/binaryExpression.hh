@@ -15,6 +15,7 @@ namespace Parsing
 
         Assignment,
         Subscript,
+        MemberAccess,
     };
 
     class BinaryExpression : public ASTNode

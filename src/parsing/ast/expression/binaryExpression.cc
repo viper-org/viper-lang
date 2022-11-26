@@ -1,3 +1,4 @@
+#include "parsing/ast/expression/variable.hh"
 #include <llvm/IR/Instruction.h>
 #include <llvm/IR/Instructions.h>
 #include <parsing/ast/expression/binaryExpression.hh>
@@ -40,6 +41,9 @@ namespace Parsing
             case Lexing::TokenType::LeftSquareBracket:
                 _operator = BinaryOperator::Subscript;
                 break;
+            case Lexing::TokenType::Dot:
+                _operator = BinaryOperator::MemberAccess;
+                break;
             default:
                 break;
         }
@@ -47,6 +51,8 @@ namespace Parsing
             _type = _lhs->GetType();
         else if(_operator == BinaryOperator::Subscript)
             _type = _lhs->GetType()->GetBase();
+        else if(_operator == BinaryOperator::MemberAccess)
+            _type = std::make_shared<Type>(static_cast<StructType*>(_lhs->GetType().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName()).second);
         else
         {
             if(_lhs->GetType()->IsPointerTy())
@@ -82,6 +88,8 @@ namespace Parsing
                 return "Assignment";
             case BinaryOperator::Subscript:
                 return "Subscript";
+            case BinaryOperator::MemberAccess:
+                return "MemberAccess";
         }
         return "";
     }
@@ -99,6 +107,21 @@ namespace Parsing
     llvm::Value* BinaryExpression::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
     {
         llvm::Value* left = _lhs->Emit(ctx, mod, builder, scope);
+        if(_operator == BinaryOperator::MemberAccess)
+        {
+            std::pair field = static_cast<StructType*>(_lhs->GetType().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName());
+            llvm::Instruction* inst = static_cast<llvm::Instruction*>(left);
+            llvm::Value* ptr = llvm::getPointerOperand(left);
+
+            llvm::Value* gep = builder.CreateStructGEP(ptr->getType()->getNonOpaquePointerElementType(), ptr, field.first);
+
+            llvm::Value* load = builder.CreateLoad(_type->GetLLVMType(), gep);
+
+            inst->eraseFromParent();
+
+            return load;
+        }
+
         llvm::Value* right = _rhs->Emit(ctx, mod, builder, scope);
 
         if(!_type->IsPointerTy() && _operator != BinaryOperator::Subscript)

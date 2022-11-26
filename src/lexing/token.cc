@@ -85,6 +85,8 @@ namespace Lexing
                 return "While";
             case Lexing::TokenType::Struct:
                 return "Struct";
+            case Lexing::TokenType::Dot:
+                return "Dot";
         }
     }
 

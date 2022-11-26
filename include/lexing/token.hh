@@ -43,7 +43,7 @@ namespace Lexing
 
         Hash,
 
-        Semicolon, Comma,
+        Semicolon, Comma, Dot,
     };
     class Token
     {

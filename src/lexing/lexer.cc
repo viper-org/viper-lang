@@ -174,6 +174,8 @@ namespace Lexing
                 return Token(TokenType::Semicolon, ";", _position, _position + 1, _lineNumber, _colNumber);
             case ',':
                 return Token(TokenType::Comma, ",", _position, _position + 1, _lineNumber, _colNumber);
+            case '.':
+                return Token(TokenType::Dot, ".", _position, _position + 1, _lineNumber, _colNumber);
 
 
             case '#':

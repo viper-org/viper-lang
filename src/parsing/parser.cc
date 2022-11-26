@@ -32,6 +32,8 @@ namespace Parsing
         {
             case Lexing::TokenType::LeftSquareBracket:
                 return 55;
+            case Lexing::TokenType::Dot:
+                return 45;
             case Lexing::TokenType::Star:
             case Lexing::TokenType::Slash:
                 return 40;
@@ -133,7 +135,12 @@ namespace Parsing
                 break;
 
             Lexing::Token operatorToken = Consume();
-            std::unique_ptr<ASTNode> rhs = ParseExpression(binOpPrecedence);
+            std::unique_ptr<ASTNode> rhs;
+            if(operatorToken.GetType() == Lexing::TokenType::Dot)
+                rhs = std::make_unique<Variable>(Consume().GetText(), nullptr);
+            else
+                rhs = ParseExpression(binOpPrecedence);
+                
             lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
             if(operatorToken.GetType() == Lexing::TokenType::LeftSquareBracket)
             {

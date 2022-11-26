@@ -11,13 +11,13 @@ StructType::StructType(const std::string name, const std::vector<std::pair<std::
     _llvmType = structType;
 }
 
-unsigned int StructType::GetMemberIndex(std::string member)
+std::pair<unsigned int, llvm::Type*> StructType::GetMemberIndex(std::string member)
 {
     unsigned int i;
     for(i = 0; i < _fields.size(); i++)
     {
         if(_fields[i].second == member)
-            return i;
+            return std::make_pair(i, _fields[i].first->GetLLVMType());
     }
-    return -1; // TODO: Error properly
+    return std::make_pair(-1, nullptr); // TODO: Error properly
 }

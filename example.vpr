@@ -7,5 +7,11 @@ struct MyStruct {
 
 let int32 Main() = {
     let MyStruct a;
-    Print("Hello World!\n");
+    a.a = 4;
+    a.b = "Hello World!\n";
+    Print(a.b);
+    let MyStruct* aPtr = #a;
+    (@aPtr).a = 22;
+
+    return a.a;
 }
