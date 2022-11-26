@@ -1,6 +1,7 @@
 #include <environment.hh>
 #include <diagnostics.hh>
 #include <algorithm>
+#include <iostream>
 
 Environment::Environment(std::shared_ptr<Environment> outer)
     :_outer(outer)
@@ -52,4 +53,22 @@ std::shared_ptr<VarSymbol> Environment::FindVarSymbol(const std::string& name)
         else
             Diagnostics::Error("viper", "Unknown variable symbol: " + name + ".");
     }
+}
+
+std::string MangleFunction(std::string_view name, std::vector<std::shared_ptr<Type>> params, std::shared_ptr<Type> returnType)
+{
+    std::string res = "_Z";
+    res += std::to_string(name.length());
+    res += name;
+
+    res += std::to_string(params.size());
+    for(std::shared_ptr<Type> param : params)
+    {
+        std::cout << param->GetLLVMType()->getScalarSizeInBits() << std::endl;
+        res += param->GetMangleID();
+    }
+    
+    res += "E";
+
+    return res + returnType->GetMangleID();
 }

@@ -34,3 +34,38 @@ llvm::Value* Type::Convert(llvm::Value* src, llvm::Type* dst, llvm::IRBuilder<>&
     src->mutateType(dst); // If all else fails
     return src;
 }
+
+std::string Type::GetMangleID()
+{
+    if(_llvmType->isIntegerTy())
+    {
+        switch(_llvmType->getScalarSizeInBits())
+        {
+            case 64:
+                return "q";
+            case 32:
+                return "i";
+            case 16:
+                return "w";
+            case 8:
+                return "c";
+            case 1:
+                return "b";
+        }
+    }
+    if(_llvmType->isPointerTy())
+        return "P" + Type(_llvmType->getPointerElementType()).GetMangleID();
+    if(_llvmType->isVoidTy())
+        return "V";
+    if(_llvmType->isArrayTy())
+        return std::to_string(_llvmType->getArrayNumElements()) + Type(_llvmType->getArrayElementType()).GetMangleID();
+    if(_llvmType->isStructTy())
+    {
+        std::string res;
+        for(int i = 0; i < _llvmType->getStructNumElements(); i++)
+            res += Type(_llvmType->getStructElementType(i)).GetMangleID();
+        
+        return res;
+    }
+    return "ERR";
+}

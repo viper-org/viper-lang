@@ -59,10 +59,24 @@ void Compiler::Compile()
     Lexing::Lexer* lexer = new Lexing::Lexer(_contents);
     Parsing::Parser* parser = new Parsing::Parser(lexer->Lex(), _contents, ctx);
 
-    for(std::unique_ptr<Parsing::ASTNode>& node : parser->Parse())
+    std::vector<std::unique_ptr<Parsing::ASTNode>> ast = parser->Parse();
+
+    for(std::unique_ptr<Parsing::ASTNode>& node : ast)
         node->Emit(ctx, mod, builder, nullptr);
     delete parser;
     delete lexer;
+
+    for(llvm::Function& func : mod.functions())
+    {
+        if(func.getName() != "Main" && func.getName() != "_start")
+        {
+            std::vector<std::shared_ptr<Type>> args;
+            for(llvm::Argument& arg : func.args())
+                args.push_back(std::make_shared<Type>(arg.getType()));
+            
+            func.setName(MangleFunction(func.getName(), args, std::make_shared<Type>(func.getReturnType())));
+        }
+    }
 
     if(_outputType == OutputType::LLVM)
     {
