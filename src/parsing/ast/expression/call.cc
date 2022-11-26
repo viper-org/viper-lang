@@ -19,12 +19,30 @@ namespace Parsing
 
     llvm::Value* CallExpr::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
     {
+        std::vector<llvm::Value*> argValues;
+        unsigned int i = 0;
+        for(std::unique_ptr<ASTNode>& arg : _args)
+        {
+            llvm::Value* value = arg->Emit(ctx, mod, builder, scope);
+            argValues.push_back(value);
+        }
+
+        std::vector<llvm::Type*> argTypes;
+        std::vector<std::shared_ptr<Type>> paramTypes;
+        for(std::unique_ptr<ASTNode>& arg : _args)
+        {
+            argTypes.push_back(arg->GetType()->GetLLVMType());
+            paramTypes.push_back(arg->GetType());
+        }
+
         llvm::Value* callee;
         llvm::Type* type;
         if(_callee->GetNodeType() == ASTNodeType::Variable)
         {
             std::string name = static_cast<Variable*>(_callee.get())->GetName();
-            llvm::Function* func = mod.getFunction(name);
+            std::string mangledName = GetMangledFunction(name, paramTypes);
+            llvm::Function* func = mod.getFunction(mangledName);
+            std::cout << mangledName << std::endl;
             type = func->getReturnType();
             callee = func;
         }
@@ -35,18 +53,6 @@ namespace Parsing
         }
 
         _type = std::make_shared<Type>(type);
-        
-        std::vector<llvm::Value*> argValues;
-        unsigned int i = 0;
-        for(std::unique_ptr<ASTNode>& arg : _args)
-        {
-            llvm::Value* value = arg->Emit(ctx, mod, builder, scope);
-            argValues.push_back(value);
-        }
-
-        std::vector<llvm::Type*> argTypes;
-        for(std::unique_ptr<ASTNode>& arg : _args)
-            argTypes.push_back(arg->GetType()->GetLLVMType());
 
         llvm::FunctionType* funcTy = llvm::FunctionType::get(type, argTypes, false);
 

@@ -1,3 +1,4 @@
+#include "type/type.hh"
 #include <type/types.hh>
 
 std::map<std::string, std::shared_ptr<Type>> types;
@@ -61,8 +62,8 @@ std::string Type::GetMangleID()
         return std::to_string(_llvmType->getArrayNumElements()) + Type(_llvmType->getArrayElementType()).GetMangleID();
     if(_llvmType->isStructTy())
     {
-        std::string res;
-        for(int i = 0; i < _llvmType->getStructNumElements(); i++)
+        std::string res = "S" + std::to_string(_llvmType->getStructNumElements());
+        for(unsigned int i = 0; i < _llvmType->getStructNumElements(); i++)
             res += Type(_llvmType->getStructElementType(i)).GetMangleID();
         
         return res;

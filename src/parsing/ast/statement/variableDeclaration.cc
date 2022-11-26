@@ -30,17 +30,23 @@ namespace Parsing
         if(_scope != nullptr)
         {
             std::vector<llvm::Type*> paramTypes;
+            std::vector<std::shared_ptr<Type>> argTypes;
             for(std::pair<std::shared_ptr<Type>, std::string> param : _params)
+            {
                 paramTypes.push_back(param.first->GetLLVMType());
+                argTypes.push_back(param.first);
+            }
+
+            std::string mangledName = MangleFunction(_name, argTypes, _type);
             
             llvm::FunctionType* funcTy = llvm::FunctionType::get(_type->GetLLVMType(), paramTypes, false);
-            llvm::Function* func = llvm::Function::Create(funcTy, llvm::GlobalValue::ExternalLinkage, _name, mod);
+            llvm::Function* func = llvm::Function::Create(funcTy, llvm::GlobalValue::ExternalLinkage, mangledName, mod);
 
             unsigned int i = 0;
             for(llvm::Argument& param : func->args())
                 param.setName(_params[i++].second);
 
-            llvm::BasicBlock* bb = llvm::BasicBlock::Create(ctx, _name, func);
+            llvm::BasicBlock* bb = llvm::BasicBlock::Create(ctx, mangledName, func);
             builder.SetInsertPoint(bb);
 
             for(llvm::Argument& param : func->args())

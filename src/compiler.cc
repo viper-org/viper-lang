@@ -66,18 +66,6 @@ void Compiler::Compile()
     delete parser;
     delete lexer;
 
-    for(llvm::Function& func : mod.functions())
-    {
-        if(func.getName() != "Main" && func.getName() != "_start")
-        {
-            std::vector<std::shared_ptr<Type>> args;
-            for(llvm::Argument& arg : func.args())
-                args.push_back(std::make_shared<Type>(arg.getType()));
-            
-            func.setName(MangleFunction(func.getName(), args, std::make_shared<Type>(func.getReturnType())));
-        }
-    }
-
     if(_outputType == OutputType::LLVM)
     {
         std::error_code ec;
