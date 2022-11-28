@@ -1,3 +1,4 @@
+#include <llvm/Transforms/Utils/BasicBlockUtils.h>
 #include <parsing/ast/statement/classDefinition.hh>
 
 namespace Parsing
@@ -32,7 +33,7 @@ namespace Parsing
 
             func->args().begin()->setName("this");
             for(unsigned int i = 1; i < func->arg_size(); i++)
-                (func->args().begin()+i)->setName(method.params[i].second);
+                (func->args().begin()+i)->setName(method.params[i-1].second);
 
             llvm::BasicBlock* bb = llvm::BasicBlock::Create(ctx, mangledName, func);
             builder.SetInsertPoint(bb);
@@ -45,6 +46,11 @@ namespace Parsing
             }
 
             method.body->Emit(ctx, mod, builder, method.scope);
+
+            llvm::EliminateUnreachableBlocks(*func);
+
+            if(func->getBasicBlockList().back().getInstList().size() == 0 || !func->getBasicBlockList().back().getInstList().back().isTerminator())
+                builder.CreateRet(llvm::Constant::getNullValue(method.returnType->GetLLVMType()));
         }
 
         return nullptr;

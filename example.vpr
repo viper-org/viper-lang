@@ -5,7 +5,14 @@ class String {
     int8* cStr;
     int32 size;
 
-    int32 GetSize() = return (@this).size;
+    int32 GetSize() = { 
+        return this.size;
+    }
+
+    void Set(int8* cStr) = {
+        this.cStr = cStr;
+        this.size = _StrLen(cStr);
+    }
 }
 
 let String String(int8* cStr) = {
@@ -22,6 +29,9 @@ let void Print(String str) = {
 
 let int32 Main() = {
     let String myStr = String("Hello World!\n");
+    Print(myStr);
+
+    myStr.Set("World Hello!\n");
     Print(myStr);
 
     return myStr.GetSize();

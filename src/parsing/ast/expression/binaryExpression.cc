@@ -69,7 +69,12 @@ namespace Parsing
         else if(_operator == BinaryOperator::Subscript)
             _type = _lhs->GetType()->GetBase();
         else if(_operator == BinaryOperator::MemberAccess)
-            _type = std::make_shared<Type>(static_cast<StructType*>(_lhs->GetType().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName()).second);
+        {
+            if(_lhs->GetType()->IsPointerTy())
+                _type = std::make_shared<Type>(static_cast<StructType*>(_lhs->GetType()->GetBase().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName()).second);
+            else
+                _type = std::make_shared<Type>(static_cast<StructType*>(_lhs->GetType().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName()).second);
+        }
         else
         {
             if(_lhs->GetType()->IsPointerTy())
@@ -139,22 +144,62 @@ namespace Parsing
         _rhs->Print(stream, indent + 2);
     }
 
+    void BinaryExpression::AssignType()
+    {
+        if(_operator == BinaryOperator::Assignment)
+            _type = _lhs->GetType();
+        else if(_operator == BinaryOperator::Subscript)
+            _type = _lhs->GetType()->GetBase();
+        else if(_operator == BinaryOperator::MemberAccess)
+        {
+            if(_lhs->GetType()->IsPointerTy())
+                _type = std::make_shared<Type>(static_cast<StructType*>(_lhs->GetType()->GetBase().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName()).second);
+            else
+                _type = std::make_shared<Type>(static_cast<StructType*>(_lhs->GetType().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName()).second);
+        }
+        else
+        {
+            if(_lhs->GetType()->IsPointerTy())
+                _type = _lhs->GetType();
+            else if(_rhs->GetType()->IsPointerTy())
+                _type = _rhs->GetType();
+            else
+                _type = (_lhs->GetType()->GetLLVMType()->getScalarSizeInBits() > _rhs->GetType()->GetLLVMType()->getScalarSizeInBits()) ? _lhs->GetType() : _rhs->GetType();
+        }
+    }
+
     llvm::Value* BinaryExpression::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
     {
         llvm::Value* left = _lhs->Emit(ctx, mod, builder, scope);
+
+        AssignType();
+
         if(_operator == BinaryOperator::MemberAccess)
         {
-            std::pair field = static_cast<StructType*>(_lhs->GetType().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName());
-            llvm::Instruction* inst = static_cast<llvm::Instruction*>(left);
-            llvm::Value* ptr = llvm::getPointerOperand(left);
-            
-            llvm::Value* gep = builder.CreateStructGEP(ptr->getType()->getNonOpaquePointerElementType(), ptr, field.first);
+            if(_lhs->GetType()->IsPointerTy())
+            {
+                std::pair field = static_cast<StructType*>(_lhs->GetType()->GetBase().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName());
+                
+                llvm::Value* gep = builder.CreateStructGEP(left->getType()->getNonOpaquePointerElementType(), left, field.first);
 
-            llvm::Value* load = builder.CreateLoad(gep->getType()->getNonOpaquePointerElementType(), gep);
+                llvm::Value* load = builder.CreateLoad(gep->getType()->getNonOpaquePointerElementType(), gep);
 
-            inst->eraseFromParent();
+                return load;
+            }
+            else
+            {
+                std::pair field = static_cast<StructType*>(_lhs->GetType().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName());
+                llvm::Instruction* inst = static_cast<llvm::Instruction*>(left);
+                llvm::Value* ptr = llvm::getPointerOperand(left);
+                
+                llvm::Value* gep = builder.CreateStructGEP(ptr->getType()->getNonOpaquePointerElementType(), ptr, field.first);
 
-            return load;
+                llvm::Value* load = builder.CreateLoad(gep->getType()->getNonOpaquePointerElementType(), gep);
+
+                inst->eraseFromParent();
+
+                return load;
+            }
         }
 
         llvm::Value* right = _rhs->Emit(ctx, mod, builder, scope);

@@ -354,6 +354,7 @@ namespace Parsing
                     std::string argName = Consume().GetText();
                     
                     params.push_back(std::make_pair(type, argName));
+                    scope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(argName, type));
                     if(Current().GetType() == Lexing::TokenType::RightParen)
                         break;
 

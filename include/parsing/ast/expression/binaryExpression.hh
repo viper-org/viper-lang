@@ -40,6 +40,8 @@ namespace Parsing
         std::unique_ptr<ASTNode> _rhs;
 
         std::string OperatorToString() const;
+
+        void AssignType();
     };
 }
 
