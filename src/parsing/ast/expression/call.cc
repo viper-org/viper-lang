@@ -70,6 +70,8 @@ namespace Parsing
                 _type = std::make_shared<Type>(type);
                 callee = func;
             }
+            else
+                throw;
         }
         else if(_callee->GetNodeType() == ASTNodeType::UnaryExpression)
         {
@@ -86,6 +88,8 @@ namespace Parsing
                 type = _type->GetLLVMType();
                 callee = func;
             }
+            else
+                throw;
         }
         else
         {
