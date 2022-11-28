@@ -54,13 +54,18 @@ namespace Parsing
             {
                 std::string className = binOp->_lhs->GetType()->GetLLVMType()->getStructName().str();
                 std::string methodName = static_cast<Variable*>(binOp->_rhs.get())->GetName();
-                std::string mangledName = GetMangledFunction({className, methodName}, paramTypes);
-                llvm::Function* func = mod.getFunction(mangledName);
-                type = func->getReturnType();
-                callee = func;
+
                 _args.insert(_args.begin(), std::move(binOp->_lhs));
                 argValues.insert(argValues.begin(), llvm::getPointerOperand(_args[0]->Emit(ctx, mod, builder, scope)));
                 argTypes.insert(argTypes.begin(), llvm::PointerType::get(_args[0]->GetType()->GetLLVMType(), 0));
+                paramTypes.insert(paramTypes.begin(), _args[0]->GetType());
+                
+                std::string mangledName = GetMangledFunction({className, methodName}, paramTypes);
+
+                llvm::Function* func = mod.getFunction(mangledName);
+                
+                type = func->getReturnType();
+                callee = func;
             }
         }
         else

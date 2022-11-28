@@ -20,6 +20,7 @@ namespace Parsing
             std::vector<llvm::Type*> paramTypes;
             std::vector<std::shared_ptr<Type>> argTypes;
             paramTypes.push_back(llvm::PointerType::get(types.at(_name)->GetLLVMType(), 0));
+            argTypes.push_back(types.at(_name));
             for(std::pair<std::shared_ptr<Type>, std::string> param : method.params)
             {
                 paramTypes.push_back(param.first->GetLLVMType());
