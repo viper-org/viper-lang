@@ -1,12 +1,13 @@
 #include <llvm/IR/Instructions.h>
 #include <parsing/ast/expression/unaryExpression.hh>
 #include <parsing/ast/expression/variable.hh>
+#include <parsing/ast/expression/call.hh>
 #include <environment.hh>
 
 namespace Parsing
 {
     UnaryExpression::UnaryExpression(std::unique_ptr<ASTNode> operand, Lexing::Token op)
-        :ASTNode(ASTNodeType::BinaryExpression), _operand(std::move(operand))
+        :ASTNode(ASTNodeType::UnaryExpression), _operand(std::move(operand))
     {
         switch(op.GetType())
         {
@@ -23,6 +24,9 @@ namespace Parsing
                 _operator = UnaryOperator::Indirection;
                 _type = _operand->GetType()->GetBase();
                 break;
+            case Lexing::TokenType::New:
+                _operator = UnaryOperator::New;
+                _type = types.at(static_cast<Variable*>(_operand.get())->GetName());
             default:
                 break;
         }
@@ -40,6 +44,8 @@ namespace Parsing
                 return "AddressOf";
             case UnaryOperator::Indirection:
                 return "Indirection";
+            case UnaryOperator::New:
+                return "New";
         }
         return "";
     }
@@ -47,7 +53,7 @@ namespace Parsing
     void UnaryExpression::Print(std::ostream& stream, int indent) const
     {
         stream << std::string(indent, ' ') << "<Unary-Expression>:\n";
-        stream << std::string(indent, ' ') << "Operand: ";
+        stream << std::string(indent, ' ') << "Operand:\n";
         _operand->Print(stream, indent + 2);
         stream << std::string(indent, ' ') << "\nOperator: " << OperatorToString() << "\n";
     }
@@ -73,6 +79,8 @@ namespace Parsing
                 return builder.CreateNeg(operand);
             case UnaryOperator::LogicalNegation:
                 return builder.CreateNot(operand);
+            case UnaryOperator::New:
+                return operand;
             default:
                 return nullptr;
         }

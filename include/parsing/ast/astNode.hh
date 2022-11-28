@@ -16,7 +16,7 @@ namespace Parsing
         ReturnStatement,
         IfStatement,
 
-        BinaryExpression,
+        BinaryExpression, UnaryExpression,
         
         VariableDeclaration,
         Variable,

@@ -7,6 +7,7 @@ namespace Parsing
 {
     class CallExpr : public ASTNode
     {
+    friend class UnaryExpression;
     public:
         CallExpr(std::unique_ptr<ASTNode> callee, std::vector<std::unique_ptr<ASTNode>> args);
 

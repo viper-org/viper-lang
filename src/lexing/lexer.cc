@@ -17,6 +17,7 @@ namespace Lexing
         { "while",  TokenType::While },
         { "struct", TokenType::Struct },
         { "class", TokenType::Class },
+        { "new", TokenType::New },
     };
 
     Lexer::Lexer(const std::string& text)

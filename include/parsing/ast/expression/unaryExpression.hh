@@ -12,10 +12,13 @@ namespace Parsing
 
         AddressOf,
         Indirection,
+
+        New,
     };
 
     class UnaryExpression : public ASTNode
     {
+    friend class CallExpr;
     public:
         UnaryExpression(std::unique_ptr<ASTNode> operand, Lexing::Token op);
 

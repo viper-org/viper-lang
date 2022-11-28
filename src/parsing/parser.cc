@@ -78,6 +78,7 @@ namespace Parsing
             case Lexing::TokenType::Minus:
             case Lexing::TokenType::Hash:
             case Lexing::TokenType::Asperand:
+            case Lexing::TokenType::New:
                 return 50;
             default:
                 return 0;
@@ -123,7 +124,7 @@ namespace Parsing
             else
             {
                 _position = savePos;
-                ParserError("Expected top-level expression");
+                ParserError("Expected top-level expression, found " + Current().TypeAsString());
             }
         }
         return result;
@@ -136,7 +137,13 @@ namespace Parsing
         if(unOpPrecedence && unOpPrecedence >= precedence)
         {
             Lexing::Token operatorToken = Consume();
-            lhs = std::make_unique<UnaryExpression>(ParseExpression(unOpPrecedence), operatorToken);
+            if(operatorToken.GetType() == Lexing::TokenType::New)
+            {
+                std::unique_ptr<ASTNode> operand = std::make_unique<Variable>(Consume().GetText(), nullptr);
+                lhs = std::make_unique<UnaryExpression>(std::move(operand), operatorToken);
+            }
+            else
+                lhs = std::make_unique<UnaryExpression>(ParseExpression(unOpPrecedence), operatorToken);
         }
         else
             lhs = ParsePrimary();
@@ -337,13 +344,12 @@ namespace Parsing
         std::vector<ClassMethod> classMethods;
         while(Current().GetType() != Lexing::TokenType::RightBracket)
         {
-            std::shared_ptr<Type> type = ParseType();
-            std::string name = Consume().GetText();
-            if(Current().GetType() == Lexing::TokenType::LeftParen)
+            if(Current().GetText() == name)
             {
+                Consume();
+                ExpectToken(Lexing::TokenType::LeftParen);
                 std::shared_ptr<Environment> scope = std::make_shared<Environment>(_currentScope);
                 _currentScope = scope;
-                _currentReturnType = type;
                 std::vector<std::pair<std::shared_ptr<Type>, std::string>> params;
                 Consume();
                 while(Current().GetType() != Lexing::TokenType::RightParen)
@@ -366,7 +372,7 @@ namespace Parsing
                 ExpectToken(Lexing::TokenType::Equals);
                 Consume();
 
-                scope->GetVarSymbols().push_back(std::make_shared<VarSymbol>("this", std::make_shared<PointerType>(structType)));
+                scope->GetVarSymbols().push_back(std::make_shared<VarSymbol>("this", structType));
 
                 std::unique_ptr<ASTNode> body = ParseExpression();
 
@@ -376,18 +382,64 @@ namespace Parsing
                 Consume();
 
                 classMethods.push_back({
-                    AccessLevel::Public, type, name,
+                    AccessLevel::Public, nullptr, name,
                     params, scope, std::move(body)
                 });
             }
             else
             {
-                ExpectToken(Lexing::TokenType::Semicolon);
-                Consume();
-                structTypeFields.push_back(std::make_pair(type, name));
-                classFields.push_back({
-                    AccessLevel::Public, type, name
-                });
+                std::shared_ptr<Type> type = ParseType();
+                std::string name = Consume().GetText();
+                if(Current().GetType() == Lexing::TokenType::LeftParen)
+                {
+                    std::shared_ptr<Environment> scope = std::make_shared<Environment>(_currentScope);
+                    _currentScope = scope;
+                    _currentReturnType = type;
+                    std::vector<std::pair<std::shared_ptr<Type>, std::string>> params;
+                    Consume();
+                    while(Current().GetType() != Lexing::TokenType::RightParen)
+                    {
+                        std::shared_ptr<Type> type = ParseType();
+
+                        ExpectToken(Lexing::TokenType::Identifier);
+                        std::string argName = Consume().GetText();
+                        
+                        params.push_back(std::make_pair(type, argName));
+                        scope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(argName, type));
+                        if(Current().GetType() == Lexing::TokenType::RightParen)
+                            break;
+
+                        ExpectToken(Lexing::TokenType::Comma);
+                        Consume();
+                    }
+                    Consume();
+
+                    ExpectToken(Lexing::TokenType::Equals);
+                    Consume();
+
+                    scope->GetVarSymbols().push_back(std::make_shared<VarSymbol>("this", std::make_shared<PointerType>(structType)));
+
+                    std::unique_ptr<ASTNode> body = ParseExpression();
+
+                    _currentScope = scope->GetOuter();
+
+                    ExpectToken(Lexing::TokenType::Semicolon);
+                    Consume();
+
+                    classMethods.push_back({
+                        AccessLevel::Public, type, name,
+                        params, scope, std::move(body)
+                    });
+                }
+                else
+                {
+                    ExpectToken(Lexing::TokenType::Semicolon);
+                    Consume();
+                    structTypeFields.push_back(std::make_pair(type, name));
+                    classFields.push_back({
+                        AccessLevel::Public, type, name
+                    });
+                }
             }
         }
         Consume();

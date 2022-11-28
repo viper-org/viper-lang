@@ -1,4 +1,5 @@
 #include "parsing/ast/expression/binaryExpression.hh"
+#include "parsing/ast/expression/unaryExpression.hh"
 #include <iostream>
 #include <llvm/IR/Instructions.h>
 #include <parsing/ast/expression/call.hh>
@@ -45,6 +46,7 @@ namespace Parsing
             std::string mangledName = GetMangledFunction({name}, paramTypes);
             llvm::Function* func = mod.getFunction(mangledName);
             type = func->getReturnType();
+            _type = std::make_shared<Type>(type);
             callee = func;
         }
         else if(_callee->GetNodeType() == ASTNodeType::BinaryExpression)
@@ -59,12 +61,29 @@ namespace Parsing
                 argValues.insert(argValues.begin(), llvm::getPointerOperand(_args[0]->Emit(ctx, mod, builder, scope)));
                 argTypes.insert(argTypes.begin(), llvm::PointerType::get(_args[0]->GetType()->GetLLVMType(), 0));
                 paramTypes.insert(paramTypes.begin(), _args[0]->GetType());
-                
+
                 std::string mangledName = GetMangledFunction({className, methodName}, paramTypes);
 
                 llvm::Function* func = mod.getFunction(mangledName);
                 
                 type = func->getReturnType();
+                _type = std::make_shared<Type>(type);
+                callee = func;
+            }
+        }
+        else if(_callee->GetNodeType() == ASTNodeType::UnaryExpression)
+        {
+            UnaryExpression* unOp = static_cast<UnaryExpression*>(_callee.get());
+            if(unOp->_operator == UnaryOperator::New)
+            {
+                std::string name = static_cast<Variable*>(unOp->_operand.get())->GetName();
+
+                std::string mangledName = GetMangledFunction({name, name}, paramTypes);
+
+                llvm::Function* func = mod.getFunction(mangledName);
+                
+                _type = types.at(name);
+                type = _type->GetLLVMType();
                 callee = func;
             }
         }
@@ -72,9 +91,8 @@ namespace Parsing
         {
             callee = _callee->Emit(ctx, mod, builder, scope);
             type = callee->getType();
+            _type = std::make_shared<Type>(type);
         }
-
-        _type = std::make_shared<Type>(type);
 
         llvm::FunctionType* funcTy = llvm::FunctionType::get(type, argTypes, false);
 

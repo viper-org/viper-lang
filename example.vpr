@@ -5,34 +5,27 @@ class String {
     int8* cStr;
     int32 size;
 
+    String() = {
+        this.cStr = "";
+        this.size = 0;
+    }
+
+    String(int8* cStr) = {
+        this.cStr = cStr;
+        this.size = _StrLen(cStr);
+    }
+
     int32 GetSize() = { 
         return this.size;
     }
 
-    void Set(int8* cStr) = {
-        this.cStr = cStr;
-        this.size = _StrLen(cStr);
+    void Print() = {
+        Print(this.cStr);
     }
 }
-
-let String String(int8* cStr) = {
-    let String str;
-    str.cStr = cStr;
-    str.size = _StrLen(cStr);
-
-    return str;
-}
-
-let void Print(String str) = {
-    Print(str.cStr);
-}
-
 let int32 Main() = {
-    let String myStr = String("Hello World!\n");
-    Print(myStr);
-
-    myStr.Set("World Hello!\n");
-    Print(myStr);
+    let String myStr = new String("Hello World!\n");
+    myStr.Print();
 
     return myStr.GetSize();
 }

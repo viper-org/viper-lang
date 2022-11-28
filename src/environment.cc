@@ -33,7 +33,7 @@ llvm::AllocaInst* Environment::FindNamedValue(const std::string& name)
         else if(env->GetOuter())
             env = env->GetOuter().get();
         else
-            Diagnostics::Error("viper", "Unknown variable symbol: " + name + ".");
+            Diagnostics::Error("viper", "Unknown identifier: " + name + ".");
     }
 }
 

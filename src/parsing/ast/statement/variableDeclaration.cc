@@ -1,3 +1,4 @@
+#include <iostream>
 #include <parsing/ast/statement/variableDeclaration.hh>
 #include <environment.hh>
 #include <llvm/IR/BasicBlock.h>

@@ -97,6 +97,10 @@ namespace Lexing
                 return "Ampersand";
             case TokenType::DoubleAmpersand:
                 return "DoubleAmpersand";
+            case Lexing::TokenType::Class:
+                return "Class";
+            case Lexing::TokenType::New:
+                return "New";
         }
     }
 
