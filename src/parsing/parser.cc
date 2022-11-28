@@ -272,9 +272,12 @@ namespace Parsing
         if(Current().GetType() != Lexing::TokenType::Equals)
         {
             if(scope)
+            {
                 _currentScope = _currentScope->GetOuter();
+                return std::make_unique<Function>(name, nullptr, scope, type, args);
+            }
 
-            return std::make_unique<VariableDeclaration>(name, nullptr, scope, type, args);
+            return std::make_unique<VariableDeclaration>(name, nullptr, type);
         }
 
         Consume();
@@ -282,9 +285,12 @@ namespace Parsing
         std::unique_ptr<ASTNode> initVal = ParseExpression();
 
         if(scope)
+        {
             _currentScope = _currentScope->GetOuter();
-
-        return std::make_unique<VariableDeclaration>(name, std::move(initVal), scope, type, args);
+            return std::make_unique<Function>(name, std::move(initVal), scope, type, args);
+        }
+    
+        return std::make_unique<VariableDeclaration>(name, std::move(initVal), type);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseVariable()

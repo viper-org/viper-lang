@@ -9,7 +9,7 @@ namespace Parsing
     class VariableDeclaration : public ASTNode
     {
     public:
-        VariableDeclaration(const std::string& name, std::unique_ptr<ASTNode> initVal, std::shared_ptr<Environment> scope, std::shared_ptr<Type> type, std::vector<std::pair<std::shared_ptr<Type>, std::string>> params);
+        VariableDeclaration(const std::string& name, std::unique_ptr<ASTNode> initVal, std::shared_ptr<Type> type);
 
         void Print(std::ostream& stream, int indent) const override;
 
@@ -19,8 +19,6 @@ namespace Parsing
     private:
         std::string _name;
         std::unique_ptr<ASTNode> _initVal;
-        std::shared_ptr<Environment> _scope;
-        std::vector<std::pair<std::shared_ptr<Type>, std::string>> _params;
     };
 }
 

@@ -7,7 +7,7 @@ let int64 _StrLen(int8* str) = {
     return len;
 }
 
-let void Print(int8* str) = {
+let void _Print(int8* str) = {
     let int64 strData = str;
     _SystemCall(1, 1, strData, _StrLen(str));
 }
