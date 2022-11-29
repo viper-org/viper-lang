@@ -26,6 +26,7 @@ public:
     virtual bool IsPointerTy() const { return false; }
     virtual bool IsVoidTy()    const { return false; }
     virtual bool IsArrayTy()   const { return false; }
+    virtual bool IsStructTy()  const { return false; }
 
     std::string GetMangleID();
 protected:

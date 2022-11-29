@@ -7,8 +7,8 @@
 
 namespace Parsing
 {
-    Function::Function(const std::string& name, std::unique_ptr<ASTNode> initVal, std::shared_ptr<Environment> scope, std::shared_ptr<Type> returnType, std::vector<std::pair<std::shared_ptr<Type>, std::string>> params)
-        :ASTNode(ASTNodeType::Function), _name(name), _initVal(std::move(initVal)), _scope(scope), _returnType(returnType), _params(params)
+    Function::Function(const std::string& name, std::unique_ptr<ASTNode> initVal, std::shared_ptr<Environment> scope, std::shared_ptr<Type> returnType, std::vector<std::pair<std::shared_ptr<Type>, std::string>> params, bool isExtension)
+        :ASTNode(ASTNodeType::Function), _name(name), _initVal(std::move(initVal)), _scope(scope), _returnType(returnType), _params(params), _isExtension(isExtension)
     {
     }
 
@@ -30,7 +30,7 @@ namespace Parsing
             argTypes.push_back(param.first);
         }
 
-        std::string mangledName = MangleFunction({_name}, argTypes, _returnType);
+        std::string mangledName = MangleFunction({_name}, argTypes, _returnType, _isExtension);
         
         llvm::FunctionType* funcTy = llvm::FunctionType::get(_returnType->GetLLVMType(), paramTypes, false);
         llvm::Function* func = llvm::Function::Create(funcTy, llvm::GlobalValue::ExternalLinkage, mangledName, mod);

@@ -59,19 +59,21 @@ struct FunctionSignature
 {
     FunctionSignature(std::vector<std::string> identifiers,
     std::vector<std::shared_ptr<Type>> params,
-    std::shared_ptr<Type> returnType) : identifiers(identifiers), params(params), returnType(returnType) {}
+    std::shared_ptr<Type> returnType,
+    bool isExtension) : identifiers(identifiers), params(params), returnType(returnType), isExtension(isExtension) {}
     std::vector<std::string> identifiers;
     std::vector<std::shared_ptr<Type>> params;
     std::shared_ptr<Type> returnType;
+    bool isExtension;
 };
 
 std::vector<FunctionSignature> mangledFunctions;
 
-std::string MangleFunction(std::vector<std::string> identifiers, std::vector<std::shared_ptr<Type>> params, std::shared_ptr<Type> returnType)
+std::string MangleFunction(std::vector<std::string> identifiers, std::vector<std::shared_ptr<Type>> params, std::shared_ptr<Type> returnType, bool isExtension)
 {
     if(identifiers[0] == "_start" || identifiers[0] == "Main")
     {
-        mangledFunctions.push_back({identifiers, params, returnType});
+        mangledFunctions.push_back({identifiers, params, returnType, isExtension});
         return identifiers[0];
     }
     std::string res = "_Z";
@@ -84,6 +86,9 @@ std::string MangleFunction(std::vector<std::string> identifiers, std::vector<std
     }
     res += name;
 
+    if(isExtension)
+        res += "T";
+
     res += std::to_string(params.size());
     for(std::shared_ptr<Type> param : params)
         res += param->GetMangleID();
@@ -91,12 +96,12 @@ std::string MangleFunction(std::vector<std::string> identifiers, std::vector<std
     res += "E";
     res += returnType->GetMangleID();
 
-    mangledFunctions.push_back({identifiers, params, returnType});
+    mangledFunctions.push_back({identifiers, params, returnType, isExtension});
 
     return res;
 }
 
-std::string MangleFunction(FunctionSignature func)
+std::string MangleFunction(FunctionSignature func, bool isExtension)
 {
     std::string res = "_Z";
     for(std::string_view ident : func.identifiers)
@@ -104,6 +109,9 @@ std::string MangleFunction(FunctionSignature func)
         res += std::to_string(ident.length());
         res += ident;
     }
+
+    if(isExtension)
+        res += "T";
 
     res += std::to_string(func.params.size());
     for(std::shared_ptr<Type> param : func.params)
@@ -115,7 +123,7 @@ std::string MangleFunction(FunctionSignature func)
     return res;
 }
 
-std::string GetMangledFunction(std::vector<std::string> identifiers, std::vector<std::shared_ptr<Type>> params)
+std::string GetMangledFunction(std::vector<std::string> identifiers, std::vector<std::shared_ptr<Type>> params, bool isExtension)
 {
     if(identifiers[0] == "Main" || identifiers[0] == "_start")
         return identifiers[0];
@@ -128,7 +136,7 @@ std::string GetMangledFunction(std::vector<std::string> identifiers, std::vector
     
     for(FunctionSignature func : mangledFunctions)
     {
-        if(func.identifiers == identifiers && func.params.size() == params.size())
+        if(func.identifiers == identifiers && func.params.size() == params.size() && isExtension == func.isExtension)
         {
             bool found = true;
             for(size_t i = 0; i < params.size(); i++)
@@ -140,7 +148,7 @@ std::string GetMangledFunction(std::vector<std::string> identifiers, std::vector
                 }
             }
             if(found)
-                return MangleFunction(func);
+                return MangleFunction(func, isExtension);
         }
     }
     return "ERROR";

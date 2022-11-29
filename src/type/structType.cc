@@ -11,6 +11,11 @@ StructType::StructType(const std::string name, const std::vector<std::pair<std::
     _llvmType = structType;
 }
 
+bool StructType::IsStructTy() const
+{
+    return true;
+}
+
 void StructType::SetBody(const std::vector<std::pair<std::shared_ptr<Type>, std::string>>& fields)
 {
     _fields = fields;

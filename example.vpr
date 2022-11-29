@@ -1,4 +1,4 @@
-import void Print(int8* data);
+import void _Print(int8* data);
 import int64 _StrLen(int8* data);
 
 class String {
@@ -20,12 +20,18 @@ class String {
     }
 
     void Print() = {
-        Print(this.cStr);
+        _Print(this.cStr);
     }
 }
+
+let void Print(this int8*) = {
+    _Print(this);
+}
+
 let int32 Main() = {
     let String myStr = new String("Hello World!\n");
-    myStr.Print();
+    
+    "hello".Print();
 
     return myStr.GetSize();
 }

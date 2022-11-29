@@ -244,6 +244,7 @@ namespace Parsing
         _currentScope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(name, type));
 
         std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
+        bool isExtension = false;
         std::shared_ptr<Environment> scope = nullptr;
         if(Current().GetType() == Lexing::TokenType::LeftParen)
         {
@@ -252,10 +253,22 @@ namespace Parsing
             _currentScope = scope;
             while(Current().GetType() != Lexing::TokenType::RightParen)
             {
-                std::shared_ptr<Type> type = ParseType();
+                std::shared_ptr<Type> type;
+                std::string argName;
+                if(Current().GetText() == "this")
+                {
+                    isExtension = true;
+                    Consume();
+                    type = ParseType();
+                    argName = "this";
+                }
+                else
+                {
+                    type = ParseType();
 
-                ExpectToken(Lexing::TokenType::Identifier);
-                std::string argName = Consume().GetText();
+                    ExpectToken(Lexing::TokenType::Identifier);
+                    argName = Consume().GetText();
+                }
                 
                 args.push_back(std::make_pair(type, argName));
                 _currentScope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(argName, type));
@@ -274,7 +287,7 @@ namespace Parsing
             if(scope)
             {
                 _currentScope = _currentScope->GetOuter();
-                return std::make_unique<Function>(name, nullptr, scope, type, args);
+                return std::make_unique<Function>(name, nullptr, scope, type, args, isExtension);
             }
 
             return std::make_unique<VariableDeclaration>(name, nullptr, type);
@@ -287,7 +300,7 @@ namespace Parsing
         if(scope)
         {
             _currentScope = _currentScope->GetOuter();
-            return std::make_unique<Function>(name, std::move(initVal), scope, type, args);
+            return std::make_unique<Function>(name, std::move(initVal), scope, type, args, isExtension);
         }
     
         return std::make_unique<VariableDeclaration>(name, std::move(initVal), type);

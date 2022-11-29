@@ -9,7 +9,7 @@ namespace Parsing
     class Function : public ASTNode
     {
     public:
-        Function(const std::string& name, std::unique_ptr<ASTNode> initVal, std::shared_ptr<Environment> scope, std::shared_ptr<Type> returnType, std::vector<std::pair<std::shared_ptr<Type>, std::string>> params);
+        Function(const std::string& name, std::unique_ptr<ASTNode> initVal, std::shared_ptr<Environment> scope, std::shared_ptr<Type> returnType, std::vector<std::pair<std::shared_ptr<Type>, std::string>> params, bool isExtension);
 
         void Print(std::ostream& stream, int indent) const override;
 
@@ -22,6 +22,7 @@ namespace Parsing
         std::shared_ptr<Environment> _scope;
         std::shared_ptr<Type> _returnType;
         std::vector<std::pair<std::shared_ptr<Type>, std::string>> _params;
+        bool _isExtension;
     };
 }
 

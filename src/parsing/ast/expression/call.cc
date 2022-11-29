@@ -54,15 +54,26 @@ namespace Parsing
             BinaryExpression* binOp = static_cast<BinaryExpression*>(_callee.get());
             if(binOp->GetOperator() == BinaryOperator::MemberAccess)
             {
-                std::string className = binOp->_lhs->GetType()->GetLLVMType()->getStructName().str();
                 std::string methodName = static_cast<Variable*>(binOp->_rhs.get())->GetName();
 
-                _args.insert(_args.begin(), std::move(binOp->_lhs));
-                argValues.insert(argValues.begin(), llvm::getPointerOperand(_args[0]->Emit(ctx, mod, builder, scope)));
-                argTypes.insert(argTypes.begin(), llvm::PointerType::get(_args[0]->GetType()->GetLLVMType(), 0));
-                paramTypes.insert(paramTypes.begin(), _args[0]->GetType());
-
-                std::string mangledName = GetMangledFunction({className, methodName}, paramTypes);
+                std::string mangledName;
+                if(!binOp->_lhs->GetType()->IsStructTy())
+                {
+                    _args.insert(_args.begin(), std::move(binOp->_lhs));
+                    argValues.insert(argValues.begin(), _args[0]->Emit(ctx, mod, builder, scope));
+                    argTypes.insert(argTypes.begin(), _args[0]->GetType()->GetLLVMType());
+                    paramTypes.insert(paramTypes.begin(), _args[0]->GetType());
+                    mangledName = GetMangledFunction({methodName}, paramTypes, true);
+                }
+                else
+                {
+                    std::string className = binOp->_lhs->GetType()->GetLLVMType()->getStructName().str();
+                    _args.insert(_args.begin(), std::move(binOp->_lhs));
+                    argValues.insert(argValues.begin(), llvm::getPointerOperand(_args[0]->Emit(ctx, mod, builder, scope)));
+                    argTypes.insert(argTypes.begin(), llvm::PointerType::get(_args[0]->GetType()->GetLLVMType(), 0));
+                    paramTypes.insert(paramTypes.begin(), _args[0]->GetType());
+                    mangledName = GetMangledFunction({className, methodName}, paramTypes);
+                }
 
                 llvm::Function* func = mod.getFunction(mangledName);
                 
