@@ -1,9 +1,7 @@
-#include "parsing/ast/expression/binaryExpression.hh"
-#include "parsing/ast/expression/unaryExpression.hh"
-#include <iostream>
-#include <llvm/IR/Instructions.h>
 #include <parsing/ast/expression/call.hh>
 #include <parsing/ast/expression/variable.hh>
+#include <parsing/ast/expression/binaryExpression.hh>
+#include <parsing/ast/expression/unaryExpression.hh>
 #include <environment.hh>
 #include <llvm/IR/DerivedTypes.h>
 
@@ -57,10 +55,11 @@ namespace Parsing
                 std::string methodName = static_cast<Variable*>(binOp->_rhs.get())->GetName();
 
                 std::string mangledName;
+                llvm::Value* value = binOp->_lhs->Emit(ctx, mod, builder, scope);
                 if(!binOp->_lhs->GetType()->IsStructTy())
                 {
                     _args.insert(_args.begin(), std::move(binOp->_lhs));
-                    argValues.insert(argValues.begin(), _args[0]->Emit(ctx, mod, builder, scope));
+                    argValues.insert(argValues.begin(), value);
                     argTypes.insert(argTypes.begin(), _args[0]->GetType()->GetLLVMType());
                     paramTypes.insert(paramTypes.begin(), _args[0]->GetType());
                     mangledName = GetMangledFunction({methodName}, paramTypes, true);
@@ -69,13 +68,14 @@ namespace Parsing
                 {
                     std::string className = binOp->_lhs->GetType()->GetLLVMType()->getStructName().str();
                     _args.insert(_args.begin(), std::move(binOp->_lhs));
-                    argValues.insert(argValues.begin(), llvm::getPointerOperand(_args[0]->Emit(ctx, mod, builder, scope)));
+                    argValues.insert(argValues.begin(), llvm::getPointerOperand(value));
                     argTypes.insert(argTypes.begin(), llvm::PointerType::get(_args[0]->GetType()->GetLLVMType(), 0));
                     paramTypes.insert(paramTypes.begin(), _args[0]->GetType());
                     mangledName = GetMangledFunction({className, methodName}, paramTypes);
                 }
 
                 llvm::Function* func = mod.getFunction(mangledName);
+
                 
                 type = func->getReturnType();
                 _type = std::make_shared<Type>(type);

@@ -64,27 +64,6 @@ namespace Parsing
             default:
                 break;
         }
-        if(_operator == BinaryOperator::Assignment)
-            _type = _lhs->GetType();
-        else if(_operator == BinaryOperator::Subscript)
-            _type = _lhs->GetType()->GetBase();
-        else if(_operator == BinaryOperator::MemberAccess)
-        {
-            if(!_lhs->GetType()->IsStructTy() && !_lhs->GetType()->GetBase()->IsStructTy());
-            else if(_lhs->GetType()->IsPointerTy())
-                _type = std::make_shared<Type>(static_cast<StructType*>(_lhs->GetType()->GetBase().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName()).second);
-            else
-                _type = std::make_shared<Type>(static_cast<StructType*>(_lhs->GetType().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName()).second);
-        }
-        else
-        {
-            if(_lhs->GetType()->IsPointerTy())
-                _type = _lhs->GetType();
-            else if(_rhs->GetType()->IsPointerTy())
-                _type = _rhs->GetType();
-            else
-                _type = (_lhs->GetType()->GetLLVMType()->getScalarSizeInBits() > _rhs->GetType()->GetLLVMType()->getScalarSizeInBits()) ? _lhs->GetType() : _rhs->GetType();
-        }
     }
 
     std::string BinaryExpression::OperatorToString() const
@@ -153,7 +132,8 @@ namespace Parsing
             _type = _lhs->GetType()->GetBase();
         else if(_operator == BinaryOperator::MemberAccess)
         {
-            if(_lhs->GetType()->IsPointerTy())
+            if(!_lhs->GetType() || (!_lhs->GetType()->IsStructTy() && !_lhs->GetType()->GetBase()->IsStructTy()));
+            else if(_lhs->GetType()->IsPointerTy())
                 _type = std::make_shared<Type>(static_cast<StructType*>(_lhs->GetType()->GetBase().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName()).second);
             else
                 _type = std::make_shared<Type>(static_cast<StructType*>(_lhs->GetType().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName()).second);

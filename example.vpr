@@ -28,10 +28,14 @@ let void Print(this int8*) = {
     _Print(this);
 }
 
+let int32 Add(this int32, int32 other) = {
+    return this + other;
+}
+
 let int32 Main() = {
     let String myStr = new String("Hello World!\n");
     
-    "hello".Print();
+    myStr.Print();
 
-    return myStr.GetSize();
+    return 1.Add(2);
 }

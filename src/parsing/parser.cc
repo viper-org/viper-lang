@@ -34,6 +34,7 @@ namespace Parsing
         switch(type)
         {
             case Lexing::TokenType::LeftSquareBracket:
+            case Lexing::TokenType::LeftParen:
                 return 55;
             case Lexing::TokenType::Dot:
                 return 45;
@@ -158,19 +159,22 @@ namespace Parsing
             std::unique_ptr<ASTNode> rhs;
             if(operatorToken.GetType() == Lexing::TokenType::Dot)
                 rhs = std::make_unique<Variable>(Consume().GetText(), nullptr);
+            else if(operatorToken.GetType() == Lexing::TokenType::LeftParen)
+            {
+                lhs = ParseCallExpression(std::move(lhs));
+            }
             else
                 rhs = ParseExpression(binOpPrecedence);
 
-            lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
+            if(operatorToken.GetType() != Lexing::TokenType::LeftParen)
+                lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
+
             if(operatorToken.GetType() == Lexing::TokenType::LeftSquareBracket)
             {
                 ExpectToken(Lexing::TokenType::RightSquareBracket);
                 Consume();
             }
         }
-
-        if(Current().GetType() == Lexing::TokenType::LeftParen)
-            lhs = ParseCallExpression(std::move(lhs));
 
         return lhs;
     }
@@ -496,7 +500,6 @@ namespace Parsing
 
     std::unique_ptr<ASTNode> Parser::ParseCallExpression(std::unique_ptr<ASTNode> callee)
     {
-        Consume();
         std::vector<std::unique_ptr<ASTNode>> args;
         while(Current().GetType() != Lexing::TokenType::RightParen)
         {

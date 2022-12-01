@@ -6,7 +6,7 @@ namespace Parsing
     IntegerLiteral::IntegerLiteral(long long value)
         :ASTNode(ASTNodeType::Integer), _value(value)
     {
-        _type = types.at("int64");
+        _type = types.at("int32");
     }
 
     void IntegerLiteral::Print(std::ostream& stream, int indent) const
