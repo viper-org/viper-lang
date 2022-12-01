@@ -18,6 +18,7 @@ namespace Lexing
         { "struct", TokenType::Struct },
         { "class", TokenType::Class },
         { "new", TokenType::New },
+        { "as", TokenType::As },
     };
 
     Lexer::Lexer(const std::string& text)

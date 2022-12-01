@@ -37,6 +37,8 @@ namespace Parsing
             case Lexing::TokenType::LeftParen:
                 return 55;
             case Lexing::TokenType::Dot:
+                return 50;
+            case Lexing::TokenType::As:
                 return 45;
             case Lexing::TokenType::Star:
             case Lexing::TokenType::Slash:
@@ -157,12 +159,10 @@ namespace Parsing
 
             Lexing::Token operatorToken = Consume();
             std::unique_ptr<ASTNode> rhs;
-            if(operatorToken.GetType() == Lexing::TokenType::Dot)
+            if(operatorToken.GetType() == Lexing::TokenType::Dot || operatorToken.GetType() == Lexing::TokenType::As)
                 rhs = std::make_unique<Variable>(Consume().GetText(), nullptr);
             else if(operatorToken.GetType() == Lexing::TokenType::LeftParen)
-            {
                 lhs = ParseCallExpression(std::move(lhs));
-            }
             else
                 rhs = ParseExpression(binOpPrecedence);
 

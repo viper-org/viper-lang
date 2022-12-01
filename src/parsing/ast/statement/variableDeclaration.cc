@@ -31,7 +31,6 @@ namespace Parsing
         if(_initVal)
         {
             llvm::Value* initVal = _initVal->Emit(ctx, mod, builder, scope);
-            initVal = Type::Convert(initVal, _type->GetLLVMType(), builder);
             builder.CreateStore(initVal, alloca);
         }
         scope->GetNamedValues()[_name] = alloca;

@@ -29,7 +29,6 @@ namespace Parsing
         builder.CreateBr(condBB);
         builder.SetInsertPoint(condBB);
         llvm::Value* condValue = _cond->Emit(ctx, mod, builder, scope);
-        condValue = Type::Convert(condValue, types.at("bool")->GetLLVMType(), builder);
         builder.CreateCondBr(condValue, bodyBB, mergeBB);
 
         func->getBasicBlockList().push_back(bodyBB);

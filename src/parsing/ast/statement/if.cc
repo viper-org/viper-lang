@@ -25,8 +25,6 @@ namespace Parsing
         bool hasElse = (_elseBody != nullptr);
 
         llvm::Value* condValue = _cond->Emit(ctx, mod, builder, scope);
-
-        condValue = Type::Convert(condValue, types.at("bool")->GetLLVMType(), builder);
         
         llvm::Function* func = builder.GetInsertBlock()->getParent();
 

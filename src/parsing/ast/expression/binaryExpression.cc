@@ -61,6 +61,10 @@ namespace Parsing
             case Lexing::TokenType::Dot:
                 _operator = BinaryOperator::MemberAccess;
                 break;
+                
+            case Lexing::TokenType::As:
+                _operator = BinaryOperator::TypeConvert;
+                break;
             default:
                 break;
         }
@@ -104,7 +108,8 @@ namespace Parsing
                 return "MulAssign";
             case BinaryOperator::DivAssign:
                 return "DivAssign";
-              break;
+            case BinaryOperator::TypeConvert:
+                return "TypeConvert";
         }
         return "";
     }
@@ -138,6 +143,8 @@ namespace Parsing
             else
                 _type = std::make_shared<Type>(static_cast<StructType*>(_lhs->GetType().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName()).second);
         }
+        else if(_operator == BinaryOperator::TypeConvert)
+            _type = types.at(static_cast<Variable*>(_rhs.get())->GetName());
         else
         {
             if(_lhs->GetType()->IsPointerTy())
@@ -183,16 +190,9 @@ namespace Parsing
             }
         }
 
-        llvm::Value* right = _rhs->Emit(ctx, mod, builder, scope);
-
-        if(!_type->IsPointerTy() && _operator != BinaryOperator::Subscript)
-        {
-            if(_operator != BinaryOperator::Assignment && _operator != BinaryOperator::AddAssign
-            && _operator != BinaryOperator::SubAssign  && _operator != BinaryOperator::MulAssign
-            && _operator != BinaryOperator::DivAssign)
-                left = Type::Convert(left, _type->GetLLVMType(), builder);
-            right = Type::Convert(right, _type->GetLLVMType(), builder);
-        }
+        llvm::Value* right;
+        if(_operator != BinaryOperator::TypeConvert)
+            right = _rhs->Emit(ctx, mod, builder, scope);
         
         switch(_operator)
         {
@@ -259,14 +259,44 @@ namespace Parsing
                 llvm::Instruction* inst = static_cast<llvm::Instruction*>(left);
                 llvm::Value* ptr = llvm::getPointerOperand(inst);
 
-                right = Type::Convert(right, types.at("int64")->GetLLVMType(), builder);
-
                 llvm::Value* gep = builder.CreateInBoundsGEP(left->getType(), ptr, {llvm::ConstantInt::get(ctx, llvm::APInt(64, 0)), right});
                 llvm::Value* load = builder.CreateLoad(gep->getType()->getPointerElementType(), gep);
 
                 inst->eraseFromParent();
 
                 return load;
+            }
+
+            case BinaryOperator::TypeConvert:
+            {
+                std::shared_ptr<Type> type = types.at(static_cast<Variable*>(_rhs.get())->GetName());
+
+                if(!type)
+                    throw; // TODO: Error
+
+                llvm::Type* llvmType = type->GetLLVMType();
+
+                if(left->getType() == llvmType)
+                    return left;
+
+                if(llvmType->isIntegerTy())
+                {
+                    if(left->getType()->isIntegerTy())
+                    {
+                        if(llvmType->isIntegerTy(1))
+                            return builder.CreateIsNotNull(left);
+                        return builder.CreateSExtOrTrunc(left, llvmType);
+                    }
+                    else if(left->getType()->isPointerTy())
+                        return builder.CreatePtrToInt(left, llvmType);
+                }
+                else if(llvmType->isPointerTy())
+                {
+                    if(left->getType()->isPointerTy())
+                        return builder.CreatePointerCast(left, llvmType);
+                    else if(left->getType()->isIntegerTy())
+                        return builder.CreateIntToPtr(left, llvmType);
+                }
             }
             default:
                 return nullptr;

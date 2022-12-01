@@ -21,7 +21,6 @@ namespace Parsing
     llvm::Value* CallExpr::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
     {
         std::vector<llvm::Value*> argValues;
-        unsigned int i = 0;
         for(std::unique_ptr<ASTNode>& arg : _args)
         {
             llvm::Value* value = arg->Emit(ctx, mod, builder, scope);
@@ -76,6 +75,7 @@ namespace Parsing
 
                 llvm::Function* func = mod.getFunction(mangledName);
 
+                llvm::outs() << mangledName << "\n";
                 
                 type = func->getReturnType();
                 _type = std::make_shared<Type>(type);
@@ -110,10 +110,6 @@ namespace Parsing
         }
 
         llvm::FunctionType* funcTy = llvm::FunctionType::get(type, argTypes, false);
-
-        i = 0;
-        for(llvm::Value*& arg : argValues)
-            arg = Type::Convert(arg, funcTy->getFunctionParamType(i), builder);
 
         return builder.CreateCall(funcTy, callee, argValues);
     }

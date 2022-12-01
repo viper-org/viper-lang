@@ -15,27 +15,6 @@ void InitBuiltinTypes(llvm::LLVMContext& ctx)
     types["bool"]  = std::make_shared<IntegerType>(1, ctx);
 }
 
-llvm::Value* Type::Convert(llvm::Value* src, llvm::Type* dst, llvm::IRBuilder<>& builder)
-{
-    if(src->getType() == dst)
-        return src;
-
-    if(src->getType()->isIntegerTy() && dst->isIntegerTy(1))
-        return builder.CreateIsNotNull(src);
-    
-    if(src->getType()->isIntegerTy() && dst->isIntegerTy())
-        return builder.CreateSExtOrTrunc(src, dst);
-
-    if(src->getType()->isIntegerTy() && dst->isPointerTy())
-        return builder.CreateIntToPtr(src, dst);
-    
-    if(src->getType()->isPointerTy() && dst->isIntegerTy())
-        return builder.CreatePtrToInt(src, dst);
-
-    src->mutateType(dst); // If all else fails
-    return src;
-}
-
 std::string Type::GetMangleID()
 {
     if(_llvmType->isIntegerTy())

@@ -41,6 +41,8 @@ namespace Lexing
 
         Struct, Class, New,
 
+        As,
+
         True, False,
 
         Type,
