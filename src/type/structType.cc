@@ -1,4 +1,7 @@
 #include <type/structType.hh>
+
+static std::vector<std::shared_ptr<StructType>> structTypes;
+
 StructType::StructType(const std::string name, const std::vector<std::pair<std::shared_ptr<Type>, std::string>>& fields, llvm::LLVMContext& ctx)
     :Type(nullptr), 
     _name(name), _fields(fields)
@@ -9,6 +12,15 @@ StructType::StructType(const std::string name, const std::vector<std::pair<std::
     llvm::StructType* structType = llvm::StructType::create(ctx, _name);
     structType->setBody(fieldTypes);
     _llvmType = structType;
+}
+
+std::shared_ptr<StructType> StructType::Create(const std::string name, const std::vector<std::pair<std::shared_ptr<Type>, std::string>>& fields, llvm::LLVMContext& ctx)
+{
+    std::shared_ptr<StructType> type = std::make_shared<StructType>(name, fields, ctx);
+
+    structTypes.push_back(type);
+
+    return type;
 }
 
 bool StructType::IsStructTy() const
@@ -23,6 +35,16 @@ void StructType::SetBody(const std::vector<std::pair<std::shared_ptr<Type>, std:
     for(auto field : _fields)
         fieldTypes.push_back(field.first->GetLLVMType());
     static_cast<llvm::StructType*>(_llvmType)->setBody(fieldTypes);
+}
+
+std::shared_ptr<StructType> StructType::FindStructType(std::string_view name)
+{
+    for(std::shared_ptr<StructType> type : structTypes)
+    {
+        if(type->_name == name)
+            return type;
+    }
+    return nullptr;
 }
 
 std::pair<unsigned int, llvm::Type*> StructType::GetMemberIndex(std::string member)

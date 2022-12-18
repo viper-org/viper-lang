@@ -22,6 +22,7 @@ namespace Parsing
                 isCtor = true;
             std::vector<llvm::Type*> paramTypes;
             std::vector<std::shared_ptr<Type>> argTypes;
+            std::shared_ptr<Type> returnType = (isCtor) ? types.at(_name) : method.returnType;
             if(!isCtor)
             {
                 paramTypes.push_back(llvm::PointerType::get(types.at(_name)->GetLLVMType(), 0));
@@ -32,10 +33,10 @@ namespace Parsing
                 paramTypes.push_back(param.first->GetLLVMType());
                 argTypes.push_back(param.first);
             }
+            
+            std::string mangledName = MangleFunction({_name, method.name}, argTypes, returnType);
 
-            std::string mangledName = MangleFunction({_name, method.name}, argTypes, types.at(_name));
-
-            llvm::FunctionType* funcTy = llvm::FunctionType::get(types.at(_name)->GetLLVMType(), paramTypes, false);
+            llvm::FunctionType* funcTy = llvm::FunctionType::get(returnType->GetLLVMType(), paramTypes, false);
             llvm::Function* func = llvm::Function::Create(funcTy, llvm::GlobalValue::ExternalLinkage, mangledName, mod);
 
             if(!isCtor)

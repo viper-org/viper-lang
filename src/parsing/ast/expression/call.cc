@@ -1,3 +1,5 @@
+#include <iostream>
+#include <llvm/IR/Instructions.h>
 #include <parsing/ast/expression/call.hh>
 #include <parsing/ast/expression/variable.hh>
 #include <parsing/ast/expression/binaryExpression.hh>
@@ -65,20 +67,30 @@ namespace Parsing
                 }
                 else
                 {
+                    llvm::Value* self = llvm::getPointerOperand(value);
                     std::string className = binOp->_lhs->GetType()->GetLLVMType()->getStructName().str();
+                    if(self == nullptr)
+                    {
+                        self = builder.CreateAlloca(binOp->_lhs->GetType()->GetLLVMType());
+                        builder.CreateStore(value, self);
+                    }
+
                     _args.insert(_args.begin(), std::move(binOp->_lhs));
-                    argValues.insert(argValues.begin(), llvm::getPointerOperand(value));
+                    argValues.insert(argValues.begin(), self);
+
                     argTypes.insert(argTypes.begin(), llvm::PointerType::get(_args[0]->GetType()->GetLLVMType(), 0));
                     paramTypes.insert(paramTypes.begin(), _args[0]->GetType());
+
                     mangledName = GetMangledFunction({className, methodName}, paramTypes);
                 }
 
                 llvm::Function* func = mod.getFunction(mangledName);
-
-                llvm::outs() << mangledName << "\n";
                 
                 type = func->getReturnType();
-                _type = std::make_shared<Type>(type);
+                if(type->isStructTy())
+                    _type = StructType::FindStructType(type->getStructName());
+                else
+                    _type = std::make_shared<Type>(type);
                 callee = func;
             }
             else

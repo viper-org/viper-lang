@@ -28,14 +28,19 @@ let void Print(this int8*) = {
     _Print(this);
 }
 
+let String toString(this bool) = {
+    if(this)
+        return new String("true");
+    
+    return new String("false");
+}
+
 let int32 Add(this int32, int32 other) = {
     return this + other;
 }
 
 let int32 Main() = {
-    let String myStr = new String("Hello World!\n");
-    
-    myStr.Print();
+    (1 as bool).toString().Print();
 
-    return 1.Add(2);
+    return 0;
 }

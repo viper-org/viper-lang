@@ -357,7 +357,7 @@ namespace Parsing
         ExpectToken(Lexing::TokenType::Identifier);
         std::string name = Consume().GetText();
         
-        std::shared_ptr<StructType> structType = std::make_shared<StructType>(name, std::vector<std::pair<std::shared_ptr<Type>, std::string>>(), _ctx);
+        std::shared_ptr<StructType> structType = StructType::Create(name, std::vector<std::pair<std::shared_ptr<Type>, std::string>>(), _ctx);
         types[name] = structType;
 
         ExpectToken(Lexing::TokenType::LeftBracket);
@@ -411,13 +411,13 @@ namespace Parsing
             }
             else
             {
-                std::shared_ptr<Type> type = ParseType();
+                std::shared_ptr<Type> fieldType = ParseType();
                 std::string name = Consume().GetText();
                 if(Current().GetType() == Lexing::TokenType::LeftParen)
                 {
                     std::shared_ptr<Environment> scope = std::make_shared<Environment>(_currentScope);
                     _currentScope = scope;
-                    _currentReturnType = type;
+                    _currentReturnType = fieldType;
                     std::vector<std::pair<std::shared_ptr<Type>, std::string>> params;
                     Consume();
                     while(Current().GetType() != Lexing::TokenType::RightParen)
@@ -450,7 +450,7 @@ namespace Parsing
                     Consume();
 
                     classMethods.push_back({
-                        AccessLevel::Public, type, name,
+                        AccessLevel::Public, fieldType, name,
                         params, scope, std::move(body)
                     });
                 }
@@ -458,9 +458,9 @@ namespace Parsing
                 {
                     ExpectToken(Lexing::TokenType::Semicolon);
                     Consume();
-                    structTypeFields.push_back(std::make_pair(type, name));
+                    structTypeFields.push_back(std::make_pair(fieldType, name));
                     classFields.push_back({
-                        AccessLevel::Public, type, name
+                        AccessLevel::Public, fieldType, name
                     });
                 }
             }
@@ -493,7 +493,7 @@ namespace Parsing
         }
         Consume();
 
-        types[name] = std::make_shared<StructType>(name, fields, _ctx);
+        types[name] = StructType::Create(name, std::move(fields), _ctx);
 
         return ParseExpression();
     }
