@@ -145,6 +145,8 @@ namespace Parsing
         }
         else if(_operator == BinaryOperator::TypeConvert)
             _type = types.at(static_cast<Variable*>(_rhs.get())->GetName());
+        else if(_operator == BinaryOperator::Equal || _operator == BinaryOperator::NotEqual || _operator == BinaryOperator::GreaterThan || _operator == BinaryOperator::LessThan)
+            _type = types.at("bool");
         else
         {
             if(_lhs->GetType()->IsPointerTy())

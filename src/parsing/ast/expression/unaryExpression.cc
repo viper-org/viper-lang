@@ -22,11 +22,9 @@ namespace Parsing
                 break;
             case Lexing::TokenType::Asperand:
                 _operator = UnaryOperator::Indirection;
-                _type = _operand->GetType()->GetBase();
                 break;
             case Lexing::TokenType::New:
                 _operator = UnaryOperator::New;
-                _type = types.at(static_cast<Variable*>(_operand.get())->GetName());
             default:
                 break;
         }
@@ -58,9 +56,24 @@ namespace Parsing
         stream << std::string(indent, ' ') << "\nOperator: " << OperatorToString() << "\n";
     }
 
+    void UnaryExpression::AssignType()
+    {
+        switch(_operator)
+        {
+            case UnaryOperator::Indirection:
+                _type = _operand->GetType()->GetBase();
+                break;
+            case UnaryOperator::New:
+                _type = types.at(static_cast<Variable*>(_operand.get())->GetName());
+            default:
+                break;
+        }
+    }
+
     llvm::Value* UnaryExpression::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
     {
         llvm::Value* operand = _operand->Emit(ctx, mod, builder, scope);
+        AssignType();
 
         switch(_operator)
         {

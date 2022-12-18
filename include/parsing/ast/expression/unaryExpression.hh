@@ -24,6 +24,8 @@ namespace Parsing
 
         void Print(std::ostream& stream, int indent) const override;
 
+        void AssignType();
+
         llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope) override;
     private:
         std::unique_ptr<ASTNode>_operand;
