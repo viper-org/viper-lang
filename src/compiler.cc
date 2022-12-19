@@ -123,4 +123,9 @@ void Compiler::Compile()
     dest.flush();
 
     delete targetMachine;
+
+    llvm::outs() << StructType::EmitStructSymbols();
+
+    for(llvm::Function& func : mod.functions())
+        llvm::outs() << "@" << func.getName();
 }

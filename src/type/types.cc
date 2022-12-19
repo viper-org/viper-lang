@@ -41,7 +41,7 @@ std::string Type::GetMangleID()
         return std::to_string(_llvmType->getArrayNumElements()) + Type(_llvmType->getArrayElementType()).GetMangleID();
     if(_llvmType->isStructTy())
     {
-        std::string res = "S" + std::to_string(_llvmType->getStructNumElements());
+        std::string res = "S" + std::to_string(_llvmType->getStructName().str().length()) + _llvmType->getStructName().str() + std::to_string(_llvmType->getStructNumElements());
         for(unsigned int i = 0; i < _llvmType->getStructNumElements(); i++)
             res += Type(_llvmType->getStructElementType(i)).GetMangleID();
         

@@ -10,6 +10,7 @@ public:
     bool IsStructTy() const override;
 
     void SetBody(const std::vector<std::pair<std::shared_ptr<Type>, std::string>>& fields);
+    static std::string EmitStructSymbols();
 
     static std::shared_ptr<StructType> FindStructType(std::string_view name);
 
@@ -19,6 +20,8 @@ public:
 private:
     std::string _name;
     std::vector<std::pair<std::shared_ptr<Type>, std::string>> _fields;
+    
+    std::string EmitSymbol();
 };
 
 #endif
