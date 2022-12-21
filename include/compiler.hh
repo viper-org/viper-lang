@@ -3,12 +3,15 @@
 #include <optional>
 #include <string>
 #include <fstream>
+#include <vector>
 
 enum class OutputType
 {
     LLVM,
     Assembly,
     Object,
+
+    Library,
 };
 
 class Compiler
@@ -16,7 +19,9 @@ class Compiler
 public:
     Compiler(OutputType outputType, const std::string& inputFileName, const std::optional<std::string>& outputFileName);
 
-    void Compile();
+    std::string Compile();
+
+    static void CompileLibrary(const std::vector<std::string>& objects, const std::stringstream& symbols, std::string_view output);
 
 private:
     OutputType _outputType;

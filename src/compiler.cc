@@ -14,7 +14,7 @@
 #include <parsing/parser.hh>
 #include <diagnostics.hh>
 #include <sstream>
-#include <iostream>
+#include <fstream>
 
 Compiler::Compiler(OutputType outputType, const std::string& inputFileName, const std::optional<std::string>& outputFileName)
     :_outputType(outputType), _inputFileName(inputFileName)
@@ -45,7 +45,7 @@ Compiler::Compiler(OutputType outputType, const std::string& inputFileName, cons
     }
 }
 
-void Compiler::Compile()
+std::string Compiler::Compile()
 {
     llvm::LLVMContext ctx;
     llvm::IRBuilder<> builder = llvm::IRBuilder(ctx);
@@ -76,7 +76,7 @@ void Compiler::Compile()
             std::exit(1);
         }
         mod.print(dest, nullptr);
-        return;
+        return "";
     }
 
     std::string targetTriple = llvm::sys::getDefaultTargetTriple();
@@ -124,8 +124,30 @@ void Compiler::Compile()
 
     delete targetMachine;
 
-    llvm::outs() << StructType::EmitStructSymbols();
+    std::string symbols = StructType::EmitStructSymbols();
 
     for(llvm::Function& func : mod.functions())
-        llvm::outs() << "@" << func.getName();
+        symbols += "@" + func.getName().str();
+
+    return symbols;
+}
+
+void Compiler::CompileLibrary(const std::vector<std::string>& objects, const std::stringstream& symbols, std::string_view output)
+{
+    std::ofstream out(output.data());
+    out << symbols.str();
+    out << (char)0x0A;
+    for(const std::string& obj : objects)
+    {
+        unsigned int fileNameIndex = obj.find_last_of('/') + 1;
+        std::string newFileName = "/tmp/" + obj.substr(fileNameIndex);
+        out << (newFileName + std::string(16 - newFileName.size(), 0));
+        std::ifstream input(obj);
+        std::stringstream buf;
+        buf << input.rdbuf();
+        std::string length = std::to_string(buf.str().length());
+        out << length << std::string(8 - length.length(), 0) << (char)0x0A;
+        out << buf.str() << (char)0x0A;
+    }
+    out.flush();
 }

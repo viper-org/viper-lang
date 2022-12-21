@@ -19,27 +19,25 @@ VPR=../vprc
 AR=ar
 AS=nasm
 
-VPRFLAGS=
+VPRFLAGS=-L
 ARFLAGS=-rcs
 ASFLAGS=$(PLATFORM_ASFLAGS)
 
 VPR_SRCS:=$(shell find $(SRCDIR) -name '*.vpr')
 ASM_SRCS:=$(shell find $(SRCDIR) -name '*.asm')
 
-OBJS:=${VPR_SRCS:.vpr=.vpr.o} ${ASM_SRCS:.asm=.o}
+OBJS:=${ASM_SRCS:.asm=.o}
 
 TARGET=libvpr.a
 
 all: $(TARGET)
 
-%.vpr.o: %.vpr
-	$(VPR) $(VPRFLAGS) $<
-
 %.o: %.asm
 	$(AS) $(ASFLAGS) $< -o $@
 
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) $(VPR_SRCS)
 	$(AR) $(ARFLAGS) $@ $^
+	$(VPR) -L $^ -o std.vplib
 
 clean:
 	rm -rf $(TARGET) $(OBJS)
