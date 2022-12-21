@@ -4,6 +4,6 @@
 *.o
 *.a
 *.vpr.asm
-*.vplib
+*.vlib
 
 vprc

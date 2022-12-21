@@ -12,24 +12,27 @@ enum class OutputType
     Object,
 
     Library,
+    Executable,
 };
 
 class Compiler
 {
 public:
-    Compiler(OutputType outputType, const std::string& inputFileName, const std::optional<std::string>& outputFileName);
+    Compiler(OutputType outputType, const std::string& inputFileName, const std::optional<std::string>& outputFileName, const std::vector<std::string>& libraries);
 
-    std::string Compile();
+    std::pair<std::string, std::string> Compile();
 
     static void CompileLibrary(const std::vector<std::string>& objects, const std::stringstream& symbols, std::string_view output);
+    static void CompileExecutable(std::vector<std::string>& objectFiles, const std::vector<std::string>& libraries, const std::string& outputFileName);
 
 private:
     OutputType _outputType;
 
     std::ifstream _inputHandle;
     std::string _inputFileName;
-    std::string _outputFileName;
+    std::optional<std::string> _outputFileName;
     std::string _contents;
+    std::vector<std::string> _libraries;
 };
 
 #endif

@@ -1,17 +1,105 @@
-#include "environment.hh"
-#include "lexing/token.hh"
-#include "parsing/ast/astNode.hh"
 #include <iostream>
 #include <parsing/parser.hh>
+#include <lexing/lexer.hh>
 #include <diagnostics.hh>
 #include <type/types.hh>
 #include <charconv>
+#include <fstream>
+#include <sstream>
 
 namespace Parsing
 {
-    Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, llvm::LLVMContext& ctx)
+    Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, llvm::LLVMContext& ctx, const std::vector<std::shared_ptr<VarSymbol>>& symbols)
         :_text(text), _tokens(tokens), _position(0), _ctx(ctx), _currentScope(std::make_shared<Environment>(nullptr)), _currentReturnType(nullptr)
     {
+        _currentScope->GetVarSymbols() = symbols;
+    }
+
+    std::vector<std::pair<std::unique_ptr<ASTNode>, std::shared_ptr<VarSymbol>>> Parser::ParseLibrary()
+    {
+        std::vector<std::pair<std::unique_ptr<ASTNode>, std::shared_ptr<VarSymbol>>> declarations;
+        while(_position < _tokens.size())
+        {
+            ExpectToken(Lexing::TokenType::Asperand); // Add struct symbol resolution
+            Consume();
+
+            std::string mangledName = Consume().GetText();
+            if(mangledName == "Main" || mangledName == "_start")
+                continue;
+            if(mangledName[2] == 'N')
+                throw; // Add member function resolution
+            
+            std::string length;
+            int position = 2;
+            while(std::isdigit(mangledName[position]))
+                length += mangledName[position++];
+            
+            int nameLength = std::stoi(length);
+
+            std::string name = mangledName.substr(position, nameLength);
+            position += nameLength;
+
+            std::string argNum;
+            while(std::isdigit(mangledName[position]))
+                argNum += mangledName[position++];
+            
+            int numArgs = std::stoi(argNum);
+            std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
+            for(int i = 0; i < numArgs; i++)
+            {
+                std::shared_ptr<Type> type;
+                switch(mangledName[position++])
+                {
+                    case 'c':
+                        type = types.at("int8");
+                        break;
+                    case 'w':
+                        type = types.at("int16");
+                        break;
+                    case 'i':
+                        type = types.at("int32");
+                        break;
+                    case 'q':
+                        type = types.at("int64");
+                        break;
+                }
+                while(mangledName[position] == 'P')
+                {
+                    position++;
+                    type = std::make_shared<PointerType>(type);
+                }
+                args.push_back(std::make_pair(type, ""));
+            }
+            position++;
+            std::shared_ptr<Type> returnType;
+            switch(mangledName[position++])
+            {
+                case 'c':
+                    returnType = types.at("int8");
+                    break;
+                case 'w':
+                    returnType = types.at("int16");
+                    break;
+                case 'i':
+                    returnType = types.at("int32");
+                    break;
+                case 'q':
+                    returnType = types.at("int64");
+                    break;
+                case 'V':
+                    returnType = types.at("void");
+                    break;
+            }
+            while(mangledName[position] == 'P')
+            {
+                position++;
+                returnType = std::make_shared<PointerType>(returnType);
+            }
+            declarations.push_back(std::make_pair(
+                std::make_unique<ImportStatement>(name, returnType, args),
+                std::make_shared<VarSymbol>(name, returnType)));
+        }
+        return declarations;
     }
 
     Lexing::Token Parser::Current() const

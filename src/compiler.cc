@@ -16,8 +16,8 @@
 #include <sstream>
 #include <fstream>
 
-Compiler::Compiler(OutputType outputType, const std::string& inputFileName, const std::optional<std::string>& outputFileName)
-    :_outputType(outputType), _inputFileName(inputFileName)
+Compiler::Compiler(OutputType outputType, const std::string& inputFileName, const std::optional<std::string>& outputFileName, const std::vector<std::string>& libraries)
+    :_outputType(outputType), _inputFileName(inputFileName), _outputFileName(outputFileName), _libraries(libraries)
 {
     _inputHandle = std::ifstream(inputFileName);
     if(!_inputHandle.is_open())
@@ -29,23 +29,9 @@ Compiler::Compiler(OutputType outputType, const std::string& inputFileName, cons
     _contents = buf.str() + '\n';
 
     _inputHandle.close();
-
-    if(outputFileName.has_value())
-        _outputFileName = outputFileName.value();
-    else
-    {
-        std::string suffix;
-        if(outputType == OutputType::LLVM)
-            suffix = ".ll";
-        else if(outputType == OutputType::Assembly)
-            suffix = ".s";
-        else
-            suffix = ".o";
-        _outputFileName = _inputFileName + suffix;
-    }
 }
 
-std::string Compiler::Compile()
+std::pair<std::string, std::string> Compiler::Compile()
 {
     llvm::LLVMContext ctx;
     llvm::IRBuilder<> builder = llvm::IRBuilder(ctx);
@@ -56,8 +42,29 @@ std::string Compiler::Compile()
 
     InitBuiltinTypes(ctx);
 
+    std::vector<std::shared_ptr<VarSymbol>> importedSymbols;
+
+    for(const std::string& lib : _libraries)
+    {
+        std::ifstream file(lib.data());
+        std::stringstream buf;
+        buf << file.rdbuf();
+        std::string text = buf.str().substr(0, buf.str().find_first_of(0x0A));
+        Lexing::Lexer lexer(text);
+        Parsing::Parser parser(lexer.Lex(), text, ctx, {});
+        std::vector<std::pair<std::unique_ptr<Parsing::ASTNode>, std::shared_ptr<VarSymbol>>> declarations = parser.ParseLibrary();
+        for(std::pair<std::unique_ptr<Parsing::ASTNode>, std::shared_ptr<VarSymbol>>& decl : declarations)
+        {
+            decl.first->Emit(ctx, mod, builder, {});
+            importedSymbols.push_back(decl.second);
+        }
+        
+    }
+
     Lexing::Lexer* lexer = new Lexing::Lexer(_contents);
-    Parsing::Parser* parser = new Parsing::Parser(lexer->Lex(), _contents, ctx);
+    Parsing::Parser* parser = new Parsing::Parser(lexer->Lex(), _contents, ctx, importedSymbols);
+
+    std::string outputFileName;
 
     std::vector<std::unique_ptr<Parsing::ASTNode>> ast = parser->Parse();
 
@@ -68,15 +75,15 @@ std::string Compiler::Compile()
 
     if(_outputType == OutputType::LLVM)
     {
+        outputFileName = _outputFileName.value_or(_inputFileName + ".ll");
         std::error_code ec;
-        llvm::raw_fd_ostream dest(_outputFileName, ec, llvm::sys::fs::OF_None);
-
+        llvm::raw_fd_ostream dest(outputFileName, ec, llvm::sys::fs::OF_None);
         if (ec) {
             llvm::errs() << "Could not open file: " << ec.message();
             std::exit(1);
         }
         mod.print(dest, nullptr);
-        return "";
+        return {"", outputFileName};
     }
 
     std::string targetTriple = llvm::sys::getDefaultTargetTriple();
@@ -100,11 +107,18 @@ std::string Compiler::Compile()
     llvm::TargetOptions opt;
     llvm::TargetMachine* targetMachine = target->createTargetMachine(targetTriple, CPU, features, opt, llvm::Reloc::PIC_);
 
+    if(_outputType == OutputType::Assembly)
+        outputFileName = _outputFileName.value_or(_inputFileName + ".s");
+    else if(_outputType == OutputType::Object)
+        outputFileName = _outputFileName.value_or(_inputFileName + ".o");
+    else
+        outputFileName = "/tmp/" + _inputFileName + ".o";
+
     mod.setDataLayout(targetMachine->createDataLayout());
     mod.setTargetTriple(targetTriple);
 
     std::error_code ec;
-    llvm::raw_fd_ostream dest(_outputFileName, ec, llvm::sys::fs::OF_None);
+    llvm::raw_fd_ostream dest(outputFileName, ec, llvm::sys::fs::OF_None);
 
     if (ec) {
         llvm::errs() << "Could not open file: " << ec.message();
@@ -129,7 +143,7 @@ std::string Compiler::Compile()
     for(llvm::Function& func : mod.functions())
         symbols += "@" + func.getName().str();
 
-    return symbols;
+    return {symbols, outputFileName};
 }
 
 void Compiler::CompileLibrary(const std::vector<std::string>& objects, const std::stringstream& symbols, std::string_view output)
@@ -137,12 +151,12 @@ void Compiler::CompileLibrary(const std::vector<std::string>& objects, const std
     std::ofstream out(output.data());
     out << symbols.str();
     out << (char)0x0A;
-    for(const std::string& obj : objects)
+    for(const std::string& object : objects)
     {
-        unsigned int fileNameIndex = obj.find_last_of('/') + 1;
-        std::string newFileName = "/tmp/" + obj.substr(fileNameIndex);
+        unsigned int fileNameIndex = object.find_last_of('/') + 1;
+        std::string newFileName = "/tmp/" + object.substr(fileNameIndex);
         out << (newFileName + std::string(16 - newFileName.size(), 0));
-        std::ifstream input(obj);
+        std::ifstream input(object);
         std::stringstream buf;
         buf << input.rdbuf();
         std::string length = std::to_string(buf.str().length());
@@ -150,4 +164,38 @@ void Compiler::CompileLibrary(const std::vector<std::string>& objects, const std
         out << buf.str() << (char)0x0A;
     }
     out.flush();
+}
+
+void Compiler::CompileExecutable(std::vector<std::string>& objectFiles, const std::vector<std::string>& libraries, const std::string& outputFileName)
+{
+    std::string command = "ld -o " + outputFileName;
+    for(const std::string& library : libraries)
+    {
+        std::ifstream file(library);
+        std::stringstream buf;
+        buf << file.rdbuf();
+
+        unsigned int nameStart = 0;
+        unsigned int size = 0;
+        unsigned int offset = 0;
+        while(nameStart + 26 + size < buf.str().length())
+        {
+            nameStart = buf.str().find_first_of(0x0A, offset) + 1;
+            size = std::stoi(buf.str().substr(nameStart + 16, 8));
+            
+            std::ofstream out(buf.str().substr(nameStart, 16));
+            if(out.is_open())
+            {
+                objectFiles.push_back(buf.str().substr(nameStart, 16));
+                out << buf.str().substr(nameStart + 25, size);
+            }
+            offset = nameStart + size - 7;
+        }
+    }
+    for(const std::string& object : objectFiles)
+        command += " " + object;
+    
+    system(command.data());
+    for(const std::string& object : objectFiles)
+        std::remove(object.data());
 }

@@ -3,12 +3,12 @@ import bool WriteConsole(void* hConsoleOutput, int8* lpBuffer, int32 nNumberOfCh
 
 let int32 _StrLen(int8* str) = {
     let int32 size = 0;
-    while(@(str + size))
+    while(@(str + size) != 0 as int8)
         size = size + 1;
     return size;
 }
 
 let void _Print(int8* str) = {
-    void* handle = GetStdHandle(0-11);
+    let void* handle = GetStdHandle(-11);
     WriteConsole(handle, str, _StrLen(str));
 }

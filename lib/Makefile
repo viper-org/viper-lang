@@ -16,11 +16,9 @@ else
 endif
 
 VPR=../vprc
-AR=ar
 AS=nasm
 
 VPRFLAGS=-L
-ARFLAGS=-rcs
 ASFLAGS=$(PLATFORM_ASFLAGS)
 
 VPR_SRCS:=$(shell find $(SRCDIR) -name '*.vpr')
@@ -28,7 +26,7 @@ ASM_SRCS:=$(shell find $(SRCDIR) -name '*.asm')
 
 OBJS:=${ASM_SRCS:.asm=.o}
 
-TARGET=libvpr.a
+TARGET=../std.vlib
 
 all: $(TARGET)
 
@@ -36,8 +34,7 @@ all: $(TARGET)
 	$(AS) $(ASFLAGS) $< -o $@
 
 $(TARGET): $(OBJS) $(VPR_SRCS)
-	$(AR) $(ARFLAGS) $@ $^
-	$(VPR) -L $^ -o std.vplib
+	$(VPR) $(VPRFLAGS) $^ -o $(TARGET)
 
 clean:
 	rm -rf $(TARGET) $(OBJS)

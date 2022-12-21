@@ -77,6 +77,8 @@ std::string MangleFunction(std::vector<std::string> identifiers, std::vector<std
         return identifiers[0];
     }
     std::string res = "_Z";
+    if(identifiers.size() > 1)
+        res += "N" + std::to_string(identifiers.size());
 
     std::string name;
     for(std::string_view ident : identifiers)
@@ -104,6 +106,9 @@ std::string MangleFunction(std::vector<std::string> identifiers, std::vector<std
 std::string MangleFunction(FunctionSignature func, bool isExtension)
 {
     std::string res = "_Z";
+    if(func.identifiers.size() > 1)
+        res += "N" + std::to_string(func.identifiers.size());
+    
     for(std::string_view ident : func.identifiers)
     {
         res += std::to_string(ident.length());

@@ -1,6 +1,3 @@
-import void _Print(int8* data);
-import int64 _StrLen(int8* data);
-
 class String {
     int8* cStr;
     int32 size;
@@ -15,32 +12,12 @@ class String {
         this.size = _StrLen(cStr);
     }
 
-    int32 GetSize() = { 
-        return this.size;
-    }
-
     void Print() = {
         _Print(this.cStr);
     }
 }
 
-let void Print(this int8*) = {
-    _Print(this);
-}
-
-let String toString(this bool) = {
-    if(this)
-        return new String("true");
-    
-    return new String("false");
-}
-
-let int32 Add(this int32, int32 other) = {
-    return this + other;
-}
-
 let int32 Main() = {
-    (1 as bool).toString().Print();
-
-    return 0;
+    let String msg = new String("Hello World!");
+    msg.Print();
 }

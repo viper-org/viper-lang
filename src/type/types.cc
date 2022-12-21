@@ -34,7 +34,7 @@ std::string Type::GetMangleID()
         }
     }
     if(_llvmType->isPointerTy())
-        return "P" + Type(_llvmType->getPointerElementType()).GetMangleID();
+        return Type(_llvmType->getPointerElementType()).GetMangleID() + "P";
     if(_llvmType->isVoidTy())
         return "V";
     if(_llvmType->isArrayTy())

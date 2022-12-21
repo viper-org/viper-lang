@@ -1,4 +1,3 @@
-#include "lexing/token.hh"
 #include <lexing/lexer.hh>
 #include <type/types.hh>
 #include <diagnostics.hh>

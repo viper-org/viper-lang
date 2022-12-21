@@ -9,9 +9,13 @@ namespace Parsing
     class Parser
     {
     public:
-        Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, llvm::LLVMContext& ctx);
+        Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, llvm::LLVMContext& ctx, const std::vector<std::shared_ptr<VarSymbol>>& symbols);
 
         std::vector<std::unique_ptr<ASTNode>> Parse();
+        std::vector<std::pair<std::unique_ptr<ASTNode>, std::shared_ptr<VarSymbol>>> ParseLibrary();
+
+        void CopyVarSymbols(const std::vector<std::shared_ptr<VarSymbol>>& symbols);
+
     private:
         std::string _text;
         std::vector<Lexing::Token> _tokens;
