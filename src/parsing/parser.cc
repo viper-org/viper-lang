@@ -52,8 +52,6 @@ namespace Parsing
                 argNum += mangledName[position++];
             
             int numArgs = std::stoi(argNum);
-            if(isExtension)
-                llvm::outs() << numArgs << "\n";
             std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
             for(int i = 0; i < numArgs; i++)
             {
