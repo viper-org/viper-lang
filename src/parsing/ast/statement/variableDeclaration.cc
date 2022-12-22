@@ -1,4 +1,6 @@
 #include <iostream>
+#include <llvm/IR/Constant.h>
+#include <llvm/IR/Constants.h>
 #include <parsing/ast/statement/variableDeclaration.hh>
 #include <environment.hh>
 #include <llvm/IR/BasicBlock.h>
