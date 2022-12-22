@@ -3,8 +3,8 @@
 
 namespace Parsing
 {
-    ImportStatement::ImportStatement(const std::string& name, std::shared_ptr<Type> type, std::vector<std::pair<std::shared_ptr<Type>, std::string>> args)
-        :ASTNode(ASTNodeType::ImportStatement), _name(name), _args(args)
+    ImportStatement::ImportStatement(const std::string& name, std::shared_ptr<Type> type, std::vector<std::pair<std::shared_ptr<Type>, std::string>> args, bool isExtension)
+        :ASTNode(ASTNodeType::ImportStatement), _name(name), _args(args), _isExtension(isExtension)
     {
         _type = type;
     }
@@ -25,7 +25,7 @@ namespace Parsing
             argTypes.push_back(param.first);
         }
 
-        std::string mangledName = MangleFunction({_name}, argTypes, _type);
+        std::string mangledName = MangleFunction({_name}, argTypes, _type, _isExtension);
 
         llvm::FunctionType* funcType = llvm::FunctionType::get(_type->GetLLVMType(), paramTypes, false);
         llvm::Function* func = llvm::Function::Create(funcType, llvm::GlobalValue::ExternalLinkage, mangledName, mod);

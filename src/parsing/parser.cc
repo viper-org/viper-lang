@@ -23,6 +23,8 @@ namespace Parsing
             ExpectToken(Lexing::TokenType::Asperand); // Add struct symbol resolution
             Consume();
 
+            bool isExtension = false;
+
             std::string mangledName = Consume().GetText();
             if(mangledName == "Main" || mangledName == "_start")
                 continue;
@@ -39,11 +41,19 @@ namespace Parsing
             std::string name = mangledName.substr(position, nameLength);
             position += nameLength;
 
+            if(mangledName[position] == 'T')
+            {
+                isExtension = true;
+                position++;
+            }
+
             std::string argNum;
             while(std::isdigit(mangledName[position]))
                 argNum += mangledName[position++];
             
             int numArgs = std::stoi(argNum);
+            if(isExtension)
+                llvm::outs() << numArgs << "\n";
             std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
             for(int i = 0; i < numArgs; i++)
             {
@@ -61,6 +71,9 @@ namespace Parsing
                         break;
                     case 'q':
                         type = types.at("int64");
+                        break;
+                    case 'b':
+                        type = types.at("bool");
                         break;
                 }
                 while(mangledName[position] == 'P')
@@ -86,6 +99,9 @@ namespace Parsing
                 case 'q':
                     returnType = types.at("int64");
                     break;
+                case 'b':
+                    returnType = types.at("bool");
+                    break;
                 case 'V':
                     returnType = types.at("void");
                     break;
@@ -96,7 +112,7 @@ namespace Parsing
                 returnType = std::make_shared<PointerType>(returnType);
             }
             declarations.push_back(std::make_pair(
-                std::make_unique<ImportStatement>(name, returnType, args),
+                std::make_unique<ImportStatement>(name, returnType, args, isExtension),
                 std::make_shared<VarSymbol>(name, returnType)));
         }
         return declarations;
@@ -424,14 +440,26 @@ namespace Parsing
         _currentScope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(name, type));
 
         std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
+        bool isExtension = false;
         ExpectToken(Lexing::TokenType::LeftParen);
         Consume();
         while(Current().GetType() != Lexing::TokenType::RightParen)
         {
-            std::shared_ptr<Type> type = ParseType();
-
-            ExpectToken(Lexing::TokenType::Identifier);
-            std::string argName = Consume().GetText();
+            std::shared_ptr<Type> type;
+            std::string argName;
+            if(Current().GetText() == "this")
+            {
+                isExtension = true;
+                Consume();
+                type = ParseType();
+                argName = "this";
+            }
+            else
+            {
+                type = ParseType();
+                ExpectToken(Lexing::TokenType::Identifier);
+                argName = Consume().GetText();
+            }
             
             args.push_back(std::make_pair(type, argName));
             if(Current().GetType() == Lexing::TokenType::RightParen)
@@ -442,7 +470,7 @@ namespace Parsing
         }
         Consume();
 
-        return std::make_unique<ImportStatement>(name, type, std::move(args));
+        return std::make_unique<ImportStatement>(name, type, std::move(args), isExtension);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseClassDefinition()
@@ -471,10 +499,11 @@ namespace Parsing
                 Consume();
                 while(Current().GetType() != Lexing::TokenType::RightParen)
                 {
-                    std::shared_ptr<Type> type = ParseType();
-
+                    std::shared_ptr<Type> type;
+                    std::string argName;
+                    type = ParseType();
                     ExpectToken(Lexing::TokenType::Identifier);
-                    std::string argName = Consume().GetText();
+                    argName = Consume().GetText();
                     
                     params.push_back(std::make_pair(type, argName));
                     scope->GetVarSymbols().push_back(std::make_shared<VarSymbol>(argName, type));

@@ -1,0 +1,16 @@
+import int64 _SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
+
+
+// Exits the program with the given exit code
+// Returns nothing as the program ends
+let void Exit(int32 exitCode) = {
+    _SystemCall(60 as int64, exitCode as int64, 0 as int64, 0 as int64); // exit syscall
+}
+
+
+// Aborts the program
+// Returns nothing as the program ends
+let void Abort() = {
+    let int64 pid = _SystemCall(39 as int64, 0 as int64, 0 as int64, 0 as int64); // getpid syscall
+    _SystemCall(62 as int64, pid, 6 as int64, 0 as int64); // kill syscall, signal 6(SIGABRT)
+}

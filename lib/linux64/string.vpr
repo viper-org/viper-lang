@@ -66,3 +66,14 @@ let int8* _StrChr(int8* str, int8 ch) = {
     }
     return 0 as int8*;
 }
+
+
+
+// Converts boolean to C string
+// Returns C string representation
+let int8* toCString(this bool) = {
+    if(this)
+        return "true";
+    
+    return "false";
+}

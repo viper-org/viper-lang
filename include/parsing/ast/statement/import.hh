@@ -7,7 +7,7 @@ namespace Parsing
     class ImportStatement : public ASTNode
     {
     public:
-        ImportStatement(const std::string& name, std::shared_ptr<Type> type, std::vector<std::pair<std::shared_ptr<Type>, std::string>> args);
+        ImportStatement(const std::string& name, std::shared_ptr<Type> type, std::vector<std::pair<std::shared_ptr<Type>, std::string>> args, bool isExtension);
 
         void Print(std::ostream& stream, int indent) const override;
         
@@ -15,6 +15,7 @@ namespace Parsing
     private:
         std::string _name;
         std::vector<std::pair<std::shared_ptr<Type>, std::string>> _args;
+        bool _isExtension;
     };
 }
 
