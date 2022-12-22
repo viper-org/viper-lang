@@ -14,7 +14,6 @@ namespace Lexing
         { "if",     TokenType::If },
         { "else",   TokenType::Else },
         { "while",  TokenType::While },
-        { "struct", TokenType::Struct },
         { "class", TokenType::Class },
         { "new", TokenType::New },
         { "as", TokenType::As },

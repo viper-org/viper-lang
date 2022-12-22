@@ -45,7 +45,6 @@ namespace Parsing
 
         std::unique_ptr<ASTNode> ParseImportStatement();
 
-        std::unique_ptr<ASTNode> ParseStructDeclaration();
         std::unique_ptr<ASTNode> ParseClassDefinition();
 
         std::unique_ptr<ASTNode> ParseCallExpression(std::unique_ptr<ASTNode> callee);

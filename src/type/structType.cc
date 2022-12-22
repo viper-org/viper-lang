@@ -2,7 +2,7 @@
 
 static std::vector<std::shared_ptr<StructType>> structTypes;
 
-StructType::StructType(const std::string name, const std::vector<std::pair<std::shared_ptr<Type>, std::string>>& fields, llvm::LLVMContext& ctx)
+StructType::StructType(const std::string name, const std::vector<std::pair<std::shared_ptr<Type>, std::string>> fields, llvm::LLVMContext& ctx)
     :Type(nullptr), 
     _name(name), _fields(fields)
 {
@@ -23,13 +23,18 @@ std::string StructType::EmitStructSymbols()
     return res;
 }
 
-std::shared_ptr<StructType> StructType::Create(const std::string name, const std::vector<std::pair<std::shared_ptr<Type>, std::string>>& fields, llvm::LLVMContext& ctx)
+std::shared_ptr<StructType> StructType::Create(const std::string name, const std::vector<std::pair<std::shared_ptr<Type>, std::string>> fields, llvm::LLVMContext& ctx)
 {
     std::shared_ptr<StructType> type = std::make_shared<StructType>(name, fields, ctx);
 
     structTypes.push_back(type);
 
     return type;
+}
+
+void StructType::ResetStructTypeArray()
+{
+    structTypes.clear();
 }
 
 bool StructType::IsStructTy() const
@@ -69,5 +74,13 @@ std::pair<unsigned int, llvm::Type*> StructType::GetMemberIndex(std::string memb
 
 std::string StructType::EmitSymbol()
 {
-    return "#" + GetMangleID();
+    std::string res = "#" + std::to_string(_name.length()) + _name + std::to_string(_fields.size());
+    for(std::pair<std::shared_ptr<Type>, std::string> field : _fields)
+    {
+        res += field.first->GetMangleID();
+        res += std::to_string(field.second.length());
+        res += field.second;
+    }
+
+    return res;
 }

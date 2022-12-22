@@ -1,5 +1,7 @@
+#include "type/structType.hh"
 #include <compiler.hh>
 #include <lexing/lexer.hh>
+#include <llvm/IR/LLVMContext.h>
 #include <llvm/MC/MCExpr.h>
 #include <llvm/Support/CodeGen.h>
 #include <llvm/Support/raw_ostream.h>
@@ -33,6 +35,7 @@ Compiler::Compiler(OutputType outputType, const std::string& inputFileName, cons
 
 std::pair<std::string, std::string> Compiler::Compile()
 {
+    StructType::ResetStructTypeArray();
     llvm::LLVMContext ctx;
     llvm::IRBuilder<> builder = llvm::IRBuilder(ctx);
     llvm::Module mod(_inputFileName, ctx);
@@ -70,8 +73,6 @@ std::pair<std::string, std::string> Compiler::Compile()
 
     for(std::unique_ptr<Parsing::ASTNode>& node : ast)
         node->Emit(ctx, mod, builder, nullptr);
-    delete parser;
-    delete lexer;
 
     if(_outputType == OutputType::LLVM)
     {
@@ -136,12 +137,15 @@ std::pair<std::string, std::string> Compiler::Compile()
     pass.run(mod);
     dest.flush();
 
-    delete targetMachine;
 
     std::string symbols = StructType::EmitStructSymbols();
 
     for(llvm::Function& func : mod.functions())
         symbols += "@" + func.getName().str();
+
+    delete targetMachine;
+    delete parser;
+    delete lexer;
 
     return {symbols, outputFileName};
 }

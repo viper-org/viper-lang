@@ -5,6 +5,7 @@ std::map<std::string, std::shared_ptr<Type>> types;
 
 void InitBuiltinTypes(llvm::LLVMContext& ctx)
 {
+    types.clear();
     types["int8"]  = std::make_shared<IntegerType>(8, ctx);
     types["int16"] = std::make_shared<IntegerType>(16, ctx);
     types["int32"] = std::make_shared<IntegerType>(32, ctx);

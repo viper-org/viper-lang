@@ -83,8 +83,6 @@ namespace Lexing
                 return "Asperand";
             case Lexing::TokenType::While:
                 return "While";
-            case Lexing::TokenType::Struct:
-                return "Struct";
             case Lexing::TokenType::Dot:
                 return "Dot";
             case TokenType::Bang:
@@ -101,6 +99,8 @@ namespace Lexing
                 return "Class";
             case Lexing::TokenType::New:
                 return "New";
+            case Lexing::TokenType::As:
+                return "As";
         }
     }
 

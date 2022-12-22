@@ -5,7 +5,7 @@
 class StructType : public Type
 {
 public:
-    static std::shared_ptr<StructType> Create(const std::string name, const std::vector<std::pair<std::shared_ptr<Type>, std::string>>& fields, llvm::LLVMContext& ctx);
+    static std::shared_ptr<StructType> Create(const std::string name, const std::vector<std::pair<std::shared_ptr<Type>, std::string>> fields, llvm::LLVMContext& ctx);
 
     bool IsStructTy() const override;
 
@@ -14,9 +14,11 @@ public:
 
     static std::shared_ptr<StructType> FindStructType(std::string_view name);
 
+    static void ResetStructTypeArray();
+
     std::pair<unsigned int, llvm::Type*> GetMemberIndex(std::string member);
 
-    StructType(const std::string name, const std::vector<std::pair<std::shared_ptr<Type>, std::string>>& fields, llvm::LLVMContext& ctx);
+    StructType(const std::string name, const std::vector<std::pair<std::shared_ptr<Type>, std::string>> fields, llvm::LLVMContext& ctx);
 private:
     std::string _name;
     std::vector<std::pair<std::shared_ptr<Type>, std::string>> _fields;

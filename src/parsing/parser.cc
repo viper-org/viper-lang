@@ -18,100 +18,163 @@ namespace Parsing
     std::vector<std::pair<std::unique_ptr<ASTNode>, std::shared_ptr<VarSymbol>>> Parser::ParseLibrary()
     {
         std::vector<std::pair<std::unique_ptr<ASTNode>, std::shared_ptr<VarSymbol>>> declarations;
-        while(_position < _tokens.size())
+        while(_position < _tokens.size()) // #6String2cP4cStri4size
         {
-            ExpectToken(Lexing::TokenType::Asperand); // Add struct symbol resolution
-            Consume();
-
-            bool isExtension = false;
-
-            std::string mangledName = Consume().GetText();
-            if(mangledName == "Main" || mangledName == "_start")
-                continue;
-            if(mangledName[2] == 'N')
-                throw; // Add member function resolution
-            
-            std::string length;
-            int position = 2;
-            while(std::isdigit(mangledName[position]))
-                length += mangledName[position++];
-            
-            int nameLength = std::stoi(length);
-
-            std::string name = mangledName.substr(position, nameLength);
-            position += nameLength;
-
-            if(mangledName[position] == 'T')
+            if(Current().GetType() == Lexing::TokenType::Hash)
             {
-                isExtension = true;
-                position++;
+                Consume();
+                int position = 0;
+                std::string info = Consume().GetText();
+
+                std::string length;
+                while(std::isdigit(info[position]))
+                    length += info[position++];
+                
+                int nameLength = std::stoi(length);
+                std::string name = info.substr(position, nameLength);
+                position += nameLength;
+                llvm::outs() << name << "\n";
+
+                std::string fieldNum;
+                while(std::isdigit(info[position]))
+                    fieldNum += info[position++];
+                
+                int numFields = std::stoi(fieldNum);
+
+                std::vector<std::pair<std::shared_ptr<Type>, std::string>> fields;
+                for(int i = 0; i < numFields; i++)
+                {
+                    std::shared_ptr<Type> type;
+                    switch(info[position++])
+                    {
+                        case 'c':
+                            type = types.at("int8");
+                            break;
+                        case 'w':
+                            type = types.at("int16");
+                            break;
+                        case 'i':
+                            type = types.at("int32");
+                            break;
+                        case 'q':
+                            type = types.at("int64");
+                            break;
+                        case 'b':
+                            type = types.at("bool");
+                            break;
+                    }
+                    while(info[position] == 'P')
+                    {
+                        position++;
+                        type = std::make_shared<PointerType>(type);
+                    }
+                    std::string fieldNameSize;
+                    while(std::isdigit(info[position]))
+                        fieldNameSize += info[position++];
+                    
+                    int nameSize = std::stoi(fieldNameSize);
+                    std::string fieldName = info.substr(position, nameSize);
+                    position += nameSize;
+                    fields.push_back({type, fieldName});
+                }
+                std::shared_ptr<StructType> type = StructType::Create(name, fields, _ctx);
+                types[name] = type;
             }
-
-            std::string argNum;
-            while(std::isdigit(mangledName[position]))
-                argNum += mangledName[position++];
-            
-            int numArgs = std::stoi(argNum);
-            std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
-            for(int i = 0; i < numArgs; i++)
+            else
             {
-                std::shared_ptr<Type> type;
+                ExpectToken(Lexing::TokenType::Asperand); // Add struct symbol resolution
+                Consume();
+
+                bool isExtension = false;
+
+                std::string mangledName = Consume().GetText();
+                if(mangledName == "Main" || mangledName == "_start")
+                    continue;
+                if(mangledName[2] == 'N')
+                    throw; // Add member function resolution
+                
+                std::string length;
+                int position = 2;
+                while(std::isdigit(mangledName[position]))
+                    length += mangledName[position++];
+                
+                int nameLength = std::stoi(length);
+
+                std::string name = mangledName.substr(position, nameLength);
+                position += nameLength;
+
+                if(mangledName[position] == 'T')
+                {
+                    isExtension = true;
+                    position++;
+                }
+
+                std::string argNum;
+                while(std::isdigit(mangledName[position]))
+                    argNum += mangledName[position++];
+                
+                int numArgs = std::stoi(argNum);
+                std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
+                for(int i = 0; i < numArgs; i++)
+                {
+                    std::shared_ptr<Type> type;
+                    switch(mangledName[position++])
+                    {
+                        case 'c':
+                            type = types.at("int8");
+                            break;
+                        case 'w':
+                            type = types.at("int16");
+                            break;
+                        case 'i':
+                            type = types.at("int32");
+                            break;
+                        case 'q':
+                            type = types.at("int64");
+                            break;
+                        case 'b':
+                            type = types.at("bool");
+                            break;
+                    }
+                    while(mangledName[position] == 'P')
+                    {
+                        position++;
+                        type = std::make_shared<PointerType>(type);
+                    }
+                    args.push_back(std::make_pair(type, ""));
+                }
+                position++;
+                std::shared_ptr<Type> returnType;
                 switch(mangledName[position++])
                 {
                     case 'c':
-                        type = types.at("int8");
+                        returnType = types.at("int8");
                         break;
                     case 'w':
-                        type = types.at("int16");
+                        returnType = types.at("int16");
                         break;
                     case 'i':
-                        type = types.at("int32");
+                        returnType = types.at("int32");
                         break;
                     case 'q':
-                        type = types.at("int64");
+                        returnType = types.at("int64");
                         break;
                     case 'b':
-                        type = types.at("bool");
+                        returnType = types.at("bool");
+                        break;
+                    case 'V':
+                        returnType = types.at("void");
                         break;
                 }
                 while(mangledName[position] == 'P')
                 {
                     position++;
-                    type = std::make_shared<PointerType>(type);
+                    returnType = std::make_shared<PointerType>(returnType);
                 }
-                args.push_back(std::make_pair(type, ""));
+                declarations.push_back(std::make_pair(
+                    std::make_unique<ImportStatement>(name, returnType, args, isExtension),
+                    std::make_shared<VarSymbol>(name, returnType)));
             }
-            position++;
-            std::shared_ptr<Type> returnType;
-            switch(mangledName[position++])
-            {
-                case 'c':
-                    returnType = types.at("int8");
-                    break;
-                case 'w':
-                    returnType = types.at("int16");
-                    break;
-                case 'i':
-                    returnType = types.at("int32");
-                    break;
-                case 'q':
-                    returnType = types.at("int64");
-                    break;
-                case 'b':
-                    returnType = types.at("bool");
-                    break;
-                case 'V':
-                    returnType = types.at("void");
-                    break;
-            }
-            while(mangledName[position] == 'P')
-            {
-                position++;
-                returnType = std::make_shared<PointerType>(returnType);
-            }
-            declarations.push_back(std::make_pair(
-                std::make_unique<ImportStatement>(name, returnType, args, isExtension),
-                std::make_shared<VarSymbol>(name, returnType)));
         }
         return declarations;
     }
@@ -311,8 +374,6 @@ namespace Parsing
                 return ParseWhileStatement();
             case Lexing::TokenType::Import:
                 return ParseImportStatement();
-            case Lexing::TokenType::Struct:
-                return ParseStructDeclaration();
             case Lexing::TokenType::Class:
                 return ParseClassDefinition();
             default:
@@ -593,30 +654,6 @@ namespace Parsing
         _tokens.insert(_tokens.begin() + _position, Lexing::Token(Lexing::TokenType::Semicolon, "", 0, 0, 0, 0));
 
         return std::make_unique<ClassDefinition>(name, classFields, std::move(classMethods));
-    }
-
-    std::unique_ptr<ASTNode> Parser::ParseStructDeclaration()
-    {
-        Consume();
-        ExpectToken(Lexing::TokenType::Identifier);
-        std::string name = Consume().GetText();
-
-        ExpectToken(Lexing::TokenType::LeftBracket);
-        Consume();
-        std::vector<std::pair<std::shared_ptr<Type>, std::string>> fields;
-        while(Current().GetType() != Lexing::TokenType::RightBracket)
-        {
-            std::shared_ptr<Type> type = ParseType();
-            std::string name = Consume().GetText();
-            ExpectToken(Lexing::TokenType::Semicolon);
-            Consume();
-            fields.push_back(std::make_pair(type, name));
-        }
-        Consume();
-
-        types[name] = StructType::Create(name, std::move(fields), _ctx);
-
-        return ParseExpression();
     }
 
     std::unique_ptr<ASTNode> Parser::ParseCallExpression(std::unique_ptr<ASTNode> callee)
