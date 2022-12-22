@@ -1,8 +1,8 @@
 [section .text]
-[global _Z11_SystemCall4qqqqEq]
+[global _Z11_SystemCallA4qqqqEq]
 ; Base system call function
 ; Returns syscall return value
-_Z11_SystemCall4qqqqEq:
+_Z11_SystemCallA4qqqqEq:
     mov rax, rdi
     mov rdi, rsi
     mov rsi, rdx

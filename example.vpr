@@ -2,10 +2,12 @@ let int32 Main() = {
     let int8[15] msgArr = "Hello, ";
     let int8* msg = #msgArr[0];
     let int8* msg2 = "World!";
+    
+    let String str = new String("hello");
 
     msg.Cat(msg2);
 
-    _Print(msg);
+    _Print(str.getCStr());
     _Print("\n");
 
     return msg.Length();

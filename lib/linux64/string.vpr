@@ -92,3 +92,26 @@ let int8* toCString(this bool) = {
     
     return "false";
 }
+
+class String {
+    int8* cStr;
+    int32 size;
+
+    String() = {
+        this.cStr = "";
+        this.size = 0;
+    }
+
+    String(int8* cStr) = {
+        this.cStr = cStr;
+        this.size = cStr.Length();
+    }
+
+    int32 getSize() = {
+        return this.size;
+    }
+
+    int8* getCStr() = {
+        return this.cStr;
+    }
+}

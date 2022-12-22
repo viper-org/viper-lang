@@ -33,7 +33,6 @@ namespace Parsing
                 int nameLength = std::stoi(length);
                 std::string name = info.substr(position, nameLength);
                 position += nameLength;
-                llvm::outs() << name << "\n";
 
                 std::string fieldNum;
                 while(std::isdigit(info[position]))
@@ -86,23 +85,46 @@ namespace Parsing
                 Consume();
 
                 bool isExtension = false;
+                bool isNested = false;
+                int position = 2;
 
                 std::string mangledName = Consume().GetText();
                 if(mangledName == "Main" || mangledName == "_start")
                     continue;
                 if(mangledName[2] == 'N')
-                    throw; // Add member function resolution
+                {
+                    isNested = true;
+                    position++;
+                }
                 
-                std::string length;
-                int position = 2;
-                while(std::isdigit(mangledName[position]))
-                    length += mangledName[position++];
-                
-                int nameLength = std::stoi(length);
+                std::vector<std::string> identifiers;
+                if(isNested)
+                {
+                    while(mangledName[position] != 'A')
+                    {
+                        std::string length;
+                        while(std::isdigit(mangledName[position]))
+                            length += mangledName[position++];
+                        
+                        int nameLength = std::stoi(length);
 
-                std::string name = mangledName.substr(position, nameLength);
-                position += nameLength;
+                        identifiers.push_back(mangledName.substr(position, nameLength));
+                        position += nameLength;
+                    }
+                }
+                else
+                {
+                    std::string length;
+                    while(std::isdigit(mangledName[position]))
+                        length += mangledName[position++];
+                    
+                    int nameLength = std::stoi(length);
 
+                    identifiers.push_back(mangledName.substr(position, nameLength));
+                    position += nameLength;
+                }
+
+                position++;
                 if(mangledName[position] == 'T')
                 {
                     isExtension = true;
@@ -112,7 +134,6 @@ namespace Parsing
                 std::string argNum;
                 while(std::isdigit(mangledName[position]))
                     argNum += mangledName[position++];
-                
                 int numArgs = std::stoi(argNum);
                 std::vector<std::pair<std::shared_ptr<Type>, std::string>> args;
                 for(int i = 0; i < numArgs; i++)
@@ -135,6 +156,17 @@ namespace Parsing
                         case 'b':
                             type = types.at("bool");
                             break;
+                        case 'S':
+                        {
+                            std::string structNameSize;
+                            while(std::isdigit(mangledName[position]))
+                                structNameSize += mangledName[position++];
+                            int nameSize = std::stoi(structNameSize);
+                            std::string structName = mangledName.substr(position, nameSize);
+                            position += nameSize;
+                            type = types.at(structName);
+                            break;
+                        }
                     }
                     while(mangledName[position] == 'P')
                     {
@@ -165,6 +197,17 @@ namespace Parsing
                     case 'V':
                         returnType = types.at("void");
                         break;
+                    case 'S':
+                    {
+                        std::string structNameSize;
+                        while(std::isdigit(mangledName[position]))
+                            structNameSize += mangledName[position++];
+                        int nameSize = std::stoi(structNameSize);
+                        std::string structName = mangledName.substr(position, nameSize);
+                        position += nameSize;
+                        returnType = types.at(structName);
+                        break;
+                    }
                 }
                 while(mangledName[position] == 'P')
                 {
@@ -172,8 +215,8 @@ namespace Parsing
                     returnType = std::make_shared<PointerType>(returnType);
                 }
                 declarations.push_back(std::make_pair(
-                    std::make_unique<ImportStatement>(name, returnType, args, isExtension),
-                    std::make_shared<VarSymbol>(name, returnType)));
+                    std::make_unique<ImportStatement>(identifiers, returnType, args, isExtension),
+                    std::make_shared<VarSymbol>(identifiers[identifiers.size() - 1], returnType)));
             }
         }
         return declarations;
@@ -529,7 +572,7 @@ namespace Parsing
         }
         Consume();
 
-        return std::make_unique<ImportStatement>(name, type, std::move(args), isExtension);
+        return std::make_unique<ImportStatement>(std::vector{name}, type, std::move(args), isExtension);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseClassDefinition()

@@ -7,13 +7,13 @@ namespace Parsing
     class ImportStatement : public ASTNode
     {
     public:
-        ImportStatement(const std::string& name, std::shared_ptr<Type> type, std::vector<std::pair<std::shared_ptr<Type>, std::string>> args, bool isExtension);
+        ImportStatement(const std::vector<std::string>& identifiers, std::shared_ptr<Type> type, std::vector<std::pair<std::shared_ptr<Type>, std::string>> args, bool isExtension);
 
         void Print(std::ostream& stream, int indent) const override;
         
         llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope) override;
     private:
-        std::string _name;
+        std::vector<std::string> _identifiers;
         std::vector<std::pair<std::shared_ptr<Type>, std::string>> _args;
         bool _isExtension;
     };
