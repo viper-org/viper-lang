@@ -1,0 +1,68 @@
+// Get length of null terminated C string
+// Returns length
+let int32 _StrLen(int8* str) = {
+    let int32 len = 0;
+    while(@(str + len) != (0 as int8))
+        len = len + 1;
+    return len;
+}
+
+
+// Copy one C string to another
+// Returns destination string
+let int8* _StrCpy(int8* dest, int8* source) = {
+    let int32 length = _StrLen(source);
+
+    while(length > 0) {
+        @dest = @source;
+
+        dest += 1;
+        source += 1;
+        length -= 1;
+    }
+    return dest;
+}
+
+
+// Concatenate 2 C strings together
+// Returns destination string
+let int8* _StrCat(int8* dest, int8* source) = {
+    let int32 length = _StrLen(dest);
+    return _StrCpy(dest + length, source);
+}
+
+
+// Compare 2 C strings
+// Returns 0 if equal, other value if not equal
+let int32 _StrCmp(int8* left, int8* right) = {
+    let int32 leftLength = _StrLen(left);
+    if(leftLength != _StrLen(right))
+        return 1;
+    
+    while(leftLength > 0) {
+        if(@left != @right)
+           return (@left - @right) as int32;
+        else {
+            left += 1;
+            right += 1;
+            leftLength -= 1;
+        }
+    }
+
+    return 0;
+}
+
+
+// Finds first occurrence of character in C string
+// Returns pointer to character, or nullptr value if not found
+let int8* _StrChr(int8* str, int8 ch) = {
+    let int32 length = _StrLen(str);
+    while(length > 0) {
+        if(@str == ch)
+            return str;
+        
+        str += 1;
+        length -= 1;
+    }
+    return 0 as int8*;
+}

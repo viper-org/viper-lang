@@ -1,12 +1,9 @@
 import int64 _SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
+import int32 _StrLen(int8* str);
 
-let int64 _StrLen(int8* str) = {
-    let int64 len = 0;
-    while(@(str + len) != 0 as int8)
-        len = len + 1;
-    return len;
-}
 
+// Print a C string value
+// Returns nothing
 let void _Print(int8* str) = {
-    _SystemCall(1 as int64, 1 as int64, str as int64, _StrLen(str));
+    _SystemCall(1 as int64, 1 as int64, str as int64, _StrLen(str) as int64);
 }

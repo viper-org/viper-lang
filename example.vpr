@@ -1,23 +1,9 @@
-class String {
-    int8* cStr;
-    int32 size;
-
-    String() = {
-        this.cStr = "";
-        this.size = 0;
-    }
-
-    String(int8* cStr) = {
-        this.cStr = cStr;
-        this.size = _StrLen(cStr);
-    }
-
-    void Print() = {
-        _Print(this.cStr);
-    }
-}
-
 let int32 Main() = {
-    let String msg = new String("Hello World!");
-    msg.Print();
+    let int8[15] msg = "Hello, ";
+    let int8[7] msg2 = "World!";
+
+    _StrCat(msg as int8*, msg2 as int8*);
+
+    _Print(msg as int8*);
+    _Print("\n");
 }

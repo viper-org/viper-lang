@@ -143,26 +143,18 @@ namespace Parsing
             else
                 _type = std::make_shared<Type>(static_cast<StructType*>(_lhs->GetType().get())->GetMemberIndex(static_cast<Variable*>(_rhs.get())->GetName()).second);
         }
-        else if(_operator == BinaryOperator::TypeConvert)
-            _type = types.at(static_cast<Variable*>(_rhs.get())->GetName());
         else if(_operator == BinaryOperator::Equal || _operator == BinaryOperator::NotEqual || _operator == BinaryOperator::GreaterThan || _operator == BinaryOperator::LessThan)
             _type = types.at("bool");
         else
-        {
-            if(_lhs->GetType()->IsPointerTy())
-                _type = _lhs->GetType();
-            else if(_rhs->GetType()->IsPointerTy())
-                _type = _rhs->GetType();
-            else
-                _type = (_lhs->GetType()->GetLLVMType()->getScalarSizeInBits() > _rhs->GetType()->GetLLVMType()->getScalarSizeInBits()) ? _lhs->GetType() : _rhs->GetType();
-        }
+            _type = _lhs->GetType();
     }
 
     llvm::Value* BinaryExpression::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
     {
         llvm::Value* left = _lhs->Emit(ctx, mod, builder, scope);
 
-        AssignType();
+        if(!_type)
+            AssignType();
 
         if(_operator == BinaryOperator::MemberAccess)
         {
@@ -271,12 +263,7 @@ namespace Parsing
 
             case BinaryOperator::TypeConvert:
             {
-                std::shared_ptr<Type> type = types.at(static_cast<Variable*>(_rhs.get())->GetName());
-
-                if(!type)
-                    throw; // TODO: Error
-
-                llvm::Type* llvmType = type->GetLLVMType();
+                llvm::Type* llvmType = _type->GetLLVMType();
 
                 if(left->getType() == llvmType)
                     return left;
@@ -298,6 +285,13 @@ namespace Parsing
                         return builder.CreatePointerCast(left, llvmType);
                     else if(left->getType()->isIntegerTy())
                         return builder.CreateIntToPtr(left, llvmType);
+                    else if(left->getType()->isArrayTy())
+                    {
+                        llvm::Instruction* inst = static_cast<llvm::Instruction*>(left);
+                        llvm::Value* ptr = llvm::getPointerOperand(inst);
+
+                        return builder.CreateInBoundsGEP(left->getType(), ptr, {llvm::ConstantInt::get(ctx, llvm::APInt(64, 0)), llvm::ConstantInt::get(ctx, llvm::APInt(64, 0))});
+                    }
                 }
             }
             default:

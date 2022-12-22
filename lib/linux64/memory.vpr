@@ -1,0 +1,53 @@
+// Finds first occurrence of a byte in a buffer
+// Returns address of byte or nullptr value if not found
+let int8* _MemChr(int8* ptr, int8 source, int32 count) = {
+    while(count > 0) {
+        if(@ptr == source)
+            return ptr;
+        
+        ptr += 1;
+        count -= 1;
+    }
+    return 0 as int8*;
+}
+
+
+// Set an entire buffer to a single value
+// Returns destination buffer
+let int8* _MemSet(int8* dest, int8 source, int32 count) = {
+    while(count > 0) {
+        @dest = source;
+        count -= 1;
+        dest += 1;
+    }
+    return dest;
+}
+
+
+// Copy memory from one buffer to another
+// Returns destination buffer
+let int8* _MemCpy(int8* dest, int8* source, int32 count) = {
+    while(count > 0) {
+        @dest = @source;
+        dest += 1;
+        source += 1;
+        count -= 1;
+    }
+    return dest;
+}
+
+
+// Compare 2 buffers
+// Returns 0 if equal, other value if not equal
+let int32 _MemCmp(int8* left, int8* right, int32 count) = {
+    while(count > 0) {
+        if(@left != @right)
+            return (@left - @right) as int32;
+        else {
+            left += 1;
+            right += 1;
+            count -= 1;
+        }
+    }
+    return 0;
+}

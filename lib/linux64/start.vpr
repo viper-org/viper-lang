@@ -1,6 +1,9 @@
 import int64 _SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
 import int32 Main();
 
+
+// Entry point function for program
+// Returns nothing as it cannot be called by user
 let void _start() = {
     let int64 exitCode = Main();
     _SystemCall(60 as int64, exitCode, 0 as int64, 0 as int64);

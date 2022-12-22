@@ -41,6 +41,8 @@ namespace Parsing
         ASTNodeType GetNodeType() const { return _nodeType; }
         std::shared_ptr<Type> GetType() const { return _type; }
 
+        void SetType(std::shared_ptr<Type> newType) { _type = newType; }
+
         virtual llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope) = 0;
     protected:
         ASTNodeType _nodeType;

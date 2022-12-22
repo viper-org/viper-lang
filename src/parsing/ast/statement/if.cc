@@ -42,15 +42,17 @@ namespace Parsing
 
         builder.SetInsertPoint(thenBB);
         _body->Emit(ctx, mod, builder, scope);
+        if(!builder.GetInsertBlock()->getInstList().back().isTerminator())
+            builder.CreateBr(mergeBB);
+
         if(hasElse)
         {
-            if(!builder.GetInsertBlock()->getInstList().back().isTerminator())
-                builder.CreateBr(mergeBB);
-            
             func->getBasicBlockList().push_back(elseBB);
             builder.SetInsertPoint(elseBB);
 
             _elseBody->Emit(ctx, mod, builder, scope);
+            if(!builder.GetInsertBlock()->getInstList().back().isTerminator())
+                builder.CreateBr(mergeBB);
         }
 
         func->getBasicBlockList().push_back(mergeBB);

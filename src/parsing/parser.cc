@@ -247,8 +247,11 @@ namespace Parsing
 
             Lexing::Token operatorToken = Consume();
             std::unique_ptr<ASTNode> rhs;
-            if(operatorToken.GetType() == Lexing::TokenType::Dot || operatorToken.GetType() == Lexing::TokenType::As)
+            std::shared_ptr<Type> type;
+            if(operatorToken.GetType() == Lexing::TokenType::Dot)
                 rhs = std::make_unique<Variable>(Consume().GetText(), nullptr);
+            else if(operatorToken.GetType() == Lexing::TokenType::As)
+                type = ParseType();
             else if(operatorToken.GetType() == Lexing::TokenType::LeftParen)
                 lhs = ParseCallExpression(std::move(lhs));
             else
@@ -256,6 +259,9 @@ namespace Parsing
 
             if(operatorToken.GetType() != Lexing::TokenType::LeftParen)
                 lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken, std::move(rhs));
+
+            if(operatorToken.GetType() == Lexing::TokenType::As)
+                lhs->SetType(type);
 
             if(operatorToken.GetType() == Lexing::TokenType::LeftSquareBracket)
             {
