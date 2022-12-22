@@ -33,14 +33,11 @@ namespace Parsing
         if(_initVal)
         {
             llvm::Value* initVal = _initVal->Emit(ctx, mod, builder, scope);
-            if(alloca->getType()->isPointerTy())
+            if(alloca->getType()->isPointerTy() && alloca->getType()->getNonOpaquePointerElementType()->isArrayTy())
             {
-                if(alloca->getType()->getNonOpaquePointerElementType()->isArrayTy())
-                {
-                    unsigned int elements = alloca->getAllocatedType()->getArrayNumElements();
-                    llvm::MaybeAlign align(elements < 16 ? 1 : 16);
-                    builder.CreateMemCpy(alloca, align, initVal, align, elements);
-                }
+                unsigned int elements = alloca->getAllocatedType()->getArrayNumElements();
+                llvm::MaybeAlign align(elements < 16 ? 1 : 16);
+                builder.CreateMemCpy(alloca, align, initVal, align, elements);
             }
             else
                 builder.CreateStore(initVal, alloca);

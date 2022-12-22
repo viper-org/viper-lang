@@ -1,6 +1,6 @@
 let int32 Main() = {
     let int8[15] msg = "Hello, ";
-    let int8[7] msg2 = "World!";
+    let int8* msg2 = "World!";
 
     _StrCat(msg as int8*, msg2 as int8*);
 
