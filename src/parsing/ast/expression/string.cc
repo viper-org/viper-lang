@@ -1,3 +1,4 @@
+#include <llvm/IR/Constant.h>
 #include <parsing/ast/expression/string.hh>
 
 namespace Parsing

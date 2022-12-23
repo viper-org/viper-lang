@@ -14,9 +14,11 @@ namespace Parsing
         stream << std::string(indent, ' ') << "<Variable>: " << _name;
     }
 
-    llvm::Value* Variable::Emit(llvm::LLVMContext&, llvm::Module&, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
+    llvm::Value* Variable::Emit(llvm::LLVMContext&, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope)
     {
-        llvm::AllocaInst* ptr = scope->FindNamedValue(_name);
+        llvm::Value* ptr = scope->FindNamedValue(_name);
+        if(!ptr)
+            ptr = mod.getNamedGlobal(_name);
 
         return builder.CreateLoad(_type->GetLLVMType(), ptr);
     }

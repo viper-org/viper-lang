@@ -332,6 +332,8 @@ namespace Parsing
 
             if(expr->GetNodeType() == ASTNodeType::Function || expr->GetNodeType() == ASTNodeType::ImportStatement || expr->GetNodeType() == ASTNodeType::ClassDefinition)
                 result.push_back(std::move(expr));
+            else if(VariableDeclaration* var; (var = dynamic_cast<VariableDeclaration*>(expr.get())) && var->IsGlobal())
+                result.push_back(std::move(expr));
             else
             {
                 _position = savePos;
@@ -452,6 +454,14 @@ namespace Parsing
     {
         Consume();
 
+        bool isGlobalVar = false;
+
+        if(Current().GetType() == Lexing::TokenType::Global)
+        {
+            isGlobalVar = true;
+            Consume();
+        }
+
         std::shared_ptr<Type> type = ParseType();
 
         ExpectToken(Lexing::TokenType::Identifier);
@@ -506,7 +516,7 @@ namespace Parsing
                 return std::make_unique<Function>(name, nullptr, scope, type, args, isExtension);
             }
 
-            return std::make_unique<VariableDeclaration>(name, nullptr, type);
+            return std::make_unique<VariableDeclaration>(name, nullptr, type, isGlobalVar);
         }
 
         Consume();
@@ -519,7 +529,7 @@ namespace Parsing
             return std::make_unique<Function>(name, std::move(initVal), scope, type, args, isExtension);
         }
     
-        return std::make_unique<VariableDeclaration>(name, std::move(initVal), type);
+        return std::make_unique<VariableDeclaration>(name, std::move(initVal), type, isGlobalVar);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseVariable()

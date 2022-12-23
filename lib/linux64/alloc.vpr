@@ -1,0 +1,82 @@
+import int64 _SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rdx, int64 r10, int64 r8, int64 r9);
+import int64 _SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rdx);
+
+
+let global void* programHeap; // Heap for the duration of the program
+let global void* heapEnd; // End of the heap
+let global int64 heapLength; // Size of the heap
+
+// Header class for all heap allocated objects
+class HeapHeader {
+    HeapHeader(int32 size) = {
+        this.next = 0 as void*;
+        this.size = size;
+    }
+
+    void* next; // Fix memory leak in having pointer to struct inside struct
+    int32 size; // Size of the allocated memory
+}
+let global HeapHeader* base;
+let global HeapHeader* freeListBegin = (0 as HeapHeader*);
+
+
+// Initializes the heap for the program
+// Returns nothing
+// Should not be called by other than in _start
+let void _InitHeap(int64 size) = {
+    programHeap = _SystemCall(9 as int64, 0 as int64, size, 3 as int64, 34 as int64, -1 as int64, 0 as int64) as void*; // Maps a large chunk of memory to be used as the heap
+    heapLength = size;
+    heapEnd = programHeap + heapLength;
+    base = programHeap as HeapHeader*;
+    @base = new HeapHeader(size as int32);
+}
+
+// Returns heap memory to the OS
+// Returns nothing
+// Should not be called other than in _start
+let void _CleanupHeap() = {
+    _SystemCall(11 as int64, programHeap as int64, heapLength, 0 as int64); // Returns the heap memory to the OS
+}
+
+
+// Allocates a chunk of memory in the program heap
+// Returns address of allocated memory
+let void* _MemAlloc(int32 length) = {
+    if(length == 0)
+        return 0 as void*;
+    let int32 size = length + 12; // Add size of header
+    if(freeListBegin == 0 as HeapHeader*) { // No existing free list
+        freeListBegin = base;
+    }
+    let HeapHeader* current = freeListBegin;
+    let HeapHeader* previous = freeListBegin;
+    while(current as void* < heapEnd) {
+        if(current.size > size - 1) { // Found a block that is large enough
+            if(current.size == size)
+                previous.next = current.next;
+            else {
+                @(current + size) = new HeapHeader(current.size - size); // Create a new header so this block is only the size it needs to be
+                current.size = size;
+            }
+            freeListBegin = previous;
+            return (current + 1) as void*; // Return the block
+        }
+
+        previous = current;
+        current = previous.next; // Continue searching the free list
+    }
+    return 0 as void*; // No block found, TODO: mmap a new heap
+}
+
+
+// Frees memory allocated with _MemAlloc
+// Returns nothing
+let void _MemFree(void* address) = {
+    if(address == 0 as void*) // Do nothing if attempted free of a nullptr value
+        return;
+
+    let HeapHeader* header = (address - 1) as HeapHeader*;
+
+    header.next = freeListBegin as void*;
+    freeListBegin = header; // Add the block to the start of the free list
+}

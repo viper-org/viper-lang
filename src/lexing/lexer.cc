@@ -17,6 +17,7 @@ namespace Lexing
         { "class", TokenType::Class },
         { "new", TokenType::New },
         { "as", TokenType::As },
+        { "global", TokenType::Global },
     };
 
     Lexer::Lexer(const std::string& text)

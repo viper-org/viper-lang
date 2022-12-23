@@ -32,7 +32,7 @@ namespace Lexing
         Identifier,
 
         Return,
-        Let,
+        Let, Global,
         
         If, Else,
         While,

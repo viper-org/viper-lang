@@ -226,8 +226,12 @@ namespace Parsing
             case BinaryOperator::AddAssign:
             {
                 llvm::Value* ptr = llvm::getPointerOperand(left);
-                llvm::Value* add = builder.CreateNSWAdd(left, right);
-                return builder.CreateStore(add, ptr);
+                llvm::Value* value;
+                if(_type->IsPointerTy())
+                    value =  builder.CreateInBoundsGEP(_type->GetLLVMType()->getPointerElementType(), left, right);
+                else
+                    value = builder.CreateNSWAdd(left, right);
+                return builder.CreateStore(value, ptr);
             }
             case BinaryOperator::SubAssign:
             {
