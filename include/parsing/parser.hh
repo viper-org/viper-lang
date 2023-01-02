@@ -9,7 +9,7 @@ namespace Parsing
     class Parser
     {
     public:
-        Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, llvm::LLVMContext& ctx, const std::vector<std::shared_ptr<VarSymbol>>& symbols);
+        Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, llvm::LLVMContext& ctx, const std::vector<std::shared_ptr<VarSymbol>>& symbols, bool isSymbolParser = false);
 
         std::vector<std::unique_ptr<ASTNode>> Parse();
         std::vector<std::pair<std::unique_ptr<ASTNode>, std::shared_ptr<VarSymbol>>> ParseLibrary();
@@ -21,6 +21,7 @@ namespace Parsing
         std::vector<Lexing::Token> _tokens;
         unsigned int _position;
         llvm::LLVMContext& _ctx;
+        bool _isSymbolParser;
         std::shared_ptr<Environment> _currentScope;
         std::shared_ptr<Type> _currentReturnType;
 

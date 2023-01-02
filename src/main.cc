@@ -79,10 +79,17 @@ int main(int argc, char** argv)
             Diagnostics::FatalError("viper", "cannot specify '\x1b[1m-o\x1b[0m' with '\x1b[1m-c\x1b[0m', '\x1b[1m-S\x1b[0m' or '\x1b[1m-i\x1b[0m' with multiple files");
     }
 
+    std::stringstream symbols;
+    for(std::string& file : files)
+    {
+        Compiler compiler(OutputType::LLVM, file, file, libraries);
+        symbols << compiler.GetSymbols();
+    }
+
     if(outputType == OutputType::Library)
     {
         std::vector<std::string> outputs;
-        std::stringstream symbols;
+        std::stringstream libSymbols;
         srand(time(0));
         for(std::string& file : files)
         {
@@ -92,10 +99,10 @@ int main(int argc, char** argv)
             outputFile += ".o";
             Compiler compiler = Compiler(OutputType::Object, file, outputFile, libraries);
             outputs.push_back(outputFile);
-            symbols << compiler.Compile().first;
+            libSymbols << compiler.Compile(symbols.str()).first;
         }
         outputs.insert(outputs.end(), objects.begin(), objects.end());
-        Compiler::CompileLibrary(outputs, symbols, output.value_or("out.vlib"));
+        Compiler::CompileLibrary(outputs, libSymbols, output.value_or("out.vlib"));
         for(std::string& file : outputs)
             std::remove(file.data());
     }
@@ -105,7 +112,7 @@ int main(int argc, char** argv)
         for(std::string& file : files)
         {
             Compiler compiler(outputType, file, output, libraries);
-            objectFiles.push_back(compiler.Compile().second);
+            objectFiles.push_back(compiler.Compile(symbols.str()).second);
         }
         objectFiles.insert(objectFiles.end(), objects.begin(), objects.end());
         Compiler::CompileExecutable(objectFiles, libraries, output.value_or("a.out"));
@@ -113,7 +120,7 @@ int main(int argc, char** argv)
     else
     {
         Compiler compiler = Compiler(outputType, files[0], output, libraries);
-        compiler.Compile();
+        compiler.Compile(symbols.str());
     }
 
     return 0;

@@ -41,6 +41,11 @@ std::string Type::GetMangleID()
     if(_llvmType->isArrayTy())
         return std::to_string(_llvmType->getArrayNumElements()) + Type(_llvmType->getArrayElementType()).GetMangleID();
     if(_llvmType->isStructTy())
-        return "S" + std::to_string(_llvmType->getStructName().str().length()) + _llvmType->getStructName().str();
+    {
+        std::string name = _llvmType->getStructName().str();
+        if(name.find('.') != name.npos)
+            name = name.substr(0, name.find_first_of('.'));
+        return "S" + std::to_string(name.length()) + name;
+    }
     return "ERR";
 }

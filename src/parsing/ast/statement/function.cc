@@ -10,6 +10,10 @@ namespace Parsing
     Function::Function(const std::string& name, std::unique_ptr<ASTNode> initVal, std::shared_ptr<Environment> scope, std::shared_ptr<Type> returnType, std::vector<std::pair<std::shared_ptr<Type>, std::string>> params, bool isExtension)
         :ASTNode(ASTNodeType::Function), _name(name), _initVal(std::move(initVal)), _scope(scope), _returnType(returnType), _params(params), _isExtension(isExtension)
     {
+        std::vector<std::shared_ptr<Type>> argTypes;
+        for(std::pair<std::shared_ptr<Type>, std::string> param : _params)
+            argTypes.push_back(param.first);
+        _mangledName = MangleFunction({_name}, argTypes, _returnType, _isExtension);
     }
 
     void Function::Print(std::ostream& stream, int indent) const
@@ -18,6 +22,11 @@ namespace Parsing
         stream << std::string(indent, ' ') << "Name: " << _name;
         stream << "\n" << std::string(indent, ' ') << "Value: \n";
         _initVal->Print(stream, indent + 2);
+    }
+
+    std::string_view Function::GetMangledName() const
+    {
+        return _mangledName;
     }
 
     llvm::Value* Function::Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment>)
@@ -30,16 +39,24 @@ namespace Parsing
             argTypes.push_back(param.first);
         }
 
-        std::string mangledName = MangleFunction({_name}, argTypes, _returnType, _isExtension);
+        llvm::Function* func = nullptr;
+        if(llvm::Function* fn = mod.getFunction(_mangledName))
+        {
+            if(fn->empty())
+                func = fn;
+        }
         
-        llvm::FunctionType* funcTy = llvm::FunctionType::get(_returnType->GetLLVMType(), paramTypes, false);
-        llvm::Function* func = llvm::Function::Create(funcTy, llvm::GlobalValue::ExternalLinkage, mangledName, mod);
+        if(!func)
+        {
+            llvm::FunctionType* funcTy = llvm::FunctionType::get(_returnType->GetLLVMType(), paramTypes, false);
+            func = llvm::Function::Create(funcTy, llvm::GlobalValue::ExternalLinkage, _mangledName, mod);
+        }
 
         unsigned int i = 0;
         for(llvm::Argument& param : func->args())
             param.setName(_params[i++].second);
 
-        llvm::BasicBlock* bb = llvm::BasicBlock::Create(ctx, mangledName, func);
+        llvm::BasicBlock* bb = llvm::BasicBlock::Create(ctx, _mangledName, func);
         builder.SetInsertPoint(bb);
 
         for(llvm::Argument& param : func->args())

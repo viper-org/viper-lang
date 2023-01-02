@@ -1,5 +1,4 @@
 import int64 _SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
-import int32 _StrLen(int8* str);
 
 
 // Print a C string value

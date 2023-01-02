@@ -69,6 +69,9 @@ namespace Parsing
                 {
                     llvm::Value* self = llvm::getPointerOperand(value);
                     std::string className = binOp->_lhs->GetType()->GetLLVMType()->getStructName().str();
+                    if(className.find('.') != className.npos)
+                        className = className.substr(0, className.find_first_of('.'));
+
                     if(self == nullptr)
                     {
                         self = builder.CreateAlloca(binOp->_lhs->GetType()->GetLLVMType());

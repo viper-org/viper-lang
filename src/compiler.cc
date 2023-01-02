@@ -1,4 +1,6 @@
+#include "parsing/ast/astNode.hh"
 #include "type/structType.hh"
+#include "type/types.hh"
 #include <compiler.hh>
 #include <lexing/lexer.hh>
 #include <llvm/IR/LLVMContext.h>
@@ -33,7 +35,57 @@ Compiler::Compiler(OutputType outputType, const std::string& inputFileName, cons
     _inputHandle.close();
 }
 
-std::pair<std::string, std::string> Compiler::Compile()
+std::string Compiler::GetSymbols()
+{
+    StructType::ResetStructTypeArray();
+    llvm::LLVMContext ctx;
+    llvm::IRBuilder<> builder = llvm::IRBuilder(ctx);
+    llvm::Module mod(_inputFileName, ctx);
+    InitBuiltinTypes(ctx);
+    
+    std::vector<std::shared_ptr<VarSymbol>> importedSymbols;
+
+    for(const std::string& lib : _libraries)
+    {
+        std::ifstream file(lib.data());
+        std::stringstream buf;
+        buf << file.rdbuf();
+        std::string text = buf.str().substr(0, buf.str().find_first_of(0x0A));
+        Lexing::Lexer lexer(text);
+        Parsing::Parser parser(lexer.Lex(), text, ctx, {}, true);
+        std::vector<std::pair<std::unique_ptr<Parsing::ASTNode>, std::shared_ptr<VarSymbol>>> declarations = parser.ParseLibrary();
+        for(std::pair<std::unique_ptr<Parsing::ASTNode>, std::shared_ptr<VarSymbol>>& decl : declarations)
+        {
+            decl.first->Emit(ctx, mod, builder, {});
+            importedSymbols.push_back(decl.second);
+        }
+        
+    }
+
+    Lexing::Lexer lexer(_contents);
+    Parsing::Parser parser(lexer.Lex(), _contents, ctx, importedSymbols, true);
+
+    std::string outputFileName;
+
+    std::vector<std::unique_ptr<Parsing::ASTNode>> ast = parser.Parse();
+
+    std::string symbols;
+    for(std::unique_ptr<Parsing::ASTNode>& node : ast)
+    {
+        if(Parsing::Function* def = dynamic_cast<Parsing::Function*>(node.get()))
+        {
+            symbols += "@";
+            symbols += def->GetMangledName();
+        }
+    }
+    symbols += StructType::EmitStructSymbols();
+    StructType::ResetStructTypeArray();
+    types.clear();
+
+    return symbols;
+}
+
+std::pair<std::string, std::string> Compiler::Compile(std::string symbols)
 {
     StructType::ResetStructTypeArray();
     llvm::LLVMContext ctx;
@@ -54,7 +106,7 @@ std::pair<std::string, std::string> Compiler::Compile()
         buf << file.rdbuf();
         std::string text = buf.str().substr(0, buf.str().find_first_of(0x0A));
         Lexing::Lexer lexer(text);
-        Parsing::Parser parser(lexer.Lex(), text, ctx, {});
+        Parsing::Parser parser(lexer.Lex(), text, ctx, {}, true);
         std::vector<std::pair<std::unique_ptr<Parsing::ASTNode>, std::shared_ptr<VarSymbol>>> declarations = parser.ParseLibrary();
         for(std::pair<std::unique_ptr<Parsing::ASTNode>, std::shared_ptr<VarSymbol>>& decl : declarations)
         {
@@ -62,6 +114,14 @@ std::pair<std::string, std::string> Compiler::Compile()
             importedSymbols.push_back(decl.second);
         }
         
+    }
+    Lexing::Lexer symbolLexer(symbols);
+    Parsing::Parser symbolParser(symbolLexer.Lex(), symbols, ctx, {}, true);
+    std::vector<std::pair<std::unique_ptr<Parsing::ASTNode>, std::shared_ptr<VarSymbol>>> declarations = symbolParser.ParseLibrary();
+    for(std::pair<std::unique_ptr<Parsing::ASTNode>, std::shared_ptr<VarSymbol>>& decl : declarations)
+    {
+        decl.first->Emit(ctx, mod, builder, {});
+        importedSymbols.push_back(decl.second);
     }
 
     Lexing::Lexer* lexer = new Lexing::Lexer(_contents);
@@ -138,16 +198,23 @@ std::pair<std::string, std::string> Compiler::Compile()
     dest.flush();
 
 
-    std::string symbols = StructType::EmitStructSymbols();
+    std::string retSymbols = StructType::EmitStructSymbols();
 
     for(llvm::Function& func : mod.functions())
-        symbols += "@" + func.getName().str();
+    {
+        std::string name = func.getName().str();
+        if(name.find('.') != name.npos)
+            name = name.substr(0, name.find_first_of('.'));
+
+        retSymbols += "@" + name;
+    }
 
     delete targetMachine;
     delete parser;
     delete lexer;
+    types.clear();
 
-    return {symbols, outputFileName};
+    return {retSymbols, outputFileName};
 }
 
 void Compiler::CompileLibrary(const std::vector<std::string>& objects, const std::stringstream& symbols, std::string_view output)

@@ -1,15 +1,10 @@
-import int64 _SystemCall(int64 rax, int64 rdi, int64 rsi, int64 rcx);
 import int32 Main();
-import void Exit(int32 exitCode);
-import void _InitHeap(int64 size);
-import void _CleanupHeap();
 
 
 // Entry point function for program
 // Returns nothing as it cannot be called by user
 let void _start() = {
-    _InitHeap((4096) as int64); // 16MiB heap
+    _InitHeap((4096 * 4096) as int64); // 16MiB heap
     let int32 exitCode = Main();
-    _CleanupHeap();
     Exit(exitCode);
 }

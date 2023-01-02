@@ -15,9 +15,12 @@ namespace Parsing
 
         bool IsFunction() const;
 
+        std::string_view GetMangledName() const;
+
         llvm::Value* Emit(llvm::LLVMContext& ctx, llvm::Module& mod, llvm::IRBuilder<>& builder, std::shared_ptr<Environment> scope) override;
     private:
         std::string _name;
+        std::string _mangledName;
         std::unique_ptr<ASTNode> _initVal;
         std::shared_ptr<Environment> _scope;
         std::shared_ptr<Type> _returnType;

@@ -74,7 +74,10 @@ std::pair<unsigned int, llvm::Type*> StructType::GetMemberIndex(std::string memb
 
 std::string StructType::EmitSymbol()
 {
-    std::string res = "#" + std::to_string(_name.length()) + _name + std::to_string(_fields.size());
+    std::string name = _name;
+    if(name.find('.') != name.npos)
+        name = name.substr(0, name.find_first_of('.'));
+    std::string res = "#" + std::to_string(name.length()) + name + std::to_string(_fields.size());
     for(std::pair<std::shared_ptr<Type>, std::string> field : _fields)
     {
         res += field.first->GetMangleID();

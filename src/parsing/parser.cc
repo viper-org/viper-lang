@@ -9,8 +9,8 @@
 
 namespace Parsing
 {
-    Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, llvm::LLVMContext& ctx, const std::vector<std::shared_ptr<VarSymbol>>& symbols)
-        :_text(text), _tokens(tokens), _position(0), _ctx(ctx), _currentScope(std::make_shared<Environment>(nullptr)), _currentReturnType(nullptr)
+    Parser::Parser(const std::vector<Lexing::Token>& tokens, const std::string& text, llvm::LLVMContext& ctx, const std::vector<std::shared_ptr<VarSymbol>>& symbols, bool isSymbolParser)
+        :_text(text), _tokens(tokens), _position(0), _ctx(ctx), _isSymbolParser(isSymbolParser), _currentScope(std::make_shared<Environment>(nullptr)), _currentReturnType(nullptr)
     {
         _currentScope->GetVarSymbols() = symbols;
     }
@@ -18,7 +18,7 @@ namespace Parsing
     std::vector<std::pair<std::unique_ptr<ASTNode>, std::shared_ptr<VarSymbol>>> Parser::ParseLibrary()
     {
         std::vector<std::pair<std::unique_ptr<ASTNode>, std::shared_ptr<VarSymbol>>> declarations;
-        while(_position < _tokens.size()) // #6String2cP4cStri4size
+        while(_position < _tokens.size())
         {
             if(Current().GetType() == Lexing::TokenType::Hash)
             {
@@ -168,11 +168,12 @@ namespace Parsing
                             break;
                         }
                     }
-                    while(mangledName[position] == 'P')
-                    {
-                        position++;
-                        type = std::make_shared<PointerType>(type);
-                    }
+                    if(position < mangledName.size())
+                        while(mangledName[position] == 'P')
+                        {
+                            position++;
+                            type = std::make_shared<PointerType>(type);
+                        }
                     args.push_back(std::make_pair(type, ""));
                 }
                 position++;
@@ -209,11 +210,12 @@ namespace Parsing
                         break;
                     }
                 }
-                while(mangledName[position] == 'P')
-                {
-                    position++;
-                    returnType = std::make_shared<PointerType>(returnType);
-                }
+                if(position < mangledName.size())
+                    while(mangledName[position] == 'P')
+                    {
+                        position++;
+                        returnType = std::make_shared<PointerType>(returnType);
+                    }
                 declarations.push_back(std::make_pair(
                     std::make_unique<ImportStatement>(identifiers, returnType, args, isExtension),
                     std::make_shared<VarSymbol>(identifiers[identifiers.size() - 1], returnType)));
@@ -302,7 +304,7 @@ namespace Parsing
         {
             Lexing::Token temp(tokenType, "", 0, 0, 0, 0);
 
-            ParserError("Expected '" + temp.TypeAsString() + "', found " + Current().GetText());
+            ParserError("Expected '" + temp.TypeAsString() + "', found " + Current().GetText() + "(" + Current().TypeAsString() + ")");
         }
     }
 
@@ -535,10 +537,15 @@ namespace Parsing
     std::unique_ptr<ASTNode> Parser::ParseVariable()
     {
         std::string name = Consume().GetText();
+        
+        if(!_isSymbolParser)
+        {
+            std::shared_ptr<VarSymbol> symbol = _currentScope->FindVarSymbol(name);
 
-        std::shared_ptr<VarSymbol> symbol = _currentScope->FindVarSymbol(name);
-
-        return std::make_unique<Variable>(name, symbol->GetType());
+            return std::make_unique<Variable>(name, symbol->GetType());
+        }
+        else
+            return std::make_unique<Variable>(name, nullptr);
     }
 
     std::unique_ptr<ASTNode> Parser::ParseImportStatement()
@@ -588,7 +595,6 @@ namespace Parsing
     std::unique_ptr<ASTNode> Parser::ParseClassDefinition()
     {
         Consume();
-        ExpectToken(Lexing::TokenType::Identifier);
         std::string name = Consume().GetText();
         
         std::shared_ptr<StructType> structType = StructType::Create(name, std::vector<std::pair<std::shared_ptr<Type>, std::string>>(), _ctx);
@@ -705,7 +711,9 @@ namespace Parsing
 
         _tokens.insert(_tokens.begin() + _position, Lexing::Token(Lexing::TokenType::Semicolon, "", 0, 0, 0, 0));
 
-        return std::make_unique<ClassDefinition>(name, classFields, std::move(classMethods));
+        std::unique_ptr<ASTNode> result = std::make_unique<ClassDefinition>(name, classFields, std::move(classMethods));
+        result->SetType(structType);
+        return result;
     }
 
     std::unique_ptr<ASTNode> Parser::ParseCallExpression(std::unique_ptr<ASTNode> callee)

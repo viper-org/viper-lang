@@ -31,13 +31,6 @@ let void _InitHeap(int64 size) = {
     @base = new HeapHeader(size as int32);
 }
 
-// Returns heap memory to the OS
-// Returns nothing
-// Should not be called other than in _start
-let void _CleanupHeap() = {
-    _SystemCall(11 as int64, programHeap as int64, heapLength, 0 as int64); // Returns the heap memory to the OS
-}
-
 
 // Allocates a chunk of memory in the program heap
 // Returns address of allocated memory

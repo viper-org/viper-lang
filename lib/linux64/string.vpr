@@ -1,9 +1,3 @@
-import void* _MemAlloc(int32 length);
-import void _MemFree(void* address);
-
-import void* _MemCpy(void* dest, void* source, int32 count);
-
-
 // Get length of null terminated C string
 // Returns length
 let int32 _StrLen(int8* str) = {
@@ -109,16 +103,6 @@ class String {
             _StrCpy(this.cStr, cStr);
             this.size = cStr.Length();
         }
-    }
-
-
-    // Getters for fields
-    int32 getSize() = {
-        return this.size;
-    }
-
-    int8* getCStr() = {
-        return this.cStr;
     }
 
 

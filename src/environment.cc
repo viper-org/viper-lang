@@ -51,7 +51,8 @@ std::shared_ptr<VarSymbol> Environment::FindVarSymbol(const std::string& name)
         else if(env->GetOuter())
             env = env->GetOuter().get();
         else
-            Diagnostics::Error("viper", "Unknown variable symbol: " + name + ".");
+            throw 1;
+            //Diagnostics::Error("viper", "Unknown variable symbol: " + name + ".");
     }
 }
 
