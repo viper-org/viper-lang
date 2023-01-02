@@ -1,5 +1,4 @@
 let int32 Main() = {
-    let int8* msg = _MemAlloc(14);
-    _StrCpy(msg, "Hello, World!!");
-    _Print(msg);
+    let String test = new String("Hello, ").cat(new String("World!"));
+    _Print(test.cStr);
 }

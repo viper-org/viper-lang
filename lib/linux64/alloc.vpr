@@ -17,7 +17,7 @@ class HeapHeader {
     int32 size; // Size of the allocated memory
 }
 let global HeapHeader* base;
-let global HeapHeader* freeListBegin = (0 as HeapHeader*);
+let global HeapHeader* freeListBegin;
 
 
 // Initializes the heap for the program
@@ -26,7 +26,7 @@ let global HeapHeader* freeListBegin = (0 as HeapHeader*);
 let void _InitHeap(int64 size) = {
     programHeap = _SystemCall(9 as int64, 0 as int64, size, 3 as int64, 34 as int64, -1 as int64, 0 as int64) as void*; // Maps a large chunk of memory to be used as the heap
     heapLength = size;
-    heapEnd = programHeap + heapLength;
+    heapEnd = programHeap + size;
     base = programHeap as HeapHeader*;
     @base = new HeapHeader(size as int32);
 }
@@ -44,6 +44,7 @@ let void _CleanupHeap() = {
 let void* _MemAlloc(int32 length) = {
     if(length == 0)
         return 0 as void*;
+    length = (length + 15) / 16 * 16; // Align to multiple of 16
     let int32 size = length + 12; // Add size of header
     if(freeListBegin == 0 as HeapHeader*) { // No existing free list
         freeListBegin = base;
@@ -56,9 +57,9 @@ let void* _MemAlloc(int32 length) = {
                 previous.next = current.next;
             else {
                 @(current + size) = new HeapHeader(current.size - size); // Create a new header so this block is only the size it needs to be
+                freeListBegin = (current + size);
                 current.size = size;
             }
-            freeListBegin = previous;
             return (current + 1) as void*; // Return the block
         }
 

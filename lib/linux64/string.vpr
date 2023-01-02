@@ -1,3 +1,9 @@
+import void* _MemAlloc(int32 length);
+import void _MemFree(void* address);
+
+import void* _MemCpy(void* dest, void* source, int32 count);
+
+
 // Get length of null terminated C string
 // Returns length
 let int32 _StrLen(int8* str) = {
@@ -83,35 +89,46 @@ let int8* Find(this int8*, int8 ch) = {
 }
 
 
-
-// Converts boolean to C string
-// Returns C string representation
-let int8* toCString(this bool) = {
-    if(this)
-        return "true";
-    
-    return "false";
-}
-
+// Standard string class
 class String {
     int8* cStr;
     int32 size;
 
-    String() = {
-        this.cStr = "";
+    String() = { // Default constructor for empty string
+        this.cStr = _MemAlloc(1);
         this.size = 0;
     }
 
-    String(int8* cStr) = {
-        this.cStr = cStr;
-        this.size = cStr.Length();
+    String(int8* cStr) = { // Constructor for string literal or other C string
+        if(cStr == 0 as int8*) { // If 
+            this.cStr = 0 as int8*;
+            this.size = 0;
+        }
+        else {
+            this.cStr = _MemAlloc(cStr.Length() + 1);
+            _StrCpy(this.cStr, cStr);
+            this.size = cStr.Length();
+        }
     }
 
+
+    // Getters for fields
     int32 getSize() = {
         return this.size;
     }
 
     int8* getCStr() = {
         return this.cStr;
+    }
+
+
+    // Concatenate 2 strings together
+    String cat(String other) = {
+        let String result = new String(0 as int8*); // Create a completely empty string object
+        result.cStr = _MemAlloc(this.size + other.size + 1);
+        _StrCpy(result.cStr, this.cStr);
+        _StrCat(result.cStr, other.cStr);
+        result.size = this.size + other.size;
+        return result;
     }
 }

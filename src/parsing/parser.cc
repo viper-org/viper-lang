@@ -601,10 +601,9 @@ namespace Parsing
         std::vector<ClassMethod> classMethods;
         while(Current().GetType() != Lexing::TokenType::RightBracket)
         {
-            if(Current().GetText() == name)
+            if(Current().GetText() == name && Peek(1).GetType() == Lexing::TokenType::LeftParen)
             {
                 Consume();
-                ExpectToken(Lexing::TokenType::LeftParen);
                 std::shared_ptr<Environment> scope = std::make_shared<Environment>(_currentScope);
                 _currentScope = scope;
                 std::vector<std::pair<std::shared_ptr<Type>, std::string>> params;
