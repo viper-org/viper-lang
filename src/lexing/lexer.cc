@@ -101,6 +101,7 @@ namespace Lexing
                 _lineBegin = &_text[_position + 1];
                 return std::nullopt;
             }
+            case '\r':
             case ' ':
                 return std::nullopt;
             
