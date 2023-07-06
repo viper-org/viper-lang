@@ -1,0 +1,11 @@
+.cache/
+CMakeFiles/
+
+*.cmake
+*.so
+
+viper
+viper_tests
+Makefile
+CMakeCache.txt
+compile_commands.json
