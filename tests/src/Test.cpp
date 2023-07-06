@@ -43,7 +43,7 @@ void diagnostics(OutputType outputType)
     if(outputType == OutputType::Markdown)
     {
         std::cout << "# Test Results";
-        std::cout << "\n" << tests.size() << "tests run. :heavy_check_mark: " << tests.size() - failedTests.size() << " succeeded, :x: " << failedTests.size() << " failed.\n\n";
+        std::cout << "\n" << tests.size() << " tests run. :heavy_check_mark: " << tests.size() - failedTests.size() << " succeeded, :x: " << failedTests.size() << " failed.\n\n";
         for (failedTest& test : failedTests)
         {
             std::cout << "<details>\n\t<summary>:x:" << test.suite << "::" << test.name << "</summary>\n";
