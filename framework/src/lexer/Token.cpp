@@ -29,7 +29,7 @@ namespace Lexing
         return mText;
     }
 
-    static inline constexpr std::string TypeToString(TokenType tokenType)
+    static inline std::string TypeToString(TokenType tokenType)
     {
         switch(tokenType)
         {
