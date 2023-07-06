@@ -29,7 +29,7 @@ namespace Lexing
         return mText;
     }
 
-    static inline std::string TypeToString(TokenType tokenType)
+    static inline const char* TypeToString(TokenType tokenType)
     {
         switch(tokenType)
         {
