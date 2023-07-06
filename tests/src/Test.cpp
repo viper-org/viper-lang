@@ -43,17 +43,25 @@ void diagnostics(OutputType outputType)
     if(outputType == OutputType::Markdown)
     {
         std::cout << "# Test Results";
-        std::cout << "\n" << tests.size() << " tests run.\n\t:heavy_check_mark:" << tests.size() - failedTests.size() << " succeeded\n\t:x:" << failedTests.size() << " failed.\n\n";
+        //std::cout << "\n" << tests.size() << " tests run.\n\t:heavy_check_mark:" << tests.size() - failedTests.size() << " succeeded\n\t:x:" << failedTests.size() << " failed.\n\n";
+        std::cout << "\n" << tests.size() << "tests run. :heavy_check_mark: " << tests.size() - failedTests.size() << " succeeded, :x: " << failedTests.size() << " failed.\n\n";
         for (failedTest& test : failedTests)
         {
-            std::cout << ":x:Test " << test.suite << "::" << test.name << "(" << test.file << ":" << test.line << ":" << test.col << ") failed with expansion:\n\t" << test.condition << "\n";
+            //std::cout << ":x:Test " << test.suite << "::" << test.name << "(" << test.file << ":" << test.line << ":" << test.col << ") failed with expansion:\n\t" << test.condition << "\n";
+            std::cout << "<details>\n\t<summary>:x:" << test.suite << "::" << test.name << "</summary>\n";
+            std::cout << "| | |\n|-|-|";
+            std::cout << "\n| **File:**      |" << test.file;
+            std::cout << "\n| **Location:**  |" << test.line << ":" << test.col;
+            std::cout << "\n| **Expansion:** |" << test.condition;
+            std::cout << "</details>\n";
         }
         if (failedTests.empty())
         {
-            std::cout << ":heavy_check_mark:All tests passed.\n";
+            std::cout << ":heavy_check_mark: All tests passed.\n";
         }
         else
         {
+            std::cout << ":heavy_check_mark: All other tests passed.\n";
             std::exit(1);
         }
     }
