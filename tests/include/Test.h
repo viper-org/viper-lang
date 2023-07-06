@@ -13,12 +13,18 @@ struct TestCase
     std::string suite;
 };
 
+enum class OutputType
+{
+    Text,
+    Markdown,
+};
+
 extern std::vector<TestCase> tests;
 
 void testFailed(std::source_location sourceLocation, const char* condition);
-void diagnostics();
+void diagnostics(OutputType outputType);
 
-void runTests();
+void runTests(OutputType outputType);
 
 #define TEST(name, suite) \
     void test$##name##$##suite(); \
