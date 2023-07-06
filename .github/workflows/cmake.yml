@@ -23,5 +23,5 @@ jobs:
 
     - name: Test
       working-directory: ${{github.workspace}}/build
-      run: ./viper_tests
+      run: ./viper_tests >> $GITHUB_STEP_SUMMARY
 
