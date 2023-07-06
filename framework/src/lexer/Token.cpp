@@ -1,6 +1,6 @@
 #include <lexer/Token.h>
 
-#include <format>
+#include <sstream>
 
 namespace Lexing
 {
@@ -50,7 +50,9 @@ namespace Lexing
 
     std::string Token::toString() const
     {
-        return std::format("{}({})", TypeToString(mTokenType), mText);
+        std::stringstream ret;
+        ret << TypeToString(mTokenType) << "(" << mText << ")";
+        return ret.str();
     }
 
     bool Token::operator==(Token other)

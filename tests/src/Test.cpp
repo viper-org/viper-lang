@@ -1,7 +1,5 @@
 #include <Test.h>
 
-#include <format>
-
 
 struct failedTest
 {
@@ -42,10 +40,10 @@ void testFailed(std::source_location sourceLocation, const char* condition)
 
 void diagnostics()
 {
-    std::cout << std::format("\n{} tests run. \x1b[;32m{} succeeded, \x1b[;31m{} failed.\x1b[;0m\n\n", tests.size(), tests.size() - failedTests.size(), failedTests.size());
+    std::cout << "\n" << tests.size() << " tests run. \x1b[;32m" << tests.size() - failedTests.size() << " succeeded, \x1b[;31m" << failedTests.size() << "failed.\x1b[;0m\n\n";
     for (failedTest& test : failedTests)
     {
-        std::cout << std::format("\x1b[;31mTest {}::{}({}:{}:{}) failed with expansion:\x1b[;0m\n\t{}\n", test.suite, test.name, test.file, test.line, test.col, test.condition);
+        std::cout << "\x1b[;31mTest " << test.suite << "::" << test.name << "(" << test.file << ":" << test.line << ":" << test.col << ") failed with expansion:\x1b[;0m\n\t" << test.condition << "\n";
     }
     if (failedTests.empty())
     {
@@ -61,7 +59,7 @@ void runTests()
 {
     for (TestCase& test : tests)
     {
-        std::cout << std::format("Running test {}::{}\n", test.suite, test.name);
+        std::cout << "Running test " << test.suite << "::" << test.name << "\n";
         test.method();
     }
     diagnostics();
