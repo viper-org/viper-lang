@@ -90,11 +90,6 @@ TEST(Brackets, LexerTests)
 
 TEST(Whitespaces, LexerTests)
 {
-    struct TestCase
-    {
-        std::string identifier;
-    };
-
     std::vector<std::string> testCases = {
         " ",
         "\n",
