@@ -3,6 +3,7 @@ CMakeFiles/
 
 *.cmake
 *.so
+*.a
 
 viper
 viper_tests

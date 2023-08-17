@@ -1,7 +1,7 @@
-#include <lexer/Lexer.h>
-#include <lexer/Token.h>
+#include "lexer/Lexer.h"
+#include "lexer/Token.h"
 
-namespace Lexing
+namespace lexing
 {
     Lexer::Lexer(const std::string& text)
         :mText(text), mPosition(0)

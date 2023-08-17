@@ -18,11 +18,11 @@ int main(int argc, char** argv)
     std::stringstream buffer;
     buffer << file.rdbuf();
 
-    Lexing::Lexer lexer(buffer.str());
+    lexing::Lexer lexer(buffer.str());
 
-    std::vector<Lexing::Token> tokens = lexer.lex();
+    std::vector<lexing::Token> tokens = lexer.lex();
 
-    for (const Lexing::Token& token : tokens)
+    for (const lexing::Token& token : tokens)
     {
         std::cout << token.toString() << "\n";
     }

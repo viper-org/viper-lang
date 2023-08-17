@@ -1,8 +1,8 @@
-#include <lexer/Token.h>
+#include "lexer/Token.h"
 
 #include <sstream>
 
-namespace Lexing
+namespace lexing
 {
     Token::Token(const TokenType tokenType, const std::string& text)
         :mTokenType(tokenType), mText(text)

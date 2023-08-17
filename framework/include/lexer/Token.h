@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace Lexing
+namespace lexing
 {
     enum class TokenType : int
     {
