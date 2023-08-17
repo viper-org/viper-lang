@@ -3,7 +3,9 @@
 
 #include "parser/ast/expression/BinaryExpression.h"
 
+#include <vipir/Module.h>
 #include <vipir/IR/Instruction/BinOpInst.h>
+#include <vipir/IR/Instruction/StoreInst.h>
 
 namespace parsing
 {
@@ -18,6 +20,10 @@ namespace parsing
                 break;
             case lexing::TokenType::Minus:
                 mOperator = Operator::Sub;
+                break;
+
+            case lexing::TokenType::Equals:
+                mOperator = Operator::Assign;
                 break;
             default:
                 break;
@@ -42,6 +48,11 @@ namespace parsing
                 return builder.CreateAdd(left, right);
             case Operator::Sub:
                 return builder.CreateSub(left, right);
+
+            case Operator::Assign:
+                vipir::Instruction* instruction = static_cast<vipir::Instruction*>(left);
+                instruction->eraseFromParent();
+                return builder.CreateStore(vipir::getPointerOperand(left), right);
         }
     }
 }

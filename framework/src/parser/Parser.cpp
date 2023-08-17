@@ -47,6 +47,9 @@ namespace parsing
             case lexing::TokenType::Plus:
             case lexing::TokenType::Minus:
                 return 35;
+
+            case lexing::TokenType::Equals:
+                return 10;
             default:
                 return 0;
         }
