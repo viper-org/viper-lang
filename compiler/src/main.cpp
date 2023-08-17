@@ -1,7 +1,9 @@
-#include <lexer/Lexer.h>
-#include <lexer/Token.h>
+#include "lexer/Lexer.h"
+#include "lexer/Token.h"
 
-#include <parser/Parser.h>
+#include "parser/Parser.h"
+
+#include <vipir/Module.h>
 
 #include <fstream>
 #include <iostream>
@@ -25,11 +27,18 @@ int main(int argc, char** argv)
     std::vector<lexing::Token> tokens = lexer.lex();
 
     parsing::Parser parser(tokens);
+    
+    vipir::Builder builder;
+    vipir::Module module(argv[1]);
 
-    for (auto& func : parser.parse())
+    for (auto& node : parser.parse())
     {
-        std::cout << static_cast<parsing::Function*>(func.get())->getName() << "\n";
+        node->emit(builder, module);
     }
+
+    using namespace std::literals;
+    std::ofstream outfile = std::ofstream(argv[1] + ".o"s);
+    module.emit(outfile);
 
     return 0;
 }

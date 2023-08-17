@@ -19,6 +19,8 @@ namespace parsing
         std::string_view getName() const;
         const std::vector<ASTNodePtr>& getBody() const;
 
+        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module) override;
+
     private:
         std::string mName;
         std::vector<ASTNodePtr> mBody;
