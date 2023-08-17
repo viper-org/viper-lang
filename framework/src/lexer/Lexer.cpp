@@ -103,6 +103,9 @@ namespace lexing
 
             case '=':
                 return Token(TokenType::Equals);
+
+            case '+':
+                return Token(TokenType::Plus);
         }
 
         return Token(TokenType::Error, std::string(1, current())); // Unknown character

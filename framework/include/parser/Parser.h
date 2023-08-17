@@ -32,6 +32,9 @@ namespace parsing
 
         void expectToken(lexing::TokenType tokenType);
 
+        int getBinaryOperatorPrecedence(lexing::TokenType tokenType);
+
+        ASTNodePtr parseExpression(int precedence = 1);
         ASTNodePtr parsePrimary();
 
         FunctionPtr parseFunction();

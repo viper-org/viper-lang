@@ -17,6 +17,8 @@ namespace lexing
         LeftBracket, RightBracket,
         Semicolon,
         Equals,
+        
+        Plus,
 
         Type,
         ReturnKeyword,

@@ -2,7 +2,8 @@
 
 
 #include "parser/Parser.h"
-#include "parser/ast/statement/VariableDeclaration.h"
+
+#include "parser/ast/expression/BinaryExpression.h"
 
 #include <iostream>
 
@@ -39,6 +40,17 @@ namespace parsing
         }
     }
 
+    int Parser::getBinaryOperatorPrecedence(lexing::TokenType tokenType)
+    {
+        switch (tokenType)
+        {
+            case lexing::TokenType::Plus:
+                return 35;
+            default:
+                return 0;
+        }
+    }
+
     std::vector<ASTNodePtr> Parser::parse()
     {
         std::vector<ASTNodePtr> result;
@@ -49,6 +61,26 @@ namespace parsing
         }
 
         return result;
+    }
+
+    ASTNodePtr Parser::parseExpression(int precedence)
+    {
+        ASTNodePtr lhs = parsePrimary();
+
+        while (true)
+        {
+            int binaryOperatorPrecedence = getBinaryOperatorPrecedence(current().getTokenType());
+            if (binaryOperatorPrecedence < precedence)
+            {
+                break;
+            }
+            
+            lexing::Token operatorToken = consume();
+            ASTNodePtr rhs = parsePrimary();
+            lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken.getTokenType(), std::move(rhs));
+        }
+
+        return lhs;
     }
 
     ASTNodePtr Parser::parsePrimary()
@@ -92,7 +124,7 @@ namespace parsing
         std::vector<ASTNodePtr> body;
         while (current().getTokenType() != lexing::TokenType::RightBracket)
         {
-            body.push_back(parsePrimary());
+            body.push_back(parseExpression());
             expectToken(lexing::TokenType::Semicolon);
             consume();
         }
@@ -110,7 +142,7 @@ namespace parsing
             return std::make_unique<ReturnStatement>(nullptr);
         }
 
-        return std::make_unique<ReturnStatement>(parsePrimary());
+        return std::make_unique<ReturnStatement>(parseExpression());
     }
 
     VariableDeclarationPtr Parser::parseVariableDeclaration()
@@ -128,7 +160,7 @@ namespace parsing
         expectToken(lexing::TokenType::Equals);
         consume();
 
-        return std::make_unique<VariableDeclaration>(std::move(name), parsePrimary());
+        return std::make_unique<VariableDeclaration>(std::move(name), parseExpression());
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral()
