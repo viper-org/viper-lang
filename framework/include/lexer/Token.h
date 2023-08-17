@@ -16,6 +16,7 @@ namespace lexing
         LeftParen, RightParen,
         LeftBracket, RightBracket,
         Semicolon,
+        Equals,
 
         ReturnKeyword,
     };

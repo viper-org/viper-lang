@@ -1,3 +1,4 @@
 int Main() {
+    int a = 23;
     return 69;
 }

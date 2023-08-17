@@ -51,7 +51,9 @@ namespace lexing
                 return "Semicolon";
             case TokenType::ReturnKeyword:
                 return "Return";
-            }
+            case TokenType::Equals:
+                return "Equals";
+        }
     }
 
     std::string Token::toString() const

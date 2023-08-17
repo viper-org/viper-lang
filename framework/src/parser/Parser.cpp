@@ -2,6 +2,7 @@
 
 
 #include "parser/Parser.h"
+#include "parser/ast/statement/VariableDeclaration.h"
 
 #include <iostream>
 
@@ -59,6 +60,9 @@ namespace parsing
 
             case lexing::TokenType::IntegerLiteral:
                 return parseIntegerLiteral();
+
+            case lexing::TokenType::Identifier: // TODO: case lexing::TokenType::Type:
+                return parseVariableDeclaration();
             default:
                 std::cerr << "Unexpected token. Expected primary expression.\n";
                 std::exit(1);
@@ -104,6 +108,24 @@ namespace parsing
         }
 
         return std::make_unique<ReturnStatement>(parsePrimary());
+    }
+
+    VariableDeclarationPtr Parser::parseVariableDeclaration()
+    {
+        consume(); // TODO: expectToken(lexing::TokenType::Type)
+
+        expectToken(lexing::TokenType::Identifier);
+        std::string name = consume().getText();
+
+        if (current().getTokenType() == lexing::TokenType::Semicolon)
+        {
+            return std::make_unique<VariableDeclaration>(std::move(name), nullptr);
+        }
+
+        expectToken(lexing::TokenType::Equals);
+        consume();
+
+        return std::make_unique<VariableDeclaration>(std::move(name), parsePrimary());
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral()

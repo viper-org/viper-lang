@@ -95,6 +95,9 @@ namespace lexing
 
             case ';':
                 return Token(TokenType::Semicolon);
+
+            case '=':
+                return Token(TokenType::Equals);
         }
 
         return Token(TokenType::Error, std::string(1, current())); // Unknown character
