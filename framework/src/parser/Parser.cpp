@@ -45,6 +45,7 @@ namespace parsing
         switch (tokenType)
         {
             case lexing::TokenType::Plus:
+            case lexing::TokenType::Minus:
                 return 35;
             default:
                 return 0;

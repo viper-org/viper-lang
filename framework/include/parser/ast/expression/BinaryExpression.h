@@ -16,6 +16,7 @@ namespace parsing
         enum class Operator
         {
             Add,
+            Sub,
         };
 
         BinaryExpression(ASTNodePtr left, lexing::TokenType op, ASTNodePtr right);

@@ -18,7 +18,7 @@ namespace lexing
         Semicolon,
         Equals,
         
-        Plus,
+        Plus, Minus,
 
         Type,
         ReturnKeyword,

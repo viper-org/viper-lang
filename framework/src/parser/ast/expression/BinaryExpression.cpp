@@ -16,6 +16,9 @@ namespace parsing
             case lexing::TokenType::Plus:
                 mOperator = Operator::Add;
                 break;
+            case lexing::TokenType::Minus:
+                mOperator = Operator::Sub;
+                break;
             default:
                 break;
         }
@@ -37,6 +40,8 @@ namespace parsing
         {
             case Operator::Add:
                 return builder.CreateAdd(left, right);
+            case Operator::Sub:
+                return builder.CreateSub(left, right);
         }
     }
 }

@@ -57,6 +57,8 @@ namespace lexing
                 return "Type";
             case TokenType::Plus:
                 return "Plus";
+            case TokenType::Minus:
+                return "Minus";
         }
     }
 
