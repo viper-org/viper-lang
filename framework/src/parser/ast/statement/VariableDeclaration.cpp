@@ -3,6 +3,8 @@
 
 #include "parser/ast/statement/VariableDeclaration.h"
 
+#include "environment/Environment.h"
+
 #include <vipir/IR/Instruction/AllocaInst.h>
 
 namespace parsing
@@ -22,6 +24,8 @@ namespace parsing
             vipir::Value* initValue = mValue->emit(builder, module);
             builder.CreateStore(alloca, initValue);
         }
+
+        variables[mName] = alloca;
 
         return alloca;
     }

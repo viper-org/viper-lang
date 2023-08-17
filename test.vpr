@@ -1,4 +1,5 @@
-int Main() {
+int main() {
     int a = 23;
-    return 69;
+    int b = a;
+    return b;
 }

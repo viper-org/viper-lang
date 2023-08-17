@@ -8,6 +8,7 @@
 #include "parser/ast/statement/ReturnStatement.h"
 #include "parser/ast/statement/VariableDeclaration.h"
 #include "parser/ast/expression/IntegerLiteral.h"
+#include "parser/ast/expression/Variable.h"
 #include "lexer/Token.h"
 
 #include <vector>
@@ -39,6 +40,7 @@ namespace parsing
         VariableDeclarationPtr parseVariableDeclaration();
 
         IntegerLiteralPtr parseIntegerLiteral();
+        VariablePtr parseVariable();
     };
 }
 

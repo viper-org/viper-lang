@@ -63,6 +63,9 @@ namespace parsing
 
             case lexing::TokenType::Type:
                 return parseVariableDeclaration();
+
+            case lexing::TokenType::Identifier:
+                return parseVariable();
             default:
                 std::cerr << "Unexpected token. Expected primary expression.\n";
                 std::exit(1);
@@ -131,5 +134,10 @@ namespace parsing
     IntegerLiteralPtr Parser::parseIntegerLiteral()
     {
         return std::make_unique<IntegerLiteral>(std::stoll(consume().getText()));
+    }
+    
+    VariablePtr Parser::parseVariable()
+    {
+        return std::make_unique<Variable>(consume().getText());
     }
 }
