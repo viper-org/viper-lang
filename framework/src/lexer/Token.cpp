@@ -45,7 +45,13 @@ namespace lexing
                 return "LeftBracket";
             case TokenType::RightBracket:
                 return "RightBracket";
-        }
+            case TokenType::IntegerLiteral:
+                return "IntegerLiteral";
+            case TokenType::Semicolon:
+                return "Semicolon";
+            case TokenType::ReturnKeyword:
+                return "Return";
+            }
     }
 
     std::string Token::toString() const

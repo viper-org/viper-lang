@@ -1,5 +1,6 @@
 #include "lexer/Lexer.h"
 #include "lexer/Token.h"
+#include <unordered_map>
 
 namespace lexing
 {
@@ -7,6 +8,10 @@ namespace lexing
         :mText(text), mPosition(0)
     {
     }
+
+    const std::unordered_map<std::string_view, TokenType> keywords = {
+        { "return", TokenType::ReturnKeyword }
+    };
 
     std::vector<Token> Lexer::lex()
     {
@@ -50,6 +55,11 @@ namespace lexing
                 text += current();
             }
 
+            if (keywords.find(text) != keywords.end())
+            {
+                return Token(keywords.at(text));
+            }
+
             return Token(TokenType::Identifier, std::move(text));
         }
         
@@ -69,6 +79,9 @@ namespace lexing
                 return Token(TokenType::LeftBracket);
             case '}':
                 return Token(TokenType::RightBracket);
+
+            case ';':
+                return Token(TokenType::Semicolon);
         }
 
         return Token(TokenType::Error, std::string(1, current())); // Unknown character

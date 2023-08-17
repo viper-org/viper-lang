@@ -5,6 +5,7 @@
 
 #include "parser/ast/Node.h"
 #include "parser/ast/global/Function.h"
+#include "parser/ast/statement/ReturnStatement.h"
 
 #include "lexer/Token.h"
 
@@ -29,7 +30,11 @@ namespace parsing
 
         void expectToken(lexing::TokenType tokenType);
 
+        ASTNodePtr parsePrimary();
+
         FunctionPtr parseFunction();
+
+        ReturnStatementPtr parseReturnStatement();
     };
 }
 

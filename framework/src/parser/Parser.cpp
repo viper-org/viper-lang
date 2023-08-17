@@ -2,6 +2,7 @@
 
 
 #include "parser/Parser.h"
+#include "parser/ast/statement/ReturnStatement.h"
 
 #include <iostream>
 
@@ -50,6 +51,18 @@ namespace parsing
         return result;
     }
 
+    ASTNodePtr Parser::parsePrimary()
+    {
+        switch (current().getTokenType())
+        {
+            case lexing::TokenType::ReturnKeyword:
+                return parseReturnStatement();
+            default:
+                std::cerr << "Unexpected token. Expected primary expression.\n";
+                std::exit(1);
+        }
+    }
+
     FunctionPtr Parser::parseFunction()
     {
         expectToken(lexing::TokenType::Identifier); // TODO: expectToken(lexing::TokenType::Type)
@@ -68,11 +81,21 @@ namespace parsing
         consume();
 
         std::vector<ASTNodePtr> body;
-        // TODO: Parse body
-        
-        expectToken(lexing::TokenType::RightBracket);
+        while (current().getTokenType() != lexing::TokenType::RightBracket)
+        {
+            body.push_back(parsePrimary());
+            expectToken(lexing::TokenType::Semicolon);
+            consume();
+        }
         consume();
 
         return std::make_unique<Function>(name, std::move(body));
+    }
+
+    ReturnStatementPtr Parser::parseReturnStatement()
+    {
+        consume();
+
+        return std::make_unique<ReturnStatement>();
     }
 }

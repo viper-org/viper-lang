@@ -11,8 +11,13 @@ namespace lexing
 
         Identifier,
 
+        IntegerLiteral,
+
         LeftParen, RightParen,
         LeftBracket, RightBracket,
+        Semicolon,
+
+        ReturnKeyword,
     };
 
     class Token

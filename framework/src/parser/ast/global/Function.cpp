@@ -28,8 +28,13 @@ namespace parsing
     {
         vipir::Function* function = vipir::Function::Create(module, mName);
 
-        vipir::BasicBlock* entryBB = vipir::BasicBlock::Create(mName, function);
+        vipir::BasicBlock* entryBB = vipir::BasicBlock::Create("", function);
         builder.setInsertPoint(entryBB);
+
+        for (auto& node : mBody)
+        {
+            node->emit(builder, module);
+        }
 
         return function;
     }
