@@ -61,7 +61,7 @@ namespace parsing
             case lexing::TokenType::IntegerLiteral:
                 return parseIntegerLiteral();
 
-            case lexing::TokenType::Identifier: // TODO: case lexing::TokenType::Type:
+            case lexing::TokenType::Type:
                 return parseVariableDeclaration();
             default:
                 std::cerr << "Unexpected token. Expected primary expression.\n";
@@ -71,7 +71,7 @@ namespace parsing
 
     FunctionPtr Parser::parseFunction()
     {
-        expectToken(lexing::TokenType::Identifier); // TODO: expectToken(lexing::TokenType::Type)
+        expectToken(lexing::TokenType::Type);
         consume();
 
         expectToken(lexing::TokenType::Identifier);

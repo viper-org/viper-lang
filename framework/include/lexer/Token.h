@@ -18,6 +18,7 @@ namespace lexing
         Semicolon,
         Equals,
 
+        Type,
         ReturnKeyword,
     };
 

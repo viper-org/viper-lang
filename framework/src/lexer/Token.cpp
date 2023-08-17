@@ -53,6 +53,8 @@ namespace lexing
                 return "Return";
             case TokenType::Equals:
                 return "Equals";
+            case TokenType::Type:
+                return "Type";
         }
     }
 

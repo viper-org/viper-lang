@@ -60,6 +60,11 @@ namespace lexing
                 return Token(keywords.at(text));
             }
 
+            if (text == "int") // TODO: Proper checking for type
+            {
+                return Token(TokenType::Type, std::move(text));
+            }
+
             return Token(TokenType::Identifier, std::move(text));
         }
 
