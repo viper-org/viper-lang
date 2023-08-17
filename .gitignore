@@ -1,5 +1,6 @@
 .cache/
 CMakeFiles/
+_deps/
 
 *.cmake
 *.so
