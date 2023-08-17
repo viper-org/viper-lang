@@ -23,7 +23,7 @@ namespace lexing
         Token(const TokenType tokenType);
 
         TokenType getTokenType() const;
-        std::string_view getText() const;
+        const std::string& getText() const;
 
         std::string toString() const;
 

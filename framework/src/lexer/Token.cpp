@@ -24,7 +24,7 @@ namespace lexing
         return mTokenType;
     }
 
-    std::string_view Token::getText() const
+    const std::string& Token::getText() const
     {
         return mText;
     }

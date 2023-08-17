@@ -16,7 +16,7 @@ namespace lexing
 
         std::vector<Token> lex();
     private:
-        const std::string& mText;
+        std::string mText;
 
         int mPosition{ 0 };
 

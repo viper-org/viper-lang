@@ -12,6 +12,7 @@ set(SOURCES
     "src/lexer/Token.cpp"
 
     "src/parser/Parser.cpp"
+    "src/parser/ast/global/Function.cpp"
 )
 
 set(HEADERS
@@ -19,6 +20,8 @@ set(HEADERS
     "include/lexer/Token.h"
 
     "include/parser/Parser.h"
+    "include/parser/ast/Node.h"
+    "include/parser/ast/global/Function.h"
 )
 
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})

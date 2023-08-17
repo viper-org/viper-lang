@@ -1,6 +1,8 @@
 #include <lexer/Lexer.h>
 #include <lexer/Token.h>
 
+#include <parser/Parser.h>
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -22,9 +24,11 @@ int main(int argc, char** argv)
 
     std::vector<lexing::Token> tokens = lexer.lex();
 
-    for (const lexing::Token& token : tokens)
+    parsing::Parser parser(tokens);
+
+    for (auto& func : parser.parse())
     {
-        std::cout << token.toString() << "\n";
+        std::cout << static_cast<parsing::Function*>(func.get())->getName() << "\n";
     }
 
     return 0;

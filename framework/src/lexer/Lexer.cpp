@@ -55,7 +55,6 @@ namespace lexing
         
         if (std::isspace(current())) // Newline, tab, space etc
         {
-            consume();
             return std::nullopt;
         }
 
@@ -72,6 +71,6 @@ namespace lexing
                 return Token(TokenType::RightBracket);
         }
 
-        return Token(TokenType::Error); // Unknown character
+        return Token(TokenType::Error, std::string(1, current())); // Unknown character
     }
 }

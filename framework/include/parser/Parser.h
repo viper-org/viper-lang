@@ -3,6 +3,9 @@
 #ifndef VIPER_FRAMEWORK_PARSER_PARSER_H
 #define VIPER_FRAMEWORK_PARSER_PARSER_H 1
 
+#include "parser/ast/Node.h"
+#include "parser/ast/global/Function.h"
+
 #include "lexer/Token.h"
 
 #include <vector>
@@ -14,13 +17,19 @@ namespace parsing
     public:
         Parser(std::vector<lexing::Token>& tokens);
 
-        lexing::Token current() const;
-        lexing::Token consume();
-        lexing::Token peek(int offset) const;
+        std::vector<ASTNodePtr> parse();
 
     private:
         std::vector<lexing::Token>& mTokens;
         int mPosition;
+
+        lexing::Token current() const;
+        lexing::Token consume();
+        lexing::Token peek(int offset) const;
+
+        void expectToken(lexing::TokenType tokenType);
+
+        FunctionPtr parseFunction();
     };
 }
 
