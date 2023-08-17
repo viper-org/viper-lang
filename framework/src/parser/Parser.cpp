@@ -2,7 +2,6 @@
 
 
 #include "parser/Parser.h"
-#include "parser/ast/statement/ReturnStatement.h"
 
 #include <iostream>
 
@@ -57,6 +56,9 @@ namespace parsing
         {
             case lexing::TokenType::ReturnKeyword:
                 return parseReturnStatement();
+
+            case lexing::TokenType::IntegerLiteral:
+                return parseIntegerLiteral();
             default:
                 std::cerr << "Unexpected token. Expected primary expression.\n";
                 std::exit(1);
@@ -96,6 +98,16 @@ namespace parsing
     {
         consume();
 
-        return std::make_unique<ReturnStatement>();
+        if (current().getTokenType() == lexing::TokenType::Semicolon)
+        {
+            return std::make_unique<ReturnStatement>(nullptr);
+        }
+
+        return std::make_unique<ReturnStatement>(parsePrimary());
+    }
+
+    IntegerLiteralPtr Parser::parseIntegerLiteral()
+    {
+        return std::make_unique<IntegerLiteral>(std::stoll(consume().getText()));
     }
 }

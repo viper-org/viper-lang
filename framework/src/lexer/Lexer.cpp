@@ -62,6 +62,19 @@ namespace lexing
 
             return Token(TokenType::Identifier, std::move(text));
         }
+
+        if (std::isdigit(current()))
+        {
+            std::string text = std::string(1, current());
+
+            while (std::isdigit(peek(1)))
+            {
+                consume();
+                text += current();
+            }
+
+            return Token(TokenType::IntegerLiteral, std::move(text));
+        }
         
         if (std::isspace(current())) // Newline, tab, space etc
         {

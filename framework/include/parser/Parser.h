@@ -6,7 +6,7 @@
 #include "parser/ast/Node.h"
 #include "parser/ast/global/Function.h"
 #include "parser/ast/statement/ReturnStatement.h"
-
+#include "parser/ast/expression/IntegerLiteral.h"
 #include "lexer/Token.h"
 
 #include <vector>
@@ -35,6 +35,8 @@ namespace parsing
         FunctionPtr parseFunction();
 
         ReturnStatementPtr parseReturnStatement();
+
+        IntegerLiteralPtr parseIntegerLiteral();
     };
 }
 
