@@ -9,15 +9,16 @@
 
 namespace parsing
 {
-    VariableDeclaration::VariableDeclaration(std::string&& name, ASTNodePtr value)
+    VariableDeclaration::VariableDeclaration(Type* type, std::string&& name, ASTNodePtr value)
         : mName(name)
         , mValue(std::move(value))
     {
+        mType = type;
     }
 
     vipir::Value* VariableDeclaration::emit(vipir::Builder& builder, vipir::Module& module)
     {
-        vipir::AllocaInst* alloca = builder.CreateAlloca(vipir::Type::GetIntegerType(32));
+        vipir::AllocaInst* alloca = builder.CreateAlloca(mType->getVipirType());
 
         if (mValue)
         {

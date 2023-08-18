@@ -8,10 +8,16 @@
 
 namespace parsing
 {
-    Function::Function(const std::string& name, std::vector<ASTNodePtr> body)
-        : mName(name)
+    Function::Function(Type* type, const std::string& name, std::vector<ASTNodePtr> body)
+        : mReturnType(type)
+        , mName(name)
         , mBody(std::move(body))
     {
+    }
+
+    Type* Function::getReturnType() const
+    {
+        return mReturnType;
     }
 
     std::string_view Function::getName() const

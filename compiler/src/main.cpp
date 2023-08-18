@@ -3,6 +3,8 @@
 
 #include "parser/Parser.h"
 
+#include "type/Type.h"
+
 #include <vipir/Module.h>
 
 #include <fstream>
@@ -21,6 +23,8 @@ int main(int argc, char** argv)
 
     std::stringstream buffer;
     buffer << file.rdbuf();
+
+    Type::Init();
 
     lexing::Lexer lexer(buffer.str());
 

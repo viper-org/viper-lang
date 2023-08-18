@@ -14,14 +14,16 @@ namespace parsing
     class Function : public ASTNode
     {
     public:
-        Function(const std::string& name, std::vector<ASTNodePtr> body);
+        Function(Type* type, const std::string& name, std::vector<ASTNodePtr> body);
 
+        Type* getReturnType() const;
         std::string_view getName() const;
         const std::vector<ASTNodePtr>& getBody() const;
 
         vipir::Value* emit(vipir::Builder& builder, vipir::Module& module) override;
 
     private:
+        Type* mReturnType;
         std::string mName;
         std::vector<ASTNodePtr> mBody;
     };

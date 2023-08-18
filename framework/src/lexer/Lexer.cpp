@@ -1,5 +1,8 @@
 #include "lexer/Lexer.h"
 #include "lexer/Token.h"
+
+#include "type/Type.h"
+
 #include <unordered_map>
 
 namespace lexing
@@ -60,7 +63,7 @@ namespace lexing
                 return Token(keywords.at(text));
             }
 
-            if (text == "int") // TODO: Proper checking for type
+            if (Type::Exists(text))
             {
                 return Token(TokenType::Type, std::move(text));
             }

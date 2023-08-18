@@ -11,7 +11,7 @@ namespace parsing
     class VariableDeclaration : public ASTNode
     {
     public:
-        VariableDeclaration(std::string&& name, ASTNodePtr value);
+        VariableDeclaration(Type* type, std::string&& name, ASTNodePtr value);
 
         vipir::Value* emit(vipir::Builder& builder, vipir::Module& module) override;
 

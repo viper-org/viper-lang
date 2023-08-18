@@ -36,6 +36,7 @@ namespace parsing
 
         ASTNodePtr parseExpression(int precedence = 1);
         ASTNodePtr parsePrimary();
+        Type* parseType();
 
         FunctionPtr parseFunction();
 

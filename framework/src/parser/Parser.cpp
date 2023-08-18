@@ -108,10 +108,15 @@ namespace parsing
         }
     }
 
-    FunctionPtr Parser::parseFunction()
+    Type* Parser::parseType()
     {
         expectToken(lexing::TokenType::Type);
-        consume();
+        return Type::Get(consume().getText());
+    }
+
+    FunctionPtr Parser::parseFunction()
+    {
+        Type* type = parseType();
 
         expectToken(lexing::TokenType::Identifier);
         std::string name = consume().getText();
@@ -134,7 +139,7 @@ namespace parsing
         }
         consume();
 
-        return std::make_unique<Function>(name, std::move(body));
+        return std::make_unique<Function>(type, name, std::move(body));
     }
 
     ReturnStatementPtr Parser::parseReturnStatement()
@@ -151,20 +156,20 @@ namespace parsing
 
     VariableDeclarationPtr Parser::parseVariableDeclaration()
     {
-        consume(); // TODO: expectToken(lexing::TokenType::Type)
+        Type* type = parseType();
 
         expectToken(lexing::TokenType::Identifier);
         std::string name = consume().getText();
 
         if (current().getTokenType() == lexing::TokenType::Semicolon)
         {
-            return std::make_unique<VariableDeclaration>(std::move(name), nullptr);
+            return std::make_unique<VariableDeclaration>(type, std::move(name), nullptr);
         }
 
         expectToken(lexing::TokenType::Equals);
         consume();
 
-        return std::make_unique<VariableDeclaration>(std::move(name), parseExpression());
+        return std::make_unique<VariableDeclaration>(type, std::move(name), parseExpression());
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral()

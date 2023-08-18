@@ -1,6 +1,6 @@
 int main() {
     int a = 23;
-    int b = 56;
-    a = b + 44;
-    return a;
+    char b = 255;
+
+    return b;
 }

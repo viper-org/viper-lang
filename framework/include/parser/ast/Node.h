@@ -4,6 +4,8 @@
 #ifndef VIPER_FRAMEWORK_PARSER_AST_NODE_H
 #define VIPER_FRAMEWORK_PARSER_AST_NODE_H 1
 
+#include "type/Type.h"
+
 #include <vipir/IR/Builder.h>
 #include <vipir/IR/Value.h>
 
@@ -17,6 +19,12 @@ namespace parsing
         virtual ~ASTNode() { }
 
         virtual vipir::Value* emit(vipir::Builder& builder, vipir::Module& module) = 0;
+
+        void setType(Type* newType) { mType = newType; }
+        Type* getType() const { return mType; }
+
+    protected:
+        Type* mType;
     };
     using ASTNodePtr = std::unique_ptr<ASTNode>;
 }
