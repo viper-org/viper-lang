@@ -80,7 +80,7 @@ namespace parsing
             }
             
             lexing::Token operatorToken = consume();
-            ASTNodePtr rhs = parsePrimary();
+            ASTNodePtr rhs = parseExpression(binaryOperatorPrecedence);
             lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken.getTokenType(), std::move(rhs));
         }
 
