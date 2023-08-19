@@ -4,7 +4,7 @@ int test() {
 
 int main() {
     int a = 23;
-    int b = 56;
+    int b = test();
     a = b + 44;
-    return test();
+    return a;
 }

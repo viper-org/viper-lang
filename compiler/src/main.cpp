@@ -40,6 +40,8 @@ int main(int argc, char** argv)
         node->emit(builder, module);
     }
 
+    module.print(std::cout);
+
     module.optimize(vipir::OptimizationLevel::High);
 
     using namespace std::literals;
