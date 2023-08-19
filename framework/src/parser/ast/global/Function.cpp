@@ -3,6 +3,8 @@
 
 #include "parser/ast/global/Function.h"
 
+#include "environment/Environment.h"
+
 #include <vipir/IR/Function.h>
 #include <vipir/IR/BasicBlock.h>
 
@@ -33,6 +35,7 @@ namespace parsing
     vipir::Value* Function::emit(vipir::Builder& builder, vipir::Module& module)
     {
         vipir::Function* function = vipir::Function::Create(module, mName);
+        functions[mName] = function;
 
         vipir::BasicBlock* entryBB = vipir::BasicBlock::Create("", function);
         builder.setInsertPoint(entryBB);

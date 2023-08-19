@@ -40,6 +40,8 @@ int main(int argc, char** argv)
         node->emit(builder, module);
     }
 
+    module.optimize(vipir::OptimizationLevel::High);
+
     using namespace std::literals;
     std::ofstream outfile = std::ofstream(argv[1] + ".o"s);
     module.emit(outfile);

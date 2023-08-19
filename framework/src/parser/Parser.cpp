@@ -3,7 +3,9 @@
 
 #include "parser/Parser.h"
 
+#include "lexer/Token.h"
 #include "parser/ast/expression/BinaryExpression.h"
+#include "parser/ast/expression/CallExpression.h"
 
 #include <iostream>
 
@@ -44,6 +46,9 @@ namespace parsing
     {
         switch (tokenType)
         {
+            case lexing::TokenType::LeftParen:
+                return 55;
+
             case lexing::TokenType::Plus:
             case lexing::TokenType::Minus:
                 return 35;
@@ -80,8 +85,18 @@ namespace parsing
             }
             
             lexing::Token operatorToken = consume();
-            ASTNodePtr rhs = parseExpression(binaryOperatorPrecedence);
-            lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken.getTokenType(), std::move(rhs));
+            if (operatorToken == lexing::TokenType::LeftParen)
+            {
+                expectToken(lexing::TokenType::RightParen);
+                consume();
+
+                lhs = std::make_unique<CallExpression>(std::move(lhs));
+            }
+            else
+            {
+                ASTNodePtr rhs = parseExpression(binaryOperatorPrecedence);
+                lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorToken.getTokenType(), std::move(rhs));
+            }
         }
 
         return lhs;

@@ -1,6 +1,10 @@
+int test() {
+    return 42;
+}
+
 int main() {
     int a = 23;
-    char b = 255;
-
-    return b;
+    int b = 56;
+    a = b + 44;
+    return test();
 }
