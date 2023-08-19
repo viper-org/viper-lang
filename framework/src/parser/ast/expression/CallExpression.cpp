@@ -16,6 +16,6 @@ namespace parsing
     {
         vipir::Value* callee = mCallee->emit(builder, module);
 
-        return builder.CreateCall(callee);
+        return builder.CreateCall(callee, {});
     }
 }

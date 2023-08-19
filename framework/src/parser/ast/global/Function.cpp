@@ -34,7 +34,7 @@ namespace parsing
 
     vipir::Value* Function::emit(vipir::Builder& builder, vipir::Module& module)
     {
-        vipir::FunctionType* functionType = vipir::FunctionType::Get(mReturnType->getVipirType());
+        vipir::FunctionType* functionType = vipir::FunctionType::Get(mReturnType->getVipirType(), {});
         vipir::Function* function = vipir::Function::Create(functionType, module, mName);
         functions[mName] = function;
 
