@@ -59,6 +59,8 @@ namespace lexing
                 return "Plus";
             case TokenType::Minus:
                 return "Minus";
+            case TokenType::ExternKeyword:
+                return "Extern";
         }
     }
 

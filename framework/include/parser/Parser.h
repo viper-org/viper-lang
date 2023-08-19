@@ -5,6 +5,7 @@
 
 #include "parser/ast/Node.h"
 #include "parser/ast/global/Function.h"
+#include "parser/ast/global/ExternFunction.h"
 #include "parser/ast/statement/ReturnStatement.h"
 #include "parser/ast/statement/VariableDeclaration.h"
 #include "parser/ast/expression/IntegerLiteral.h"
@@ -34,11 +35,13 @@ namespace parsing
 
         int getBinaryOperatorPrecedence(lexing::TokenType tokenType);
 
+        ASTNodePtr parseGlobal();
         ASTNodePtr parseExpression(int precedence = 1);
         ASTNodePtr parsePrimary();
         Type* parseType();
 
         FunctionPtr parseFunction();
+        ExternFunctionPtr parseExternFunction();
 
         ReturnStatementPtr parseReturnStatement();
         VariableDeclarationPtr parseVariableDeclaration();

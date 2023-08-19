@@ -13,7 +13,8 @@ namespace lexing
     }
 
     const std::unordered_map<std::string_view, TokenType> keywords = {
-        { "return", TokenType::ReturnKeyword }
+        { "return", TokenType::ReturnKeyword },
+        { "extern", TokenType::ExternKeyword }
     };
 
     std::vector<Token> Lexer::lex()

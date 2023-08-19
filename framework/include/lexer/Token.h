@@ -22,6 +22,7 @@ namespace lexing
 
         Type,
         ReturnKeyword,
+        ExternKeyword,
     };
 
     class Token

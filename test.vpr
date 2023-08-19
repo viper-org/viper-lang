@@ -1,8 +1,11 @@
+extern int hello();
+
 int test() {
     return 42;
 }
 
 int main() {
+    hello();
     int a = 23;
     int b = test();
     a = b + 44;

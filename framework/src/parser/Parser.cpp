@@ -3,7 +3,6 @@
 
 #include "parser/Parser.h"
 
-#include "lexer/Token.h"
 #include "parser/ast/expression/BinaryExpression.h"
 #include "parser/ast/expression/CallExpression.h"
 
@@ -66,10 +65,24 @@ namespace parsing
 
         while (mPosition < mTokens.size())
         {
-            result.push_back(parseFunction());
+            result.push_back(parseGlobal());
         }
 
         return result;
+    }
+
+    ASTNodePtr Parser::parseGlobal()
+    {
+        switch (current().getTokenType())
+        {
+            case lexing::TokenType::Type:
+                return parseFunction();
+            case lexing::TokenType::ExternKeyword:
+                return parseExternFunction();
+            default:
+                std::cerr << "Unexpected token: " << current().toString() << ". Expected global statement.\n";
+                std::exit(1);
+        }
     }
 
     ASTNodePtr Parser::parseExpression(int precedence)
@@ -155,6 +168,27 @@ namespace parsing
         consume();
 
         return std::make_unique<Function>(type, name, std::move(body));
+    }
+
+    ExternFunctionPtr Parser::parseExternFunction()
+    {
+        consume(); // ExternKeyword
+        
+        Type* type = parseType();
+
+        expectToken(lexing::TokenType::Identifier);
+        std::string name = consume().getText();
+
+        expectToken(lexing::TokenType::LeftParen);
+        consume();
+        // TODO: Parse arguments
+        expectToken(lexing::TokenType::RightParen);
+        consume();
+
+        expectToken(lexing::TokenType::Semicolon);
+        consume();
+
+        return std::make_unique<ExternFunction>(type, name);
     }
 
     ReturnStatementPtr Parser::parseReturnStatement()
