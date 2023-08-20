@@ -7,8 +7,9 @@
 
 namespace parsing
 {
-    CallExpression::CallExpression(ASTNodePtr callee)
+    CallExpression::CallExpression(ASTNodePtr callee, std::vector<ASTNodePtr> parameters)
         : mCallee(std::move(callee))
+        , mParameters(std::move(parameters))
     {
     }
 
@@ -16,6 +17,12 @@ namespace parsing
     {
         vipir::Value* callee = mCallee->emit(builder, module);
 
-        return builder.CreateCall(callee, {});
+        std::vector<vipir::Value*> parameters;
+        for (auto& parameter : mParameters)
+        {
+            parameters.push_back(parameter->emit(builder, module));
+        }
+
+        return builder.CreateCall(callee, parameters);
     }
 }

@@ -9,9 +9,10 @@
 
 namespace parsing
 {
-    ExternFunction::ExternFunction(Type* type, const std::string& name)
+    ExternFunction::ExternFunction(Type* type, const std::string& name, std::vector<FunctionArgument> arguments)
         : mReturnType(type)
         , mName(name)
+        , mArguments(std::move(arguments))
     {
     }
 
@@ -25,9 +26,19 @@ namespace parsing
         return mName;
     }
 
+    const std::vector<FunctionArgument>& ExternFunction::getArguments() const
+    {
+        return mArguments;
+    }
+
     vipir::Value* ExternFunction::emit(vipir::Builder& builder, vipir::Module& module)
     {
-        vipir::FunctionType* functionType = vipir::FunctionType::Get(mReturnType->getVipirType(), {});
+        std::vector<vipir::Type*> argumentTypes;
+        for (auto argument : mArguments)
+        {
+            argumentTypes.push_back(argument.getType()->getVipirType());
+        }
+        vipir::FunctionType* functionType = vipir::FunctionType::Get(mReturnType->getVipirType(), argumentTypes);
         vipir::Function* function = vipir::Function::Create(functionType, module, mName);
 
         functions[mName] = function;

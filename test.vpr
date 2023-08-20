@@ -1,6 +1,8 @@
 extern int hello();
+extern int printInt(int num);
 
 int main(int argc) {
     hello();
+    printInt(12);
     return argc;
 }

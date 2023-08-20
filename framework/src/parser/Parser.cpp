@@ -5,7 +5,6 @@
 
 #include "lexer/Token.h"
 #include "parser/ast/expression/BinaryExpression.h"
-#include "parser/ast/expression/CallExpression.h"
 
 #include <iostream>
 
@@ -101,10 +100,7 @@ namespace parsing
             lexing::Token operatorToken = consume();
             if (operatorToken == lexing::TokenType::LeftParen)
             {
-                expectToken(lexing::TokenType::RightParen);
-                consume();
-
-                lhs = std::make_unique<CallExpression>(std::move(lhs));
+                lhs = parseCallExpression(std::move(lhs));
             }
             else
             {
@@ -190,16 +186,26 @@ namespace parsing
         expectToken(lexing::TokenType::Identifier);
         std::string name = consume().getText();
 
+        std::vector<FunctionArgument> arguments;
         expectToken(lexing::TokenType::LeftParen);
         consume();
-        // TODO: Parse arguments
-        expectToken(lexing::TokenType::RightParen);
+        while (current().getTokenType() != lexing::TokenType::RightParen)
+        {
+            Type* type = parseType();
+            const std::string& name = consume().getText();
+            arguments.emplace_back(name, type);
+            if (current().getTokenType() != lexing::TokenType::RightParen)
+            {
+                expectToken(lexing::TokenType::Comma);
+                consume();
+            }
+        }
         consume();
 
         expectToken(lexing::TokenType::Semicolon);
         consume();
 
-        return std::make_unique<ExternFunction>(type, name);
+        return std::make_unique<ExternFunction>(type, name, std::move(arguments));
     }
 
     ReturnStatementPtr Parser::parseReturnStatement()
@@ -240,5 +246,23 @@ namespace parsing
     VariablePtr Parser::parseVariable()
     {
         return std::make_unique<Variable>(consume().getText());
+    }
+
+    CallExpressionPtr Parser::parseCallExpression(ASTNodePtr callee)
+    {
+        std::vector<ASTNodePtr> parameters;
+        while (current().getTokenType() != lexing::TokenType::RightParen)
+        {
+            parameters.push_back(parseExpression());
+
+            if (current().getTokenType() != lexing::TokenType::RightParen)
+            {
+                expectToken(lexing::TokenType::Comma);
+                consume();
+            }
+        }
+        consume();
+
+        return std::make_unique<CallExpression>(std::move(callee), std::move(parameters));
     }
 }

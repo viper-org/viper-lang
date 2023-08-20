@@ -11,12 +11,13 @@ namespace parsing
     class CallExpression : public ASTNode
     {
     public:
-        CallExpression(ASTNodePtr callee);
+        CallExpression(ASTNodePtr callee, std::vector<ASTNodePtr> parameters);
 
         vipir::Value* emit(vipir::Builder& builder, vipir::Module& module) override;
 
     private:
         ASTNodePtr mCallee;
+        std::vector<ASTNodePtr> mParameters;
     };
 
     using CallExpressionPtr = std::unique_ptr<CallExpression>;

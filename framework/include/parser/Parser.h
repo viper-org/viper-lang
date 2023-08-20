@@ -10,6 +10,7 @@
 #include "parser/ast/statement/VariableDeclaration.h"
 #include "parser/ast/expression/IntegerLiteral.h"
 #include "parser/ast/expression/Variable.h"
+#include "parser/ast/expression/CallExpression.h"
 #include "lexer/Token.h"
 
 #include <vector>
@@ -48,6 +49,7 @@ namespace parsing
 
         IntegerLiteralPtr parseIntegerLiteral();
         VariablePtr parseVariable();
+        CallExpressionPtr parseCallExpression(ASTNodePtr callee);
     };
 }
 
