@@ -3,6 +3,7 @@
 
 #include "parser/Parser.h"
 
+#include "lexer/Token.h"
 #include "parser/ast/expression/BinaryExpression.h"
 #include "parser/ast/expression/CallExpression.h"
 
@@ -149,10 +150,20 @@ namespace parsing
         expectToken(lexing::TokenType::Identifier);
         std::string name = consume().getText();
 
+        std::vector<FunctionArgument> arguments;
         expectToken(lexing::TokenType::LeftParen);
         consume();
-        // TODO: Parse arguments
-        expectToken(lexing::TokenType::RightParen);
+        while (current().getTokenType() != lexing::TokenType::RightParen)
+        {
+            Type* type = parseType();
+            const std::string& name = consume().getText();
+            arguments.emplace_back(name, type);
+            if (current().getTokenType() != lexing::TokenType::RightParen)
+            {
+                expectToken(lexing::TokenType::Comma);
+                consume();
+            }
+        }
         consume();
 
         expectToken(lexing::TokenType::LeftBracket);
@@ -167,7 +178,7 @@ namespace parsing
         }
         consume();
 
-        return std::make_unique<Function>(type, name, std::move(body));
+        return std::make_unique<Function>(type, name, std::move(arguments), std::move(body));
     }
 
     ExternFunctionPtr Parser::parseExternFunction()

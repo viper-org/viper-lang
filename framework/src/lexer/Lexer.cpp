@@ -104,6 +104,8 @@ namespace lexing
 
             case ';':
                 return Token(TokenType::Semicolon);
+            case ',':
+                return Token(TokenType::Comma);
 
             case '=':
                 return Token(TokenType::Equals);

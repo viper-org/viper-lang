@@ -49,6 +49,8 @@ namespace lexing
                 return "IntegerLiteral";
             case TokenType::Semicolon:
                 return "Semicolon";
+            case TokenType::Comma:
+                return "Comma";
             case TokenType::ReturnKeyword:
                 return "Return";
             case TokenType::Equals:

@@ -10,9 +10,10 @@
 
 namespace parsing
 {
-    Function::Function(Type* type, const std::string& name, std::vector<ASTNodePtr> body)
+    Function::Function(Type* type, const std::string& name, std::vector<FunctionArgument> arguments, std::vector<ASTNodePtr> body)
         : mReturnType(type)
         , mName(name)
+        , mArguments(std::move(arguments))
         , mBody(std::move(body))
     {
     }
@@ -27,6 +28,11 @@ namespace parsing
         return mName;
     }
 
+    const std::vector<FunctionArgument>& Function::getArguments() const
+    {
+        return mArguments;
+    }
+
     const std::vector<ASTNodePtr>& Function::getBody() const
     {
         return mBody;
@@ -34,12 +40,25 @@ namespace parsing
 
     vipir::Value* Function::emit(vipir::Builder& builder, vipir::Module& module)
     {
-        vipir::FunctionType* functionType = vipir::FunctionType::Get(mReturnType->getVipirType(), {});
+        std::vector<vipir::Type*> argumentTypes;
+        for (auto argument : mArguments)
+        {
+            argumentTypes.push_back(argument.getType()->getVipirType());
+        }
+        vipir::FunctionType* functionType = vipir::FunctionType::Get(mReturnType->getVipirType(), argumentTypes);
         vipir::Function* function = vipir::Function::Create(functionType, module, mName);
         functions[mName] = function;
 
         vipir::BasicBlock* entryBB = vipir::BasicBlock::Create("", function);
         builder.setInsertPoint(entryBB);
+
+        int index = 0;
+        for (auto argument : mArguments)
+        {
+            vipir::AllocaInst* alloca = builder.CreateAlloca(argument.getType()->getVipirType());
+            variables[argument.getName()] = alloca;
+            builder.CreateStore(alloca, function->getArgument(index++));
+        }
 
         for (auto& node : mBody)
         {

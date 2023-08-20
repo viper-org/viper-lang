@@ -13,6 +13,7 @@ set(SOURCES
 
     "src/parser/Parser.cpp"
     "src/parser/ast/global/Function.cpp"
+    "src/parser/ast/global/FunctionArgument.cpp"
     "src/parser/ast/global/ExternFunction.cpp"
     "src/parser/ast/statement/ReturnStatement.cpp"
     "src/parser/ast/statement/VariableDeclaration.cpp"
@@ -34,6 +35,7 @@ set(HEADERS
     "include/parser/Parser.h"
     "include/parser/ast/Node.h"
     "include/parser/ast/global/Function.h"
+    "include/parser/ast/global/FunctionArgument.h"
     "include/parser/ast/global/ExternFunction.h"
     "include/parser/ast/statement/ReturnStatement.h"
     "include/parser/ast/statement/VariableDeclaration.h"
