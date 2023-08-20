@@ -3,6 +3,7 @@
 
 #include "type/Type.h"
 #include "type/IntegerType.h"
+#include "type/VoidType.h"
 
 #include <memory>
 #include <string>
@@ -16,6 +17,8 @@ void Type::Init()
     types["short"] = std::make_unique<IntegerType>(16);
     types["int"]   = std::make_unique<IntegerType>(32);
     types["long"]  = std::make_unique<IntegerType>(64);
+
+    types["void"]  = std::make_unique<VoidType>();
 }
 
 bool Type::Exists(const std::string& name)

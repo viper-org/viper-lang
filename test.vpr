@@ -1,5 +1,5 @@
-extern int hello();
-extern int printInt(int num);
+extern void hello();
+extern void printInt(int num);
 
 int main(int argc) {
     hello();

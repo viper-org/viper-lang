@@ -24,6 +24,7 @@ set(SOURCES
 
     "src/type/Type.cpp"
     "src/type/IntegerType.cpp"
+    "src/type/VoidType.cpp"
 
     "src/environment/Environment.cpp"
 )
@@ -46,6 +47,7 @@ set(HEADERS
 
     "include/type/Type.h"
     "include/type/IntegerType.h"
+    "include/type/VoidType.h"
 
     "include/environment/Environment.h"
 )
