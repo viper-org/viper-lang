@@ -69,6 +69,8 @@ namespace lexing
                 return "Else";
             case TokenType::DoubleEquals:
                 return "DoubleEquals";
+            case TokenType::AsKeyword:
+                return "As";
         }
     }
 

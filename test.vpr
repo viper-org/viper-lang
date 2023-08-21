@@ -2,17 +2,11 @@ extern void hello();
 extern void printInt(int num);
 
 int main(int argc) {
-    int a = 4;
-    if (a == 4) {
-        printInt(4);
-    }
-    else if (a == 3) {
-        printInt(3);
-    }
-    else {
-        printInt(0);
+    char c = 5 as char;
+    if (c == 4 as char) {
+        hello();
     }
 
-    printInt(a + argc);
+    printInt(argc);
     return argc;
 }

@@ -4,6 +4,7 @@
 #include "parser/Parser.h"
 
 #include "parser/ast/expression/BinaryExpression.h"
+#include "parser/ast/expression/AsExpression.h"
 
 #include "lexer/Token.h"
 
@@ -47,8 +48,12 @@ namespace parsing
     {
         switch (tokenType)
         {
+            
             case lexing::TokenType::LeftParen:
                 return 55;
+
+            case lexing::TokenType::AsKeyword:
+                return 50;
 
             case lexing::TokenType::Plus:
             case lexing::TokenType::Minus:
@@ -106,6 +111,11 @@ namespace parsing
             if (operatorToken == lexing::TokenType::LeftParen)
             {
                 lhs = parseCallExpression(std::move(lhs));
+            }
+            else if (operatorToken == lexing::TokenType::AsKeyword)
+            {
+                Type* destination = parseType();
+                lhs = std::make_unique<AsExpression>(std::move(lhs), destination);
             }
             else
             {

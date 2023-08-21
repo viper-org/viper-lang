@@ -12,6 +12,11 @@ namespace parsing
     {
     }
 
+    long long IntegerLiteral::getValue() const
+    {
+        return mValue;
+    }
+
     vipir::Value* IntegerLiteral::emit(vipir::Builder& builder, vipir::Module& module, Environment* scope)
     {
         return builder.CreateConstantInt(mValue, vipir::Type::GetIntegerType(32));
