@@ -15,20 +15,21 @@ namespace parsing
     class Function : public ASTNode
     {
     public:
-        Function(Type* type, const std::string& name, std::vector<FunctionArgument> arguments, std::vector<ASTNodePtr> body);
+        Function(Type* type, const std::string& name, std::vector<FunctionArgument> arguments, std::vector<ASTNodePtr> body, Environment* scope);
 
         Type* getReturnType() const;
         std::string_view getName() const;
         const std::vector<FunctionArgument>& getArguments() const;
         const std::vector<ASTNodePtr>& getBody() const;
 
-        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module) override;
+        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module, Environment* scope) override;
 
     private:
         Type* mReturnType;
         std::string mName;
         std::vector<FunctionArgument> mArguments;
         std::vector<ASTNodePtr> mBody;
+        EnvironmentPtr mScope;
     };
     using FunctionPtr = std::unique_ptr<Function>;
 }

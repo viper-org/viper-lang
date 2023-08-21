@@ -37,10 +37,10 @@ namespace parsing
     {
     }
 
-    vipir::Value* BinaryExpression::emit(vipir::Builder& builder, vipir::Module& module)
+    vipir::Value* BinaryExpression::emit(vipir::Builder& builder, vipir::Module& module, Environment* scope)
     {
-        vipir::Value* left  = mLeft->emit(builder, module);
-        vipir::Value* right = mRight->emit(builder, module);
+        vipir::Value* left  = mLeft->emit(builder, module, scope);
+        vipir::Value* right = mRight->emit(builder, module, scope);
 
         switch (mOperator)
         {

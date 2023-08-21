@@ -6,6 +6,8 @@
 
 #include "type/Type.h"
 
+#include "environment/Environment.h"
+
 #include <vipir/IR/Builder.h>
 #include <vipir/IR/Value.h>
 
@@ -18,7 +20,7 @@ namespace parsing
     public:
         virtual ~ASTNode() { }
 
-        virtual vipir::Value* emit(vipir::Builder& builder, vipir::Module& module) = 0;
+        virtual vipir::Value* emit(vipir::Builder& builder, vipir::Module& module, Environment* scope) = 0;
 
         void setType(Type* newType) { mType = newType; }
         Type* getType() const { return mType; }

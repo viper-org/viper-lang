@@ -31,7 +31,7 @@ namespace parsing
         return mArguments;
     }
 
-    vipir::Value* ExternFunction::emit(vipir::Builder& builder, vipir::Module& module)
+    vipir::Value* ExternFunction::emit(vipir::Builder& builder, vipir::Module& module, Environment* scope)
     {
         std::vector<vipir::Type*> argumentTypes;
         for (auto argument : mArguments)

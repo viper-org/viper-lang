@@ -15,14 +15,13 @@ namespace parsing
     {
     }
 
-    vipir::Value* Variable::emit(vipir::Builder& builder, vipir::Module& module)
+    vipir::Value* Variable::emit(vipir::Builder& builder, vipir::Module& module, Environment* scope)
     {
-        //return builder.CreateLoad(variables.at(mName));
-        auto alloca = variables.find(mName);
-        if (alloca != variables.end())
+        auto function = functions.find(mName);
+        if (function != functions.end())
         {
-            return builder.CreateLoad(alloca->second);
+            return function->second;
         }
-        return functions.at(mName);
+        return builder.CreateLoad(scope->findVariable(mName));
     }
 }

@@ -10,9 +10,10 @@
 
 namespace parsing
 {
-    Parser::Parser(std::vector<lexing::Token>& tokens)
+    Parser::Parser(std::vector<lexing::Token>& tokens, Environment* scope)
         : mTokens(tokens)
         , mPosition(0)
+        , mScope(scope)
     {
     }
 
@@ -162,6 +163,11 @@ namespace parsing
         }
         consume();
 
+        Environment* outerScope = mScope;
+        Environment* scope = new Environment;
+        scope->parent = outerScope;
+        mScope = scope;
+
         expectToken(lexing::TokenType::LeftBracket);
         consume();
 
@@ -174,7 +180,9 @@ namespace parsing
         }
         consume();
 
-        return std::make_unique<Function>(type, name, std::move(arguments), std::move(body));
+        mScope = outerScope;
+
+        return std::make_unique<Function>(type, name, std::move(arguments), std::move(body), scope);
     }
 
     ExternFunctionPtr Parser::parseExternFunction()

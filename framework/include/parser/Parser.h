@@ -20,13 +20,14 @@ namespace parsing
     class Parser
     {
     public:
-        Parser(std::vector<lexing::Token>& tokens);
+        Parser(std::vector<lexing::Token>& tokens, Environment* scope);
 
         std::vector<ASTNodePtr> parse();
 
     private:
         std::vector<lexing::Token>& mTokens;
         int mPosition;
+        Environment* mScope;
 
         lexing::Token current() const;
         lexing::Token consume();

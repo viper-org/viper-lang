@@ -12,7 +12,7 @@ namespace parsing
     {
     }
 
-    vipir::Value* IntegerLiteral::emit(vipir::Builder& builder, vipir::Module& module)
+    vipir::Value* IntegerLiteral::emit(vipir::Builder& builder, vipir::Module& module, Environment* scope)
     {
         return builder.CreateConstantInt(mValue, vipir::Type::GetIntegerType(32));
     }

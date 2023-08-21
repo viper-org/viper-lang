@@ -13,14 +13,14 @@ namespace parsing
     {
     }
 
-    vipir::Value* CallExpression::emit(vipir::Builder& builder, vipir::Module& module)
+    vipir::Value* CallExpression::emit(vipir::Builder& builder, vipir::Module& module, Environment* scope)
     {
-        vipir::Value* callee = mCallee->emit(builder, module);
+        vipir::Value* callee = mCallee->emit(builder, module, scope);
 
         std::vector<vipir::Value*> parameters;
         for (auto& parameter : mParameters)
         {
-            parameters.push_back(parameter->emit(builder, module));
+            parameters.push_back(parameter->emit(builder, module, scope));
         }
 
         return builder.CreateCall(callee, parameters);

@@ -8,7 +8,15 @@
 
 #include <unordered_map>
 
-extern std::unordered_map<std::string, vipir::AllocaInst*> variables; // TODO: Proper scopes/environments
+struct Environment
+{
+    std::unordered_map<std::string, vipir::AllocaInst*> variables;
+    Environment* parent;
+
+    vipir::AllocaInst* findVariable(const std::string& name);
+};
+using EnvironmentPtr = std::unique_ptr<Environment>;
+
 extern std::unordered_map<std::string, vipir::Function*> functions; // TODO: Proper symbol table
 
 #endif

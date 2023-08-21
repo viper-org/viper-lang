@@ -20,7 +20,7 @@ namespace parsing
         std::string_view getName() const;
         const std::vector<FunctionArgument>& getArguments() const;
 
-        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module) override;
+        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module, Environment* scope) override;
 
     private:
         Type* mReturnType;

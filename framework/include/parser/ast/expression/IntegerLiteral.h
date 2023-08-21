@@ -13,7 +13,7 @@ namespace parsing
     public:
         IntegerLiteral(long long value);
 
-        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module) override;
+        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module, Environment* scope) override;
 
     private:
         long long mValue;

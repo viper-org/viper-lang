@@ -12,11 +12,11 @@ namespace parsing
     {
     }
 
-    vipir::Value* ReturnStatement::emit(vipir::Builder& builder, vipir::Module& module)
+    vipir::Value* ReturnStatement::emit(vipir::Builder& builder, vipir::Module& module, Environment* scope)
     {
         if (mValue)
         {
-            vipir::Value* returnValue = mValue->emit(builder, module);
+            vipir::Value* returnValue = mValue->emit(builder, module, scope);
 
             return builder.CreateRet(returnValue);
         }

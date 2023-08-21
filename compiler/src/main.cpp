@@ -30,14 +30,16 @@ int main(int argc, char** argv)
 
     std::vector<lexing::Token> tokens = lexer.lex();
 
-    parsing::Parser parser(tokens);
+    Environment globalScope;
+
+    parsing::Parser parser(tokens, &globalScope);
     
     vipir::Builder builder;
     vipir::Module module(argv[1]);
 
     for (auto& node : parser.parse())
     {
-        node->emit(builder, module);
+        node->emit(builder, module, &globalScope);
     }
 
     module.print(std::cout);

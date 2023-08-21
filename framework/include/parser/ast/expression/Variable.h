@@ -13,7 +13,7 @@ namespace parsing
     public:
         Variable(const std::string& name);
 
-        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module) override;
+        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module, Environment* scope) override;
 
     private:
         std::string mName;

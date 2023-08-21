@@ -2,7 +2,8 @@ extern void hello();
 extern void printInt(int num);
 
 int main(int argc) {
+    int a = 4;
     hello();
-    printInt(12);
+    printInt(a + argc);
     return argc;
 }

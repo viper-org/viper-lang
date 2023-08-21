@@ -10,11 +10,12 @@
 
 namespace parsing
 {
-    Function::Function(Type* type, const std::string& name, std::vector<FunctionArgument> arguments, std::vector<ASTNodePtr> body)
+    Function::Function(Type* type, const std::string& name, std::vector<FunctionArgument> arguments, std::vector<ASTNodePtr> body, Environment* scope)
         : mReturnType(type)
         , mName(name)
         , mArguments(std::move(arguments))
         , mBody(std::move(body))
+        , mScope(EnvironmentPtr(scope))
     {
     }
 
@@ -38,7 +39,7 @@ namespace parsing
         return mBody;
     }
 
-    vipir::Value* Function::emit(vipir::Builder& builder, vipir::Module& module)
+    vipir::Value* Function::emit(vipir::Builder& builder, vipir::Module& module, Environment*)
     {
         std::vector<vipir::Type*> argumentTypes;
         for (auto argument : mArguments)
@@ -56,13 +57,13 @@ namespace parsing
         for (auto argument : mArguments)
         {
             vipir::AllocaInst* alloca = builder.CreateAlloca(argument.getType()->getVipirType());
-            variables[argument.getName()] = alloca;
+            mScope->variables[argument.getName()] = alloca;
             builder.CreateStore(alloca, function->getArgument(index++));
         }
 
         for (auto& node : mBody)
         {
-            node->emit(builder, module);
+            node->emit(builder, module, mScope.get());
         }
 
         return function;

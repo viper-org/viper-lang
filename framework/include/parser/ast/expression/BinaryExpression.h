@@ -24,7 +24,7 @@ namespace parsing
         BinaryExpression(ASTNodePtr left, lexing::TokenType op, ASTNodePtr right);
         BinaryExpression(ASTNodePtr left, Operator op, ASTNodePtr right);
 
-        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module) override;
+        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module, Environment* scope) override;
 
     private:
         ASTNodePtr mLeft;

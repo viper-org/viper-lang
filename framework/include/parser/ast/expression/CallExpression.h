@@ -13,7 +13,7 @@ namespace parsing
     public:
         CallExpression(ASTNodePtr callee, std::vector<ASTNodePtr> parameters);
 
-        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module) override;
+        vipir::Value* emit(vipir::Builder& builder, vipir::Module& module, Environment* scope) override;
 
     private:
         ASTNodePtr mCallee;
