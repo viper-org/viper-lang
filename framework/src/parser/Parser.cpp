@@ -263,8 +263,21 @@ namespace parsing
 
         expectToken(lexing::TokenType::RightParen);
         consume();
+        
+        ASTNodePtr body = parseExpression();
+        ASTNodePtr elseBody = nullptr;
 
-        return std::make_unique<IfStatement>(std::move(condition), parseExpression());
+        if (peek(1).getTokenType() == lexing::TokenType::ElseKeyword)
+        {
+            expectToken(lexing::TokenType::Semicolon);
+            consume();
+
+            consume(); // ElseKeyword
+
+            elseBody = parseExpression();
+        }
+
+        return std::make_unique<IfStatement>(std::move(condition), std::move(body), std::move(elseBody));
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral()

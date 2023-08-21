@@ -16,6 +16,7 @@ namespace lexing
         { "return", TokenType::ReturnKeyword },
         { "extern", TokenType::ExternKeyword },
         { "if",     TokenType::IfKeyword },
+        { "else",   TokenType::ElseKeyword },
     };
 
     std::vector<Token> Lexer::lex()

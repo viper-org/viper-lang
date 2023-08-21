@@ -11,13 +11,14 @@ namespace parsing
     class IfStatement : public ASTNode
     {
     public:
-        IfStatement(ASTNodePtr condition, ASTNodePtr body);
+        IfStatement(ASTNodePtr condition, ASTNodePtr body, ASTNodePtr elseBody);
 
         vipir::Value* emit(vipir::Builder& builder, vipir::Module& module, Environment* scope) override;
 
     private:
         ASTNodePtr mCondition;
         ASTNodePtr mBody;
+        ASTNodePtr mElseBody;
     };
 
     using IfStatementPtr = std::unique_ptr<IfStatement>;

@@ -23,7 +23,7 @@ namespace lexing
         Type,
         ReturnKeyword,
         ExternKeyword,
-        IfKeyword,
+        IfKeyword, ElseKeyword,
     };
 
     class Token
