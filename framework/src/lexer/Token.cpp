@@ -71,6 +71,10 @@ namespace lexing
                 return "DoubleEquals";
             case TokenType::AsKeyword:
                 return "As";
+            case TokenType::Asperand:
+                return "Asperand";
+            case TokenType::Star:
+                return "Star";
         }
     }
 

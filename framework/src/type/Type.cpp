@@ -30,3 +30,8 @@ Type* Type::Get(const std::string& name)
 {
     return types.at(name).get();
 }
+
+void Type::Register(Type* type)
+{
+    types[type->getVipirType()->getName().data()] = std::unique_ptr<Type>(type);
+}

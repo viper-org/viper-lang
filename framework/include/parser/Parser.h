@@ -38,6 +38,7 @@ namespace parsing
         void expectToken(lexing::TokenType tokenType);
 
         int getBinaryOperatorPrecedence(lexing::TokenType tokenType);
+        int getUnaryOperatorPrecedence(lexing::TokenType tokenType);
 
         ASTNodePtr parseGlobal();
         ASTNodePtr parseExpression(int precedence = 1);

@@ -24,10 +24,12 @@ set(SOURCES
     "src/parser/ast/expression/BinaryExpression.cpp"
     "src/parser/ast/expression/CallExpression.cpp"
     "src/parser/ast/expression/AsExpression.cpp"
+    "src/parser/ast/expression/UnaryExpression.cpp"
 
     "src/type/Type.cpp"
     "src/type/IntegerType.cpp"
     "src/type/VoidType.cpp"
+    "src/type/PointerType.cpp"
 
     "src/environment/Environment.cpp"
 )
@@ -50,10 +52,12 @@ set(HEADERS
     "include/parser/ast/expression/BinaryExpression.h"
     "include/parser/ast/expression/CallExpression.h"
     "include/parser/ast/expression/AsExpression.h"
+    "include/parser/ast/expression/UnaryExpression.h"
 
     "include/type/Type.h"
     "include/type/IntegerType.h"
     "include/type/VoidType.h"
+    "include/type/PointerType.h"
 
     "include/environment/Environment.h"
 )

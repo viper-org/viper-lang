@@ -7,6 +7,8 @@ int main(int argc) {
         hello();
     }
 
+    char* ptr = &c;
+
     printInt(argc);
     return argc;
 }

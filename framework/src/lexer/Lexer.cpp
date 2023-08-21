@@ -110,6 +110,12 @@ namespace lexing
             case ',':
                 return Token(TokenType::Comma);
 
+            case '&':
+                return Token(TokenType::Asperand);
+
+            case '*':
+                return Token(TokenType::Star);
+
             case '=':
             {
                 if (peek(1) == '=')

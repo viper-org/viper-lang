@@ -16,6 +16,7 @@ public:
     static void Init();
     static bool Exists(const std::string& name);
     static Type* Get(const std::string& name);
+    static void Register(Type* type);
 };
 
 #endif

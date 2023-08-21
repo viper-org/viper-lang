@@ -3,10 +3,12 @@
 
 #include "parser/Parser.h"
 
+#include "parser/ast/expression/UnaryExpression.h"
 #include "parser/ast/expression/BinaryExpression.h"
 #include "parser/ast/expression/AsExpression.h"
 
 #include "lexer/Token.h"
+#include "type/PointerType.h"
 
 #include <iostream>
 
@@ -69,6 +71,17 @@ namespace parsing
         }
     }
 
+    int Parser::getUnaryOperatorPrecedence(lexing::TokenType tokenType)
+    {
+        switch (tokenType)
+        {
+            case lexing::TokenType::Asperand:
+                return 50;
+            default:
+                return 0;
+        }
+    }
+
     std::vector<ASTNodePtr> Parser::parse()
     {
         std::vector<ASTNodePtr> result;
@@ -97,7 +110,17 @@ namespace parsing
 
     ASTNodePtr Parser::parseExpression(int precedence)
     {
-        ASTNodePtr lhs = parsePrimary();
+        ASTNodePtr lhs;
+        int unaryOperatorPrecedence = getUnaryOperatorPrecedence(current().getTokenType());
+        if (unaryOperatorPrecedence && unaryOperatorPrecedence >= precedence)
+        {
+            lexing::TokenType operatorToken = consume().getTokenType();
+            lhs = std::make_unique<UnaryExpression>(parseExpression(unaryOperatorPrecedence), operatorToken);
+        }
+        else
+        {
+            lhs = parsePrimary();
+        }
 
         while (true)
         {
@@ -157,7 +180,18 @@ namespace parsing
     Type* Parser::parseType()
     {
         expectToken(lexing::TokenType::Type);
-        return Type::Get(consume().getText());
+
+        Type* type = Type::Get(consume().getText());
+        
+        while (current().getTokenType() == lexing::TokenType::Star)
+        {
+            consume();
+            type = new PointerType(type);
+
+            Type::Register(type);
+        }
+
+        return type;
     }
 
     FunctionPtr Parser::parseFunction()
