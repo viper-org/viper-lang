@@ -187,9 +187,7 @@ namespace parsing
         while (current().getTokenType() == lexing::TokenType::Star)
         {
             consume();
-            type = new PointerType(type);
-
-            Type::Register(type);
+            type = Type::GetPointerType(type);
         }
 
         return type;
@@ -208,7 +206,7 @@ namespace parsing
         while (current().getTokenType() != lexing::TokenType::RightParen)
         {
             Type* type = parseType();
-            const std::string& name = consume().getText();
+            std::string name = consume().getText();
             arguments.emplace_back(name, type);
             if (current().getTokenType() != lexing::TokenType::RightParen)
             {
@@ -255,7 +253,7 @@ namespace parsing
         while (current().getTokenType() != lexing::TokenType::RightParen)
         {
             Type* type = parseType();
-            const std::string& name = consume().getText();
+            std::string name = consume().getText();
             arguments.emplace_back(name, type);
             if (current().getTokenType() != lexing::TokenType::RightParen)
             {

@@ -3,8 +3,11 @@
 
 #include "type/Type.h"
 #include "type/IntegerType.h"
+#include "type/PointerType.h"
 #include "type/VoidType.h"
 
+#include <cassert>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -31,7 +34,17 @@ Type* Type::Get(const std::string& name)
     return types.at(name).get();
 }
 
-void Type::Register(Type* type)
+Type* Type::GetPointerType(Type* base)
 {
-    types[type->getVipirType()->getName().data()] = std::unique_ptr<Type>(type);
+    using namespace std::literals;
+
+    std::string key = base->getVipirType()->getName().data() + "*"s;
+
+    if (types.find(key) != types.end())
+    {
+        return types.at(key).get();
+    }
+
+    types.emplace(key, std::make_unique<PointerType>(base));
+    return types.at(key).get();
 }

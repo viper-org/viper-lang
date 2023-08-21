@@ -1,7 +1,9 @@
-extern void hello();
+extern void print(char* message);
 extern void printInt(int num);
 
-int main(int argc) {
+int main(int argc, char** argv) {
+    print(*argv);
+
     int* ptr = &argc;
 
     printInt(argc);

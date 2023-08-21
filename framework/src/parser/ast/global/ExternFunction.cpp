@@ -5,6 +5,7 @@
 
 #include "environment/Environment.h"
 
+#include <iostream>
 #include <vipir/IR/Function.h>
 
 namespace parsing
@@ -36,6 +37,7 @@ namespace parsing
         std::vector<vipir::Type*> argumentTypes;
         for (auto argument : mArguments)
         {
+            std::cout << argument.getName() << "\n";
             argumentTypes.push_back(argument.getType()->getVipirType());
         }
         vipir::FunctionType* functionType = vipir::FunctionType::Get(mReturnType->getVipirType(), argumentTypes);

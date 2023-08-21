@@ -9,3 +9,8 @@ void printInt(int n)
 {
     printf("%d\n", n);
 }
+
+void print(char* message)
+{
+    puts(message);
+}

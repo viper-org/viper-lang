@@ -5,6 +5,8 @@
 
 #include "vipir/Type/Type.h"
 
+#include <memory>
+
 class Type
 {
 public:
@@ -16,7 +18,7 @@ public:
     static void Init();
     static bool Exists(const std::string& name);
     static Type* Get(const std::string& name);
-    static void Register(Type* type);
+    static Type* GetPointerType(Type* base);
 };
 
 #endif

@@ -17,3 +17,6 @@ target_include_directories(viper
 )
 target_compile_features(viper PUBLIC cxx_std_20)
 target_link_libraries(viper viper::framework)
+
+target_compile_options(viper PRIVATE -fsanitize=address,undefined)
+target_link_options(viper PRIVATE -fsanitize=address,undefined)
