@@ -22,6 +22,10 @@ namespace parsing
                 mOperator = Operator::Sub;
                 break;
 
+            case lexing::TokenType::DoubleEquals:
+                mOperator = Operator::Equal;
+                break;
+
             case lexing::TokenType::Equals:
                 mOperator = Operator::Assign;
                 break;
@@ -48,6 +52,9 @@ namespace parsing
                 return builder.CreateAdd(left, right);
             case Operator::Sub:
                 return builder.CreateSub(left, right);
+
+            case Operator::Equal:
+                return builder.CreateICmpEQ(left, right);
 
             case Operator::Assign:
                 vipir::Instruction* instruction = static_cast<vipir::Instruction*>(left);

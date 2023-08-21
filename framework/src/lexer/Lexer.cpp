@@ -14,7 +14,8 @@ namespace lexing
 
     const std::unordered_map<std::string_view, TokenType> keywords = {
         { "return", TokenType::ReturnKeyword },
-        { "extern", TokenType::ExternKeyword }
+        { "extern", TokenType::ExternKeyword },
+        { "if",     TokenType::IfKeyword },
     };
 
     std::vector<Token> Lexer::lex()
@@ -108,7 +109,14 @@ namespace lexing
                 return Token(TokenType::Comma);
 
             case '=':
+            {
+                if (peek(1) == '=')
+                {
+                    consume();
+                    return Token(TokenType::DoubleEquals);
+                }
                 return Token(TokenType::Equals);
+            }
 
             case '+':
                 return Token(TokenType::Plus);

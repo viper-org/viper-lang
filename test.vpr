@@ -3,7 +3,12 @@ extern void printInt(int num);
 
 int main(int argc) {
     int a = 4;
-    hello();
+    if (a == 4)
+        hello();
+
+    if (a == 3)
+        hello();
+
     printInt(a + argc);
     return argc;
 }

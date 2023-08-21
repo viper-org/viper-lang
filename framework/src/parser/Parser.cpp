@@ -53,6 +53,9 @@ namespace parsing
             case lexing::TokenType::Minus:
                 return 35;
 
+            case lexing::TokenType::DoubleEquals:
+                return 25;
+
             case lexing::TokenType::Equals:
                 return 10;
             default:
@@ -128,6 +131,9 @@ namespace parsing
 
             case lexing::TokenType::Identifier:
                 return parseVariable();
+
+            case lexing::TokenType::IfKeyword:
+                return parseIfStatement();
             default:
                 std::cerr << "Unexpected token. Expected primary expression.\n";
                 std::exit(1);
@@ -244,6 +250,21 @@ namespace parsing
         consume();
 
         return std::make_unique<VariableDeclaration>(type, std::move(name), parseExpression());
+    }
+
+    IfStatementPtr Parser::parseIfStatement()
+    {
+        consume(); // IfKeyword
+
+        expectToken(lexing::TokenType::LeftParen);
+        consume();
+
+        ASTNodePtr condition = parseExpression();
+
+        expectToken(lexing::TokenType::RightParen);
+        consume();
+
+        return std::make_unique<IfStatement>(std::move(condition), parseExpression());
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral()

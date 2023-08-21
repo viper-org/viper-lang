@@ -16,13 +16,14 @@ namespace lexing
         LeftParen, RightParen,
         LeftBracket, RightBracket,
         Semicolon, Comma,
-        Equals,
-        
+
+        Equals, DoubleEquals,
         Plus, Minus,
 
         Type,
         ReturnKeyword,
         ExternKeyword,
+        IfKeyword,
     };
 
     class Token

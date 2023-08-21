@@ -63,6 +63,10 @@ namespace lexing
                 return "Minus";
             case TokenType::ExternKeyword:
                 return "Extern";
+            case TokenType::IfKeyword:
+                return "If";
+            case TokenType::DoubleEquals:
+                return "DoubleEquals";
         }
     }
 
