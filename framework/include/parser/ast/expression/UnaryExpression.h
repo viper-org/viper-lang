@@ -15,7 +15,8 @@ namespace parsing
     public:
         enum class Operator
         {
-            AddressOf
+            AddressOf,
+            Dereference,
         };
 
         UnaryExpression(ASTNodePtr operand, lexing::TokenType op);

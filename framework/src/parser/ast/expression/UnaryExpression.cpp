@@ -4,6 +4,8 @@
 #include "parser/ast/expression/UnaryExpression.h"
 
 #include <vipir/IR/Instruction/AddrOfInst.h>
+#include <vipir/IR/Instruction/LoadInst.h>
+
 #include <vipir/Module.h>
 
 namespace parsing
@@ -15,6 +17,9 @@ namespace parsing
         {
             case lexing::TokenType::Asperand:
                 mOperator = Operator::AddressOf;
+                break;
+            case lexing::TokenType::Star:
+                mOperator = Operator::Dereference;
                 break;
             
             default:
@@ -29,9 +34,15 @@ namespace parsing
         switch (mOperator)
         {
             case Operator::AddressOf:
+            {
                 vipir::Instruction* instruction = static_cast<vipir::Instruction*>(operand);
                 instruction->eraseFromParent();
                 return builder.CreateAddrOf(static_cast<vipir::AllocaInst*>(vipir::getPointerOperand(operand)));
+            }
+            case Operator::Dereference:
+            {
+                return builder.CreateLoad(operand);
+            }
         }
     }
 }

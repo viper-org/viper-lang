@@ -2,13 +2,8 @@ extern void hello();
 extern void printInt(int num);
 
 int main(int argc) {
-    char c = 5 as char;
-    if (c == 4 as char) {
-        hello();
-    }
-
-    char* ptr = &c;
+    int* ptr = &argc;
 
     printInt(argc);
-    return argc;
+    return *ptr;
 }

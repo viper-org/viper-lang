@@ -76,6 +76,7 @@ namespace parsing
         switch (tokenType)
         {
             case lexing::TokenType::Asperand:
+            case lexing::TokenType::Star:
                 return 50;
             default:
                 return 0;

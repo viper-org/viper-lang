@@ -10,10 +10,8 @@ vipir::AllocaInst* Environment::findVariable(const std::string& name)
     Environment* environment = this;
     while (environment)
     {
-        std::cout << name << "\n";
         if (environment->variables.find(name) != environment->variables.end())
         {
-            std::cout << environment->variables.at(name)->getAllocatedType()->getName() << "\n";
             return environment->variables.at(name);
         }
 
