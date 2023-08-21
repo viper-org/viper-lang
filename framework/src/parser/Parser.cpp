@@ -3,8 +3,9 @@
 
 #include "parser/Parser.h"
 
-#include "lexer/Token.h"
 #include "parser/ast/expression/BinaryExpression.h"
+
+#include "lexer/Token.h"
 
 #include <iostream>
 
@@ -134,6 +135,9 @@ namespace parsing
 
             case lexing::TokenType::IfKeyword:
                 return parseIfStatement();
+
+            case lexing::TokenType::LeftBracket:
+                return parseCompoundStatement();
             default:
                 std::cerr << "Unexpected token. Expected primary expression.\n";
                 std::exit(1);
@@ -278,6 +282,31 @@ namespace parsing
         }
 
         return std::make_unique<IfStatement>(std::move(condition), std::move(body), std::move(elseBody));
+    }
+
+    CompoundStatementPtr Parser::parseCompoundStatement()
+    {
+        consume(); // LeftBracket
+
+        Environment* outerScope = mScope;
+        Environment* scope = new Environment;
+        scope->parent = outerScope;
+        mScope = scope;
+
+        std::vector<ASTNodePtr> body;
+        while (current().getTokenType() != lexing::TokenType::RightBracket)
+        {
+            body.push_back(parseExpression());
+            expectToken(lexing::TokenType::Semicolon);
+            consume();
+        }
+        consume();
+
+        mScope = outerScope;
+
+        mTokens.insert(mTokens.begin() + mPosition, lexing::Token(lexing::TokenType::Semicolon));
+
+        return std::make_unique<CompoundStatement>(std::move(body), scope);
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral()

@@ -9,6 +9,7 @@
 #include "parser/ast/statement/ReturnStatement.h"
 #include "parser/ast/statement/VariableDeclaration.h"
 #include "parser/ast/statement/IfStatement.h"
+#include "parser/ast/statement/CompoundStatement.h"
 #include "parser/ast/expression/IntegerLiteral.h"
 #include "parser/ast/expression/Variable.h"
 #include "parser/ast/expression/CallExpression.h"
@@ -49,6 +50,7 @@ namespace parsing
         ReturnStatementPtr parseReturnStatement();
         VariableDeclarationPtr parseVariableDeclaration();
         IfStatementPtr parseIfStatement();
+        CompoundStatementPtr parseCompoundStatement();
 
         IntegerLiteralPtr parseIntegerLiteral();
         VariablePtr parseVariable();

@@ -3,10 +3,15 @@ extern void printInt(int num);
 
 int main(int argc) {
     int a = 4;
-    if (a == 4)
-        printInt(1);
-    else
+    if (a == 4) {
+        printInt(4);
+    }
+    else if (a == 3) {
+        printInt(3);
+    }
+    else {
         printInt(0);
+    }
 
     printInt(a + argc);
     return argc;
