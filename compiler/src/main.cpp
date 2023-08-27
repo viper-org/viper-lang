@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 
     using namespace std::literals;
     std::ofstream outfile = std::ofstream(argv[1] + ".o"s);
-    module.emit(outfile);
+    module.emit(outfile, vipir::OutputFormat::ELF);
 
     return 0;
 }
