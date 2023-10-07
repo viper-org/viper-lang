@@ -10,9 +10,10 @@
 
 namespace parsing
 {
-    Variable::Variable(const std::string& name)
+    Variable::Variable(const std::string& name, Type* type)
         : mName(name)
     {
+        mType = type;
     }
 
     vipir::Value* Variable::emit(vipir::Builder& builder, vipir::Module& module, Environment* scope)
@@ -22,6 +23,8 @@ namespace parsing
         {
             return function->second;
         }
-        return builder.CreateLoad(scope->findVariable(mName));
+
+        LocalSymbol variable = scope->findVariable(mName);
+        return builder.CreateLoad(variable.alloca);
     }
 }

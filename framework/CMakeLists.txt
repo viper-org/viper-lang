@@ -32,6 +32,8 @@ set(SOURCES
     "src/type/PointerType.cpp"
 
     "src/environment/Environment.cpp"
+
+    "src/symbol/Symbol.cpp"
 )
 
 set(HEADERS
@@ -60,6 +62,8 @@ set(HEADERS
     "include/type/PointerType.h"
 
     "include/environment/Environment.h"
+
+    "include/symbol/Symbol.h"
 )
 
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})

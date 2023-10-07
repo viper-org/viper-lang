@@ -11,7 +11,7 @@ namespace parsing
     class Variable : public ASTNode
     {
     public:
-        Variable(const std::string& name);
+        Variable(const std::string& name, Type* type);
 
         vipir::Value* emit(vipir::Builder& builder, vipir::Module& module, Environment* scope) override;
 

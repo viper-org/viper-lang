@@ -57,7 +57,7 @@ namespace parsing
         for (auto argument : mArguments)
         {
             vipir::AllocaInst* alloca = builder.CreateAlloca(argument.getType()->getVipirType());
-            mScope->variables[argument.getName()] = alloca;
+            mScope->variables[argument.getName()] = LocalSymbol(alloca, argument.getType());
             builder.CreateStore(alloca, function->getArgument(index++));
         }
 

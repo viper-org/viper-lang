@@ -1,11 +1,15 @@
 extern void print(char* message);
 extern void printInt(int num);
 
-int main(int argc, char** argv) {
+int
+main(int argc, char **argv) {
     print(*argv);
 
-    int* ptr = &argc;
+    int *ptr = &argc;
+
+    char test = 1 as char;
+    int test2 = test as int;
 
     printInt(argc);
-    return *ptr;
+    return *ptr + test2;
 }

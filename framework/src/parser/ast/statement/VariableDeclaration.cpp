@@ -26,7 +26,7 @@ namespace parsing
             builder.CreateStore(alloca, initValue);
         }
 
-        scope->variables[mName] = alloca;
+        scope->variables[mName] = LocalSymbol(alloca, mType);
 
         return alloca;
     }

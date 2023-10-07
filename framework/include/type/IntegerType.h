@@ -13,6 +13,8 @@ public:
     int getSize() const override;
     vipir::Type* getVipirType() const override;
 
+    bool isIntegerType() const override;
+
 private:
     int mBits;
 };

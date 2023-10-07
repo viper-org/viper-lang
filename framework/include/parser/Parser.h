@@ -13,7 +13,10 @@
 #include "parser/ast/expression/IntegerLiteral.h"
 #include "parser/ast/expression/Variable.h"
 #include "parser/ast/expression/CallExpression.h"
+
 #include "lexer/Token.h"
+
+#include "symbol/Symbol.h"
 
 #include <vector>
 
@@ -30,6 +33,7 @@ namespace parsing
         std::vector<lexing::Token>& mTokens;
         int mPosition;
         Environment* mScope;
+        SymbolTable mGlobalSymbols;
 
         lexing::Token current() const;
         lexing::Token consume();

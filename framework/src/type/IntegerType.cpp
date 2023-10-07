@@ -17,3 +17,8 @@ vipir::Type* IntegerType::getVipirType() const
 {
     return vipir::Type::GetIntegerType(mBits);
 }
+
+bool IntegerType::isIntegerType() const
+{
+    return true;
+}

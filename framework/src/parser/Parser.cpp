@@ -8,7 +8,6 @@
 #include "parser/ast/expression/AsExpression.h"
 
 #include "lexer/Token.h"
-#include "type/PointerType.h"
 
 #include <iostream>
 
@@ -221,6 +220,11 @@ namespace parsing
         scope->parent = outerScope;
         mScope = scope;
 
+        for (const auto& argument : arguments)
+        {
+            mScope->symbols[argument.getName()] = Symbol(false, argument.getType(), argument.getName());
+        }
+
         expectToken(lexing::TokenType::LeftBracket);
         consume();
 
@@ -232,6 +236,8 @@ namespace parsing
             consume();
         }
         consume();
+
+        mGlobalSymbols[name] = Symbol(true, type, name);
 
         mScope = outerScope;
 
@@ -266,6 +272,9 @@ namespace parsing
         expectToken(lexing::TokenType::Semicolon);
         consume();
 
+        mGlobalSymbols[name] = Symbol(true, type, name);
+        std::cout << name << "\n";
+
         return std::make_unique<ExternFunction>(type, name, std::move(arguments));
     }
 
@@ -296,7 +305,11 @@ namespace parsing
         expectToken(lexing::TokenType::Equals);
         consume();
 
-        return std::make_unique<VariableDeclaration>(type, std::move(name), parseExpression());
+        ASTNodePtr initVal = parseExpression();
+
+        mScope->symbols[name] = Symbol(true, type, name);
+
+        return std::make_unique<VariableDeclaration>(type, std::move(name), std::move(initVal));
     }
 
     IfStatementPtr Parser::parseIfStatement()
@@ -359,7 +372,16 @@ namespace parsing
     
     VariablePtr Parser::parseVariable()
     {
-        return std::make_unique<Variable>(consume().getText());
+        std::string name = consume().getText();
+
+        std::optional<Symbol> symbol = mScope->findSymbol(name);
+        if (!symbol)
+        {
+            std::cout << name << "\n";
+            symbol = mGlobalSymbols.at(name);
+        }
+
+        return std::make_unique<Variable>(name, symbol->getType());
     }
 
     CallExpressionPtr Parser::parseCallExpression(ASTNodePtr callee)

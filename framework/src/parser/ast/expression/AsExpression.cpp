@@ -5,6 +5,7 @@
 #include "parser/ast/expression/IntegerLiteral.h"
 
 #include <vipir/IR/Constant/ConstantInt.h>
+#include <vipir/IR/Instruction/SExtInst.h>
 
 #include <iostream>
 
@@ -22,6 +23,18 @@ namespace parsing
         {
             return builder.CreateConstantInt(literal->getValue(), mDestination->getVipirType());
         }
+        
+        if (mDestination->isIntegerType() && mSource->getType()->isIntegerType())
+        {
+            std::cout << "a\n";
+            if (mDestination->getSize() > mSource->getType()->getSize()) // TODO: Add truncation
+            {
+                vipir::Value* source = mSource->emit(builder, module, scope);
+
+                return builder.CreateSExt(source, mDestination->getVipirType());
+            }
+        }
+
         std::cerr << "Unimplemented cast.\n";
         std::exit(1);
     }
