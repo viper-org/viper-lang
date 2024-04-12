@@ -2,9 +2,12 @@
 
 
 #include "parser/Parser.h"
+#include "parser/ast/expression/BinaryExpression.h"
 
 #include "lexer/Token.h"
 
+#include <algorithm>
+#include <format>
 #include <iostream>
 
 namespace parser
@@ -63,6 +66,23 @@ namespace parser
                 std::exit(1);
         }
     }
+
+    int Parser::getBinaryOperatorPrecedence(lexing::TokenType tokenType)
+    {
+        switch (tokenType)
+        {
+            
+            case lexing::TokenType::LeftParen:
+                return 55;
+
+            case lexing::TokenType::Plus:
+            case lexing::TokenType::Minus:
+                return 35;
+
+            default:
+                return 0;
+        }
+    }
     
     Type* Parser::parseType()
     {
@@ -71,9 +91,24 @@ namespace parser
         return Type::Get(consume().getText());
     }
 
-    ASTNodePtr Parser::parseExpression(Type* preferredType)
+    ASTNodePtr Parser::parseExpression(Type* preferredType, int precedence)
     {
-        return parsePrimary(preferredType);
+        ASTNodePtr lhs = parsePrimary(preferredType);
+
+        while(true)
+        {
+            int binaryOperatorPrecedence = getBinaryOperatorPrecedence(current().getTokenType());
+            if (binaryOperatorPrecedence < precedence)
+            {
+                break;
+            }
+
+            lexing::TokenType operatorTokenType = consume().getTokenType();
+            ASTNodePtr rhs = parseExpression(preferredType, precedence);
+            lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorTokenType, std::move(rhs));
+        }
+
+        return lhs;
     }
 
     ASTNodePtr Parser::parsePrimary(Type* preferredType)
@@ -160,6 +195,8 @@ namespace parser
 
         Type* type = parseType();
 
+        mSymbols.push_back({name, type});
+
         if (current().getTokenType() == lexing::TokenType::Semicolon)
         {
             return std::make_unique<VariableDeclaration>(type, std::move(name), nullptr);
@@ -180,6 +217,16 @@ namespace parser
     {
         std::string name = consume().getText();
 
-        return std::make_unique<VariableExpression>(std::move(name));
+        auto it = std::find_if(mSymbols.begin(), mSymbols.end(), [&name](const Symbol& symbol) {
+            return symbol.name == name;
+        });
+
+        if (it != mSymbols.end())
+        {
+            return std::make_unique<VariableExpression>(std::move(name), it->type);
+        }
+
+        std::cerr << std::format("Unknown local symbol '{}'", name);
+        std::exit(1);
     }
 }

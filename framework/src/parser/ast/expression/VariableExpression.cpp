@@ -7,9 +7,10 @@
 
 namespace parser
 {
-    VariableExpression::VariableExpression(std::string&& name)
+    VariableExpression::VariableExpression(std::string&& name, Type* type)
         : mName(std::move(name))
     {
+        mType = type;
     }
 
     vipir::Value* VariableExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)

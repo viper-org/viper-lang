@@ -17,6 +17,7 @@ set(SOURCES
     "src/parser/ast/statement/VariableDeclaration.cpp"
     "src/parser/ast/expression/IntegerLiteral.cpp"
     "src/parser/ast/expression/VariableExpression.cpp"
+    "src/parser/ast/expression/BinaryExpression.cpp"
 
     "src/type/Type.cpp"
     "src/type/IntegerType.cpp"
@@ -35,6 +36,7 @@ set(HEADERS
     "include/parser/ast/statement/VariableDeclaration.h"
     "include/parser/ast/expression/IntegerLiteral.h"
     "include/parser/ast/expression/VariableExpression.h"
+    "include/parser/ast/expression/BinaryExpression.h"
 
     "include/type/Type.h"
     "include/type/IntegerType.h"

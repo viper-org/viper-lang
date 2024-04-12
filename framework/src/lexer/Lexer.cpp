@@ -116,13 +116,15 @@ namespace lexing
             case '=':
                 return Token(TokenType::Equals);
             
+            case '+':
+                return Token(TokenType::Plus);
             case '-':
                 if (peek(1) == '>')
                 {
                     consume();
                     return Token(TokenType::RightArrow);
                 }
-                else break;
+                return Token(TokenType::Minus);
         }
 
         return Token(TokenType::Error, std::string(1, current())); // Unknown character

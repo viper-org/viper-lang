@@ -1,5 +1,5 @@
-func @main() -> i64 {
-    let testvar: i64 = 4;
+func @main() -> i32 {
+    let testvar:  i32 = 13;
     let testvar2: i32 = 5;
-    return testvar;
+    return testvar - testvar2;
 }

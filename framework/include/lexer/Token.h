@@ -20,6 +20,7 @@ namespace lexing
         Semicolon, Colon,
 
         Equals,
+        Plus, Minus,
 
         Asperand,
         RightArrow,

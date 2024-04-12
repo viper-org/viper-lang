@@ -10,7 +10,7 @@ namespace parser
     class VariableExpression : public ASTNode
     {
     public:
-        VariableExpression(std::string&& name);
+        VariableExpression(std::string&& name, Type* type);
 
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
 

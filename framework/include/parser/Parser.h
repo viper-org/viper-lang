@@ -16,6 +16,12 @@
 
 namespace parser
 {
+    struct Symbol
+    {
+        std::string name;
+        Type* type;
+    };
+
     class Parser
     {
     public:
@@ -28,6 +34,7 @@ namespace parser
         int mPosition;
 
         Scope* mScope;
+        std::vector<Symbol> mSymbols;
 
         lexing::Token current() const;
         lexing::Token consume();
@@ -35,10 +42,12 @@ namespace parser
 
         void expectToken(lexing::TokenType tokenType);
 
+        int getBinaryOperatorPrecedence(lexing::TokenType tokenType);
+
         Type* parseType();
 
         ASTNodePtr parseGlobal();
-        ASTNodePtr parseExpression(Type* preferredType = nullptr);
+        ASTNodePtr parseExpression(Type* preferredType = nullptr, int precedence = 1);
         ASTNodePtr parsePrimary(Type* preferredType = nullptr);
 
         FunctionPtr parseFunction();
