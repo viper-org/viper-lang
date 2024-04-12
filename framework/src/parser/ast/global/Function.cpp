@@ -7,14 +7,17 @@
 
 namespace parser
 {
-    Function::Function(std::string_view name, std::vector<ASTNodePtr>&& body)
+    Function::Function(std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope)
         : mName(name)
         , mBody(std::move(body))
+        , mScope(scope)
     {
     }
 
-    vipir::Value* Function::emit(vipir::IRBuilder& builder, vipir::Module& module)
+    vipir::Value* Function::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
     {
+        scope = mScope.get();
+
         vipir::Function* func = vipir::Function::Create(module, mName);
 
         vipir::BasicBlock* entryBasicBlock = vipir::BasicBlock::Create("", func);
@@ -22,7 +25,7 @@ namespace parser
 
         for (auto& node : mBody)
         {
-            node->emit(builder, module);
+            node->emit(builder, module, scope);
         }
 
         return func;

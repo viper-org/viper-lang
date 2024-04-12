@@ -82,6 +82,9 @@ namespace parser
             case lexing::TokenType::IntegerLiteral:
                 return parseIntegerLiteral();
 
+            case lexing::TokenType::Identifier:
+                return parseVariableExpression();
+
             default:
                 std::cerr << "Unexpected token. Expected primary expression.\n";
                 std::exit(1);
@@ -107,6 +110,9 @@ namespace parser
         expectToken(lexing::TokenType::Type);
         consume();
 
+        Scope* functionScope = new Scope(mScope);
+        mScope = functionScope;
+
         expectToken(lexing::TokenType::LeftBracket);
         consume();
 
@@ -119,7 +125,9 @@ namespace parser
         }
         consume();
 
-        return std::make_unique<Function>(name, std::move(body));
+        mScope = functionScope->parent;
+
+        return std::make_unique<Function>(name, std::move(body), functionScope);
     }
 
     ReturnStatementPtr Parser::parseReturnStatement()
@@ -160,5 +168,12 @@ namespace parser
     IntegerLiteralPtr Parser::parseIntegerLiteral()
     {
         return std::make_unique<IntegerLiteral>(std::stoll(consume().getText()));
+    }
+
+    VariableExpressionPtr Parser::parseVariableExpression()
+    {
+        std::string name = consume().getText();
+
+        return std::make_unique<VariableExpression>(std::move(name));
     }
 }

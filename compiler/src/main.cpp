@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 
     for (auto& node : parser.parse())
     {
-        node->emit(builder, module);
+        node->emit(builder, module, nullptr);
     }
 
     module.print(std::cout);

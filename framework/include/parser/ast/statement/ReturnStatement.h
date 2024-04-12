@@ -12,7 +12,7 @@ namespace parser
     public:
         ReturnStatement(ASTNodePtr&& returnValue);
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
 
     private:
         ASTNodePtr mReturnValue;

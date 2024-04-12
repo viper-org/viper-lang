@@ -12,7 +12,7 @@ namespace parser
     public:
         IntegerLiteral(intmax_t value);
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
 
     private:
         intmax_t mValue;

@@ -16,6 +16,9 @@ set(SOURCES
     "src/parser/ast/statement/ReturnStatement.cpp"
     "src/parser/ast/statement/VariableDeclaration.cpp"
     "src/parser/ast/expression/IntegerLiteral.cpp"
+    "src/parser/ast/expression/VariableExpression.cpp"
+
+    "src/scope/Scope.cpp"
 )
 
 set(HEADERS
@@ -28,6 +31,9 @@ set(HEADERS
     "include/parser/ast/statement/ReturnStatement.h"
     "include/parser/ast/statement/VariableDeclaration.h"
     "include/parser/ast/expression/IntegerLiteral.h"
+    "include/parser/ast/expression/VariableExpression.h"
+
+    "include/scope/Scope.h"
 )
 
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})

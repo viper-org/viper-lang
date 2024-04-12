@@ -1,4 +1,4 @@
 func @main() -> i32 {
     let testvar: i32 = 4;
-    return 0;
+    return testvar;
 }

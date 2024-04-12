@@ -8,6 +8,7 @@
 #include "parser/ast/statement/ReturnStatement.h"
 #include "parser/ast/statement/VariableDeclaration.h"
 #include "parser/ast/expression/IntegerLiteral.h"
+#include "parser/ast/expression/VariableExpression.h"
 
 #include "lexer/Token.h"
 
@@ -26,6 +27,8 @@ namespace parser
         std::vector<lexing::Token>& mTokens;
         int mPosition;
 
+        Scope* mScope;
+
         lexing::Token current() const;
         lexing::Token consume();
         lexing::Token peek(int offset) const;
@@ -42,6 +45,7 @@ namespace parser
         VariableDeclarationPtr parseVariableDeclaration();
 
         IntegerLiteralPtr parseIntegerLiteral();
+        VariableExpressionPtr parseVariableExpression();
     };
 }
 

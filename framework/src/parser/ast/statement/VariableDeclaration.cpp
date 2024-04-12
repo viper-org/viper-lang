@@ -13,15 +13,17 @@ namespace parser
     {
     }
 
-    vipir::Value* VariableDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module)
+    vipir::Value* VariableDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
     {
         vipir::AllocaInst* alloca = builder.CreateAlloca(mName);
 
         if (mInitialValue)
         {
-            vipir::Value* initalValue = mInitialValue->emit(builder, module);
+            vipir::Value* initalValue = mInitialValue->emit(builder, module, scope);
             builder.CreateStore(alloca, initalValue);
         }
+
+        scope->locals[mName] = LocalSymbol(alloca);
 
         return nullptr;
     }
