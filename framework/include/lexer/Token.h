@@ -1,3 +1,5 @@
+// Copyright 2024 solar-mist
+
 #ifndef VIPER_FRAMEWORK_LEXER_TOKEN_H
 #define VIPER_FRAMEWORK_LEXER_TOKEN_H
 

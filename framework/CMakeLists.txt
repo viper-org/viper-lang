@@ -10,11 +10,22 @@ FetchContent_MakeAvailable(vipir)
 set(SOURCES
     "src/lexer/Lexer.cpp"
     "src/lexer/Token.cpp"
+
+    "src/parser/Parser.cpp"
+    "src/parser/ast/global/Function.cpp"
+    "src/parser/ast/statement/ReturnStatement.cpp"
+    "src/parser/ast/expression/IntegerLiteral.cpp"
 )
 
 set(HEADERS
     "include/lexer/Lexer.h"
     "include/lexer/Token.h"
+
+    "include/parser/Parser.h"
+    "include/parser/ast/Node.h"
+    "include/parser/ast/global/Function.h"
+    "include/parser/ast/statement/ReturnStatement.h"
+    "include/parser/ast/expression/IntegerLiteral.h"
 )
 
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})

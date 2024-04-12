@@ -1,3 +1,5 @@
+// Copyright 2024 solar-mist
+
 #include "lexer/Lexer.h"
 #include "lexer/Token.h"
 

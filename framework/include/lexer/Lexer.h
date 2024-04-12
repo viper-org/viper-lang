@@ -1,3 +1,5 @@
+// Copyright 2024 solar-mist
+
 #ifndef VIPER_FRAMEWORK_LEXER_LEXER_H
 #define VIPER_FRAMEWORK_LEXER_LEXER_H
 
@@ -28,4 +30,4 @@ namespace lexing
     };
 }
 
-#endif
+#endif // VIPER_FRAMEWORK_LEXER_LEXER_H

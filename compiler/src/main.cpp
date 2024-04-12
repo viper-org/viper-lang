@@ -1,5 +1,12 @@
+// Copyright 2024 solar-mist
+
 #include "lexer/Lexer.h"
 #include "lexer/Token.h"
+
+#include "parser/Parser.h"
+
+#include <vipir/IR/IRBuilder.h>
+#include <vipir/Module.h>
 
 #include <fstream>
 #include <iostream>
@@ -20,10 +27,23 @@ int main(int argc, char** argv)
 
     lexing::Lexer lexer(buffer.str());
 
-    for (auto&& tok : lexer.lex())
+    std::vector<lexing::Token> tokens = lexer.lex();
+
+    parser::Parser parser(tokens);
+    
+    vipir::IRBuilder builder;
+    vipir::Module module(argv[1]);
+
+    for (auto& node : parser.parse())
     {
-        std::cout << tok.toString() << "\n";
+        node->emit(builder, module);
     }
+
+    module.print(std::cout);
+
+    using namespace std::literals;
+    std::ofstream outfile = std::ofstream(argv[1] + ".o"s);
+    module.emit(outfile, vipir::OutputFormat::ELF);
 
     return 0;
 }
