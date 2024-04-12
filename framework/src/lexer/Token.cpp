@@ -1,6 +1,7 @@
 #include "lexer/Token.h"
 
 #include <sstream>
+#include <format>
 
 namespace lexing
 {
@@ -35,8 +36,10 @@ namespace lexing
         {
             case TokenType::Error:
                 return "Error";
+
             case TokenType::Identifier:
                 return "Identifier";
+
             case TokenType::LeftParen:
                 return "LeftParen";
             case TokenType::RightParen:
@@ -45,44 +48,29 @@ namespace lexing
                 return "LeftBracket";
             case TokenType::RightBracket:
                 return "RightBracket";
+
             case TokenType::IntegerLiteral:
                 return "IntegerLiteral";
+            
             case TokenType::Semicolon:
                 return "Semicolon";
-            case TokenType::Comma:
-                return "Comma";
-            case TokenType::ReturnKeyword:
-                return "Return";
-            case TokenType::Equals:
-                return "Equals";
-            case TokenType::Type:
-                return "Type";
-            case TokenType::Plus:
-                return "Plus";
-            case TokenType::Minus:
-                return "Minus";
-            case TokenType::ExternKeyword:
-                return "Extern";
-            case TokenType::IfKeyword:
-                return "If";
-            case TokenType::ElseKeyword:
-                return "Else";
-            case TokenType::DoubleEquals:
-                return "DoubleEquals";
-            case TokenType::AsKeyword:
-                return "As";
             case TokenType::Asperand:
                 return "Asperand";
-            case TokenType::Star:
-                return "Star";
+            case TokenType::RightArrow:
+                return "RightArrow";
+
+            case TokenType::Type:
+                return "Type";
+            case TokenType::FuncKeyword:
+                return "Func";
+            case TokenType::ReturnKeyword:
+                return "Return";
         }
     }
 
     std::string Token::toString() const
     {
-        std::stringstream ret;
-        ret << TypeToString(mTokenType) << "(" << mText << ")";
-        return ret.str();
+        return std::format("{}({})", TypeToString(mTokenType), mText);
     }
 
     bool Token::operator==(Token other)

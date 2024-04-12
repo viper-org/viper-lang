@@ -1,8 +1,6 @@
 #include "lexer/Lexer.h"
 #include "lexer/Token.h"
 
-#include "type/Type.h"
-
 #include <unordered_map>
 
 namespace lexing
@@ -14,10 +12,7 @@ namespace lexing
 
     const std::unordered_map<std::string_view, TokenType> keywords = {
         { "return", TokenType::ReturnKeyword },
-        { "extern", TokenType::ExternKeyword },
-        { "if",     TokenType::IfKeyword },
-        { "else",   TokenType::ElseKeyword },
-        { "as",     TokenType::AsKeyword },
+        { "func", TokenType::FuncKeyword },
     };
 
     std::vector<Token> Lexer::lex()
@@ -67,7 +62,7 @@ namespace lexing
                 return Token(keywords.at(text));
             }
 
-            if (Type::Exists(text))
+            if (text == "i32") // TODO: Lookup type properly
             {
                 return Token(TokenType::Type, std::move(text));
             }
@@ -107,29 +102,17 @@ namespace lexing
 
             case ';':
                 return Token(TokenType::Semicolon);
-            case ',':
-                return Token(TokenType::Comma);
 
-            case '&':
+            case '@':
                 return Token(TokenType::Asperand);
-
-            case '*':
-                return Token(TokenType::Star);
-
-            case '=':
-            {
-                if (peek(1) == '=')
+            
+            case '-':
+                if (peek(1) == '>')
                 {
                     consume();
-                    return Token(TokenType::DoubleEquals);
+                    return Token(TokenType::RightArrow);
                 }
-                return Token(TokenType::Equals);
-            }
-
-            case '+':
-                return Token(TokenType::Plus);
-            case '-':
-                return Token(TokenType::Minus);
+                else break;
         }
 
         return Token(TokenType::Error, std::string(1, current())); // Unknown character
