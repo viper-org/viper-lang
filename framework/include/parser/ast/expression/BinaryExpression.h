@@ -17,6 +17,8 @@ namespace parser
         {
             Add,
             Sub,
+
+            Assign,
         };
 
         BinaryExpression(ASTNodePtr left, lexing::TokenType op, ASTNodePtr right);

@@ -21,6 +21,11 @@ namespace parser
             case lexing::TokenType::Minus:
                 mOperator = Operator::Sub;
                 break;
+
+            case lexing::TokenType::Equals:
+                mOperator = Operator::Assign;
+                break;
+                
             default:
                 break;
         }
@@ -44,6 +49,16 @@ namespace parser
                 return builder.CreateAdd(left, right);
             case Operator::Sub:
                 return builder.CreateSub(left, right);
+
+            case Operator::Assign:
+            {
+                vipir::Value* pointerOperand = vipir::getPointerOperand(left);
+
+                vipir::Instruction* instruction = static_cast<vipir::Instruction*>(left);
+                instruction->eraseFromParent();
+
+                return builder.CreateStore(pointerOperand, right);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 func @main() -> i32 {
     let testvar:  i32 = 13;
     let testvar2: i32 = 5;
+    testvar = testvar + 3;
     return testvar - testvar2;
 }
