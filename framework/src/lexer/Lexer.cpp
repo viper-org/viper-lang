@@ -3,6 +3,8 @@
 #include "lexer/Lexer.h"
 #include "lexer/Token.h"
 
+#include "type/Type.h"
+
 #include <unordered_map>
 
 namespace lexing
@@ -65,7 +67,7 @@ namespace lexing
                 return Token(keywords.at(text));
             }
 
-            if (text == "i32") // TODO: Lookup type properly
+            if (Type::Exists(text)) // TODO: Lookup type properly
             {
                 return Token(TokenType::Type, std::move(text));
             }

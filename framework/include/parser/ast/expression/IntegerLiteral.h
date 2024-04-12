@@ -10,7 +10,7 @@ namespace parser
     class IntegerLiteral : public ASTNode
     {
     public:
-        IntegerLiteral(intmax_t value);
+        IntegerLiteral(intmax_t value, Type* type);
 
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
 

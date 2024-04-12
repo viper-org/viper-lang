@@ -7,8 +7,9 @@
 
 namespace parser
 {
-    Function::Function(std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope)
-        : mName(name)
+    Function::Function(Type* returnType, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope)
+        : mReturnType(returnType)
+        , mName(name)
         , mBody(std::move(body))
         , mScope(scope)
     {

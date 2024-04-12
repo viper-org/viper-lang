@@ -18,6 +18,9 @@ set(SOURCES
     "src/parser/ast/expression/IntegerLiteral.cpp"
     "src/parser/ast/expression/VariableExpression.cpp"
 
+    "src/type/Type.cpp"
+    "src/type/IntegerType.cpp"
+
     "src/scope/Scope.cpp"
 )
 
@@ -32,6 +35,9 @@ set(HEADERS
     "include/parser/ast/statement/VariableDeclaration.h"
     "include/parser/ast/expression/IntegerLiteral.h"
     "include/parser/ast/expression/VariableExpression.h"
+
+    "include/type/Type.h"
+    "include/type/IntegerType.h"
 
     "include/scope/Scope.h"
 )

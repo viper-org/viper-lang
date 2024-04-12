@@ -7,15 +7,16 @@
 
 namespace parser
 {
-    VariableDeclaration::VariableDeclaration(std::string&& name, ASTNodePtr&& initialValue)
+    VariableDeclaration::VariableDeclaration(Type* type, std::string&& name, ASTNodePtr&& initialValue)
         : mName(std::move(name))
         , mInitialValue(std::move(initialValue))
     {
+        mType = type;
     }
 
     vipir::Value* VariableDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
     {
-        vipir::AllocaInst* alloca = builder.CreateAlloca(mName);
+        vipir::AllocaInst* alloca = builder.CreateAlloca(mType->getVipirType(), mName);
 
         if (mInitialValue)
         {

@@ -5,6 +5,8 @@
 
 #include "scope/Scope.h"
 
+#include "type/Type.h"
+
 #include <vipir/IR/IRBuilder.h>
 
 #include <memory>
@@ -18,6 +20,9 @@ namespace parser
         virtual ~ASTNode() { }
 
         virtual vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) = 0;
+    
+    protected:
+        Type* mType;
     };
     using ASTNodePtr = std::unique_ptr<ASTNode>;
 }

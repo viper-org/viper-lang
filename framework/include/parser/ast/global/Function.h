@@ -10,11 +10,12 @@ namespace parser
     class Function : public ASTNode
     {
     public:
-        Function(std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope);
+        Function(Type* returnType, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope);
 
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
 
     private:
+        Type* mReturnType;
         std::string mName;
         std::vector<ASTNodePtr> mBody;
         ScopePtr mScope;

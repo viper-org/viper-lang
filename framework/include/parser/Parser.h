@@ -35,17 +35,19 @@ namespace parser
 
         void expectToken(lexing::TokenType tokenType);
 
+        Type* parseType();
+
         ASTNodePtr parseGlobal();
-        ASTNodePtr parseExpression();
-        ASTNodePtr parsePrimary();
+        ASTNodePtr parseExpression(Type* preferredType = nullptr);
+        ASTNodePtr parsePrimary(Type* preferredType = nullptr);
 
         FunctionPtr parseFunction();
 
         ReturnStatementPtr parseReturnStatement();
         VariableDeclarationPtr parseVariableDeclaration();
 
-        IntegerLiteralPtr parseIntegerLiteral();
-        VariableExpressionPtr parseVariableExpression();
+        IntegerLiteralPtr parseIntegerLiteral(Type* preferredType = nullptr);
+        VariableExpressionPtr parseVariableExpression(Type* preferredType = nullptr);
     };
 }
 

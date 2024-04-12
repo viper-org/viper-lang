@@ -6,14 +6,15 @@
 
 namespace parser
 {
-    IntegerLiteral::IntegerLiteral(intmax_t value)
+    IntegerLiteral::IntegerLiteral(intmax_t value, Type* type)
         : mValue(value)
     {
+        mType = type ? type : Type::Get("i32");
     }
 
     vipir::Value* IntegerLiteral::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
     {
-        return builder.CreateConstantInt(mValue);
+        return builder.CreateConstantInt(mValue, mType->getVipirType());
     }
 
 }
