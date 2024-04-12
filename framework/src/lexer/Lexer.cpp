@@ -13,8 +13,9 @@ namespace lexing
     }
 
     const std::unordered_map<std::string_view, TokenType> keywords = {
-        { "return", TokenType::ReturnKeyword },
         { "func", TokenType::FuncKeyword },
+        { "return", TokenType::ReturnKeyword },
+        { "let", TokenType::LetKeyword },
     };
 
     std::vector<Token> Lexer::lex()
@@ -104,9 +105,14 @@ namespace lexing
 
             case ';':
                 return Token(TokenType::Semicolon);
+            case ':':
+                return Token(TokenType::Colon);
 
             case '@':
                 return Token(TokenType::Asperand);
+
+            case '=':
+                return Token(TokenType::Equals);
             
             case '-':
                 if (peek(1) == '>')

@@ -75,6 +75,9 @@ namespace parser
         {
             case lexing::TokenType::ReturnKeyword:
                 return parseReturnStatement();
+            
+            case lexing::TokenType::LetKeyword:
+                return parseVariableDeclaration();
 
             case lexing::TokenType::IntegerLiteral:
                 return parseIntegerLiteral();
@@ -129,6 +132,29 @@ namespace parser
         }
 
         return std::make_unique<ReturnStatement>(parseExpression());
+    }
+
+    VariableDeclarationPtr Parser::parseVariableDeclaration()
+    {
+        consume(); // let
+        
+        std::string name = consume().getText();
+
+        expectToken(lexing::TokenType::Colon);
+        consume();
+
+        expectToken(lexing::TokenType::Type);
+        consume();
+
+        if (current().getTokenType() == lexing::TokenType::Semicolon)
+        {
+            return std::make_unique<VariableDeclaration>(std::move(name), nullptr);
+        }
+
+        expectToken(lexing::TokenType::Equals);
+        consume();
+
+        return std::make_unique<VariableDeclaration>(std::move(name), parseExpression());
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral()

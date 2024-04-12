@@ -14,6 +14,7 @@ set(SOURCES
     "src/parser/Parser.cpp"
     "src/parser/ast/global/Function.cpp"
     "src/parser/ast/statement/ReturnStatement.cpp"
+    "src/parser/ast/statement/VariableDeclaration.cpp"
     "src/parser/ast/expression/IntegerLiteral.cpp"
 )
 
@@ -25,6 +26,7 @@ set(HEADERS
     "include/parser/ast/Node.h"
     "include/parser/ast/global/Function.h"
     "include/parser/ast/statement/ReturnStatement.h"
+    "include/parser/ast/statement/VariableDeclaration.h"
     "include/parser/ast/expression/IntegerLiteral.h"
 )
 

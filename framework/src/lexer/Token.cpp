@@ -56,10 +56,15 @@ namespace lexing
             
             case TokenType::Semicolon:
                 return "Semicolon";
+            case TokenType::Colon:
+                return "Colon";
             case TokenType::Asperand:
                 return "Asperand";
             case TokenType::RightArrow:
                 return "RightArrow";
+
+            case TokenType::Equals:
+                return "Equals";
 
             case TokenType::Type:
                 return "Type";
@@ -67,7 +72,10 @@ namespace lexing
                 return "Func";
             case TokenType::ReturnKeyword:
                 return "Return";
+            case TokenType::LetKeyword:
+                return "Let";
         }
+        return ""; // unreachable
     }
 
     std::string Token::toString() const

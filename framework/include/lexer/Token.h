@@ -17,7 +17,9 @@ namespace lexing
 
         LeftParen, RightParen,
         LeftBracket, RightBracket,
-        Semicolon,
+        Semicolon, Colon,
+
+        Equals,
 
         Asperand,
         RightArrow,
@@ -25,6 +27,7 @@ namespace lexing
         Type,
         FuncKeyword,
         ReturnKeyword,
+        LetKeyword,
     };
 
     class Token
