@@ -31,6 +31,7 @@ namespace lexing
         ReturnKeyword,
         LetKeyword,
         IfKeyword, ElseKeyword,
+        WhileKeyword,
         TrueKeyword, FalseKeyword
     };
 

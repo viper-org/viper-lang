@@ -131,6 +131,8 @@ namespace parser
 
             case lexing::TokenType::IfKeyword:
                 return parseIfStatement();
+            case lexing::TokenType::WhileKeyword:
+                return parseWhileStatement();
 
             case lexing::TokenType::TrueKeyword:
                 consume();
@@ -252,6 +254,23 @@ namespace parser
         }
 
         return std::make_unique<IfStatement>(std::move(condition), std::move(body), std::move(elseBody));
+    }
+
+    WhileStatementPtr Parser::parseWhileStatement()
+    {
+        consume(); // while
+
+        expectToken(lexing::TokenType::LeftParen);
+        consume();
+
+        ASTNodePtr condition = parseExpression();
+
+        expectToken(lexing::TokenType::RightParen);
+        consume();
+
+        ASTNodePtr body = parseExpression();
+
+        return std::make_unique<WhileStatement>(std::move(condition), std::move(body));
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral(Type* preferredType)

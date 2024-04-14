@@ -84,6 +84,8 @@ namespace lexing
                 return "If";
             case TokenType::ElseKeyword:
                 return "Else";
+            case TokenType::WhileKeyword:
+                return "While";
             case TokenType::TrueKeyword:
                 return "True";
             case TokenType::FalseKeyword:

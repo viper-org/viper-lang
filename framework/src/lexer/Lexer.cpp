@@ -20,6 +20,7 @@ namespace lexing
         { "let",    TokenType::LetKeyword },
         { "if",     TokenType::IfKeyword },
         { "else",   TokenType::ElseKeyword },
+        { "while",  TokenType::WhileKeyword },
         { "true",   TokenType::TrueKeyword },
         { "false",  TokenType::FalseKeyword },
     };
