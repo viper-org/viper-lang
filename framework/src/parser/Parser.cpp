@@ -2,7 +2,9 @@
 
 
 #include "parser/Parser.h"
+
 #include "parser/ast/expression/BinaryExpression.h"
+#include "parser/ast/expression/BooleanLiteral.h"
 
 #include "lexer/Token.h"
 
@@ -129,6 +131,13 @@ namespace parser
 
             case lexing::TokenType::IfKeyword:
                 return parseIfStatement();
+
+            case lexing::TokenType::TrueKeyword:
+                consume();
+                return std::make_unique<BooleanLiteral>(true);
+            case lexing::TokenType::FalseKeyword:
+                consume();
+                return std::make_unique<BooleanLiteral>(false);
 
             case lexing::TokenType::IntegerLiteral:
                 return parseIntegerLiteral(preferredType);

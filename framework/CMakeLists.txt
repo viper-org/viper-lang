@@ -17,12 +17,14 @@ set(SOURCES
     "src/parser/ast/statement/VariableDeclaration.cpp"
     "src/parser/ast/statement/IfStatement.cpp"
     "src/parser/ast/expression/IntegerLiteral.cpp"
+    "src/parser/ast/expression/BooleanLiteral.cpp"
     "src/parser/ast/expression/VariableExpression.cpp"
     "src/parser/ast/expression/BinaryExpression.cpp"
 
     "src/type/Type.cpp"
     "src/type/IntegerType.cpp"
     "src/type/VoidType.cpp"
+    "src/type/BooleanType.cpp"
 
     "src/scope/Scope.cpp"
 )
@@ -38,12 +40,14 @@ set(HEADERS
     "include/parser/ast/statement/VariableDeclaration.h"
     "include/parser/ast/statement/IfStatement.h"
     "include/parser/ast/expression/IntegerLiteral.h"
+    "include/parser/ast/expression/BooleanLiteral.h"
     "include/parser/ast/expression/VariableExpression.h"
     "include/parser/ast/expression/BinaryExpression.h"
 
     "include/type/Type.h"
     "include/type/IntegerType.h"
     "include/type/VoidType.h"
+    "include/type/BooleanType.h"
 
     "include/scope/Scope.h"
 )

@@ -20,6 +20,8 @@ namespace lexing
         { "let",    TokenType::LetKeyword },
         { "if",     TokenType::IfKeyword },
         { "else",   TokenType::ElseKeyword },
+        { "true",   TokenType::TrueKeyword },
+        { "false",  TokenType::FalseKeyword },
     };
 
     std::vector<Token> Lexer::lex()

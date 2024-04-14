@@ -84,6 +84,10 @@ namespace lexing
                 return "If";
             case TokenType::ElseKeyword:
                 return "Else";
+            case TokenType::TrueKeyword:
+                return "True";
+            case TokenType::FalseKeyword:
+                return "False";
         }
         return ""; // unreachable
     }
