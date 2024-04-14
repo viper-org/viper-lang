@@ -19,7 +19,9 @@ namespace parser
     {
         scope = mScope.get();
 
-        vipir::Function* func = vipir::Function::Create(module, mName);
+        vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType());
+
+        vipir::Function* func = vipir::Function::Create(functionType, module, mName);
 
         vipir::BasicBlock* entryBasicBlock = vipir::BasicBlock::Create("", func);
         builder.setInsertPoint(entryBasicBlock);
