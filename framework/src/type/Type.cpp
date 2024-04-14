@@ -3,6 +3,7 @@
 
 #include "type/Type.h"
 #include "type/IntegerType.h"
+#include "type/VoidType.h"
 
 #include <unordered_map>
 
@@ -14,6 +15,8 @@ void Type::Init()
     types["i16"] = std::make_unique<IntegerType>(16);
     types["i32"] = std::make_unique<IntegerType>(32);
     types["i64"] = std::make_unique<IntegerType>(64);
+
+    types["void"] = std::make_unique<VoidType>();
 }
 
 bool Type::Exists(const std::string& name)

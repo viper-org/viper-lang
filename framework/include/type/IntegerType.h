@@ -19,4 +19,4 @@ private:
     int mBits;
 };
 
-#endif
+#endif // VIPER_FRAMEWORK_TYPE_INTEGER_TYPE_H

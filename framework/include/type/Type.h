@@ -16,10 +16,11 @@ public:
     virtual vipir::Type* getVipirType() const = 0;
 
     virtual bool isIntegerType() const { return false; }
+    virtual bool isVoidType()    const { return false; }
 
     static void Init();
     static bool Exists(const std::string& name);
     static Type* Get(const std::string& name);
 };
 
-#endif
+#endif // VIPER_FRAMEWORK_TYPE_TYPE_H
