@@ -69,6 +69,8 @@ namespace lexing
                 return "Plus";
             case TokenType::Minus:
                 return "Minus";
+            case TokenType::DoubleEquals:
+                return "DoubleEquals";
 
             case TokenType::Type:
                 return "Type";
@@ -78,6 +80,10 @@ namespace lexing
                 return "Return";
             case TokenType::LetKeyword:
                 return "Let";
+            case TokenType::IfKeyword:
+                return "If";
+            case TokenType::ElseKeyword:
+                return "Else";
         }
         return ""; // unreachable
     }

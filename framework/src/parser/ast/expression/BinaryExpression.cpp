@@ -22,6 +22,10 @@ namespace parser
                 mOperator = Operator::Sub;
                 break;
 
+            case lexing::TokenType::DoubleEquals:
+                mOperator = Operator::Equal;
+                break;
+
             case lexing::TokenType::Equals:
                 mOperator = Operator::Assign;
                 break;
@@ -49,6 +53,9 @@ namespace parser
                 return builder.CreateAdd(left, right);
             case Operator::Sub:
                 return builder.CreateSub(left, right);
+
+            case Operator::Equal:
+                return builder.CreateCmpEQ(left, right);
 
             case Operator::Assign:
             {

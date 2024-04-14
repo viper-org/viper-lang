@@ -79,6 +79,9 @@ namespace parser
             case lexing::TokenType::Minus:
                 return 35;
 
+            case lexing::TokenType::DoubleEquals:
+                return 25;
+
             case lexing::TokenType::Equals:
                 return 10;
 
@@ -123,6 +126,9 @@ namespace parser
             
             case lexing::TokenType::LetKeyword:
                 return parseVariableDeclaration();
+
+            case lexing::TokenType::IfKeyword:
+                return parseIfStatement();
 
             case lexing::TokenType::IntegerLiteral:
                 return parseIntegerLiteral(preferredType);
@@ -209,6 +215,34 @@ namespace parser
         consume();
 
         return std::make_unique<VariableDeclaration>(type, std::move(name), parseExpression(type));
+    }
+
+    IfStatementPtr Parser::parseIfStatement()
+    {
+        consume(); // if
+
+        expectToken(lexing::TokenType::LeftParen);
+        consume();
+
+        ASTNodePtr condition = parseExpression();
+
+        expectToken(lexing::TokenType::RightParen);
+        consume();
+
+        ASTNodePtr body = parseExpression();
+        ASTNodePtr elseBody = nullptr;
+
+        if (peek(1).getTokenType() == lexing::TokenType::ElseKeyword)
+        {
+            expectToken(lexing::TokenType::Semicolon);
+            consume();
+
+            consume(); // else
+
+            elseBody = parseExpression();
+        }
+
+        return std::make_unique<IfStatement>(std::move(condition), std::move(body), std::move(elseBody));
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral(Type* preferredType)

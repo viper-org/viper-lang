@@ -21,6 +21,7 @@ namespace lexing
 
         Equals,
         Plus, Minus,
+        DoubleEquals,
 
         Asperand,
         RightArrow,
@@ -29,6 +30,7 @@ namespace lexing
         FuncKeyword,
         ReturnKeyword,
         LetKeyword,
+        IfKeyword, ElseKeyword,
     };
 
     class Token
