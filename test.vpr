@@ -2,7 +2,7 @@ func @main() -> i32 {
     let testvar: i32 = 1;
 
     while(testvar <= 13) {
-        testvar = testvar + 1;
+        testvar += 1;
     }
 
     return testvar;

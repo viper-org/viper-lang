@@ -69,6 +69,11 @@ namespace lexing
                 return "Plus";
             case TokenType::Minus:
                 return "Minus";
+            case TokenType::PlusEquals:
+                return "PlusEquals";
+            case TokenType::MinusEquals:
+                return "MinusEquals";
+
             case TokenType::DoubleEquals:
                 return "DoubleEquals";
             case TokenType::BangEquals:

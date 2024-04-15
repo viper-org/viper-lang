@@ -92,6 +92,8 @@ namespace parser
                 return 25;
 
             case lexing::TokenType::Equals:
+            case lexing::TokenType::PlusEquals:
+            case lexing::TokenType::MinusEquals:
                 return 10;
 
             default:

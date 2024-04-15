@@ -15,14 +15,14 @@ namespace parser
     public:
         enum class Operator
         {
-            Add,
-            Sub,
+            Add, Sub,
 
             Equal, NotEqual,
             LessThan, GreaterThan,
             LessEqual, GreaterEqual,
 
             Assign,
+            AddAssign, SubAssign,
         };
 
         BinaryExpression(ASTNodePtr left, lexing::TokenType op, ASTNodePtr right);

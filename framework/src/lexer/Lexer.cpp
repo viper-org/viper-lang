@@ -127,12 +127,22 @@ namespace lexing
                 return Token(TokenType::Equals);
             
             case '+':
+                if (peek(1) == '=')
+                {
+                    consume();
+                    return Token(TokenType::PlusEquals);
+                }
                 return Token(TokenType::Plus);
             case '-':
                 if (peek(1) == '>')
                 {
                     consume();
                     return Token(TokenType::RightArrow);
+                }
+                else if (peek(1) == '=')
+                {
+                    consume();
+                    return Token(TokenType::MinusEquals);
                 }
                 return Token(TokenType::Minus);
 

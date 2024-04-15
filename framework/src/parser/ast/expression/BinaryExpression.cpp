@@ -7,6 +7,8 @@
 #include <vipir/IR/Instruction/BinaryInst.h>
 #include <vipir/IR/Instruction/StoreInst.h>
 
+#include <cassert>
+
 namespace parser
 {
     BinaryExpression::BinaryExpression(ASTNodePtr left, lexing::TokenType tokenType, ASTNodePtr right)
@@ -45,6 +47,12 @@ namespace parser
 
             case lexing::TokenType::Equals:
                 mOperator = Operator::Assign;
+                break;
+            case lexing::TokenType::PlusEquals:
+                mOperator = Operator::AddAssign;
+                break;
+            case lexing::TokenType::MinusEquals:
+                mOperator = Operator::SubAssign;
                 break;
 
             default:
@@ -94,6 +102,22 @@ namespace parser
                 instruction->eraseFromParent();
 
                 return builder.CreateStore(pointerOperand, right);
+            }
+            case Operator::AddAssign:
+            {
+                vipir::Value* pointerOperand = vipir::getPointerOperand(left);
+                assert(pointerOperand != nullptr); // TODO: Proper error report
+
+                vipir::Value* add = builder.CreateAdd(left, right);
+                return builder.CreateStore(pointerOperand, add);
+            }
+            case Operator::SubAssign:
+            {
+                vipir::Value* pointerOperand = vipir::getPointerOperand(left);
+                assert(pointerOperand != nullptr); // TODO: Proper error report
+
+                vipir::Value* sub = builder.CreateSub(left, right);
+                return builder.CreateStore(pointerOperand, sub);
             }
         }
     }
