@@ -2,11 +2,13 @@ func @main() -> i32 {
     let testvar:  i32 = 13;
     let testvar2: i32 = 5;
 
-    while(testvar == 13)
+    while(testvar == 13) {
         testvar = testvar + 1;
+    }
 
-    if (testvar == 13)
+    if (testvar == 13) {
         testvar = testvar + testvar2 + 3;
+    }
 
     return testvar;
 }

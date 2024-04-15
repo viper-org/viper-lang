@@ -123,6 +123,9 @@ namespace parser
     {
         switch (current().getTokenType())
         {
+            case lexing::TokenType::LeftBracket:
+                return parseCompoundStatement();
+
             case lexing::TokenType::ReturnKeyword:
                 return parseReturnStatement();
             
@@ -190,6 +193,29 @@ namespace parser
         mScope = functionScope->parent;
 
         return std::make_unique<Function>(type, name, std::move(body), functionScope);
+    }
+
+    CompoundStatementPtr Parser::parseCompoundStatement()
+    {
+        consume(); // left bracket
+
+        Scope* blockScope = new Scope(mScope);
+        mScope = blockScope;
+        
+        std::vector<ASTNodePtr> body;
+        while (current().getTokenType() != lexing::TokenType::RightBracket)
+        {
+            body.push_back(parseExpression());
+            expectToken(lexing::TokenType::Semicolon);
+            consume();
+        }
+        consume();
+
+        mTokens.insert(mTokens.begin()+mPosition, lexing::Token(lexing::TokenType::Semicolon));
+
+        mScope = blockScope->parent;
+
+        return std::make_unique<CompoundStatement>(std::move(body), blockScope);
     }
 
     ReturnStatementPtr Parser::parseReturnStatement()
