@@ -18,7 +18,7 @@ namespace parser
             Add,
             Sub,
 
-            Equal,
+            Equal, NotEqual,
 
             Assign,
         };

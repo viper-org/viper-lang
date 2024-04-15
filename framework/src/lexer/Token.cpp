@@ -71,6 +71,8 @@ namespace lexing
                 return "Minus";
             case TokenType::DoubleEquals:
                 return "DoubleEquals";
+            case TokenType::BangEquals:
+                return "BangEquals";
 
             case TokenType::Type:
                 return "Type";

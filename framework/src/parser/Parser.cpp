@@ -82,6 +82,7 @@ namespace parser
                 return 35;
 
             case lexing::TokenType::DoubleEquals:
+            case lexing::TokenType::BangEquals:
                 return 25;
 
             case lexing::TokenType::Equals:

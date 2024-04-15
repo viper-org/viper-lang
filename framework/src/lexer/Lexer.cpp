@@ -135,6 +135,14 @@ namespace lexing
                     return Token(TokenType::RightArrow);
                 }
                 return Token(TokenType::Minus);
+
+            case '!':
+                if (peek(1) == '=')
+                {
+                    consume();
+                    return Token(TokenType::BangEquals);
+                }
+                break;
         }
 
         return Token(TokenType::Error, std::string(1, current())); // Unknown character

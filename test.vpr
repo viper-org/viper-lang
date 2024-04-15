@@ -6,7 +6,7 @@ func @main() -> i32 {
         testvar = testvar + 1;
     }
 
-    if (testvar == 13) {
+    if (testvar != 13) {
         testvar = testvar + testvar2 + 3;
     }
 

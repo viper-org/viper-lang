@@ -25,11 +25,14 @@ namespace parser
             case lexing::TokenType::DoubleEquals:
                 mOperator = Operator::Equal;
                 break;
+            case lexing::TokenType::BangEquals:
+                mOperator = Operator::NotEqual;
+                break;
 
             case lexing::TokenType::Equals:
                 mOperator = Operator::Assign;
                 break;
-                
+
             default:
                 break;
         }
@@ -56,6 +59,8 @@ namespace parser
 
             case Operator::Equal:
                 return builder.CreateCmpEQ(left, right);
+            case Operator::NotEqual:
+                return builder.CreateCmpNE(left, right);
 
             case Operator::Assign:
             {
