@@ -19,6 +19,8 @@ namespace parser
             Sub,
 
             Equal, NotEqual,
+            LessThan, GreaterThan,
+            LessEqual, GreaterEqual,
 
             Assign,
         };

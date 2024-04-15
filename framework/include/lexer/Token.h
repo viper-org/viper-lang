@@ -22,6 +22,8 @@ namespace lexing
         Equals,
         Plus, Minus,
         DoubleEquals, BangEquals,
+        LessThan, GreaterThan,
+        LessEqual, GreaterEqual,
 
         Asperand,
         RightArrow,

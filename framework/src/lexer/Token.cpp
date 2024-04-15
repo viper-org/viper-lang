@@ -73,6 +73,14 @@ namespace lexing
                 return "DoubleEquals";
             case TokenType::BangEquals:
                 return "BangEquals";
+            case TokenType::LessThan:
+                return "LessThan";
+            case TokenType::GreaterThan:
+                return "GreaterThan";
+            case TokenType::LessEqual:
+                return "LessEqual";
+            case TokenType::GreaterEqual:
+                return "GreaterEqual";
 
             case TokenType::Type:
                 return "Type";

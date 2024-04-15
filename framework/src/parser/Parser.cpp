@@ -81,6 +81,12 @@ namespace parser
             case lexing::TokenType::Minus:
                 return 35;
 
+            case lexing::TokenType::LessThan:
+            case lexing::TokenType::GreaterThan:
+            case lexing::TokenType::LessEqual:
+            case lexing::TokenType::GreaterEqual:
+                return 25;
+
             case lexing::TokenType::DoubleEquals:
             case lexing::TokenType::BangEquals:
                 return 25;

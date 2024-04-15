@@ -29,6 +29,20 @@ namespace parser
                 mOperator = Operator::NotEqual;
                 break;
 
+            case lexing::TokenType::LessThan:
+                mOperator = Operator::LessThan;
+                break;
+            case lexing::TokenType::GreaterThan:
+                mOperator = Operator::GreaterThan;
+                break;
+
+            case lexing::TokenType::LessEqual:
+                mOperator = Operator::LessEqual;
+                break;
+            case lexing::TokenType::GreaterEqual:
+                mOperator = Operator::GreaterEqual;
+                break;
+
             case lexing::TokenType::Equals:
                 mOperator = Operator::Assign;
                 break;
@@ -61,6 +75,16 @@ namespace parser
                 return builder.CreateCmpEQ(left, right);
             case Operator::NotEqual:
                 return builder.CreateCmpNE(left, right);
+
+            case Operator::LessThan:
+                return builder.CreateCmpLT(left, right);
+            case Operator::GreaterThan:
+                return builder.CreateCmpGT(left, right);
+
+            case Operator::LessEqual:
+                return builder.CreateCmpLE(left, right);
+            case Operator::GreaterEqual:
+                return builder.CreateCmpGE(left, right);
 
             case Operator::Assign:
             {

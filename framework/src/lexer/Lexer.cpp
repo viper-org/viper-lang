@@ -143,6 +143,21 @@ namespace lexing
                     return Token(TokenType::BangEquals);
                 }
                 break;
+
+            case '<':
+                if (peek(1) == '=')
+                {
+                    consume();
+                    return Token(TokenType::LessEqual);
+                }
+                return Token(TokenType::LessThan);
+            case '>':
+                if (peek(1) == '=')
+                {
+                    consume();
+                    return Token(TokenType::GreaterEqual);
+                }
+                return Token(TokenType::GreaterThan);
         }
 
         return Token(TokenType::Error, std::string(1, current())); // Unknown character
