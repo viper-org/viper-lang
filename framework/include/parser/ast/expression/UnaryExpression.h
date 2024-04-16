@@ -15,7 +15,9 @@ namespace parser
     public:
         enum class Operator
         {
-            Negate
+            Negate,
+            
+            BitwiseNot,
         };
 
         UnaryExpression(ASTNodePtr operand, lexing::TokenType op);

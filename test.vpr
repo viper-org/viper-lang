@@ -5,5 +5,5 @@ func @main() -> i32 {
         testvar += 1;
     }
 
-    return -testvar;
+    return testvar & ~testvar;
 }

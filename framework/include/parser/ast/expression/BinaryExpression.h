@@ -17,6 +17,8 @@ namespace parser
         {
             Add, Sub,
 
+            BitwiseOr, BitwiseAnd, BitwiseXor,
+
             Equal, NotEqual,
             LessThan, GreaterThan,
             LessEqual, GreaterEqual,

@@ -26,7 +26,10 @@ namespace lexing
         LessThan, GreaterThan,
         LessEqual, GreaterEqual,
 
-        Asperand,
+        Asperand, Ampersand,
+        Pipe,
+        Caret,
+        Tilde,
         RightArrow,
 
         Type,

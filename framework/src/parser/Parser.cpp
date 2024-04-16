@@ -76,22 +76,29 @@ namespace parser
         {
             case lexing::TokenType::Plus:
             case lexing::TokenType::Minus:
-                return 35;
+                return 70;
 
             case lexing::TokenType::LessThan:
             case lexing::TokenType::GreaterThan:
             case lexing::TokenType::LessEqual:
             case lexing::TokenType::GreaterEqual:
-                return 25;
+                return 55;
 
             case lexing::TokenType::DoubleEquals:
             case lexing::TokenType::BangEquals:
-                return 25;
+                return 50;
+
+            case lexing::TokenType::Ampersand:
+                return 45;
+            case lexing::TokenType::Caret:
+                return 40;
+            case lexing::TokenType::Pipe:
+                return 35;
 
             case lexing::TokenType::Equals:
             case lexing::TokenType::PlusEquals:
             case lexing::TokenType::MinusEquals:
-                return 10;
+                return 20;
 
             default:
                 return 0;
@@ -103,7 +110,8 @@ namespace parser
         switch(tokenType)
         {
             case lexing::TokenType::Minus:
-                return 45;
+            case lexing::TokenType::Tilde:
+                return 85;
             
             default:
                 return 0;

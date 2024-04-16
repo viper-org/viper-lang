@@ -24,6 +24,16 @@ namespace parser
                 mOperator = Operator::Sub;
                 break;
 
+            case lexing::TokenType::Pipe:
+                mOperator = Operator::BitwiseOr;
+                break;
+            case lexing::TokenType::Ampersand:
+                mOperator = Operator::BitwiseAnd;
+                break;
+            case lexing::TokenType::Caret:
+                mOperator = Operator::BitwiseXor;
+                break;
+
             case lexing::TokenType::DoubleEquals:
                 mOperator = Operator::Equal;
                 break;
@@ -78,6 +88,13 @@ namespace parser
                 return builder.CreateAdd(left, right);
             case Operator::Sub:
                 return builder.CreateSub(left, right);
+
+            case Operator::BitwiseOr:
+                return builder.CreateBWOr(left, right);
+            case Operator::BitwiseAnd:
+                return builder.CreateBWAnd(left, right);
+            case Operator::BitwiseXor:
+                return builder.CreateBWXor(left, right);
 
             case Operator::Equal:
                 return builder.CreateCmpEQ(left, right);

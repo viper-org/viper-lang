@@ -168,6 +168,15 @@ namespace lexing
                     return Token(TokenType::GreaterEqual);
                 }
                 return Token(TokenType::GreaterThan);
+
+            case '|':
+                return Token(TokenType::Pipe);
+            case '&':
+                return Token(TokenType::Ampersand);
+            case '^':
+                return Token(TokenType::Caret);
+            case '~':
+                return Token(TokenType::Tilde);
         }
 
         return Token(TokenType::Error, std::string(1, current())); // Unknown character

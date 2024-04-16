@@ -16,6 +16,9 @@ namespace parser
                 mOperator = Operator::Negate;
                 break;
 
+            case lexing::TokenType::Tilde:
+                mOperator = Operator::BitwiseNot;
+
             default:
                 break; // TODO: Error
         }
@@ -35,6 +38,9 @@ namespace parser
         {
             case Operator::Negate:
                 return builder.CreateNeg(operand);
+
+            case Operator::BitwiseNot:
+                return builder.CreateNot(operand);
         }
 
         return nullptr;
