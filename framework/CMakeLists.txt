@@ -22,6 +22,7 @@ set(SOURCES
     "src/parser/ast/expression/BooleanLiteral.cpp"
     "src/parser/ast/expression/VariableExpression.cpp"
     "src/parser/ast/expression/BinaryExpression.cpp"
+    "src/parser/ast/expression/UnaryExpression.cpp"
 
     "src/type/Type.cpp"
     "src/type/IntegerType.cpp"
@@ -47,6 +48,7 @@ set(HEADERS
     "include/parser/ast/expression/BooleanLiteral.h"
     "include/parser/ast/expression/VariableExpression.h"
     "include/parser/ast/expression/BinaryExpression.h"
+    "include/parser/ast/expression/UnaryExpression.h"
 
     "include/type/Type.h"
     "include/type/IntegerType.h"

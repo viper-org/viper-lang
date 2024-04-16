@@ -4,6 +4,7 @@
 #include "parser/Parser.h"
 
 #include "parser/ast/expression/BinaryExpression.h"
+#include "parser/ast/expression/UnaryExpression.h"
 #include "parser/ast/expression/BooleanLiteral.h"
 
 #include "lexer/Token.h"
@@ -73,10 +74,6 @@ namespace parser
     {
         switch (tokenType)
         {
-            
-            case lexing::TokenType::LeftParen:
-                return 55;
-
             case lexing::TokenType::Plus:
             case lexing::TokenType::Minus:
                 return 35;
@@ -100,6 +97,27 @@ namespace parser
                 return 0;
         }
     }
+
+    int Parser::getPrefixUnaryOperatorPrecedence(lexing::TokenType tokenType)
+    {
+        switch(tokenType)
+        {
+            case lexing::TokenType::Minus:
+                return 45;
+            
+            default:
+                return 0;
+        }
+    }
+
+    int Parser::getPostfixUnaryOperatorPrecedence(lexing::TokenType tokenType)
+    {
+        switch(tokenType)
+        {
+            default:
+                return 0;
+        }
+    }
     
     Type* Parser::parseType()
     {
@@ -110,7 +128,17 @@ namespace parser
 
     ASTNodePtr Parser::parseExpression(Type* preferredType, int precedence)
     {
-        ASTNodePtr lhs = parsePrimary(preferredType);
+        ASTNodePtr lhs;
+        int prefixOperatorPrecedence = getPrefixUnaryOperatorPrecedence(current().getTokenType());
+        if (prefixOperatorPrecedence >= precedence)
+        {
+            lexing::TokenType operatorTokenType = consume().getTokenType();
+            lhs = std::make_unique<UnaryExpression>(parseExpression(nullptr, prefixOperatorPrecedence), operatorTokenType);
+        }
+        else
+        {
+            lhs = parsePrimary(preferredType);
+        }
 
         while(true)
         {

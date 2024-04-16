@@ -46,6 +46,8 @@ namespace parser
         void expectToken(lexing::TokenType tokenType);
 
         int getBinaryOperatorPrecedence(lexing::TokenType tokenType);
+        int getPrefixUnaryOperatorPrecedence(lexing::TokenType tokenType);
+        int getPostfixUnaryOperatorPrecedence(lexing::TokenType tokenType);
 
         Type* parseType();
 
