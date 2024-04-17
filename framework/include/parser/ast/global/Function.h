@@ -12,6 +12,8 @@ namespace parser
     public:
         Function(Type* returnType, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope);
 
+        Type* getReturnType() const;
+
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
 
     private:

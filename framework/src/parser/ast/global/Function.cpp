@@ -1,9 +1,9 @@
 // Copyright 2024 solar-mist
 
 #include "parser/ast/global/Function.h"
-#include "vipir/IR/BasicBlock.h"
 
 #include <vipir/IR/Function.h>
+#include <vipir/IR/BasicBlock.h>
 
 namespace parser
 {
@@ -15,6 +15,11 @@ namespace parser
     {
     }
 
+    Type* Function::getReturnType() const
+    {
+        return mReturnType;
+    }
+
     vipir::Value* Function::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
     {
         scope = mScope.get();
@@ -22,6 +27,7 @@ namespace parser
         vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType());
 
         vipir::Function* func = vipir::Function::Create(functionType, module, mName);
+        GlobalFunctions[mName] = func;
 
         vipir::BasicBlock* entryBasicBlock = vipir::BasicBlock::Create("", func);
         builder.setInsertPoint(entryBasicBlock);

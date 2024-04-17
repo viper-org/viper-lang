@@ -5,6 +5,7 @@
 #define VIPER_FRAMEWORK_SCOPE_SCOPE_H 1
 
 #include <vipir/IR/Instruction/AllocaInst.h>
+#include <vipir/IR/Function.h>
 
 #include <optional>
 #include <unordered_map>
@@ -17,13 +18,22 @@ struct LocalSymbol
     vipir::AllocaInst* alloca;
 };
 
+struct FunctionSymbol
+{
+    FunctionSymbol() = default;
+    FunctionSymbol(vipir::Function* function);
+
+    vipir::Function* function;
+};
+extern std::unordered_map<std::string, FunctionSymbol> GlobalFunctions;
+
 struct Scope
 {
     Scope(Scope* parent);
 
     std::unordered_map<std::string, LocalSymbol> locals;
 
-    LocalSymbol findVariable(const std::string& name);
+    LocalSymbol* findVariable(const std::string& name);
 
     Scope* parent;
 };

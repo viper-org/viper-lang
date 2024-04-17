@@ -1,6 +1,7 @@
 // Copyright 2024 solar-mist
 
 #include "parser/ast/expression/VariableExpression.h"
+#include "scope/Scope.h"
 
 #include <vipir/IR/Instruction/AllocaInst.h>
 #include <vipir/IR/Instruction/LoadInst.h>
@@ -15,11 +16,15 @@ namespace parser
 
     vipir::Value* VariableExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
     {
-        vipir::AllocaInst* alloca = scope->findVariable(mName).alloca;
+        LocalSymbol* local = scope->findVariable(mName);
 
-        if (alloca)
+        if (local)
         {
-            return builder.CreateLoad(alloca);
+            return builder.CreateLoad(local->alloca);
+        }
+        else if (GlobalFunctions.find(mName) != GlobalFunctions.end())
+        {
+            return GlobalFunctions.at(mName).function;
         }
         else
         {

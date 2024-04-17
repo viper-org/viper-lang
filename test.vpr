@@ -1,9 +1,13 @@
+func @test() -> i32 {
+    return 69;
+}
+
 func @main() -> i32 {
     let testvar: i32 = 1;
 
-    while(testvar <= 13) {
+    while(testvar <= test()) {
         testvar += 1;
     }
 
-    return testvar & ~testvar;
+    return testvar;
 }

@@ -22,7 +22,7 @@ namespace parser
     struct Symbol
     {
         std::string name;
-        Type* type;
+        Type* type; // returnType for functions
     };
 
     class Parser

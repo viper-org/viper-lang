@@ -4,6 +4,7 @@
 #include "parser/Parser.h"
 
 #include "parser/ast/expression/BinaryExpression.h"
+#include "parser/ast/expression/CallExpression.h"
 #include "parser/ast/expression/UnaryExpression.h"
 #include "parser/ast/expression/BooleanLiteral.h"
 
@@ -18,6 +19,7 @@ namespace parser
     Parser::Parser(std::vector<lexing::Token>& tokens)
         : mTokens(tokens)
         , mPosition(0)
+        , mScope(nullptr)
     {
     }
 
@@ -74,6 +76,9 @@ namespace parser
     {
         switch (tokenType)
         {
+            case lexing::TokenType::LeftParen:
+                return 80;
+
             case lexing::TokenType::Plus:
             case lexing::TokenType::Minus:
                 return 70;
@@ -157,8 +162,18 @@ namespace parser
             }
 
             lexing::TokenType operatorTokenType = consume().getTokenType();
-            ASTNodePtr rhs = parseExpression(preferredType, precedence);
-            lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorTokenType, std::move(rhs));
+
+            if (operatorTokenType == lexing::TokenType::LeftParen)
+            {
+                lhs = std::make_unique<CallExpression>(std::move(lhs));
+                expectToken(lexing::TokenType::RightParen);
+                consume();
+            }
+            else
+            {
+                ASTNodePtr rhs = parseExpression(preferredType, precedence);
+                lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorTokenType, std::move(rhs));
+            }
         }
 
         return lhs;
@@ -219,6 +234,8 @@ namespace parser
         consume();
         
         Type* type = parseType();
+
+        mSymbols.push_back({name, type});
 
         Scope* functionScope = new Scope(mScope);
         mScope = functionScope;
