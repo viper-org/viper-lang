@@ -9,5 +9,7 @@ func @main() -> i32 {
         testvar += 1;
     }
 
-    return testvar;
+    let ptr: i32* = &testvar;
+
+    return *ptr;
 }

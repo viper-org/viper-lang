@@ -177,6 +177,8 @@ namespace lexing
                 return Token(TokenType::Caret);
             case '~':
                 return Token(TokenType::Tilde);
+            case '*':
+                return Token(TokenType::Star);
         }
 
         return Token(TokenType::Error, std::string(1, current())); // Unknown character

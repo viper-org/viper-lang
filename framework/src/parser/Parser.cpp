@@ -10,6 +10,8 @@
 
 #include "lexer/Token.h"
 
+#include "type/PointerType.h"
+
 #include <algorithm>
 #include <format>
 #include <iostream>
@@ -77,7 +79,7 @@ namespace parser
         switch (tokenType)
         {
             case lexing::TokenType::LeftParen:
-                return 80;
+                return 90;
 
             case lexing::TokenType::Plus:
             case lexing::TokenType::Minus:
@@ -116,6 +118,8 @@ namespace parser
         {
             case lexing::TokenType::Minus:
             case lexing::TokenType::Tilde:
+            case lexing::TokenType::Ampersand:
+            case lexing::TokenType::Star:
                 return 85;
             
             default:
@@ -136,7 +140,15 @@ namespace parser
     {
         expectToken(lexing::TokenType::Type);
 
-        return Type::Get(consume().getText());
+        Type* type = Type::Get(consume().getText());
+
+        while(current().getTokenType() == lexing::TokenType::Star)
+        {
+            consume();
+            type = PointerType::Create(type);
+        }
+
+        return type;
     }
 
     ASTNodePtr Parser::parseExpression(Type* preferredType, int precedence)

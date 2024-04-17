@@ -18,6 +18,8 @@ namespace parser
             Negate,
             
             BitwiseNot,
+
+            AddressOf, Indirection,
         };
 
         UnaryExpression(ASTNodePtr operand, lexing::TokenType op);

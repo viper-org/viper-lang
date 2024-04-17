@@ -30,6 +30,7 @@ namespace lexing
         Pipe,
         Caret,
         Tilde,
+        Star,
         RightArrow,
 
         Type,

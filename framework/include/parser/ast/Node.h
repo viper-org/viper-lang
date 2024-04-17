@@ -19,6 +19,8 @@ namespace parser
         ASTNode() { }
         virtual ~ASTNode() { }
 
+        Type* getType() const { return mType; }
+
         virtual vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) = 0;
     
     protected:

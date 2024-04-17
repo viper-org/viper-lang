@@ -29,6 +29,7 @@ set(SOURCES
     "src/type/IntegerType.cpp"
     "src/type/VoidType.cpp"
     "src/type/BooleanType.cpp"
+    "src/type/PointerType.cpp"
 
     "src/scope/Scope.cpp"
 )
@@ -56,6 +57,7 @@ set(HEADERS
     "include/type/IntegerType.h"
     "include/type/VoidType.h"
     "include/type/BooleanType.h"
+    "include/type/PointerType.h"
 
     "include/scope/Scope.h"
 )
