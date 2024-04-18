@@ -23,7 +23,7 @@ namespace parser
 
     vipir::Value* Function::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
     {
-        scope = mScope.get();
+        if (!mBody.empty()) scope = mScope.get();
 
         std::vector<vipir::Type*> argumentTypes;
         for (auto& argument : mArguments)
@@ -35,6 +35,11 @@ namespace parser
         vipir::Function* func = vipir::Function::Create(functionType, module, mName);
         GlobalFunctions[mName] = func;
 
+        if (mBody.empty())
+        {
+            return func;
+        }
+
         vipir::BasicBlock* entryBasicBlock = vipir::BasicBlock::Create("", func);
         builder.setInsertPoint(entryBasicBlock);
 
@@ -43,7 +48,7 @@ namespace parser
         {
             vipir::AllocaInst* alloca = builder.CreateAlloca(argument.type->getVipirType(), argument.name);
             scope->locals[argument.name] = LocalSymbol(alloca);
-            
+
             builder.CreateStore(alloca, func->getArgument(index++));
         }
 

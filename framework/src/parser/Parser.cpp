@@ -265,6 +265,12 @@ namespace parser
 
         mSymbols.push_back({name, type});
 
+        if (current().getTokenType() == lexing::TokenType::Semicolon) // Extern function declaration
+        {
+            consume();
+            return std::make_unique<Function>(type, std::move(arguments), std::move(name), std::vector<ASTNodePtr>(), nullptr);
+        }
+
         Scope* functionScope = new Scope(mScope);
         mScope = functionScope;
 

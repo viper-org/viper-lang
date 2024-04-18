@@ -1,8 +1,12 @@
+func @printInt(num: i32) -> i32;
+
 func @max(a: i32, b: i32) -> i32 {
     if (a > b) return a;
     return b;
 }
 
 func @main(argc: i32) -> i32 {
-    return max(argc, 5);
+    let maximum: i32 = max(argc, 5);
+    printInt(maximum);
+    return 0;
 }
