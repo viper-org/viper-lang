@@ -2,12 +2,12 @@ func @test() -> i32 {
     return 69;
 }
 
-func @main() -> i32 {
-    let testvar: i32 = 1;
+func @test2() -> i32 {
+    return 77;
+}
 
-    while(testvar <= test()) {
-        testvar += 1;
-    }
+func @main(argc: i32) -> i32 {
+    let testvar: i32 = argc;
 
     let ptr: i32* = &testvar;
 

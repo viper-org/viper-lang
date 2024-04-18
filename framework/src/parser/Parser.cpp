@@ -239,7 +239,26 @@ namespace parser
 
         expectToken(lexing::TokenType::LeftParen);
         consume();
-        expectToken(lexing::TokenType::RightParen);
+        
+        std::vector<FunctionArgument> arguments;
+        while (current().getTokenType() != lexing::TokenType::RightParen)
+        {
+            expectToken(lexing::TokenType::Identifier);
+            std::string name = consume().getText();
+
+            expectToken(lexing::TokenType::Colon);
+            consume();
+
+            Type* type = parseType();
+            mSymbols.push_back({name, type});
+            arguments.push_back({std::move(name), type});
+
+            if (current().getTokenType() != lexing::TokenType::RightParen)
+            {
+                expectToken(lexing::TokenType::Comma);
+                consume();
+            }
+        }
         consume();
 
         expectToken(lexing::TokenType::RightArrow);
@@ -266,7 +285,7 @@ namespace parser
 
         mScope = functionScope->parent;
 
-        return std::make_unique<Function>(type, name, std::move(body), functionScope);
+        return std::make_unique<Function>(type, std::move(arguments), std::move(name), std::move(body), functionScope);
     }
 
     CompoundStatementPtr Parser::parseCompoundStatement()

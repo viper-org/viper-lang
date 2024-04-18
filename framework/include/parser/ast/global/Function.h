@@ -7,10 +7,16 @@
 
 namespace parser
 {
+    struct FunctionArgument
+    {
+        std::string name;
+        Type* type;
+    };
+
     class Function : public ASTNode
     {
     public:
-        Function(Type* returnType, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope);
+        Function(Type* returnType, std::vector<FunctionArgument> arguments, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope);
 
         Type* getReturnType() const;
 
@@ -18,6 +24,7 @@ namespace parser
 
     private:
         Type* mReturnType;
+        std::vector<FunctionArgument> mArguments;
         std::string mName;
         std::vector<ASTNodePtr> mBody;
         ScopePtr mScope;
