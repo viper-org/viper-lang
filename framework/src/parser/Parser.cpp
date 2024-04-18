@@ -4,7 +4,6 @@
 #include "parser/Parser.h"
 
 #include "parser/ast/expression/BinaryExpression.h"
-#include "parser/ast/expression/CallExpression.h"
 #include "parser/ast/expression/UnaryExpression.h"
 #include "parser/ast/expression/BooleanLiteral.h"
 
@@ -177,9 +176,7 @@ namespace parser
 
             if (operatorTokenType == lexing::TokenType::LeftParen)
             {
-                lhs = std::make_unique<CallExpression>(std::move(lhs));
-                expectToken(lexing::TokenType::RightParen);
-                consume();
+                lhs = parseCallExpression(std::move(lhs));
             }
             else
             {
@@ -397,7 +394,7 @@ namespace parser
         return std::make_unique<IntegerLiteral>(std::stoll(consume().getText()), preferredType);
     }
 
-    VariableExpressionPtr Parser::parseVariableExpression(Type* preferredType)
+    VariableExpressionPtr Parser::parseVariableExpression(Type*)
     {
         std::string name = consume().getText();
 
@@ -412,5 +409,23 @@ namespace parser
 
         std::cerr << std::format("Unknown local symbol '{}'", name);
         std::exit(1);
+    }
+
+    CallExpressionPtr Parser::parseCallExpression(ASTNodePtr function)
+    {
+        std::vector<ASTNodePtr> parameters;
+        while (current().getTokenType() != lexing::TokenType::RightParen)
+        {
+            parameters.push_back(parseExpression());
+
+            if (current().getTokenType() != lexing::TokenType::RightParen)
+            {
+                expectToken(lexing::TokenType::Comma);
+                consume();
+            }
+        }
+        consume();
+
+        return std::make_unique<CallExpression>(std::move(function), std::move(parameters));
     }
 }

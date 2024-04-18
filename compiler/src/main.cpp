@@ -9,6 +9,7 @@
 
 #include <vipir/IR/IRBuilder.h>
 #include <vipir/Module.h>
+#include <vipir/ABI/SysV.h>
 
 #include <fstream>
 #include <iostream>
@@ -37,6 +38,7 @@ int main(int argc, char** argv)
     
     vipir::IRBuilder builder;
     vipir::Module module(argv[1]);
+    module.setABI<vipir::abi::SysV>();
 
     for (auto& node : parser.parse())
     {

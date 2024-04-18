@@ -114,6 +114,8 @@ namespace lexing
                 return Token(TokenType::Semicolon);
             case ':':
                 return Token(TokenType::Colon);
+            case ',':
+                return Token(TokenType::Comma);
 
             case '@':
                 return Token(TokenType::Asperand);

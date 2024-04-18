@@ -1,15 +1,8 @@
-func @test() -> i32 {
-    return 69;
-}
-
-func @test2() -> i32 {
-    return 77;
+func @max(a: i32, b: i32) -> i32 {
+    if (a > b) return a;
+    return b;
 }
 
 func @main(argc: i32) -> i32 {
-    let testvar: i32 = argc;
-
-    let ptr: i32* = &testvar;
-
-    return *ptr;
+    return max(argc, 5);
 }

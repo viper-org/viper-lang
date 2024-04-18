@@ -12,6 +12,7 @@
 #include "parser/ast/statement/CompoundStatement.h"
 #include "parser/ast/expression/IntegerLiteral.h"
 #include "parser/ast/expression/VariableExpression.h"
+#include "parser/ast/expression/CallExpression.h"
 
 #include "lexer/Token.h"
 
@@ -65,6 +66,7 @@ namespace parser
 
         IntegerLiteralPtr parseIntegerLiteral(Type* preferredType = nullptr);
         VariableExpressionPtr parseVariableExpression(Type* preferredType = nullptr);
+        CallExpressionPtr parseCallExpression(ASTNodePtr function);
     };
 }
 
