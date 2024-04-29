@@ -11,7 +11,7 @@ func @main(argc: i32) -> i32 {
     printInt(maximum);
 
     let message: i8* = "Hello World!\n";
-    print(message);
+    print(message + 1);
     
     return 0;
 }

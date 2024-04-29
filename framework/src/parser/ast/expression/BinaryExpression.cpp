@@ -6,6 +6,7 @@
 #include <vipir/Module.h>
 #include <vipir/IR/Instruction/BinaryInst.h>
 #include <vipir/IR/Instruction/StoreInst.h>
+#include <vipir/IR/Instruction/GEPInst.h>
 
 #include <cassert>
 
@@ -85,6 +86,14 @@ namespace parser
         switch (mOperator)
         {
             case Operator::Add:
+                if (left->getType()->isPointerType())
+                {
+                    return builder.CreateGEP(left, right);
+                }
+                else if (right->getType()->isPointerType())
+                {
+                    return builder.CreateGEP(right, left);
+                }
                 return builder.CreateAdd(left, right);
             case Operator::Sub:
                 return builder.CreateSub(left, right);
