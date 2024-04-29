@@ -24,6 +24,7 @@ namespace lexing
         { "while",  TokenType::WhileKeyword },
         { "true",   TokenType::TrueKeyword },
         { "false",  TokenType::FalseKeyword },
+        { "struct", TokenType::StructKeyword },
     };
 
     std::vector<Token> Lexer::lex()
@@ -117,6 +118,8 @@ namespace lexing
                 return Token(TokenType::Colon);
             case ',':
                 return Token(TokenType::Comma);
+            case '.':
+                return Token(TokenType::Dot);
 
             case '@':
                 return Token(TokenType::Asperand);

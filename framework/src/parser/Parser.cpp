@@ -10,6 +10,7 @@
 #include "lexer/Token.h"
 
 #include "type/PointerType.h"
+#include "type/StructType.h"
 
 #include <algorithm>
 #include <format>
@@ -67,6 +68,8 @@ namespace parser
         {
             case lexing::TokenType::FuncKeyword:
                 return parseFunction();
+            case lexing::TokenType::StructKeyword:
+                return parseStructDeclaration();
             default:
                 std::cerr << "Unexpected token: " << current().toString() << ". Expected global statement.\n";
                 std::exit(1);
@@ -78,6 +81,7 @@ namespace parser
         switch (tokenType)
         {
             case lexing::TokenType::LeftParen:
+            case lexing::TokenType::Dot:
                 return 90;
 
             case lexing::TokenType::Plus:
@@ -137,9 +141,18 @@ namespace parser
     
     Type* Parser::parseType()
     {
-        expectToken(lexing::TokenType::Type);
-
-        Type* type = Type::Get(consume().getText());
+        Type* type;
+        if (current().getTokenType() == lexing::TokenType::StructKeyword)
+        {
+            consume();
+            expectToken(lexing::TokenType::Identifier);
+            type = StructType::Get(consume().getText());
+        }
+        else
+        {
+            expectToken(lexing::TokenType::Type);
+            type = Type::Get(consume().getText());
+        }
 
         while(current().getTokenType() == lexing::TokenType::Star)
         {
@@ -177,6 +190,10 @@ namespace parser
             if (operatorTokenType == lexing::TokenType::LeftParen)
             {
                 lhs = parseCallExpression(std::move(lhs));
+            }
+            else if (operatorTokenType == lexing::TokenType::Dot)
+            {
+                lhs = parseMemberAccess(std::move(lhs));
             }
             else
             {
@@ -291,6 +308,37 @@ namespace parser
         mScope = functionScope->parent;
 
         return std::make_unique<Function>(type, std::move(arguments), std::move(name), std::move(body), functionScope);
+    }
+
+    StructDeclarationPtr Parser::parseStructDeclaration()
+    {
+        consume(); // struct
+
+        expectToken(lexing::TokenType::Identifier);
+        std::string name = consume().getText();
+
+        expectToken(lexing::TokenType::LeftBracket);
+        consume();
+
+        std::vector<StructField> fields;
+        while (current().getTokenType() != lexing::TokenType::RightBracket)
+        {
+            expectToken(lexing::TokenType::Identifier);
+            std::string name = consume().getText();
+
+            expectToken(lexing::TokenType::Colon);
+            consume();
+
+            Type* type = parseType();
+
+            fields.push_back({std::move(name), type});
+
+            expectToken(lexing::TokenType::Semicolon);
+            consume();
+        }
+        consume();
+
+        return std::make_unique<StructDeclaration>(std::move(name), std::move(fields));
     }
 
     CompoundStatementPtr Parser::parseCompoundStatement()
@@ -440,5 +488,10 @@ namespace parser
         consume();
 
         return std::make_unique<CallExpression>(std::move(function), std::move(parameters));
+    }
+
+    MemberAccessPtr Parser::parseMemberAccess(ASTNodePtr struc)
+    {
+        return std::make_unique<MemberAccess>(std::move(struc), consume().getText());
     }
 }

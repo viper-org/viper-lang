@@ -33,6 +33,7 @@ namespace lexing
         Tilde,
         Star,
         RightArrow,
+        Dot,
 
         Type,
         FuncKeyword,
@@ -40,7 +41,8 @@ namespace lexing
         LetKeyword,
         IfKeyword, ElseKeyword,
         WhileKeyword,
-        TrueKeyword, FalseKeyword
+        TrueKeyword, FalseKeyword,
+        StructKeyword
     };
 
     class Token

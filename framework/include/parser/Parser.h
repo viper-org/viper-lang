@@ -5,6 +5,7 @@
 
 #include "parser/ast/Node.h"
 #include "parser/ast/global/Function.h"
+#include "parser/ast/global/StructDeclaration.h"
 #include "parser/ast/statement/ReturnStatement.h"
 #include "parser/ast/statement/VariableDeclaration.h"
 #include "parser/ast/statement/IfStatement.h"
@@ -14,6 +15,7 @@
 #include "parser/ast/expression/StringLiteral.h"
 #include "parser/ast/expression/VariableExpression.h"
 #include "parser/ast/expression/CallExpression.h"
+#include "parser/ast/expression/MemberAccess.h"
 
 #include "lexer/Token.h"
 
@@ -58,6 +60,7 @@ namespace parser
         ASTNodePtr parsePrimary(Type* preferredType = nullptr);
 
         FunctionPtr parseFunction();
+        StructDeclarationPtr parseStructDeclaration();
 
         CompoundStatementPtr parseCompoundStatement();
         ReturnStatementPtr parseReturnStatement();
@@ -69,6 +72,7 @@ namespace parser
         StringLiteralPtr parseStringLiteral();
         VariableExpressionPtr parseVariableExpression(Type* preferredType = nullptr);
         CallExpressionPtr parseCallExpression(ASTNodePtr function);
+        MemberAccessPtr parseMemberAccess(ASTNodePtr struc);
     };
 }
 

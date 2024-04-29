@@ -13,6 +13,7 @@ set(SOURCES
 
     "src/parser/Parser.cpp"
     "src/parser/ast/global/Function.cpp"
+    "src/parser/ast/global/StructDeclaration.cpp"
     "src/parser/ast/statement/ReturnStatement.cpp"
     "src/parser/ast/statement/VariableDeclaration.cpp"
     "src/parser/ast/statement/IfStatement.cpp"
@@ -25,12 +26,14 @@ set(SOURCES
     "src/parser/ast/expression/BinaryExpression.cpp"
     "src/parser/ast/expression/UnaryExpression.cpp"
     "src/parser/ast/expression/CallExpression.cpp"
+    "src/parser/ast/expression/MemberAccess.cpp"
 
     "src/type/Type.cpp"
     "src/type/IntegerType.cpp"
     "src/type/VoidType.cpp"
     "src/type/BooleanType.cpp"
     "src/type/PointerType.cpp"
+    "src/type/StructType.cpp"
 
     "src/scope/Scope.cpp"
 )
@@ -42,6 +45,7 @@ set(HEADERS
     "include/parser/Parser.h"
     "include/parser/ast/Node.h"
     "include/parser/ast/global/Function.h"
+    "include/parser/ast/global/StructDeclaration.h"
     "include/parser/ast/statement/ReturnStatement.h"
     "include/parser/ast/statement/VariableDeclaration.h"
     "include/parser/ast/statement/IfStatement.h"
@@ -54,12 +58,14 @@ set(HEADERS
     "include/parser/ast/expression/BinaryExpression.h"
     "include/parser/ast/expression/UnaryExpression.h"
     "include/parser/ast/expression/CallExpression.h"
+    "include/parser/ast/expression/MemberAccess.h"
 
     "include/type/Type.h"
     "include/type/IntegerType.h"
     "include/type/VoidType.h"
     "include/type/BooleanType.h"
     "include/type/PointerType.h"
+    "include/type/StructType.h"
 
     "include/scope/Scope.h"
 )

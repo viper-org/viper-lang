@@ -1,6 +1,12 @@
 func @printInt(num: i32) -> i32;
 func @print(message: i8*) -> i32;
 
+struct abc {
+    test: i32;
+    foo: i32;
+    bar: i32;
+}
+
 func @max(a: i32, b: i32) -> i32 {
     if (a > b) return a;
     return b;
@@ -12,6 +18,9 @@ func @main(argc: i32) -> i32 {
 
     let message: i8* = "Hello World!\n";
     print(message + 1);
+
+    let test: struct abc;
+    test.foo = 1;
     
-    return 0;
+    return test.foo;
 }
