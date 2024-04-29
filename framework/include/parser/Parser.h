@@ -11,6 +11,7 @@
 #include "parser/ast/statement/WhileStatement.h"
 #include "parser/ast/statement/CompoundStatement.h"
 #include "parser/ast/expression/IntegerLiteral.h"
+#include "parser/ast/expression/StringLiteral.h"
 #include "parser/ast/expression/VariableExpression.h"
 #include "parser/ast/expression/CallExpression.h"
 
@@ -65,6 +66,7 @@ namespace parser
         WhileStatementPtr parseWhileStatement();
 
         IntegerLiteralPtr parseIntegerLiteral(Type* preferredType = nullptr);
+        StringLiteralPtr parseStringLiteral();
         VariableExpressionPtr parseVariableExpression(Type* preferredType = nullptr);
         CallExpressionPtr parseCallExpression(ASTNodePtr function);
     };

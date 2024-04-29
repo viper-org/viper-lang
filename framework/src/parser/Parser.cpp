@@ -215,6 +215,8 @@ namespace parser
 
             case lexing::TokenType::IntegerLiteral:
                 return parseIntegerLiteral(preferredType);
+            case lexing::TokenType::StringLiteral:
+                return parseStringLiteral();
 
             case lexing::TokenType::Identifier:
                 return parseVariableExpression(preferredType);
@@ -398,6 +400,11 @@ namespace parser
     IntegerLiteralPtr Parser::parseIntegerLiteral(Type* preferredType)
     {
         return std::make_unique<IntegerLiteral>(std::stoll(consume().getText()), preferredType);
+    }
+
+    StringLiteralPtr Parser::parseStringLiteral()
+    {
+        return std::make_unique<StringLiteral>(consume().getText());
     }
 
     VariableExpressionPtr Parser::parseVariableExpression(Type*)

@@ -13,7 +13,7 @@ namespace lexing
 
         Identifier,
 
-        IntegerLiteral,
+        IntegerLiteral, StringLiteral,
 
         LeftParen, RightParen,
         LeftBracket, RightBracket,

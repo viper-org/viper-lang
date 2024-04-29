@@ -5,6 +5,7 @@
 
 #include "type/Type.h"
 
+#include <iostream>
 #include <unordered_map>
 
 namespace lexing
@@ -181,6 +182,51 @@ namespace lexing
                 return Token(TokenType::Tilde);
             case '*':
                 return Token(TokenType::Star);
+
+            case '"':
+            {
+                consume();
+                std::string value;
+                int start = mPosition;
+                while(current() != '"')
+                {
+                    switch(current())
+                    {
+                        case '\\':
+                        {
+                            consume();
+                            switch(current())
+                            {
+                                case 'n':
+                                    value += '\n';
+                                    break;
+                                case '\'':
+                                    value += '\'';
+                                    break;
+                                case '\"':
+                                    value += '\"';
+                                    break;
+                                case '\\':
+                                    value += '\\';
+                                    break;
+                                case '0':
+                                    value += '\0';
+                                    break;
+                                default:
+                                {
+                                    std::cerr << "Unknown escape sequence in string. Stop\n";
+                                    std::exit(1);
+                                }
+                            }
+                            break;
+                        }
+                        default:
+                            value += current();
+                    }
+                    consume();
+                }
+                return Token(TokenType::StringLiteral, value);
+            }
         }
 
         return Token(TokenType::Error, std::string(1, current())); // Unknown character

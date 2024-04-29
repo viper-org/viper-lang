@@ -1,4 +1,5 @@
 func @printInt(num: i32) -> i32;
+func @print(message: i8*) -> i32;
 
 func @max(a: i32, b: i32) -> i32 {
     if (a > b) return a;
@@ -8,5 +9,9 @@ func @max(a: i32, b: i32) -> i32 {
 func @main(argc: i32) -> i32 {
     let maximum: i32 = max(argc, 5);
     printInt(maximum);
+
+    let message: i8* = "Hello World!\n";
+    print(message);
+    
     return 0;
 }
