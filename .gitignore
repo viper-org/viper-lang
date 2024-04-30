@@ -5,6 +5,7 @@ _deps/
 *.cmake
 *.so
 *.a
+*.o
 
 viper
 viper_tests

@@ -4,7 +4,7 @@ func @print(message: i8*) -> i32;
 struct abc {
     test: i32;
     foo: i32;
-    bar: i32;
+    bar: i8*;
 }
 
 func @max(a: i32, b: i32) -> i32 {
@@ -16,11 +16,12 @@ func @main(argc: i32) -> i32 {
     let maximum: i32 = max(argc, 5);
     printInt(maximum);
 
-    let message: i8* = "Hello World!\n";
-    print(message + 1);
-
     let test: struct abc;
     test.foo = 1;
+    test.bar = "Hello World!\n";
+    print(test.bar + 1);
+
+    let something: struct abc* = &test;
     
-    return test.foo;
+    return something->foo;
 }

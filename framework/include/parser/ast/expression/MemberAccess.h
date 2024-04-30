@@ -11,13 +11,14 @@ namespace parser
     class MemberAccess : public ASTNode
     {
     public:
-        MemberAccess(ASTNodePtr struc, std::string field);
+        MemberAccess(ASTNodePtr struc, std::string field, bool pointer);
 
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
 
     private:
         ASTNodePtr mStruct;
         std::string mField;
+        bool mPointer;
     };
 
     using MemberAccessPtr = std::unique_ptr<MemberAccess>;

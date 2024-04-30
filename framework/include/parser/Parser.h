@@ -72,7 +72,7 @@ namespace parser
         StringLiteralPtr parseStringLiteral();
         VariableExpressionPtr parseVariableExpression(Type* preferredType = nullptr);
         CallExpressionPtr parseCallExpression(ASTNodePtr function);
-        MemberAccessPtr parseMemberAccess(ASTNodePtr struc);
+        MemberAccessPtr parseMemberAccess(ASTNodePtr struc, bool pointer);
     };
 }
 

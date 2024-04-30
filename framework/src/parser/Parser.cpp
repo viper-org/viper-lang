@@ -82,6 +82,7 @@ namespace parser
         {
             case lexing::TokenType::LeftParen:
             case lexing::TokenType::Dot:
+            case lexing::TokenType::RightArrow:
                 return 90;
 
             case lexing::TokenType::Plus:
@@ -193,7 +194,11 @@ namespace parser
             }
             else if (operatorTokenType == lexing::TokenType::Dot)
             {
-                lhs = parseMemberAccess(std::move(lhs));
+                lhs = parseMemberAccess(std::move(lhs), false);
+            }
+            else if (operatorTokenType == lexing::TokenType::RightArrow)
+            {
+                lhs = parseMemberAccess(std::move(lhs), true);
             }
             else
             {
@@ -490,8 +495,8 @@ namespace parser
         return std::make_unique<CallExpression>(std::move(function), std::move(parameters));
     }
 
-    MemberAccessPtr Parser::parseMemberAccess(ASTNodePtr struc)
+    MemberAccessPtr Parser::parseMemberAccess(ASTNodePtr struc, bool pointer)
     {
-        return std::make_unique<MemberAccess>(std::move(struc), consume().getText());
+        return std::make_unique<MemberAccess>(std::move(struc), consume().getText(), pointer);
     }
 }
