@@ -19,6 +19,7 @@ namespace lexing
         { "func",   TokenType::FuncKeyword },
         { "return", TokenType::ReturnKeyword },
         { "let",    TokenType::LetKeyword },
+        { "global", TokenType::GlobalKeyword },
         { "if",     TokenType::IfKeyword },
         { "else",   TokenType::ElseKeyword },
         { "while",  TokenType::WhileKeyword },

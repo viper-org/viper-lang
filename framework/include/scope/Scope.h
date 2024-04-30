@@ -6,6 +6,7 @@
 
 #include <vipir/IR/Instruction/AllocaInst.h>
 #include <vipir/IR/Function.h>
+#include <vipir/IR/GlobalVar.h>
 
 #include <optional>
 #include <unordered_map>
@@ -25,7 +26,15 @@ struct FunctionSymbol
 
     vipir::Function* function;
 };
+struct GlobalSymbol
+{
+    GlobalSymbol() = default;
+    GlobalSymbol(vipir::GlobalVar* global);
+
+    vipir::GlobalVar* global;
+};
 extern std::unordered_map<std::string, FunctionSymbol> GlobalFunctions;
+extern std::unordered_map<std::string, GlobalSymbol> GlobalVariables;
 
 struct Scope
 {

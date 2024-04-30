@@ -38,11 +38,11 @@ namespace lexing
         Type,
         FuncKeyword,
         ReturnKeyword,
-        LetKeyword,
+        LetKeyword, GlobalKeyword,
         IfKeyword, ElseKeyword,
         WhileKeyword,
         TrueKeyword, FalseKeyword,
-        StructKeyword
+        StructKeyword,
     };
 
     class Token

@@ -7,17 +7,11 @@ struct abc {
     bar: i8*;
 }
 
-func @max(a: i32, b: i32) -> i32 {
-    if (a > b) return a;
-    return b;
-}
+global v: i32 = 33;
 
 func @main(argc: i32) -> i32 {
-    let maximum: i32 = max(argc, 5);
-    printInt(maximum);
-
     let test: struct abc;
-    test.foo = 1;
+    test.foo = v;
     test.bar = "Hello World!\n";
     print(test.bar + 1);
 

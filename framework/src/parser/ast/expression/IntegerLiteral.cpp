@@ -14,7 +14,6 @@ namespace parser
 
     vipir::Value* IntegerLiteral::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
     {
-        return builder.CreateConstantInt(mValue, mType->getVipirType());
+        return vipir::ConstantInt::Get(module, mValue, mType->getVipirType());
     }
-
 }

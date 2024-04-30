@@ -6,6 +6,7 @@
 #include <iostream>
 
 std::unordered_map<std::string, FunctionSymbol> GlobalFunctions;
+std::unordered_map<std::string, GlobalSymbol>   GlobalVariables;
 
 LocalSymbol::LocalSymbol(vipir::AllocaInst* alloca)
     : alloca{alloca}
@@ -14,6 +15,11 @@ LocalSymbol::LocalSymbol(vipir::AllocaInst* alloca)
 
 FunctionSymbol::FunctionSymbol(vipir::Function* function)
     : function(function)
+{
+}
+
+GlobalSymbol::GlobalSymbol(vipir::GlobalVar* global)
+    : global(global)
 {
 }
 

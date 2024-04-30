@@ -26,6 +26,10 @@ namespace parser
         {
             return GlobalFunctions.at(mName).function;
         }
+        else if (GlobalVariables.find(mName) != GlobalVariables.end())
+        {
+            return builder.CreateLoad(GlobalVariables.at(mName).global);
+        }
         else
         {
             return nullptr; // TODO: Error

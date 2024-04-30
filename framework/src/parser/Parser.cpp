@@ -70,6 +70,8 @@ namespace parser
                 return parseFunction();
             case lexing::TokenType::StructKeyword:
                 return parseStructDeclaration();
+            case lexing::TokenType::GlobalKeyword:
+                return parseGlobalDeclaration();
             default:
                 std::cerr << "Unexpected token: " << current().toString() << ". Expected global statement.\n";
                 std::exit(1);
@@ -344,6 +346,31 @@ namespace parser
         consume();
 
         return std::make_unique<StructDeclaration>(std::move(name), std::move(fields));
+    }
+
+    GlobalDeclarationPtr Parser::parseGlobalDeclaration()
+    {
+        consume(); // global
+
+        expectToken(lexing::TokenType::Identifier);
+        std::string name = consume().getText();
+
+        expectToken(lexing::TokenType::Colon);
+        consume();
+
+        Type* type = parseType();
+
+        expectToken(lexing::TokenType::Equals);
+        consume();
+
+        ASTNodePtr initVal = parseExpression(type);
+
+        expectToken(lexing::TokenType::Semicolon);
+        consume();
+
+        mSymbols.push_back({name, type});
+
+        return std::make_unique<GlobalDeclaration>(std::move(name), type, std::move(initVal));
     }
 
     CompoundStatementPtr Parser::parseCompoundStatement()
