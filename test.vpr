@@ -1,21 +1,10 @@
-func @printInt(num: i32) -> i32;
-func @print(message: i8*) -> i32;
-
 struct abc {
     test: i32;
     foo: i32;
-    bar: i8*;
 }
 
-global v: i32 = 33;
+global a: struct abc = struct abc { 11, 33 };
 
-func @main(argc: i32) -> i32 {
-    let test: struct abc;
-    test.foo = v;
-    test.bar = "Hello World!\n";
-    print(test.bar + 1);
-
-    let something: struct abc* = &test;
-    
-    return something->foo;
+func @main() -> i32 {
+    return a.foo;
 }

@@ -245,6 +245,9 @@ namespace parser
             case lexing::TokenType::Identifier:
                 return parseVariableExpression(preferredType);
 
+            case lexing::TokenType::StructKeyword:
+                return parseStructInitializer();
+
             default:
                 std::cerr << "Unexpected token. Expected primary expression.\n";
                 std::exit(1);
@@ -525,5 +528,31 @@ namespace parser
     MemberAccessPtr Parser::parseMemberAccess(ASTNodePtr struc, bool pointer)
     {
         return std::make_unique<MemberAccess>(std::move(struc), consume().getText(), pointer);
+    }
+
+    StructInitializerPtr Parser::parseStructInitializer()
+    {
+        consume(); // struct
+
+        StructType* type = StructType::Get(consume().getText());
+        
+        expectToken(lexing::TokenType::LeftBracket);
+        consume();
+
+        std::vector<ASTNodePtr> body;
+        int index = 0;
+        while (current().getTokenType() != lexing::TokenType::RightBracket)
+        {
+            body.push_back(parseExpression(type->getFields()[index++].type));
+
+            if (current().getTokenType() != lexing::TokenType::RightBracket)
+            {
+                expectToken(lexing::TokenType::Comma);
+                consume();
+            }
+        }
+        consume();
+
+        return std::make_unique<StructInitializer>(type, std::move(body));
     }
 }
