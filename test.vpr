@@ -1,10 +1,5 @@
-struct abc {
-    test: i32;
-    foo: i32;
-}
-
-global a: struct abc = struct abc { 11, 33 };
-
-func @main() -> i32 {
-    return a.foo;
+func @main() -> i8 {
+    let test: i32 = 22;
+    let ptr: i8* = (i8*)&test;
+    return *ptr;
 }

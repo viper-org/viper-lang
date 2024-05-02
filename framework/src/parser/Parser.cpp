@@ -6,6 +6,7 @@
 #include "parser/ast/expression/BinaryExpression.h"
 #include "parser/ast/expression/UnaryExpression.h"
 #include "parser/ast/expression/BooleanLiteral.h"
+#include "parser/ast/expression/CastExpression.h"
 
 #include "lexer/Token.h"
 
@@ -126,6 +127,7 @@ namespace parser
             case lexing::TokenType::Tilde:
             case lexing::TokenType::Ampersand:
             case lexing::TokenType::Star:
+            case lexing::TokenType::LeftParen:
                 return 85;
             
             default:
@@ -173,7 +175,17 @@ namespace parser
         if (prefixOperatorPrecedence >= precedence)
         {
             lexing::TokenType operatorTokenType = consume().getTokenType();
-            lhs = std::make_unique<UnaryExpression>(parseExpression(nullptr, prefixOperatorPrecedence), operatorTokenType);
+            if (operatorTokenType == lexing::TokenType::LeftParen) // Cast expression
+            {
+                Type* type = parseType();
+                expectToken(lexing::TokenType::RightParen);
+                consume();
+                lhs = std::make_unique<CastExpression>(parseExpression(nullptr, prefixOperatorPrecedence), type);
+            }
+            else
+            {
+                lhs = std::make_unique<UnaryExpression>(parseExpression(nullptr, prefixOperatorPrecedence), operatorTokenType);
+            }
         }
         else
         {
