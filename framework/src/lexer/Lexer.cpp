@@ -86,14 +86,48 @@ namespace lexing
         if (std::isdigit(current()))
         {
             std::string text = std::string(1, current());
-
-            while (std::isdigit(peek(1)))
+            if (current() == '0')
             {
-                consume();
-                text += current();
-            }
+                if (peek(1) == 'x') // hex
+                {
+                    consume();
+                    text += current();
 
-            return Token(TokenType::IntegerLiteral, std::move(text));
+                    while (std::isxdigit(peek(1)))
+                    {
+                        consume();
+                        text += current();
+                    }
+                }
+                else if (peek(1) == 'b') // binary
+                {
+                    consume();
+                    text += current();
+
+                    while (peek(1) == '0' || peek(1) == '1')
+                    {
+                        consume();
+                        text += current();
+                    }
+                }
+                else // octal
+                {
+                    while (peek(1) >= '0' && peek(1) <= '7')
+                    {
+                        consume();
+                        text += current();
+                    }
+                }
+            }
+            else // decimal
+            {
+                while (std::isdigit(peek(1)))
+                {
+                    consume();
+                    text += current();
+                }
+            }
+            return Token {TokenType::IntegerLiteral, std::move(text)};
         }
         
         if (std::isspace(current())) // Newline, tab, space etc
