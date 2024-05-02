@@ -280,6 +280,9 @@ namespace parser
             case lexing::TokenType::StructKeyword:
                 return parseStructInitializer();
 
+            case lexing::TokenType::LeftSquareBracket:
+                return parseArrayInitializer(preferredType);
+
             default:
                 std::cerr << "Unexpected token. Expected primary expression.\n";
                 std::exit(1);
@@ -586,5 +589,27 @@ namespace parser
         consume();
 
         return std::make_unique<StructInitializer>(type, std::move(body));
+    }
+
+    ArrayInitializerPtr Parser::parseArrayInitializer(Type* preferredType)
+    {
+        consume(); // left square bracket
+
+        preferredType = static_cast<ArrayType*>(preferredType)->getBaseType();
+
+        std::vector<ASTNodePtr> values;
+        while (current().getTokenType() != lexing::TokenType::RightSquareBracket)
+        {
+            values.push_back(parseExpression(preferredType));
+
+            if (current().getTokenType() != lexing::TokenType::RightSquareBracket)
+            {
+                expectToken(lexing::TokenType::Comma);
+                consume();
+            }
+        }
+        consume();
+
+        return std::make_unique<ArrayInitializer>(std::move(values));
     }
 }

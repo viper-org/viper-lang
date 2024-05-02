@@ -1,14 +1,13 @@
 struct abc {
-    test: i64;
+    test: i32[3];
     foo: i32;
 }
 
-global a: struct abc = struct abc { 11, 33 };
+global a: struct abc = struct abc { [ 1, 2, 3 ], 33 };
 
 func @main() -> i8 {
-    let test: i64[3];
-    test[0] = 69;
-    a.foo = test[0];
+    a.test[0] = 69;
+    a.foo = a.test[0];
     let ptr: i32* = &a.foo;
     return *(i8*)ptr;
 }

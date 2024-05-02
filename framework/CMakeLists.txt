@@ -29,6 +29,7 @@ set(SOURCES
     "src/parser/ast/expression/CallExpression.cpp"
     "src/parser/ast/expression/MemberAccess.cpp"
     "src/parser/ast/expression/StructInitializer.cpp"
+    "src/parser/ast/expression/ArrayInitializer.cpp"
     "src/parser/ast/expression/CastExpression.cpp"
 
     "src/type/Type.cpp"
@@ -65,6 +66,7 @@ set(HEADERS
     "include/parser/ast/expression/CallExpression.h"
     "include/parser/ast/expression/MemberAccess.h"
     "include/parser/ast/expression/StructInitializer.h"
+    "include/parser/ast/expression/ArrayInitializer.h"
     "include/parser/ast/expression/CastExpression.h"
 
     "include/type/Type.h"

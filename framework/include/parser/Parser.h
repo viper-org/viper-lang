@@ -18,6 +18,7 @@
 #include "parser/ast/expression/CallExpression.h"
 #include "parser/ast/expression/MemberAccess.h"
 #include "parser/ast/expression/StructInitializer.h"
+#include "parser/ast/expression/ArrayInitializer.h"
 
 #include "lexer/Token.h"
 
@@ -77,6 +78,7 @@ namespace parser
         CallExpressionPtr parseCallExpression(ASTNodePtr function);
         MemberAccessPtr parseMemberAccess(ASTNodePtr struc, bool pointer);
         StructInitializerPtr parseStructInitializer();
+        ArrayInitializerPtr parseArrayInitializer(Type* preferredType = nullptr);
     };
 }
 
