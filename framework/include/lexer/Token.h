@@ -17,6 +17,7 @@ namespace lexing
 
         LeftParen, RightParen,
         LeftBracket, RightBracket,
+        LeftSquareBracket, RightSquareBracket,
         Semicolon, Colon,
         Comma,
 

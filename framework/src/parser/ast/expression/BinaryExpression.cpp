@@ -7,6 +7,7 @@
 #include <vipir/IR/Instruction/BinaryInst.h>
 #include <vipir/IR/Instruction/StoreInst.h>
 #include <vipir/IR/Instruction/GEPInst.h>
+#include <vipir/IR/Instruction/LoadInst.h>
 
 #include <cassert>
 
@@ -64,6 +65,10 @@ namespace parser
                 break;
             case lexing::TokenType::MinusEquals:
                 mOperator = Operator::SubAssign;
+                break;
+
+            case lexing::TokenType::LeftSquareBracket:
+                mOperator = Operator::ArrayAccess;
                 break;
 
             default:
@@ -144,6 +149,18 @@ namespace parser
 
                 vipir::Value* sub = builder.CreateSub(left, right);
                 return builder.CreateStore(pointerOperand, sub);
+            }
+
+            case Operator::ArrayAccess:
+            {
+                vipir::Value* pointerOperand = vipir::getPointerOperand(left);
+
+                vipir::Instruction* instruction = static_cast<vipir::Instruction*>(left);
+                instruction->eraseFromParent();
+
+                vipir::Value* gep = builder.CreateGEP(pointerOperand, right);
+
+                return builder.CreateLoad(gep);
             }
         }
     }

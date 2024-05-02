@@ -48,7 +48,7 @@ vipir::Type* StructType::getVipirType() const
     return vipir::Type::GetStructType(std::move(fieldTypes));
 }
 
-bool StructType::isPointerType() const
+bool StructType::isStructType() const
 {
     return true;
 }

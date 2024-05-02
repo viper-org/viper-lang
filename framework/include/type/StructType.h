@@ -25,7 +25,7 @@ public:
     int getSize() const override;
     vipir::Type* getVipirType() const override;
 
-    bool isPointerType() const override;
+    bool isStructType() const override;
 
     static StructType* Get(std::string name);
     static StructType* Create(std::string name, std::vector<Field> fields);

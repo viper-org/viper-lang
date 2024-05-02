@@ -12,6 +12,7 @@
 
 #include "type/PointerType.h"
 #include "type/StructType.h"
+#include "type/ArrayType.h"
 
 #include <algorithm>
 #include <format>
@@ -84,6 +85,7 @@ namespace parser
         switch (tokenType)
         {
             case lexing::TokenType::LeftParen:
+            case lexing::TokenType::LeftSquareBracket:
             case lexing::TokenType::Dot:
             case lexing::TokenType::RightArrow:
                 return 90;
@@ -159,10 +161,22 @@ namespace parser
             type = Type::Get(consume().getText());
         }
 
-        while(current().getTokenType() == lexing::TokenType::Star)
+        while(current().getTokenType() == lexing::TokenType::Star || current().getTokenType() == lexing::TokenType::LeftSquareBracket)
         {
-            consume();
-            type = PointerType::Create(type);
+            if (current().getTokenType() == lexing::TokenType::Star)
+            {
+                consume();
+                type = PointerType::Create(type);
+            }
+            else
+            {
+                consume();
+                expectToken(lexing::TokenType::IntegerLiteral);
+                int count = std::stoi(consume().getText(), 0, 0);
+                expectToken(lexing::TokenType::RightSquareBracket);
+                consume();
+                type = ArrayType::Create(type, count);
+            }
         }
 
         return type;
@@ -218,6 +232,12 @@ namespace parser
             {
                 ASTNodePtr rhs = parseExpression(preferredType, precedence);
                 lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorTokenType, std::move(rhs));
+            }
+
+            if (operatorTokenType == lexing::TokenType::LeftSquareBracket)
+            {
+                expectToken(lexing::TokenType::RightSquareBracket);
+                consume();
             }
         }
 

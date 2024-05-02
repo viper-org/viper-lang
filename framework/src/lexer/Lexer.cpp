@@ -113,6 +113,11 @@ namespace lexing
             case '}':
                 return Token(TokenType::RightBracket);
 
+            case '[':
+                return Token(TokenType::LeftSquareBracket);
+            case ']':
+                return Token(TokenType::RightSquareBracket);
+
             case ';':
                 return Token(TokenType::Semicolon);
             case ':':

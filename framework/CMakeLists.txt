@@ -37,6 +37,7 @@ set(SOURCES
     "src/type/BooleanType.cpp"
     "src/type/PointerType.cpp"
     "src/type/StructType.cpp"
+    "src/type/ArrayType.cpp"
 
     "src/scope/Scope.cpp"
 )
@@ -72,6 +73,7 @@ set(HEADERS
     "include/type/BooleanType.h"
     "include/type/PointerType.h"
     "include/type/StructType.h"
+    "include/type/ArrayType.h"
 
     "include/scope/Scope.h"
 )

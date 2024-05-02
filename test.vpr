@@ -6,8 +6,9 @@ struct abc {
 global a: struct abc = struct abc { 11, 33 };
 
 func @main() -> i8 {
-    let test: i64 = 12;
-    a.foo = (i32)test;
+    let test: i64[3];
+    test[0] = 69;
+    a.foo = test[0];
     let ptr: i32* = &a.foo;
     return *(i8*)ptr;
 }
