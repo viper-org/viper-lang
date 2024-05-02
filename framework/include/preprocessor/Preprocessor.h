@@ -14,7 +14,8 @@ namespace preprocessor
     class Preprocessor
     {
     public:
-        Preprocessor(std::string text);
+        void addIncludePath(std::string path);
+        void addText(std::string text);
 
         void preprocess();
 
@@ -23,6 +24,7 @@ namespace preprocessor
     private:
         std::string mText;
         std::vector<std::unique_ptr<Directive> > mDirectives;
+        std::vector<std::string> mIncludePaths;
 
         void doPreprocess();
 

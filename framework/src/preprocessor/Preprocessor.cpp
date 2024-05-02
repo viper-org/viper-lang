@@ -13,9 +13,15 @@
 
 namespace preprocessor
 {
-    Preprocessor::Preprocessor(std::string text)
-        : mText(std::move(text))
+    void Preprocessor::addIncludePath(std::string path)
     {
+        if (path.ends_with('/')) path.pop_back();
+        mIncludePaths.push_back(std::move(path));
+    }
+
+    void Preprocessor::addText(std::string text)
+    {
+        mText = std::move(text);
     }
 
     void Preprocessor::preprocess()
@@ -45,6 +51,14 @@ namespace preprocessor
             if (auto include = dynamic_cast<IncludeDirective*>(directive.get()))
             {
                 std::ifstream file = std::ifstream(include->getPath().data());
+                if (!file.is_open())
+                {
+                    for (auto& path : mIncludePaths)
+                    {
+                        file = std::ifstream(std::format("{}/{}", path, include->getPath()));
+                        if (file.is_open()) break;
+                    }
+                }
                 std::stringstream ss;
                 ss << file.rdbuf();
 

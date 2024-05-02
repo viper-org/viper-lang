@@ -26,6 +26,53 @@ int main(int argc, char** argv)
         std::exit(1);
     }
 
+    std::string inputFilePath;
+    std::string outputFilePath;
+    bool outputIR = false;
+
+    preprocessor::Preprocessor preprocessor;
+
+    for (int i = 1; i < argc; ++i)
+    {
+        std::string arg = argv[i];
+        if (arg.starts_with('-'))
+        {
+            switch(arg[1])
+            {
+                case 'I':
+                    if (arg.length() == 2)
+                        preprocessor.addIncludePath(argv[++i]);
+                    else
+                        preprocessor.addIncludePath(arg.substr(2));
+                    break;
+
+                case 'i':
+                    outputIR = true;
+                    break;
+
+                case 'o':
+                    if (arg.length() == 2)
+                        outputFilePath = argv[++i];
+                    else
+                        outputFilePath = arg.substr(2);
+                    break;
+
+                default: // TODO: Proper error
+                    std::cerr << "Unrecognized command-line option: " << arg << "\n";
+                    std::exit(1);
+            }
+        }
+        else
+        {
+            inputFilePath = arg;
+        }
+    }
+
+    if (outputFilePath.empty())
+    {
+        outputFilePath = inputFilePath + (outputIR ? ".i" : ".o");
+    }
+
     std::ifstream file = std::ifstream(argv[1]);
 
     std::stringstream buffer;
@@ -33,7 +80,7 @@ int main(int argc, char** argv)
 
     Type::Init();
 
-    preprocessor::Preprocessor preprocessor(buffer.str());
+    preprocessor.addText(buffer.str());
     preprocessor.preprocess();
 
     lexing::Lexer lexer(preprocessor.getText());
@@ -51,11 +98,15 @@ int main(int argc, char** argv)
         node->emit(builder, module, nullptr);
     }
 
-    module.print(std::cout);
-
-    using namespace std::literals;
-    std::ofstream outfile = std::ofstream(argv[1] + ".o"s);
-    module.emit(outfile, vipir::OutputFormat::ELF);
+    std::ofstream outputFile = std::ofstream(outputFilePath);
+    if (outputIR)
+    {
+        module.print(outputFile);
+    }
+    else
+    {
+        module.emit(outputFile, vipir::OutputFormat::ELF);
+    }
 
     return 0;
 }
