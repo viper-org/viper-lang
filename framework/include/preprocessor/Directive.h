@@ -31,6 +31,19 @@ namespace preprocessor
     private:
         std::string mPath;
     };
+
+    class DefineDirective : public Directive
+    {
+    public:
+        DefineDirective(int start, int end, std::string name, std::string value);
+
+        std::string_view getName() const;
+        std::string_view getValue() const;
+
+    private:
+        std::string mName;
+        std::string mValue;
+    };
 }
 
 #endif // VIPER_FRAMEWORK_PREPROCESSOR_DIRECTIVE_H

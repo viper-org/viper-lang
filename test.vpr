@@ -1,9 +1,12 @@
 #include "test.vh"
 
-global a: struct abc = struct abc { [ 1, 2, 3 ], 33 };
+#define macro 24
+#define type struct abc
+
+global a: type = type { [ 1, 2, 3 ], 33 };
 
 func @main() -> i8 {
-    a.test[0] = 69;
+    a.test[0] = macro;
     a.foo = a.test[0];
     let ptr: i32* = &a.foo;
     return *(i8*)ptr;

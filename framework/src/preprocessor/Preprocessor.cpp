@@ -2,6 +2,7 @@
 
 
 #include "preprocessor/Preprocessor.h"
+#include "preprocessor/Directive.h"
 
 #include <cassert>
 #include <cctype>
@@ -55,6 +56,19 @@ namespace preprocessor
                 mText.erase(mText.begin() + include->getStart(), mText.begin() + include->getEnd());
                 mText.insert(include->getStart(), ss.str());
             }
+            else if (auto define = dynamic_cast<DefineDirective*>(directive.get()))
+            {
+                mText.erase(mText.begin() + define->getStart(), mText.begin() + define->getEnd());
+
+                while (true)
+                {
+                    std::size_t position = mText.find(define->getName(), define->getStart());
+                    if (position == std::string::npos) break;
+
+                    mText.erase(mText.begin() + position, mText.begin() + position + define->getName().length());
+                    mText.insert(position, define->getValue());
+                }
+            }
         }
         if (!mDirectives.empty())
         {
@@ -70,13 +84,30 @@ namespace preprocessor
         if (mText.substr(position).starts_with("include"))
         {
             position += 7;
-            while(std::isspace(mText[position])) ++position;
+            while (std::isspace(mText[position])) ++position;
             assert(mText[position++] == '"');
             std::string path;
             while(mText[position] != '"')
                 path += mText[position++];
             position++;
             mDirectives.push_back(std::make_unique<IncludeDirective>(startPos, position, std::move(path)));
+        }
+        else if (mText.substr(position).starts_with(("define")))
+        {
+            position += 7;
+            while (std::isspace(mText[position])) ++position;
+
+            std::string name;
+            while (!std::isspace(mText[position]))
+                name += mText[position++];
+            while (std::isspace(mText[position])) ++position;
+
+            std::string value;
+            while (mText[position] != '\n')
+                value += mText[position++];
+            position++;
+
+            mDirectives.push_back(std::make_unique<DefineDirective>(startPos, position, std::move(name), std::move(value)));
         }
         return position;
     }
