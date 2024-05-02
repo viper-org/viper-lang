@@ -8,6 +8,7 @@
 #include <vipir/IR/Instruction/UnaryInst.h>
 #include <vipir/IR/Instruction/AddrInst.h>
 #include <vipir/IR/Instruction/LoadInst.h>
+#include <vipir/IR/Instruction/GEPInst.h>
 
 #include <vipir/Module.h>
 
@@ -66,6 +67,11 @@ namespace parser
 
                 vipir::Instruction* instruction = static_cast<vipir::Instruction*>(operand);
                 instruction->eraseFromParent();
+
+                if (dynamic_cast<vipir::GEPInst*>(pointerOperand))
+                {
+                    return pointerOperand;
+                }
 
                 return builder.CreateAddrOf(pointerOperand);
             }
