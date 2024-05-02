@@ -26,6 +26,10 @@ namespace parser
                 mOperator = Operator::Sub;
                 break;
 
+            case lexing::TokenType::Star:
+                mOperator = Operator::Mul;
+                break;
+
             case lexing::TokenType::Pipe:
                 mOperator = Operator::BitwiseOr;
                 break;
@@ -102,6 +106,9 @@ namespace parser
                 return builder.CreateAdd(left, right);
             case Operator::Sub:
                 return builder.CreateSub(left, right);
+
+            case Operator::Mul:
+                return builder.CreateIMul(left, right);
 
             case Operator::BitwiseOr:
                 return builder.CreateBWOr(left, right);

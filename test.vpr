@@ -7,7 +7,7 @@ global a: type = type { [ 1, 2, 3 ], 33 };
 
 func @main() -> i8 {
     a.test[0] = macro;
-    a.foo = a.test[0];
+    a.foo = a.test[0] * 2;
     let ptr: i32* = &a.foo;
     return *(i8*)ptr;
 }

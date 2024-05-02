@@ -91,6 +91,9 @@ namespace parser
             case lexing::TokenType::RightArrow:
                 return 90;
 
+            case lexing::TokenType::Star:
+                return 75;
+
             case lexing::TokenType::Plus:
             case lexing::TokenType::Minus:
                 return 70;
