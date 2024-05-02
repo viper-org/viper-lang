@@ -5,6 +5,7 @@
 
 #include <vipir/IR/Instruction/PtrCastInst.h>
 #include <vipir/IR/Instruction/SExtInst.h>
+#include <vipir/IR/Instruction/TruncInst.h>
 
 namespace parser
 {
@@ -23,7 +24,14 @@ namespace parser
         }
         else if (mType->isIntegerType() && mOperand->getType()->isIntegerType())
         {
-            return builder.CreateSExt(operand, mType->getVipirType());
+            if (mType->getSize() > mOperand->getType()->getSize())
+            {
+                return builder.CreateSExt(operand, mType->getVipirType());
+            }
+            else
+            {
+                return builder.CreateTrunc(operand, mType->getVipirType());
+            }
         }
         return nullptr;
     }
