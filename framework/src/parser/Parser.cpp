@@ -522,7 +522,7 @@ namespace parser
 
     IntegerLiteralPtr Parser::parseIntegerLiteral(Type* preferredType)
     {
-        return std::make_unique<IntegerLiteral>(std::stoll(consume().getText()), preferredType);
+        return std::make_unique<IntegerLiteral>(std::stoull(consume().getText(), 0, 0), preferredType);
     }
 
     StringLiteralPtr Parser::parseStringLiteral()
