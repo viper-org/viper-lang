@@ -43,6 +43,7 @@ namespace lexing
         IfKeyword, ElseKeyword,
         WhileKeyword,
         TrueKeyword, FalseKeyword,
+        NullptrKeyword,
         StructKeyword,
     };
 

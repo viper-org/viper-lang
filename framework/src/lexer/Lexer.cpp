@@ -16,16 +16,17 @@ namespace lexing
     }
 
     const std::unordered_map<std::string_view, TokenType> keywords = {
-        { "func",   TokenType::FuncKeyword },
-        { "return", TokenType::ReturnKeyword },
-        { "let",    TokenType::LetKeyword },
-        { "global", TokenType::GlobalKeyword },
-        { "if",     TokenType::IfKeyword },
-        { "else",   TokenType::ElseKeyword },
-        { "while",  TokenType::WhileKeyword },
-        { "true",   TokenType::TrueKeyword },
-        { "false",  TokenType::FalseKeyword },
-        { "struct", TokenType::StructKeyword },
+        { "func",    TokenType::FuncKeyword },
+        { "return",  TokenType::ReturnKeyword },
+        { "let",     TokenType::LetKeyword },
+        { "global",  TokenType::GlobalKeyword },
+        { "if",      TokenType::IfKeyword },
+        { "else",    TokenType::ElseKeyword },
+        { "while",   TokenType::WhileKeyword },
+        { "true",    TokenType::TrueKeyword },
+        { "false",   TokenType::FalseKeyword },
+        { "nullptr", TokenType::NullptrKeyword },
+        { "struct",  TokenType::StructKeyword },
     };
 
     std::vector<Token> Lexer::lex()

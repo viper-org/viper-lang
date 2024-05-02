@@ -6,6 +6,7 @@
 #include "parser/ast/expression/BinaryExpression.h"
 #include "parser/ast/expression/UnaryExpression.h"
 #include "parser/ast/expression/BooleanLiteral.h"
+#include "parser/ast/expression/NullptrLiteral.h"
 #include "parser/ast/expression/CastExpression.h"
 
 #include "lexer/Token.h"
@@ -268,6 +269,10 @@ namespace parser
             case lexing::TokenType::FalseKeyword:
                 consume();
                 return std::make_unique<BooleanLiteral>(false);
+
+            case lexing::TokenType::NullptrKeyword:
+                consume();
+                return std::make_unique<NullptrLiteral>(preferredType);
 
             case lexing::TokenType::IntegerLiteral:
                 return parseIntegerLiteral(preferredType);
