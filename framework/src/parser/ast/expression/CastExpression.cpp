@@ -4,6 +4,7 @@
 #include "parser/ast/expression/CastExpression.h"
 
 #include <vipir/IR/Instruction/PtrCastInst.h>
+#include <vipir/IR/Instruction/SExtInst.h>
 
 namespace parser
 {
@@ -16,9 +17,13 @@ namespace parser
     vipir::Value* CastExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
     {
         vipir::Value* operand = mOperand->emit(builder, module, scope);
-        if (mType->isPointerType())
+        if (mType->isPointerType() && mOperand->getType()->isPointerType())
         {
             return builder.CreatePtrCast(operand, mType->getVipirType());
+        }
+        else if (mType->isIntegerType() && mOperand->getType()->isIntegerType())
+        {
+            return builder.CreateSExt(operand, mType->getVipirType());
         }
         return nullptr;
     }
