@@ -73,7 +73,7 @@ int main(int argc, char** argv)
         outputFilePath = inputFilePath + (outputIR ? ".i" : ".o");
     }
 
-    std::ifstream file = std::ifstream(argv[1]);
+    std::ifstream file = std::ifstream(inputFilePath);
 
     std::stringstream buffer;
     buffer << file.rdbuf();
@@ -90,7 +90,7 @@ int main(int argc, char** argv)
     parser::Parser parser(tokens);
     
     vipir::IRBuilder builder;
-    vipir::Module module(argv[1]);
+    vipir::Module module(inputFilePath);
     module.setABI<vipir::abi::SysV>();
 
     for (auto& node : parser.parse())
