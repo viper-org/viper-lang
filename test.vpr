@@ -1,7 +1,4 @@
-struct abc {
-    test: i32[3];
-    foo: i32;
-}
+#include "test.vh"
 
 global a: struct abc = struct abc { [ 1, 2, 3 ], 33 };
 

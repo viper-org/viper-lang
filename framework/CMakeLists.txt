@@ -8,6 +8,9 @@ FetchContent_Declare(vipir
 FetchContent_MakeAvailable(vipir)
 
 set(SOURCES
+    "src/preprocessor/Preprocessor.cpp"
+    "src/preprocessor/Directive.cpp"
+
     "src/lexer/Lexer.cpp"
     "src/lexer/Token.cpp"
 
@@ -44,6 +47,9 @@ set(SOURCES
 )
 
 set(HEADERS
+    "include/preprocessor/Preprocessor.h"
+    "include/preprocessor/Directive.h"
+
     "include/lexer/Lexer.h"
     "include/lexer/Token.h"
 

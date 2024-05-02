@@ -1,5 +1,8 @@
 // Copyright 2024 solar-mist
 
+
+#include "preprocessor/Preprocessor.h"
+
 #include "lexer/Lexer.h"
 #include "lexer/Token.h"
 
@@ -30,7 +33,10 @@ int main(int argc, char** argv)
 
     Type::Init();
 
-    lexing::Lexer lexer(buffer.str());
+    preprocessor::Preprocessor preprocessor(buffer.str());
+    preprocessor.preprocess();
+
+    lexing::Lexer lexer(preprocessor.getText());
 
     std::vector<lexing::Token> tokens = lexer.lex();
 
