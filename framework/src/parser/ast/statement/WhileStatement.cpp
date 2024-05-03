@@ -1,6 +1,7 @@
 // Copyright 2024 solar-mist
 
 #include "parser/ast/statement/WhileStatement.h"
+#include "parser/ast/expression/BooleanLiteral.h"
 
 #include <vipir/IR/Instruction/RetInst.h>
 
@@ -20,6 +21,21 @@ namespace parser
         vipir::BasicBlock* bodyBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
         vipir::BasicBlock* doneBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
 
+        if (auto boolean = dynamic_cast<BooleanLiteral*>(mCondition.get()))
+        {
+            if (boolean->getValue() == true)
+            {
+                builder.setInsertPoint(bodyBasicBlock);
+                mBody->emit(builder, module, scope);
+                builder.CreateBr(bodyBasicBlock);
+            }
+            else
+            {
+                builder.setInsertPoint(doneBasicBlock);
+            }
+            return nullptr;
+        }
+
         builder.CreateBr(conditionBasicBlock);
         builder.setInsertPoint(conditionBasicBlock);
         vipir::Value* condition = mCondition->emit(builder, module, scope);
@@ -33,5 +49,4 @@ namespace parser
 
         return nullptr;
     }
-
 }

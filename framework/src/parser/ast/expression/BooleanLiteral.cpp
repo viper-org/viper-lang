@@ -12,6 +12,11 @@ namespace parser
         mType = Type::Get("bool");
     }
 
+    bool BooleanLiteral::getValue() const
+    {
+        return mValue;
+    }
+
     vipir::Value* BooleanLiteral::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
     {
         return builder.CreateConstantBool(mValue);

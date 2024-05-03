@@ -12,6 +12,8 @@ namespace parser
     public:
         BooleanLiteral(bool value);
 
+        bool getValue() const;
+
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
 
     private:
