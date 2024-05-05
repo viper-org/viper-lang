@@ -46,7 +46,7 @@ namespace parser
         int index = 0;
         for (auto& argument : mArguments)
         {
-            vipir::AllocaInst* alloca = builder.CreateAlloca(argument.type->getVipirType(), argument.name);
+            vipir::AllocaInst* alloca = builder.CreateAlloca(argument.type->getVipirType());
             scope->locals[argument.name] = LocalSymbol(alloca);
 
             builder.CreateStore(alloca, func->getArgument(index++));

@@ -16,7 +16,7 @@ namespace parser
 
     vipir::Value* VariableDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
     {
-        vipir::AllocaInst* alloca = builder.CreateAlloca(mType->getVipirType(), mName);
+        vipir::AllocaInst* alloca = builder.CreateAlloca(mType->getVipirType());
 
         if (mInitialValue)
         {
