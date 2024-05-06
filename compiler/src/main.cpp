@@ -29,6 +29,7 @@ int main(int argc, char** argv)
     std::string inputFilePath;
     std::string outputFilePath;
     bool outputIR = false;
+    bool optimize = false;
 
     preprocessor::Preprocessor preprocessor;
 
@@ -55,6 +56,10 @@ int main(int argc, char** argv)
                         outputFilePath = argv[++i];
                     else
                         outputFilePath = arg.substr(2);
+                    break;
+
+                case 'O':
+                    optimize = true;
                     break;
 
                 default: // TODO: Proper error
@@ -93,11 +98,17 @@ int main(int argc, char** argv)
     vipir::Module module(inputFilePath);
     module.setABI<vipir::abi::SysV>();
 
+
     for (auto& node : parser.parse())
     {
         node->emit(builder, module, nullptr);
     }
 
+    if (optimize)
+    {
+        module.addPass(vipir::Pass::PeepholeOptimization);
+    }
+    
     std::ofstream outputFile = std::ofstream(outputFilePath);
     if (outputIR)
     {

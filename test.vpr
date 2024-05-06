@@ -2,8 +2,16 @@
 
 #define macro 24
 
+func @test(a: i32) -> i32 {
+    return a + 2;
+}
+
 func @main() -> i32 {
-    let test: i32 = 44;
-    test = test + 6;
-    return test;
+    let str: i8* = "hello";
+    let b: i32 = test(12);
+    if (b == 44) {
+        b = b + 6;
+    }
+    let ptr: i32* = &b;
+    return *ptr;
 }
