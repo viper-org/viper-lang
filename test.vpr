@@ -1,13 +1,9 @@
 #include "test.vh"
 
 #define macro 24
-#define type struct abc
 
-global a: type = type { [ 1, 2, 3 ], 33 };
-
-func @main() -> i8 {
-    a.test[0] = macro;
-    a.foo = a.test[0] * 2;
-    let ptr: i32* = &a.foo;
-    return *(i8*)ptr;
+func @main() -> i32 {
+    let test: i32 = 44;
+    test = test + 6;
+    return test;
 }
