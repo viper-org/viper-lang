@@ -7,7 +7,6 @@ func @test(a: i32) -> i32 {
 }
 
 func @main() -> i32 {
-    let str: i8* = "hello";
     let b: i32 = test(12);
     if (b == 44) {
         b = b + 6;

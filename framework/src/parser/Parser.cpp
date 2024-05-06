@@ -202,7 +202,7 @@ namespace parser
             }
             else
             {
-                lhs = std::make_unique<UnaryExpression>(parseExpression(nullptr, prefixOperatorPrecedence), operatorTokenType);
+                lhs = std::make_unique<UnaryExpression>(parseExpression(preferredType, prefixOperatorPrecedence), operatorTokenType);
             }
         }
         else
@@ -234,7 +234,7 @@ namespace parser
             }
             else
             {
-                ASTNodePtr rhs = parseExpression(preferredType, precedence);
+                ASTNodePtr rhs = parseExpression(lhs->getType(), precedence);
                 lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorTokenType, std::move(rhs));
             }
 
