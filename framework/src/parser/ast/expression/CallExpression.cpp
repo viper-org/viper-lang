@@ -3,6 +3,8 @@
 
 #include "parser/ast/expression/CallExpression.h"
 
+#include "parser/ast/global/Function.h"
+
 #include <vipir/IR/Instruction/CallInst.h>
 
 namespace parser
@@ -11,6 +13,7 @@ namespace parser
         : mFunction(std::move(function))
         , mParameters(std::move(parameters))
     {
+        mType = mFunction->getType();
     }
 
     vipir::Value* CallExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)

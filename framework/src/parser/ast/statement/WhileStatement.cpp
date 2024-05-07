@@ -21,6 +21,9 @@ namespace parser
         vipir::BasicBlock* bodyBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
         vipir::BasicBlock* doneBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
 
+        conditionBasicBlock->loopEnd() = doneBasicBlock;
+        bodyBasicBlock->loopEnd() = doneBasicBlock;
+
         if (auto boolean = dynamic_cast<BooleanLiteral*>(mCondition.get()))
         {
             if (boolean->getValue() == true)
