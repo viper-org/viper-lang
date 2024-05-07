@@ -25,12 +25,14 @@ namespace parser
         {
             if (boolean->getValue() == true)
             {
+                builder.CreateBr(bodyBasicBlock);
                 builder.setInsertPoint(bodyBasicBlock);
                 mBody->emit(builder, module, scope);
                 builder.CreateBr(bodyBasicBlock);
             }
             else
             {
+                builder.CreateBr(doneBasicBlock);
                 builder.setInsertPoint(doneBasicBlock);
             }
             return nullptr;
