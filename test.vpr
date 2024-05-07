@@ -1,16 +1,12 @@
 #include "test.vh"
 
 #define macro 24
+#define type struct abc
 
-func @test(a: i32) -> i32 {
-    return a + 2;
-}
+global g: type = type { [ 1, 2, 3 ], 4 };
 
 func @main() -> i32 {
-    let b: i32 = test(12);
-    if (b == 44) {
-        b = b + 6;
-    }
-    let ptr: i32* = &b;
-    return *ptr;
+    g.test[1] = 7;
+    let test: i32 = g.test[1];
+    return test;
 }

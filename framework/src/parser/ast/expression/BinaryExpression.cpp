@@ -3,6 +3,8 @@
 
 #include "parser/ast/expression/BinaryExpression.h"
 
+#include "type/ArrayType.h"
+
 #include <vipir/Module.h>
 #include <vipir/IR/Instruction/BinaryInst.h>
 #include <vipir/IR/Instruction/StoreInst.h>
@@ -21,44 +23,56 @@ namespace parser
         {
             case lexing::TokenType::Plus:
                 mOperator = Operator::Add;
+                mType = left->getType();
                 break;
             case lexing::TokenType::Minus:
                 mOperator = Operator::Sub;
+                mType = left->getType();
                 break;
 
             case lexing::TokenType::Star:
                 mOperator = Operator::Mul;
+                mType = left->getType();
                 break;
 
             case lexing::TokenType::Pipe:
                 mOperator = Operator::BitwiseOr;
+                mType = left->getType();
                 break;
             case lexing::TokenType::Ampersand:
                 mOperator = Operator::BitwiseAnd;
+                mType = left->getType();
                 break;
             case lexing::TokenType::Caret:
                 mOperator = Operator::BitwiseXor;
+                mType = left->getType();
                 break;
 
             case lexing::TokenType::DoubleEquals:
                 mOperator = Operator::Equal;
+                mType = Type::Get("bool");
                 break;
             case lexing::TokenType::BangEquals:
                 mOperator = Operator::NotEqual;
+                mType = Type::Get("bool");
                 break;
 
             case lexing::TokenType::LessThan:
                 mOperator = Operator::LessThan;
+                mType = Type::Get("bool");
                 break;
             case lexing::TokenType::GreaterThan:
                 mOperator = Operator::GreaterThan;
+                mType = Type::Get("bool");
                 break;
 
             case lexing::TokenType::LessEqual:
                 mOperator = Operator::LessEqual;
+                mType = Type::Get("bool");
                 break;
             case lexing::TokenType::GreaterEqual:
                 mOperator = Operator::GreaterEqual;
+                mType = Type::Get("bool");
                 break;
 
             case lexing::TokenType::Equals:
@@ -73,6 +87,7 @@ namespace parser
 
             case lexing::TokenType::LeftSquareBracket:
                 mOperator = Operator::ArrayAccess;
+                mType = static_cast<ArrayType*>(mLeft->getType())->getBaseType();
                 break;
 
             default:
