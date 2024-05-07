@@ -61,6 +61,7 @@ namespace parser
         ASTNodePtr parseGlobal();
         ASTNodePtr parseExpression(Type* preferredType = nullptr, int precedence = 1);
         ASTNodePtr parsePrimary(Type* preferredType = nullptr);
+        ASTNodePtr parseParenthesizedExpression(Type* preferredType = nullptr);
 
         FunctionPtr parseFunction();
         StructDeclarationPtr parseStructDeclaration();

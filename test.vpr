@@ -7,6 +7,6 @@ global g: type = type { [ 1, 2, 3 ], 4 };
 
 func @main() -> i32 {
     g.test[1] = 7;
-    let test: i32 = g.test[1];
-    return test;
+    let test: i32* = &g.test[1];
+    return *(test + 1);
 }

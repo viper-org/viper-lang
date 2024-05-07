@@ -193,12 +193,19 @@ namespace parser
         if (prefixOperatorPrecedence >= precedence)
         {
             lexing::TokenType operatorTokenType = consume().getTokenType();
-            if (operatorTokenType == lexing::TokenType::LeftParen) // Cast expression
+            if (operatorTokenType == lexing::TokenType::LeftParen) // Cast expression or parenthesized expression
             {
-                Type* type = parseType();
-                expectToken(lexing::TokenType::RightParen);
-                consume();
-                lhs = std::make_unique<CastExpression>(parseExpression(nullptr, prefixOperatorPrecedence), type);
+                if (current().getTokenType() == lexing::TokenType::StructKeyword || current().getTokenType() == lexing::TokenType::Type) // Cast
+                {
+                    Type* type = parseType();
+                    expectToken(lexing::TokenType::RightParen);
+                    consume();
+                    lhs = std::make_unique<CastExpression>(parseExpression(nullptr, prefixOperatorPrecedence), type);
+                }
+                else // Parenthesized expression
+                {
+                    lhs = parseParenthesizedExpression(preferredType);
+                }
             }
             else
             {
@@ -295,6 +302,16 @@ namespace parser
                 std::cerr << "Unexpected token. Expected primary expression.\n";
                 std::exit(1);
         }
+    }
+
+    ASTNodePtr Parser::parseParenthesizedExpression(Type* preferredType)
+    {
+        ASTNodePtr expression = parseExpression(preferredType);
+
+        expectToken(lexing::TokenType::RightParen);
+        consume();
+
+        return expression;
     }
 
     FunctionPtr Parser::parseFunction()
