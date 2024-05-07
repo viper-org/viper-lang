@@ -112,11 +112,11 @@ int main(int argc, char** argv)
     std::ofstream outputFile = std::ofstream(outputFilePath);
     if (outputIR)
     {
-        module.print2(outputFile);
+        module.print(outputFile);
     }
     else
     {
-        module.emit2(outputFile, vipir::OutputFormat::ELF);
+        module.emit(outputFile, vipir::OutputFormat::ELF);
     }
 
     return 0;
