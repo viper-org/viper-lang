@@ -23,29 +23,29 @@ namespace parser
         {
             case lexing::TokenType::Plus:
                 mOperator = Operator::Add;
-                mType = left->getType();
+                mType = mLeft->getType();
                 break;
             case lexing::TokenType::Minus:
                 mOperator = Operator::Sub;
-                mType = left->getType();
+                mType = mLeft->getType();
                 break;
 
             case lexing::TokenType::Star:
                 mOperator = Operator::Mul;
-                mType = left->getType();
+                mType = mLeft->getType();
                 break;
 
             case lexing::TokenType::Pipe:
                 mOperator = Operator::BitwiseOr;
-                mType = left->getType();
+                mType = mLeft->getType();
                 break;
             case lexing::TokenType::Ampersand:
                 mOperator = Operator::BitwiseAnd;
-                mType = left->getType();
+                mType = mLeft->getType();
                 break;
             case lexing::TokenType::Caret:
                 mOperator = Operator::BitwiseXor;
-                mType = left->getType();
+                mType = mLeft->getType();
                 break;
 
             case lexing::TokenType::DoubleEquals:
