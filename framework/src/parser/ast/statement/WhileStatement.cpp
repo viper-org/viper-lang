@@ -26,6 +26,8 @@ namespace parser
 
         if (auto boolean = dynamic_cast<BooleanLiteral*>(mCondition.get()))
         {
+            bodyBasicBlock->loopEnd() = nullptr;
+            conditionBasicBlock->loopEnd() = nullptr;
             if (boolean->getValue() == true)
             {
                 builder.CreateBr(bodyBasicBlock);
