@@ -3,9 +3,11 @@
 #include "parser/ast/global/Function.h"
 #include "parser/ast/global/StructDeclaration.h"
 #include "scope/Scope.h"
+#include "parser/ast/statement/ReturnStatement.h"
 
 #include <vipir/IR/Function.h>
 #include <vipir/IR/BasicBlock.h>
+#include <vipir/IR/Constant/ConstantInt.h>
 
 namespace parser
 {
@@ -74,6 +76,10 @@ namespace parser
         for (auto& node : mBody)
         {
             node->emit(builder, module, scope);
+        }
+
+        if (!dynamic_cast<ReturnStatement*>(mBody.end()->get())) {
+            builder.CreateRet(vipir::ConstantInt::Get(module, 0, func->getFunctionType()->getReturnType())); //TODO: get null value for types
         }
 
         return func;
