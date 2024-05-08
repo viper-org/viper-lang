@@ -1,15 +1,18 @@
 // Copyright 2024 solar-mist
 
 #include "parser/ast/global/Function.h"
+#include "parser/ast/global/StructDeclaration.h"
+#include "scope/Scope.h"
 
 #include <vipir/IR/Function.h>
 #include <vipir/IR/BasicBlock.h>
 
 namespace parser
 {
-    Function::Function(Type* returnType, std::vector<FunctionArgument> arguments, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope)
+    Function::Function(Type* returnType, std::vector<FunctionArgument> arguments, std::optional<std::string> struc, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope)
         : mReturnType(returnType)
         , mArguments(std::move(arguments))
+        , mStruct(struc)
         , mName(name)
         , mBody(std::move(body))
         , mScope(scope)
@@ -30,10 +33,26 @@ namespace parser
         {
             argumentTypes.push_back(argument.type->getVipirType());
         }
-        vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType(), argumentTypes);
 
-        vipir::Function* func = vipir::Function::Create(functionType, module, mName);
-        GlobalFunctions[mName] = func;
+        std::string name;
+
+        if (mStruct.has_value())
+            name = mangleMethodName(mStruct.value(), mName);
+        else
+            name = mName;
+
+        vipir::Function* func;
+        if (GlobalFunctions.contains(name))
+        {
+            func = GlobalFunctions[name].function;
+            // assert func is empty
+        }
+        else
+        {
+            vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType(), argumentTypes);
+            func = vipir::Function::Create(functionType, module, name);
+            GlobalFunctions[mName] = func;
+        }
 
         if (mBody.empty())
         {

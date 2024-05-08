@@ -18,6 +18,7 @@ namespace parser
         , mField(std::move(field))
         , mPointer(pointer)
     {
+
         StructType* structType;
         if (mPointer)
         {
@@ -27,6 +28,7 @@ namespace parser
         {
             structType = static_cast<StructType*>(mStruct->getType());
         }
+
         mType = structType->getField(mField).type;
     }
 
@@ -41,11 +43,11 @@ namespace parser
         {
             vipir::Value* structValue = mStruct->emit(builder, module, scope);
             struc = vipir::getPointerOperand(structValue);
-            
+
             vipir::Instruction* instruction = static_cast<vipir::Instruction*>(structValue);
             instruction->eraseFromParent();
         }
-        
+
         StructType* structType;
         if (mPointer)
         {

@@ -1,12 +1,17 @@
-#include "test.vh"
+struct Test {
+    field: i32;
+    another: i32;
 
-#define macro 24
-#define type struct abc
+    func @method(balls: i32) -> i32;
+}
 
-global g: type = type { [ 1, 2, 3 ], 4 };
+func Test@method(balls: i32) -> i32 {
+    return this->another + balls;
+}
 
 func @main() -> i32 {
-    g.test[1] = 7;
-    let test: i32* = &g.test[1];
-    return *(test + 1);
+    let test: struct Test = struct Test { 1, 2 };
+    let ptr: struct Test* = &test;
+
+    return ptr->method(5);
 }
