@@ -78,7 +78,7 @@ namespace parser
             node->emit(builder, module, scope);
         }
 
-        if (!dynamic_cast<ReturnStatement*>(mBody.end()->get())) {
+        if (!dynamic_cast<ReturnStatement*>(mBody.back().get())) {
             builder.CreateRet(vipir::ConstantInt::Get(module, 0, func->getFunctionType()->getReturnType())); //TODO: get null value for types
         }
 
