@@ -274,6 +274,8 @@ namespace parser
                 return parseIfStatement();
             case lexing::TokenType::WhileKeyword:
                 return parseWhileStatement();
+            case lexing::TokenType::ForKeyword:
+                return parseForStatement();
 
             case lexing::TokenType::TrueKeyword:
                 consume();
@@ -301,7 +303,7 @@ namespace parser
                 return parseArrayInitializer(preferredType);
 
             default:
-                std::cerr << "Unexpected token. Expected primary expression.\n";
+                std::cerr << "Unexpected token: " << current().toString() << ". Expected primary expression.\n";
                 std::exit(1);
         }
     }
@@ -639,6 +641,52 @@ namespace parser
         ASTNodePtr body = parseExpression();
 
         return std::make_unique<WhileStatement>(std::move(condition), std::move(body));
+    }
+
+    ForStatementPtr Parser::parseForStatement() {
+        consume();
+
+        expectToken(lexing::TokenType::LeftParen);
+        consume();
+
+        ASTNodePtr init = nullptr;
+        ASTNodePtr condition = nullptr;
+        std::vector<ASTNodePtr> loopExpr;
+
+        Scope* forScope = new Scope(mScope);
+        mScope = forScope;
+
+        if (current().getTokenType() != lexing::TokenType::Semicolon)
+        {
+            init = parseExpression();
+            expectToken(lexing::TokenType::Semicolon);
+        }
+        consume();
+
+        if (current().getTokenType() != lexing::TokenType::Semicolon)
+        {
+            condition = parseExpression();
+            expectToken(lexing::TokenType::Semicolon);
+        }
+        consume();
+
+        if (current().getTokenType() != lexing::TokenType::RightParen) {
+            while (current().getTokenType() != lexing::TokenType::RightParen) {
+                loopExpr.push_back(parseExpression());
+
+                if (current().getTokenType() != lexing::TokenType::RightParen) {
+                    expectToken(lexing::TokenType::Comma);
+                    consume();
+                }
+            }
+        }
+        consume();
+
+        ASTNodePtr body = parseExpression();
+
+        mScope = forScope->parent;
+
+        return std::make_unique<ForStatement>(std::move(init), std::move(condition), std::move(loopExpr), std::move(body), forScope);
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral(Type* preferredType)

@@ -64,6 +64,8 @@ set(HEADERS
     "include/parser/ast/statement/IfStatement.h"
     "include/parser/ast/statement/WhileStatement.h"
     "include/parser/ast/statement/CompoundStatement.h"
+    "include/parser/ast/statement/ForStatement.h"
+    "src/parser/ast/statement/ForStatement.cpp"
     "include/parser/ast/expression/IntegerLiteral.h"
     "include/parser/ast/expression/BooleanLiteral.h"
     "include/parser/ast/expression/StringLiteral.h"
