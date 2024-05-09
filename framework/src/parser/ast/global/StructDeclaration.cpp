@@ -73,7 +73,8 @@ namespace parser
                 builder.CreateStore(alloca, func->getArgument(index++));
             }
 
-            for (auto& node : method.body) {
+            for (auto& node : method.body)
+            {
                 node->emit(builder, module, scope);
             }
         }
