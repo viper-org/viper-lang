@@ -44,7 +44,8 @@ set(SOURCES
     "src/type/StructType.cpp"
     "src/type/ArrayType.cpp"
 
-    "src/scope/Scope.cpp"
+    "src/symbol/Scope.cpp"
+    "src/symbol/NameMangling.cpp"
 )
 
 set(HEADERS
@@ -86,8 +87,8 @@ set(HEADERS
     "include/type/PointerType.h"
     "include/type/StructType.h"
     "include/type/ArrayType.h"
-
-    "include/scope/Scope.h"
+    "include/symbol/Scope.h"
+    "include/symbol/NameMangling.h"
 )
 
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})

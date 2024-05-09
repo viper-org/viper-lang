@@ -1,7 +1,6 @@
 // Copyright 2024 solar-mist
 
 #include "parser/ast/expression/VariableExpression.h"
-#include "scope/Scope.h"
 
 #include <vipir/IR/Instruction/AllocaInst.h>
 #include <vipir/IR/Instruction/LoadInst.h>

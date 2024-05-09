@@ -12,6 +12,7 @@ public:
 
     int getSize() const override;
     vipir::Type* getVipirType() const override;
+    std::string getMangleID() const override;
 
     bool isBooleanType() const override;
 };

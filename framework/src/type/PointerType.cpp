@@ -31,6 +31,11 @@ vipir::Type* PointerType::getVipirType() const
     return vipir::Type::GetPointerType(mBase->getVipirType());
 }
 
+std::string PointerType::getMangleID() const
+{
+    return mBase->getMangleID() + "P";
+}
+
 bool PointerType::isPointerType() const
 {
     return true;

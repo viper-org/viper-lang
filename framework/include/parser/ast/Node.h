@@ -3,7 +3,7 @@
 #ifndef VIPER_FRAMEWORK_PARSER_AST_AST_NODE_H
 #define VIPER_FRAMEWORK_PARSER_AST_AST_NODE_H 1
 
-#include "scope/Scope.h"
+#include "symbol/Scope.h"
 
 #include "type/Type.h"
 

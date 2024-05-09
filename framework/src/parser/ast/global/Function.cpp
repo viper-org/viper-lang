@@ -2,12 +2,13 @@
 
 #include "parser/ast/global/Function.h"
 #include "parser/ast/global/StructDeclaration.h"
-
 #include "parser/ast/statement/ReturnStatement.h"
+#include "symbol/NameMangling.h"
 
 #include <vipir/IR/Function.h>
 #include <vipir/IR/BasicBlock.h>
 #include <vipir/IR/Constant/ConstantInt.h>
+#include <cassert>
 
 namespace parser
 {
@@ -30,28 +31,32 @@ namespace parser
     {
         if (!mBody.empty()) scope = mScope.get();
 
+        std::vector<Type*> manglingArguments;
         std::vector<vipir::Type*> argumentTypes;
         for (auto& argument : mArguments)
         {
+            manglingArguments.push_back(argument.type);
             argumentTypes.push_back(argument.type->getVipirType());
         }
 
-        std::string name;
-
+        std::vector<std::string_view> names;
         if (mStruct.has_value())
-            name = mangleMethodName(mStruct.value(), mName);
-        else
-            name = mName;
+            names.push_back(mStruct.value());
+        names.push_back(mName);
 
+        std::string name = symbol::mangleFunctionName(std::move(names), std::move(manglingArguments));
+
+        vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType(), argumentTypes);
         vipir::Function* func;
+
         if (GlobalFunctions.contains(name))
         {
             func = GlobalFunctions[name].function;
+            assert(func->getFunctionType() == functionType);
             // assert func is empty
         }
         else
         {
-            vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType(), argumentTypes);
             func = vipir::Function::Create(functionType, module, name);
             GlobalFunctions[mName] = FunctionSymbol(func, false);
         }
@@ -78,7 +83,8 @@ namespace parser
             node->emit(builder, module, scope);
         }
 
-        if (!dynamic_cast<ReturnStatement*>(mBody.back().get())) {
+        if (!dynamic_cast<ReturnStatement*>(mBody.back().get()))
+        {
             builder.CreateRet(vipir::ConstantInt::Get(module, 0, func->getFunctionType()->getReturnType())); //TODO: get null value for types
         }
 

@@ -9,6 +9,7 @@ namespace parser
 {
     class VariableExpression : public ASTNode
     {
+    friend class CallExpression;
     public:
         VariableExpression(std::string&& name, Type* type);
 

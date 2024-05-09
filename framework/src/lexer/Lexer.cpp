@@ -83,6 +83,12 @@ namespace lexing
                 return Token(TokenType::Type, std::move(text));
             }
 
+            if (text.length() >= 2 && text[0] == '_' && std::isupper(text[1]))
+            {
+                std::cerr << "Identifiers cannot begin with _ and an uppercase character. (" << text << ")\n";
+                std::exit(1);
+            }
+
             return Token(TokenType::Identifier, std::move(text));
         }
 

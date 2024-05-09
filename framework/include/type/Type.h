@@ -14,6 +14,7 @@ public:
 
     virtual int getSize() const = 0;
     virtual vipir::Type* getVipirType() const = 0;
+    virtual std::string getMangleID() const = 0;
 
     virtual bool isIntegerType() const { return false; }
     virtual bool isVoidType()    const { return false; }

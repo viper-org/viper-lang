@@ -1,7 +1,7 @@
 // Copyright 2024 solar-mist
 
 
-#include "scope/Scope.h"
+#include "symbol/Scope.h"
 
 #include <iostream>
 

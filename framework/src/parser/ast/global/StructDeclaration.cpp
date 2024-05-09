@@ -2,8 +2,9 @@
 
 
 #include "parser/ast/global/StructDeclaration.h"
-
+#include "symbol/NameMangling.h"
 #include "type/StructType.h"
+#include "type/PointerType.h"
 
 #include <vipir/IR/BasicBlock.h>
 #include <vipir/Type/FunctionType.h>
@@ -32,15 +33,19 @@ namespace parser
         {
             scope = method.scope.get();
 
+            std::vector<Type*> manglingArguments;
             std::vector<vipir::Type*> argumentTypes;
+
+            manglingArguments.push_back(PointerType::Create(mType));
             argumentTypes.push_back(vipir::Type::GetPointerType(mType->getVipirType()));
 
             for (auto& argument : method.arguments)
             {
+                manglingArguments.push_back(argument.type);
                 argumentTypes.push_back(argument.type->getVipirType());
             }
             vipir::FunctionType* functionType = vipir::FunctionType::Create(method.returnType->getVipirType(), argumentTypes);
-            std::string name = mangleMethodName(mName, method.name);
+            std::string name = symbol::mangleFunctionName({mName, method.name}, std::move(manglingArguments));
 
             vipir::Function* func = vipir::Function::Create(functionType, module, name);
             GlobalFunctions[name] = FunctionSymbol(func, method.priv); //TODO: make this better or sum
@@ -68,20 +73,12 @@ namespace parser
                 builder.CreateStore(alloca, func->getArgument(index++));
             }
 
-            for (auto& node : method.body) {
+            for (auto& node : method.body)
+            {
                 node->emit(builder, module, scope);
             }
         }
 
         return nullptr;
-    }
-
-    std::string mangleMethodName(std::string_view structName, std::string_view methodName)
-    {
-        std::string res = "m";
-        res += structName;
-        res += methodName;
-
-        return res;
     }
 }
