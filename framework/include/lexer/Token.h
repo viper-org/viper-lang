@@ -44,7 +44,7 @@ namespace lexing
         WhileKeyword, ForKeyword,
         TrueKeyword, FalseKeyword,
         NullptrKeyword,
-        StructKeyword,
+        StructKeyword, PrivateKeyword,
     };
 
     class Token

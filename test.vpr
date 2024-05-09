@@ -1,59 +1,22 @@
 struct Test {
     field: i32;
-    another: i32;
+    private another: i32;
+    
+    func @pubMethod(balls: i32) -> i32;
+    private func @method(balls: i32) -> i32;
+}
 
-    func @method(balls: i32) -> i32;
+func Test@pubMethod(balls: i32) -> i32 {
+    return this->method(balls);
 }
 
 func Test@method(balls: i32) -> i32 {
     return this->another + balls;
 }
 
-func @testFor4() {
-    let bleh: i32 = 0;
-
-    for (let i: i32 = 0; i < 10; i += 1, bleh += 1) {
-        bleh += i;
-    }
-}
-
-func @testFor3() {
-    let bleh: i32 = 0;
-
-    for (let i: i32 = 0; i < 10; i += 1) {
-        bleh += i;
-    }
-}
-
-func @testFor2() {
-    let bleh: i32 = 0;
-
-    for (let i: i32 = 0; i < 10; ) {
-        bleh += i;
-        i += 1;
-    }
-}
-
-func @testFor1() {
-    let bleh: i32 = 0;
-
-    for (let i: i32 = 0; ; ) {
-        bleh += i;
-        i += 1;
-    }
-}
-
-func @testFor0() {
-    let bleh: i32 = 0;
-
-    for (;;) {
-        bleh += 1;
-    }
-}
-
 func @main() -> i32 {
     let test: struct Test = struct Test { 1, 2 };
     let ptr: struct Test* = &test;
 
-    return ptr->method(5);
+    return ptr->pubMethod(5);
 }

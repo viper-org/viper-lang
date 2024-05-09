@@ -11,6 +11,8 @@
 
 #include <vipir/Module.h>
 
+#include <iostream>
+
 namespace parser
 {
     MemberAccess::MemberAccess(ASTNodePtr struc, std::string field, bool pointer)
@@ -56,6 +58,11 @@ namespace parser
         else
         {
             structType = static_cast<StructType*>(mStruct->getType());
+        }
+
+        if (structType->getField(mField).priv && scope->owner != structType)
+        { // TODO: Proper error
+            std::cerr << std::format("{} is a private member of struct {}\n", mField, structType->getName());
         }
 
         vipir::Value* gep = builder.CreateStructGEP(struc, structType->getFieldOffset(mField));

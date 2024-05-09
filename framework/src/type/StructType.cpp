@@ -47,7 +47,7 @@ int StructType::getSize() const
 vipir::Type* StructType::getVipirType() const
 {
     std::vector<vipir::Type*> fieldTypes;
-    for (auto [_, field] : mFields)
+    for (auto [_, _x, field] : mFields)
     {
         fieldTypes.push_back(field->getVipirType());
     }

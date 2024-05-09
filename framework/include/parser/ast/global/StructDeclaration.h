@@ -10,12 +10,14 @@ namespace parser
 {
     struct StructField
     {
+        bool priv;
         std::string name;
         Type* type;
     };
 
     struct StructMethod
     {
+        bool priv;
         std::string name;
         Type* returnType;
         std::vector<FunctionArgument> arguments;

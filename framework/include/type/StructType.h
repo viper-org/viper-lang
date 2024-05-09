@@ -12,6 +12,7 @@ class StructType : public Type
 public:
     struct Field
     {
+        bool priv;
         std::string name;
         Type* type;
     };

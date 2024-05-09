@@ -13,8 +13,9 @@ LocalSymbol::LocalSymbol(vipir::AllocaInst* alloca)
 {
 }
 
-FunctionSymbol::FunctionSymbol(vipir::Function* function)
+FunctionSymbol::FunctionSymbol(vipir::Function* function, bool priv)
     : function(function)
+    , priv(priv)
 {
 }
 
@@ -23,8 +24,9 @@ GlobalSymbol::GlobalSymbol(vipir::GlobalVar* global)
 {
 }
 
-Scope::Scope(Scope* parent)
+Scope::Scope(Scope* parent, StructType* owner)
     : parent(parent)
+    , owner(owner)
 {
 }
 
