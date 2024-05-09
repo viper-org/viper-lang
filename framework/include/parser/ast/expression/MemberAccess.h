@@ -1,6 +1,7 @@
 // Copyright 2024 solar-mist
 
 
+#include "parser/ast/expression/CallExpression.h"
 #ifndef VIPER_FRAMEWORK_PARSER_AST_EXPRESSION_MEMBER_ACCESS_H
 #define VIPER_FRAMEWORK_PARSER_AST_EXPRESSION_MEMBER_ACCESS_H 1
 
@@ -10,6 +11,7 @@ namespace parser
 {
     class MemberAccess : public ASTNode
     {
+    friend class CallExpression;
     public:
         MemberAccess(ASTNodePtr struc, std::string field, bool pointer);
 

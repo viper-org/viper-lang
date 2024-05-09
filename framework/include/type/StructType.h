@@ -16,7 +16,9 @@ public:
         Type* type;
     };
 
-    StructType(std::vector<Field> fields);
+    StructType(std::string name, std::vector<Field> fields);
+
+    std::string_view getName() const;
 
     const std::vector<Field>& getFields() const;
     Field& getField(std::string fieldName);
@@ -31,6 +33,7 @@ public:
     static StructType* Create(std::string name, std::vector<Field> fields);
 
 private:
+    std::string mName;
     std::vector<Field> mFields;
 };
 

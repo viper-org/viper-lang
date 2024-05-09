@@ -23,6 +23,7 @@ namespace lexing
         { "if",      TokenType::IfKeyword },
         { "else",    TokenType::ElseKeyword },
         { "while",   TokenType::WhileKeyword },
+        { "for",     TokenType::ForKeyword },
         { "true",    TokenType::TrueKeyword },
         { "false",   TokenType::FalseKeyword },
         { "nullptr", TokenType::NullptrKeyword },

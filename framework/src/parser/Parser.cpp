@@ -3,6 +3,7 @@
 
 #include "parser/Parser.h"
 
+#include "parser/ast/Node.h"
 #include "parser/ast/expression/BinaryExpression.h"
 #include "parser/ast/expression/UnaryExpression.h"
 #include "parser/ast/expression/BooleanLiteral.h"
@@ -11,6 +12,7 @@
 
 #include "lexer/Token.h"
 
+#include "parser/ast/global/Function.h"
 #include "type/PointerType.h"
 #include "type/StructType.h"
 #include "type/ArrayType.h"
@@ -135,7 +137,7 @@ namespace parser
             case lexing::TokenType::Star:
             case lexing::TokenType::LeftParen:
                 return 85;
-            
+
             default:
                 return 0;
         }
@@ -149,7 +151,7 @@ namespace parser
                 return 0;
         }
     }
-    
+
     Type* Parser::parseType()
     {
         Type* type;
@@ -264,7 +266,7 @@ namespace parser
 
             case lexing::TokenType::ReturnKeyword:
                 return parseReturnStatement();
-            
+
             case lexing::TokenType::LetKeyword:
                 return parseVariableDeclaration();
 
@@ -272,6 +274,8 @@ namespace parser
                 return parseIfStatement();
             case lexing::TokenType::WhileKeyword:
                 return parseWhileStatement();
+            case lexing::TokenType::ForKeyword:
+                return parseForStatement();
 
             case lexing::TokenType::TrueKeyword:
                 consume();
@@ -299,7 +303,7 @@ namespace parser
                 return parseArrayInitializer(preferredType);
 
             default:
-                std::cerr << "Unexpected token. Expected primary expression.\n";
+                std::cerr << "Unexpected token: " << current().toString() << ". Expected primary expression.\n";
                 std::exit(1);
         }
     }
@@ -317,6 +321,14 @@ namespace parser
     FunctionPtr Parser::parseFunction()
     {
         consume();
+
+        std::optional<std::string> struc;
+
+        if (current().getTokenType() == lexing::TokenType::Identifier)
+        {
+            struc = consume().getText();
+        }
+
         expectToken(lexing::TokenType::Asperand);
         consume();
 
@@ -325,8 +337,17 @@ namespace parser
 
         expectToken(lexing::TokenType::LeftParen);
         consume();
-        
+
         std::vector<FunctionArgument> arguments;
+
+        if (struc.has_value())
+        {
+            StructType* structType = StructType::Get(struc.value());
+
+            mSymbols.push_back({"this", PointerType::Create(structType)});
+            arguments.push_back({"this", PointerType::Create(structType)});
+        }
+
         while (current().getTokenType() != lexing::TokenType::RightParen)
         {
             expectToken(lexing::TokenType::Identifier);
@@ -347,17 +368,19 @@ namespace parser
         }
         consume();
 
-        expectToken(lexing::TokenType::RightArrow);
-        consume();
-        
-        Type* type = parseType();
+        Type* type = Type::Get("void");
+        if (current().getTokenType() == lexing::TokenType::RightArrow)
+        {
+            consume();
+            type = parseType();
+        }
 
         mSymbols.push_back({name, type});
 
         if (current().getTokenType() == lexing::TokenType::Semicolon) // Extern function declaration
         {
             consume();
-            return std::make_unique<Function>(type, std::move(arguments), std::move(name), std::vector<ASTNodePtr>(), nullptr);
+            return std::make_unique<Function>(type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
         }
 
         Scope* functionScope = new Scope(mScope);
@@ -377,7 +400,7 @@ namespace parser
 
         mScope = functionScope->parent;
 
-        return std::make_unique<Function>(type, std::move(arguments), std::move(name), std::move(body), functionScope);
+        return std::make_unique<Function>(type, std::move(arguments), std::move(struc), std::move(name), std::move(body), functionScope);
     }
 
     StructDeclarationPtr Parser::parseStructDeclaration()
@@ -387,28 +410,108 @@ namespace parser
         expectToken(lexing::TokenType::Identifier);
         std::string name = consume().getText();
 
+        //StructType* structType = StructType::Create(name, std::vector<StructType::Field>());
+
         expectToken(lexing::TokenType::LeftBracket);
         consume();
 
+        //std::vector<StructType::Field>& fieldTypes = const_cast<std::vector<StructType::Field>&>(structType->getFields()); // bit hacky but it works ig
         std::vector<StructField> fields;
+        std::vector<StructMethod> methods;
         while (current().getTokenType() != lexing::TokenType::RightBracket)
         {
-            expectToken(lexing::TokenType::Identifier);
-            std::string name = consume().getText();
+            if (current().getTokenType() == lexing::TokenType::FuncKeyword)
+            {
+                consume();
+                expectToken(lexing::TokenType::Asperand);
+                consume();
 
-            expectToken(lexing::TokenType::Colon);
-            consume();
+                expectToken(lexing::TokenType::Identifier);
+                std::string name = consume().getText();
 
-            Type* type = parseType();
+                expectToken(lexing::TokenType::LeftParen);
+                consume();
 
-            fields.push_back({std::move(name), type});
+                std::vector<FunctionArgument> arguments;
+                while (current().getTokenType() != lexing::TokenType::RightParen)
+                {
+                    expectToken(lexing::TokenType::Identifier);
+                    std::string name = consume().getText();
 
-            expectToken(lexing::TokenType::Semicolon);
-            consume();
+                    expectToken(lexing::TokenType::Colon);
+                    consume();
+
+                    Type* type = parseType();
+                    mSymbols.push_back({name, type});
+                    arguments.push_back({std::move(name), type});
+
+                    if (current().getTokenType() != lexing::TokenType::RightParen)
+                    {
+                        expectToken(lexing::TokenType::Comma);
+                        consume();
+                    }
+                }
+                consume();
+
+                Type* type = Type::Get("void");
+                if (current().getTokenType() == lexing::TokenType::RightArrow)
+                {
+                    consume();
+                    type = parseType();
+                }
+
+                expectToken(lexing::TokenType::Semicolon);
+
+                if (current().getTokenType() == lexing::TokenType::Semicolon)
+                {
+                    consume();
+                    methods.push_back({std::move(name), type, std::move(arguments), std::vector<ASTNodePtr>(), nullptr});
+                    continue;
+                }
+
+                // if definition in struct will ever be readded
+
+                Scope* scope = new Scope(mScope);
+                mScope = scope;
+
+                //mSymbols.push_back({"this", PointerType::Create(structType)});
+
+                expectToken(lexing::TokenType::LeftBracket);
+                consume();
+
+                std::vector<ASTNodePtr> body;
+                while (current().getTokenType() != lexing::TokenType::RightBracket)
+                {
+                    body.push_back(parseExpression());
+                    expectToken(lexing::TokenType::Semicolon);
+                    consume();
+                }
+                consume();
+
+                mScope = mScope->parent;
+
+                methods.push_back({name, type, std::move(arguments), std::move(body), ScopePtr(scope)});
+            }
+            else
+            {
+                expectToken(lexing::TokenType::Identifier);
+                std::string name = consume().getText();
+
+                expectToken(lexing::TokenType::Colon);
+                consume();
+
+                Type* type = parseType();
+
+                //fieldTypes.push_back({name, type});
+                fields.push_back({std::move(name), type});
+
+                expectToken(lexing::TokenType::Semicolon);
+                consume();
+            }
         }
         consume();
 
-        return std::make_unique<StructDeclaration>(std::move(name), std::move(fields));
+        return std::make_unique<StructDeclaration>(std::move(name), std::move(fields), std::move(methods));
     }
 
     GlobalDeclarationPtr Parser::parseGlobalDeclaration()
@@ -442,7 +545,7 @@ namespace parser
 
         Scope* blockScope = new Scope(mScope);
         mScope = blockScope;
-        
+
         std::vector<ASTNodePtr> body;
         while (current().getTokenType() != lexing::TokenType::RightBracket)
         {
@@ -474,7 +577,7 @@ namespace parser
     VariableDeclarationPtr Parser::parseVariableDeclaration()
     {
         consume(); // let
-        
+
         std::string name = consume().getText();
 
         expectToken(lexing::TokenType::Colon);
@@ -540,6 +643,52 @@ namespace parser
         return std::make_unique<WhileStatement>(std::move(condition), std::move(body));
     }
 
+    ForStatementPtr Parser::parseForStatement() {
+        consume();
+
+        expectToken(lexing::TokenType::LeftParen);
+        consume();
+
+        ASTNodePtr init = nullptr;
+        ASTNodePtr condition = nullptr;
+        std::vector<ASTNodePtr> loopExpr;
+
+        Scope* forScope = new Scope(mScope);
+        mScope = forScope;
+
+        if (current().getTokenType() != lexing::TokenType::Semicolon)
+        {
+            init = parseExpression();
+            expectToken(lexing::TokenType::Semicolon);
+        }
+        consume();
+
+        if (current().getTokenType() != lexing::TokenType::Semicolon)
+        {
+            condition = parseExpression();
+            expectToken(lexing::TokenType::Semicolon);
+        }
+        consume();
+
+        if (current().getTokenType() != lexing::TokenType::RightParen) {
+            while (current().getTokenType() != lexing::TokenType::RightParen) {
+                loopExpr.push_back(parseExpression());
+
+                if (current().getTokenType() != lexing::TokenType::RightParen) {
+                    expectToken(lexing::TokenType::Comma);
+                    consume();
+                }
+            }
+        }
+        consume();
+
+        ASTNodePtr body = parseExpression();
+
+        mScope = forScope->parent;
+
+        return std::make_unique<ForStatement>(std::move(init), std::move(condition), std::move(loopExpr), std::move(body), forScope);
+    }
+
     IntegerLiteralPtr Parser::parseIntegerLiteral(Type* preferredType)
     {
         return std::make_unique<IntegerLiteral>(std::stoull(consume().getText(), 0, 0), preferredType);
@@ -595,7 +744,7 @@ namespace parser
         consume(); // struct
 
         StructType* type = StructType::Get(consume().getText());
-        
+
         expectToken(lexing::TokenType::LeftBracket);
         consume();
 

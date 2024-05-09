@@ -1,5 +1,6 @@
 .cache/
 CMakeFiles/
+cmake-build-debug-wsl/
 _deps/
 
 *.cmake

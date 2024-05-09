@@ -9,9 +9,15 @@
 #include <algorithm>
 #include <map>
 
-StructType::StructType(std::vector<Field> fields)
-    : mFields(std::move(fields))
+StructType::StructType(std::string name, std::vector<Field> fields)
+    : mName(std::move(name))
+    , mFields(std::move(fields))
 {
+}
+
+std::string_view StructType::getName() const
+{
+    return mName;
 }
 
 const std::vector<StructType::Field>& StructType::getFields() const
@@ -72,6 +78,6 @@ StructType* StructType::Create(std::string name, std::vector<StructType::Field> 
         return it->second.get();
     }
 
-    structTypes[name] = std::make_unique<StructType>(std::move(fields));
+    structTypes[name] = std::make_unique<StructType>(name, std::move(fields));
     return structTypes.at(name).get();
 }

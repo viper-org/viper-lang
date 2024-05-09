@@ -21,6 +21,7 @@
 #include "parser/ast/expression/ArrayInitializer.h"
 
 #include "lexer/Token.h"
+#include "parser/ast/statement/ForStatement.h"
 
 #include <vector>
 
@@ -72,6 +73,7 @@ namespace parser
         VariableDeclarationPtr parseVariableDeclaration();
         IfStatementPtr parseIfStatement();
         WhileStatementPtr parseWhileStatement();
+        ForStatementPtr parseForStatement();
 
         IntegerLiteralPtr parseIntegerLiteral(Type* preferredType = nullptr);
         StringLiteralPtr parseStringLiteral();

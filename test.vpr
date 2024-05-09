@@ -1,12 +1,59 @@
-#include "test.vh"
+struct Test {
+    field: i32;
+    another: i32;
 
-#define macro 24
-#define type struct abc
+    func @method(balls: i32) -> i32;
+}
 
-global g: type = type { [ 1, 2, 3 ], 4 };
+func Test@method(balls: i32) -> i32 {
+    return this->another + balls;
+}
+
+func @testFor4() {
+    let bleh: i32 = 0;
+
+    for (let i: i32 = 0; i < 10; i += 1, bleh += 1) {
+        bleh += i;
+    }
+}
+
+func @testFor3() {
+    let bleh: i32 = 0;
+
+    for (let i: i32 = 0; i < 10; i += 1) {
+        bleh += i;
+    }
+}
+
+func @testFor2() {
+    let bleh: i32 = 0;
+
+    for (let i: i32 = 0; i < 10; ) {
+        bleh += i;
+        i += 1;
+    }
+}
+
+func @testFor1() {
+    let bleh: i32 = 0;
+
+    for (let i: i32 = 0; ; ) {
+        bleh += i;
+        i += 1;
+    }
+}
+
+func @testFor0() {
+    let bleh: i32 = 0;
+
+    for (;;) {
+        bleh += 1;
+    }
+}
 
 func @main() -> i32 {
-    g.test[1] = 7;
-    let test: i32* = &g.test[1];
-    return *(test + 1);
+    let test: struct Test = struct Test { 1, 2 };
+    let ptr: struct Test* = &test;
+
+    return ptr->method(5);
 }
