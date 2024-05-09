@@ -665,11 +665,14 @@ namespace parser
         }
         consume();
 
-        if (current().getTokenType() != lexing::TokenType::RightParen) {
-            while (current().getTokenType() != lexing::TokenType::RightParen) {
+        if (current().getTokenType() != lexing::TokenType::RightParen)
+        {
+            while (current().getTokenType() != lexing::TokenType::RightParen)
+            {
                 loopExpr.push_back(parseExpression());
 
-                if (current().getTokenType() != lexing::TokenType::RightParen) {
+                if (current().getTokenType() != lexing::TokenType::RightParen)
+                {
                     expectToken(lexing::TokenType::Comma);
                     consume();
                 }

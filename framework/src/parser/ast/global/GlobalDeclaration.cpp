@@ -3,8 +3,6 @@
 
 #include "parser/ast/global/GlobalDeclaration.h"
 
-#include "scope/Scope.h"
-
 #include <vipir/Module.h>
 
 namespace parser

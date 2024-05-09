@@ -3,11 +3,7 @@
 
 #include "parser/ast/expression/CallExpression.h"
 #include "parser/ast/expression/MemberAccess.h"
-
 #include "parser/ast/global/StructDeclaration.h"
-
-#include "scope/Scope.h"
-
 #include "type/PointerType.h"
 #include "type/StructType.h"
 

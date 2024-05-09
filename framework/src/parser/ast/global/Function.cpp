@@ -8,6 +8,7 @@
 #include <vipir/IR/Function.h>
 #include <vipir/IR/BasicBlock.h>
 #include <vipir/IR/Constant/ConstantInt.h>
+#include <cassert>
 
 namespace parser
 {
@@ -43,15 +44,17 @@ namespace parser
         else
             name = mName;
 
+        vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType(), argumentTypes);
         vipir::Function* func;
+
         if (GlobalFunctions.contains(name))
         {
             func = GlobalFunctions[name].function;
+            assert(func->getFunctionType() == functionType);
             // assert func is empty
         }
         else
         {
-            vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType(), argumentTypes);
             func = vipir::Function::Create(functionType, module, name);
             GlobalFunctions[mName] = func;
         }
