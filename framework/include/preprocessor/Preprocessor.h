@@ -25,6 +25,7 @@ namespace preprocessor
         std::string mText;
         std::vector<std::unique_ptr<Directive> > mDirectives;
         std::vector<std::string> mIncludePaths;
+        std::pair<int, int> mIfdefErase{-1, -1};
 
         void doPreprocess();
 
