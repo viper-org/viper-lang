@@ -28,6 +28,7 @@ namespace lexing
         { "false",   TokenType::FalseKeyword },
         { "nullptr", TokenType::NullptrKeyword },
         { "struct",  TokenType::StructKeyword },
+        { "private", TokenType::PrivateKeyword },
     };
 
     std::vector<Token> Lexer::lex()

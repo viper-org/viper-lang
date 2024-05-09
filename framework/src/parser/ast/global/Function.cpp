@@ -53,7 +53,7 @@ namespace parser
         {
             vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType(), argumentTypes);
             func = vipir::Function::Create(functionType, module, name);
-            GlobalFunctions[mName] = func;
+            GlobalFunctions[mName] = FunctionSymbol(func, false);
         }
 
         if (mBody.empty())

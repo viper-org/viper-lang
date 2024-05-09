@@ -20,7 +20,7 @@ namespace parser
         std::vector<StructType::Field> fieldTypes;
         for (auto& field : mFields)
         {
-            fieldTypes.push_back({field.name, field.type});
+            fieldTypes.push_back({field.priv, field.name, field.type});
         }
 
         mType = StructType::Create(mName, std::move(fieldTypes));
@@ -43,7 +43,7 @@ namespace parser
             std::string name = mangleMethodName(mName, method.name);
 
             vipir::Function* func = vipir::Function::Create(functionType, module, name);
-            GlobalFunctions[name] = func; //TODO: make this better or sum
+            GlobalFunctions[name] = FunctionSymbol(func, method.priv); //TODO: make this better or sum
 
             if (method.body.empty())
             {

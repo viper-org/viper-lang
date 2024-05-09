@@ -18,6 +18,8 @@
 
 #include <vipir/Module.h>
 
+#include <iostream>
+
 namespace parser
 {
     CallExpression::CallExpression(ASTNodePtr function, std::vector<ASTNodePtr> parameters)
@@ -38,12 +40,19 @@ namespace parser
 
         if (MemberAccess* member = dynamic_cast<MemberAccess*>(mFunction.get()))
         {
-            std::string_view structName = member->mPointer
-                ? static_cast<StructType*>(static_cast<PointerType*>(member->mStruct->getType())->getBaseType())->getName()
-                : static_cast<StructType*>(member->mStruct->getType())->getName();
+            StructType* structType = member->mPointer
+                ? static_cast<StructType*>(static_cast<PointerType*>(member->mStruct->getType())->getBaseType())
+                : static_cast<StructType*>(member->mStruct->getType());
             std::string_view methodName = member->mField;
-            std::string mangledName = mangleMethodName(structName, methodName);
+            std::string mangledName = mangleMethodName(structType->getName(), methodName);
 
+            if (GlobalFunctions.at(mangledName).priv)
+            {
+                if (scope->owner != structType)
+                { // TODO: Proper error
+                    std::cerr << std::format("{} is a private member of struct {}\n", member->mField, structType->getName());
+                }
+            }
             vipir::Value* value = member->mStruct->emit(builder, module, scope);
 
             if (member->mStruct->getType()->isStructType())
@@ -64,6 +73,7 @@ namespace parser
 
                 mParameters.insert(mParameters.begin(), std::move(member->mStruct));
                 parameters.insert(parameters.begin(), value);
+
             }
             else
             {
