@@ -44,6 +44,25 @@ namespace preprocessor
         std::string mName;
         std::string mValue;
     };
+
+    class IfDirective : public Directive
+    {
+    public:
+        IfDirective(int start, int end, std::string condition, bool invert);
+
+        std::string_view getCondition() const;
+        bool getInvert() const;
+
+    private:
+        std::string mCondition;
+        bool mInvert;
+    };
+
+    class EndifDirective : public Directive
+    {
+    public:
+        EndifDirective(int start, int end);
+    };
 }
 
 #endif // VIPER_FRAMEWORK_PREPROCESSOR_DIRECTIVE_H

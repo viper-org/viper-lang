@@ -1,3 +1,6 @@
+#define BLAH 2
+
+#ifdef BLAH
 struct Test {
     field: i32;
     private another: i32;
@@ -5,6 +8,7 @@ struct Test {
     func @pubMethod(balls: i32) -> i32;
     private func @method(balls: i32) -> i32;
 }
+#endif
 
 func Test@pubMethod(balls: i32) -> i32 {
     return this->method(balls);

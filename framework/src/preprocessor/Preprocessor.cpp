@@ -37,6 +37,14 @@ namespace preprocessor
     void Preprocessor::doPreprocess()
     {
         int position = 0;
+
+        if (mIfdefErase.first != -1 && mIfdefErase.second != -1)
+        {
+            mText.erase(mText.begin() + mIfdefErase.first, mText.begin() + mIfdefErase.second);
+            mIfdefErase.first = -1;
+            mIfdefErase.second = -1;
+        }
+
         for (auto c : mText)
         {
             if (c == '#')
@@ -83,6 +91,23 @@ namespace preprocessor
                     mText.insert(position, define->getValue());
                 }
             }
+            else if (auto ifDirective = dynamic_cast<IfDirective*>(directive.get()))
+            {
+                mText.erase(mText.begin() + ifDirective->getStart(), mText.begin() + ifDirective->getEnd());
+
+                int condition = std::stoi(std::string(ifDirective->getCondition()));
+
+
+                if ((condition == 0 && !ifDirective->getInvert()) || (condition != 0 && ifDirective->getInvert()))
+                {
+                    mIfdefErase.first = ifDirective->getStart();
+                }
+            }
+            else if (auto endifDirective = dynamic_cast<EndifDirective*>(directive.get()))
+            {
+                mText.erase(mText.begin() + endifDirective->getStart(), mText.begin() + endifDirective->getEnd());
+                mIfdefErase.second = endifDirective->getStart();
+            }
         }
         if (!mDirectives.empty())
         {
@@ -122,6 +147,29 @@ namespace preprocessor
             position++;
 
             mDirectives.push_back(std::make_unique<DefineDirective>(startPos, position, std::move(name), std::move(value)));
+        }
+        else if (mText.substr(position).starts_with("ifdef") || mText.substr(position).starts_with("ifndef"))
+        {
+            bool invert = false;
+            if (mText.substr(position).starts_with("ifndef"))
+            {
+                position += 1;
+                invert = true;
+            }
+            position += 6;
+            while (std::isspace(mText[position])) ++position;
+
+            std::string condition;
+            while (!std::isspace(mText[position]))
+                condition += mText[position++];
+
+            mDirectives.push_back(std::make_unique<IfDirective>(startPos, position, std::move(condition), invert));
+        }
+        else if (mText.substr(position).starts_with("endif"))
+        {
+            position += 6;
+
+            mDirectives.push_back(std::make_unique<EndifDirective>(startPos, position));
         }
         return position;
     }
