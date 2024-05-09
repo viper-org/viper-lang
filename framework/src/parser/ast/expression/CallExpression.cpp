@@ -3,16 +3,20 @@
 
 #include "parser/ast/expression/CallExpression.h"
 #include "parser/ast/expression/MemberAccess.h"
+
 #include "parser/ast/global/StructDeclaration.h"
+
 #include "scope/Scope.h"
+
 #include "type/PointerType.h"
 #include "type/StructType.h"
-#include "vipir/IR/Instruction/GEPInst.h"
-#include "vipir/IR/Instruction/Instruction.h"
-#include "vipir/Module.h"
 
+#include <vipir/IR/Instruction/GEPInst.h>
+#include <vipir/IR/Instruction/Instruction.h>
 #include <vipir/IR/Instruction/AddrInst.h>
 #include <vipir/IR/Instruction/CallInst.h>
+
+#include <vipir/Module.h>
 
 namespace parser
 {

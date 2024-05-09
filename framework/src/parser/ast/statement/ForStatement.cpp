@@ -1,4 +1,5 @@
 #include "parser/ast/statement/ForStatement.h"
+
 #include "parser/ast/expression/BooleanLiteral.h"
 
 namespace parser
@@ -12,7 +13,8 @@ namespace parser
     {
     }
 
-    vipir::Value* ForStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) {
+    vipir::Value* ForStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    {
         vipir::BasicBlock* conditionBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
         vipir::BasicBlock* bodyBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
         vipir::BasicBlock* doneBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
@@ -31,7 +33,8 @@ namespace parser
             builder.setInsertPoint(bodyBasicBlock);
 
             mBody->emit(builder, module, scope);
-            for (auto& node : mLoopExpr) {
+            for (auto& node : mLoopExpr)
+            {
                 node->emit(builder, module, scope);
             }
 
@@ -72,7 +75,8 @@ namespace parser
         builder.setInsertPoint(bodyBasicBlock);
 
         mBody->emit(builder, module, scope);
-        for (auto& node : mLoopExpr) {
+        for (auto& node : mLoopExpr)
+        {
             node->emit(builder, module, scope);
         }
 

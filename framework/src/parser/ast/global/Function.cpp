@@ -2,7 +2,7 @@
 
 #include "parser/ast/global/Function.h"
 #include "parser/ast/global/StructDeclaration.h"
-#include "scope/Scope.h"
+
 #include "parser/ast/statement/ReturnStatement.h"
 
 #include <vipir/IR/Function.h>

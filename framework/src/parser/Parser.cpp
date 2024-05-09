@@ -3,7 +3,6 @@
 
 #include "parser/Parser.h"
 
-#include "parser/ast/Node.h"
 #include "parser/ast/expression/BinaryExpression.h"
 #include "parser/ast/expression/UnaryExpression.h"
 #include "parser/ast/expression/BooleanLiteral.h"
@@ -410,12 +409,9 @@ namespace parser
         expectToken(lexing::TokenType::Identifier);
         std::string name = consume().getText();
 
-        //StructType* structType = StructType::Create(name, std::vector<StructType::Field>());
-
         expectToken(lexing::TokenType::LeftBracket);
         consume();
 
-        //std::vector<StructType::Field>& fieldTypes = const_cast<std::vector<StructType::Field>&>(structType->getFields()); // bit hacky but it works ig
         std::vector<StructField> fields;
         std::vector<StructMethod> methods;
         while (current().getTokenType() != lexing::TokenType::RightBracket)
@@ -502,7 +498,6 @@ namespace parser
 
                 Type* type = parseType();
 
-                //fieldTypes.push_back({name, type});
                 fields.push_back({std::move(name), type});
 
                 expectToken(lexing::TokenType::Semicolon);

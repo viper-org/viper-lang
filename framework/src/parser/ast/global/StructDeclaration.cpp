@@ -2,10 +2,12 @@
 
 
 #include "parser/ast/global/StructDeclaration.h"
-#include "scope/Scope.h"
+
 #include "type/StructType.h"
-#include "vipir/IR/BasicBlock.h"
-#include "vipir/Type/FunctionType.h"
+
+#include <vipir/IR/BasicBlock.h>
+#include <vipir/Type/FunctionType.h>
+
 #include <vector>
 
 namespace parser
