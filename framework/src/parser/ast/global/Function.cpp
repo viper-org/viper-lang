@@ -2,8 +2,8 @@
 
 #include "parser/ast/global/Function.h"
 #include "parser/ast/global/StructDeclaration.h"
-
 #include "parser/ast/statement/ReturnStatement.h"
+#include "symbol/NameMangling.h"
 
 #include <vipir/IR/Function.h>
 #include <vipir/IR/BasicBlock.h>
@@ -31,18 +31,20 @@ namespace parser
     {
         if (!mBody.empty()) scope = mScope.get();
 
+        std::vector<Type*> manglingArguments;
         std::vector<vipir::Type*> argumentTypes;
         for (auto& argument : mArguments)
         {
+            manglingArguments.push_back(argument.type);
             argumentTypes.push_back(argument.type->getVipirType());
         }
 
-        std::string name;
-
+        std::vector<std::string_view> names;
         if (mStruct.has_value())
-            name = mangleMethodName(mStruct.value(), mName);
-        else
-            name = mName;
+            names.push_back(mStruct.value());
+        names.push_back(mName);
+
+        std::string name = symbol::mangleFunctionName(std::move(names), std::move(manglingArguments));
 
         vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType(), argumentTypes);
         vipir::Function* func;

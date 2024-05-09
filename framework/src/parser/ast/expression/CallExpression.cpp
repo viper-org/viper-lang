@@ -4,6 +4,8 @@
 #include "parser/ast/expression/CallExpression.h"
 #include "parser/ast/expression/MemberAccess.h"
 #include "parser/ast/global/StructDeclaration.h"
+#include "parser/ast/expression/VariableExpression.h"
+#include "symbol/NameMangling.h"
 #include "type/PointerType.h"
 #include "type/StructType.h"
 
@@ -27,28 +29,31 @@ namespace parser
 
     vipir::Value* CallExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
     {
-
+        std::vector<Type*> manglingArguments;
         std::vector<vipir::Value*> parameters;
         for (auto& parameter : mParameters)
         {
+            manglingArguments.push_back(parameter->getType());
             parameters.push_back(parameter->emit(builder, module, scope));
         }
 
-        if (MemberAccess* member = dynamic_cast<MemberAccess*>(mFunction.get()))
+        if (VariableExpression* variable = dynamic_cast<VariableExpression*>(mFunction.get()))
+        {
+            std::string name = variable->mName;
+            std::string mangledName = symbol::mangleFunctionName({name}, std::move(manglingArguments));
+
+            vipir::Function* function = GlobalFunctions.at(mangledName).function;
+
+            return builder.CreateCall(function, std::move(parameters));
+        }
+        else if (MemberAccess* member = dynamic_cast<MemberAccess*>(mFunction.get()))
         {
             StructType* structType = member->mPointer
                 ? static_cast<StructType*>(static_cast<PointerType*>(member->mStruct->getType())->getBaseType())
                 : static_cast<StructType*>(member->mStruct->getType());
             std::string_view methodName = member->mField;
-            std::string mangledName = mangleMethodName(structType->getName(), methodName);
+            std::string mangledName;
 
-            if (GlobalFunctions.at(mangledName).priv)
-            {
-                if (scope->owner != structType)
-                { // TODO: Proper error
-                    std::cerr << std::format("{} is a private member of struct {}\n", member->mField, structType->getName());
-                }
-            }
             vipir::Value* value = member->mStruct->emit(builder, module, scope);
 
             if (member->mStruct->getType()->isStructType())
@@ -69,12 +74,24 @@ namespace parser
 
                 mParameters.insert(mParameters.begin(), std::move(member->mStruct));
                 parameters.insert(parameters.begin(), value);
+                manglingArguments.insert(manglingArguments.begin(), mParameters[0]->getType());
 
+                mangledName = symbol::mangleFunctionName({structType->getName(), methodName}, std::move(manglingArguments));
             }
             else
             {
                 mParameters.insert(mParameters.begin(), std::move(member->mStruct));
                 parameters.insert(parameters.begin(), value);
+                manglingArguments.insert(manglingArguments.begin(), mParameters[0]->getType());
+                mangledName = symbol::mangleFunctionName({structType->getName(), methodName}, std::move(manglingArguments));
+            }
+
+            if (GlobalFunctions.at(mangledName).priv)
+            {
+                if (scope->owner != structType)
+                { // TODO: Proper error
+                    std::cerr << std::format("{} is a private member of struct {}\n", member->mField, structType->getName());
+                }
             }
 
             vipir::Function* function = GlobalFunctions.at(mangledName).function;

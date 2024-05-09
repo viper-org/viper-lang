@@ -54,6 +54,11 @@ vipir::Type* StructType::getVipirType() const
     return vipir::Type::GetStructType(std::move(fieldTypes));
 }
 
+std::string StructType::getMangleID() const
+{
+    return "S" + std::to_string(mName.length()) + mName;
+}
+
 bool StructType::isStructType() const
 {
     return true;

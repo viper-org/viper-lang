@@ -17,6 +17,11 @@ vipir::Type* VoidType::getVipirType() const
     return vipir::Type::GetVoidType();
 }
 
+std::string VoidType::getMangleID() const
+{
+    return "V";
+}
+
 bool VoidType::isVoidType() const
 {
     return true;

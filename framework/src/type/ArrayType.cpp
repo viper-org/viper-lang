@@ -32,6 +32,11 @@ vipir::Type* ArrayType::getVipirType() const
     return vipir::Type::GetArrayType(mBase->getVipirType(), mCount);
 }
 
+std::string ArrayType::getMangleID() const
+{
+    return mBase->getMangleID() + std::to_string(mCount);
+}
+
 bool ArrayType::isArrayType() const
 {
     return true;
