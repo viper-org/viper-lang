@@ -11,6 +11,11 @@
 
 namespace diagnostic
 {
+    void Diagnostics::setImported(bool imported)
+    {
+        mImported = imported;
+    }
+
     void Diagnostics::setFileName(std::string fileName)
     {
         mFileName = std::move(fileName);
@@ -44,7 +49,9 @@ namespace diagnostic
         std::string spacesBefore = std::string(std::to_string(start.line).length(), ' ');
         std::string spacesAfter = std::string(before.length(), ' ');
 
-        std::cerr << std::format("{}{}:{}:{} {}error: {}{}\n", fmt::bold, mFileName, start.line, start.column, fmt::red, fmt::defaults, message);
+        std::string imported = mImported ? " in imported file" : "";
+
+        std::cerr << std::format("{}{}:{}:{} {}error{}: {}{}\n", fmt::bold, mFileName, start.line, start.column, fmt::red, imported, fmt::defaults, message);
         std::cerr << std::format("    {} | {}{}{}{}{}{}\n", start.line, before, fmt::bold, fmt::red, error, fmt::defaults, after);
         std::cerr << std::format("    {} | {}{}{}^{}{}\n", spacesBefore, spacesAfter, fmt::bold, fmt::red, std::string(error.length()-1, '~'), fmt::defaults);
 

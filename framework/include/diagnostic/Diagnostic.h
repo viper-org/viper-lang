@@ -22,6 +22,7 @@ namespace diagnostic
     class Diagnostics
     {
     public:
+        void setImported(bool imported);
         void setFileName(std::string fileName);
         void setErrorSender(std::string sender);
         void setText(std::string text);
@@ -34,6 +35,7 @@ namespace diagnostic
         std::string mFileName;
         std::string mSender;
         std::string mText;
+        bool mImported;
 
         int getLinePosition(int lineNumber);
     };

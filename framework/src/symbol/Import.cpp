@@ -34,13 +34,20 @@ namespace symbol
             if (stream.is_open()) break;
         }
 
+        diagnostic::Diagnostics importerDiag;
+
         std::stringstream buf;
         buf << stream.rdbuf();
 
-        lexing::Lexer lexer(buf.str(), diag);
+        importerDiag.setErrorSender("viper");
+        importerDiag.setFileName(path);
+        importerDiag.setText(buf.str());
+        importerDiag.setImported(true);
+
+        lexing::Lexer lexer(buf.str(), importerDiag);
         auto tokens = lexer.lex();
 
-        parser::Parser parser(tokens, diag, *this, true);
+        parser::Parser parser(tokens, importerDiag, *this, true);
         
         auto nodes = parser.parse();
         return {std::move(nodes), parser.getSymbols()};
