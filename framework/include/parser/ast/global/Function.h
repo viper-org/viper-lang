@@ -20,7 +20,7 @@ namespace parser
 
         Type* getReturnType() const;
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         Type* mReturnType;

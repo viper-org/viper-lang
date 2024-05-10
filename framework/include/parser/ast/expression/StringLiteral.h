@@ -12,7 +12,7 @@ namespace parser
     public:
         StringLiteral(std::string value);
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         std::string mValue;

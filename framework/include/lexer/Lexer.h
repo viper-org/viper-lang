@@ -10,6 +10,7 @@
 namespace lexing
 {
     class Token;
+    class SourceLocation;
 
     class Lexer
     {
@@ -19,12 +20,15 @@ namespace lexing
         std::vector<Token> lex();
     private:
         std::string mText;
-
         int mPosition{ 0 };
+        int mColumn{ 1 };
+        int mLine{ 1 };
 
         char current();
         char consume();
         char peek(int offset);
+
+        SourceLocation location();
 
         std::optional<Token> nextToken();
     };

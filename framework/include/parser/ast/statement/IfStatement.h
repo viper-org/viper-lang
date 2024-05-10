@@ -12,7 +12,7 @@ namespace parser
     public:
         IfStatement(ASTNodePtr&& condition, ASTNodePtr&& body, ASTNodePtr&& elseBody);
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         ASTNodePtr mCondition;

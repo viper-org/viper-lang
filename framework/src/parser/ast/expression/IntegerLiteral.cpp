@@ -12,7 +12,7 @@ namespace parser
         mType = type ? type : Type::Get("i32");
     }
 
-    vipir::Value* IntegerLiteral::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* IntegerLiteral::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         return vipir::ConstantInt::Get(module, mValue, mType->getVipirType());
     }

@@ -46,6 +46,8 @@ set(SOURCES
 
     "src/symbol/Scope.cpp"
     "src/symbol/NameMangling.cpp"
+
+    "src/diagnostic/Diagnostic.cpp"
 )
 
 set(HEADERS
@@ -89,6 +91,8 @@ set(HEADERS
     "include/type/ArrayType.h"
     "include/symbol/Scope.h"
     "include/symbol/NameMangling.h"
+
+    "include/diagnostic/Diagnostic.h"
 )
 
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})

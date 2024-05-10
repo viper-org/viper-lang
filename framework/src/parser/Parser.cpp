@@ -22,10 +22,11 @@
 
 namespace parser
 {
-    Parser::Parser(std::vector<lexing::Token>& tokens)
+    Parser::Parser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag)
         : mTokens(tokens)
         , mPosition(0)
         , mScope(nullptr)
+        , mDiag(diag)
     {
     }
 
@@ -48,9 +49,9 @@ namespace parser
     {
         if (current().getTokenType() != tokenType)
         {
-            lexing::Token temp(tokenType);
-            std::cerr << "Expected " << temp.toString() << ". Found " << current().toString() << "\n";
-            std::exit(1);
+            lexing::Token temp(tokenType, {0, 0}, {0, 0});
+            mDiag.compilerError(current().getStart(), current().getEnd(), std::format("expected '{}{}{}' before '{}{}{}' token",
+                fmt::bold, temp.getId(), fmt::defaults, fmt::bold, current().getId(), fmt::defaults));
         }
     }
 
@@ -77,8 +78,7 @@ namespace parser
             case lexing::TokenType::GlobalKeyword:
                 return parseGlobalDeclaration();
             default:
-                std::cerr << "Unexpected token: " << current().toString() << ". Expected global statement.\n";
-                std::exit(1);
+                mDiag.compilerError(current().getStart(), current().getEnd(), "Unexpected token. Expected global statement");
         }
     }
 
@@ -193,15 +193,15 @@ namespace parser
         int prefixOperatorPrecedence = getPrefixUnaryOperatorPrecedence(current().getTokenType());
         if (prefixOperatorPrecedence >= precedence)
         {
-            lexing::TokenType operatorTokenType = consume().getTokenType();
-            if (operatorTokenType == lexing::TokenType::LeftParen) // Cast expression or parenthesized expression
+            lexing::Token operatorToken = consume();
+            if (operatorToken.getTokenType() == lexing::TokenType::LeftParen) // Cast expression or parenthesized expression
             {
                 if (current().getTokenType() == lexing::TokenType::StructKeyword || current().getTokenType() == lexing::TokenType::Type) // Cast
                 {
                     Type* type = parseType();
                     expectToken(lexing::TokenType::RightParen);
                     consume();
-                    lhs = std::make_unique<CastExpression>(parseExpression(nullptr, prefixOperatorPrecedence), type);
+                    lhs = std::make_unique<CastExpression>(parseExpression(nullptr, prefixOperatorPrecedence), type, std::move(operatorToken));
                 }
                 else // Parenthesized expression
                 {
@@ -210,7 +210,7 @@ namespace parser
             }
             else
             {
-                lhs = std::make_unique<UnaryExpression>(parseExpression(preferredType, prefixOperatorPrecedence), operatorTokenType);
+                lhs = std::make_unique<UnaryExpression>(parseExpression(preferredType, prefixOperatorPrecedence), operatorToken.getTokenType());
             }
         }
         else
@@ -226,27 +226,27 @@ namespace parser
                 break;
             }
 
-            lexing::TokenType operatorTokenType = consume().getTokenType();
+            lexing::Token operatorToken = consume();
 
-            if (operatorTokenType == lexing::TokenType::LeftParen)
+            if (operatorToken.getTokenType() == lexing::TokenType::LeftParen)
             {
                 lhs = parseCallExpression(std::move(lhs));
             }
-            else if (operatorTokenType == lexing::TokenType::Dot)
+            else if (operatorToken.getTokenType() == lexing::TokenType::Dot)
             {
                 lhs = parseMemberAccess(std::move(lhs), false);
             }
-            else if (operatorTokenType == lexing::TokenType::RightArrow)
+            else if (operatorToken.getTokenType() == lexing::TokenType::RightArrow)
             {
                 lhs = parseMemberAccess(std::move(lhs), true);
             }
             else
             {
                 ASTNodePtr rhs = parseExpression(lhs->getType(), precedence);
-                lhs = std::make_unique<BinaryExpression>(std::move(lhs), operatorTokenType, std::move(rhs));
+                lhs = std::make_unique<BinaryExpression>(std::move(lhs), std::move(operatorToken), std::move(rhs));
             }
 
-            if (operatorTokenType == lexing::TokenType::LeftSquareBracket)
+            if (operatorToken.getTokenType() == lexing::TokenType::LeftSquareBracket)
             {
                 expectToken(lexing::TokenType::RightSquareBracket);
                 consume();
@@ -302,8 +302,7 @@ namespace parser
                 return parseArrayInitializer(preferredType);
 
             default:
-                std::cerr << "Unexpected token: " << current().toString() << ". Expected primary expression.\n";
-                std::exit(1);
+                mDiag.compilerError(current().getStart(), current().getEnd(), "Unexpected token. Expected primary expression");
         }
     }
 
@@ -558,7 +557,7 @@ namespace parser
         }
         consume();
 
-        mTokens.insert(mTokens.begin()+mPosition, lexing::Token(lexing::TokenType::Semicolon));
+        mTokens.insert(mTokens.begin()+mPosition, lexing::Token(lexing::TokenType::Semicolon, {0, 0}, {0, 0}));
 
         mScope = blockScope->parent;
 
@@ -708,6 +707,7 @@ namespace parser
 
     VariableExpressionPtr Parser::parseVariableExpression(Type*)
     {
+        lexing::Token nameToken = current();
         std::string name = consume().getText();
 
         auto it = std::find_if(mSymbols.begin(), mSymbols.end(), [&name](const Symbol& symbol) {
@@ -716,11 +716,10 @@ namespace parser
 
         if (it != mSymbols.end())
         {
-            return std::make_unique<VariableExpression>(std::move(name), it->type);
+            return std::make_unique<VariableExpression>(std::move(name), it->type, std::move(nameToken));
         }
 
-        std::cerr << std::format("Unknown local symbol '{}'", name);
-        std::exit(1);
+        mDiag.compilerError(nameToken.getStart(), nameToken.getEnd(), std::format("Unknown local symbol '{}{}{}'", fmt::bold, name, fmt::defaults));
     }
 
     CallExpressionPtr Parser::parseCallExpression(ASTNodePtr function)
@@ -743,7 +742,9 @@ namespace parser
 
     MemberAccessPtr Parser::parseMemberAccess(ASTNodePtr struc, bool pointer)
     {
-        return std::make_unique<MemberAccess>(std::move(struc), consume().getText(), pointer);
+        lexing::Token nameToken = consume();
+
+        return std::make_unique<MemberAccess>(std::move(struc), std::string(nameToken.getText()), pointer, std::move(nameToken));
     }
 
     StructInitializerPtr Parser::parseStructInitializer()

@@ -4,6 +4,7 @@
 #include "type/VoidType.h"
 
 VoidType::VoidType()
+    : Type("void")
 {
 }
 

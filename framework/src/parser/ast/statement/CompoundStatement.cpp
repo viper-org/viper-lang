@@ -14,13 +14,13 @@ namespace parser
     {
     }
 
-    vipir::Value* CompoundStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* CompoundStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         scope = mScope.get();
 
         for (ASTNodePtr& node : mBody)
         {
-            node->emit(builder, module, scope);
+            node->emit(builder, module, scope, diag);
         }
 
         return nullptr;

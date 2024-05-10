@@ -13,7 +13,7 @@ namespace parser
     {
     }
 
-    vipir::Value* ForStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* ForStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::BasicBlock* conditionBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
         vipir::BasicBlock* bodyBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
@@ -25,17 +25,17 @@ namespace parser
         bodyBasicBlock->loopEnd() = doneBasicBlock;
 
         if (mInit)
-            mInit->emit(builder, module, scope);
+            mInit->emit(builder, module, scope, diag);
 
         if (!mCondition)
         {
             builder.CreateBr(bodyBasicBlock);
             builder.setInsertPoint(bodyBasicBlock);
 
-            mBody->emit(builder, module, scope);
+            mBody->emit(builder, module, scope, diag);
             for (auto& node : mLoopExpr)
             {
-                node->emit(builder, module, scope);
+                node->emit(builder, module, scope, diag);
             }
 
             builder.CreateBr(bodyBasicBlock);
@@ -52,9 +52,9 @@ namespace parser
                 builder.CreateBr(bodyBasicBlock);
                 builder.setInsertPoint(bodyBasicBlock);
 
-                mBody->emit(builder, module, scope);
+                mBody->emit(builder, module, scope, diag);
                 for (auto& node : mLoopExpr) {
-                    node->emit(builder, module, scope);
+                    node->emit(builder, module, scope, diag);
                 }
 
                 builder.CreateBr(bodyBasicBlock);
@@ -69,15 +69,15 @@ namespace parser
 
         builder.CreateBr(conditionBasicBlock);
         builder.setInsertPoint(conditionBasicBlock);
-        vipir::Value* condition = mCondition->emit(builder, module, scope);
+        vipir::Value* condition = mCondition->emit(builder, module, scope, diag);
         builder.CreateCondBr(condition, bodyBasicBlock, doneBasicBlock);
 
         builder.setInsertPoint(bodyBasicBlock);
 
-        mBody->emit(builder, module, scope);
+        mBody->emit(builder, module, scope, diag);
         for (auto& node : mLoopExpr)
         {
-            node->emit(builder, module, scope);
+            node->emit(builder, module, scope, diag);
         }
 
         builder.CreateBr(conditionBasicBlock);

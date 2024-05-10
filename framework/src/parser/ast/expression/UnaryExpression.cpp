@@ -39,7 +39,7 @@ namespace parser
                 break;
 
             default:
-                break; // TODO: Error
+                break;
         }
     }
 
@@ -49,9 +49,9 @@ namespace parser
     {
     }
 
-    vipir::Value* UnaryExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* UnaryExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
-        vipir::Value* operand = mOperand->emit(builder, module, scope);
+        vipir::Value* operand = mOperand->emit(builder, module, scope, diag);
 
         switch(mOperator)
         {

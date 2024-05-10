@@ -7,12 +7,14 @@
 #include <vipir/Type/ArrayType.h>
 
 #include <algorithm>
+#include <format>
 #include <unordered_map>
 
 extern std::unordered_map<std::string, std::unique_ptr<Type>> types;
 
 ArrayType::ArrayType(Type* base, int count)
-    : mBase(base)
+    : Type(std::format("{}[{}]", base->getName(), count))
+    , mBase(base)
     , mCount(count)
 {
 }

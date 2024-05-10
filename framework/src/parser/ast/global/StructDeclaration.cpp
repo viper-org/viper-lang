@@ -27,7 +27,17 @@ namespace parser
         mType = StructType::Create(mName, std::move(fieldTypes));
     }
 
-    vipir::Value* StructDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    std::vector<StructField>& StructDeclaration::getFields()
+    {
+        return mFields;
+    }
+
+    std::vector<StructMethod>& StructDeclaration::getMethods()
+    {
+        return mMethods;
+    }
+
+    vipir::Value* StructDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         for (StructMethod& method : mMethods)
         {
@@ -75,7 +85,7 @@ namespace parser
 
             for (auto& node : method.body)
             {
-                node->emit(builder, module, scope);
+                node->emit(builder, module, scope, diag);
             }
         }
 

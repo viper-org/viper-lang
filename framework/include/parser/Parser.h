@@ -12,6 +12,7 @@
 #include "parser/ast/statement/IfStatement.h"
 #include "parser/ast/statement/WhileStatement.h"
 #include "parser/ast/statement/CompoundStatement.h"
+#include "parser/ast/statement/ForStatement.h"
 #include "parser/ast/expression/IntegerLiteral.h"
 #include "parser/ast/expression/StringLiteral.h"
 #include "parser/ast/expression/VariableExpression.h"
@@ -21,7 +22,8 @@
 #include "parser/ast/expression/ArrayInitializer.h"
 
 #include "lexer/Token.h"
-#include "parser/ast/statement/ForStatement.h"
+
+#include "diagnostic/Diagnostic.h"
 
 #include <vector>
 
@@ -36,7 +38,7 @@ namespace parser
     class Parser
     {
     public:
-        Parser(std::vector<lexing::Token>& tokens);
+        Parser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag);
 
         std::vector<ASTNodePtr> parse();
 
@@ -46,6 +48,8 @@ namespace parser
 
         Scope* mScope;
         std::vector<Symbol> mSymbols;
+
+        diagnostic::Diagnostics& mDiag;
 
         lexing::Token current() const;
         lexing::Token consume();

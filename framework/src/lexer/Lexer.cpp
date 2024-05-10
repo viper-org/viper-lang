@@ -11,7 +11,8 @@
 namespace lexing
 {
     Lexer::Lexer(const std::string& text)
-        :mText(text), mPosition(0)
+        : mText(text)
+        , mPosition(0)
     {
     }
 
@@ -53,6 +54,12 @@ namespace lexing
 
     char Lexer::consume()
     {
+        mColumn++;
+        if (mText[mPosition + 1] == '\n')
+        {
+            mColumn = 0;
+            mLine++;
+        }
         return mText[mPosition++];
     }
 
@@ -61,8 +68,15 @@ namespace lexing
         return mText[mPosition + offset];
     }
 
+    SourceLocation Lexer::location()
+    {
+        return {mColumn, mLine, mPosition};
+    }
+
     std::optional<Token> Lexer::nextToken()
     {
+        SourceLocation start = location();
+
         if (std::isalpha(current()) || current() == '_') // Identifier
         {
             std::string text = std::string(1, current());
@@ -75,12 +89,12 @@ namespace lexing
 
             if (keywords.find(text) != keywords.end())
             {
-                return Token(keywords.at(text));
+                return Token(keywords.at(text), start, location());
             }
 
-            if (Type::Exists(text)) // TODO: Lookup type properly
+            if (Type::Exists(text))
             {
-                return Token(TokenType::Type, std::move(text));
+                return Token(TokenType::Type, std::move(text), start, location());
             }
 
             if (text.length() >= 2 && text[0] == '_' && std::isupper(text[1]))
@@ -89,7 +103,7 @@ namespace lexing
                 std::exit(1);
             }
 
-            return Token(TokenType::Identifier, std::move(text));
+            return Token(TokenType::Identifier, std::move(text), start, location());
         }
 
         if (std::isdigit(current()))
@@ -136,7 +150,7 @@ namespace lexing
                     text += current();
                 }
             }
-            return Token {TokenType::IntegerLiteral, std::move(text)};
+            return Token(TokenType::IntegerLiteral, std::move(text), start, location());
         }
         
         if (std::isspace(current())) // Newline, tab, space etc
@@ -147,65 +161,65 @@ namespace lexing
         switch(current())
         {
             case '(':
-                return Token(TokenType::LeftParen);
+                return Token(TokenType::LeftParen, start, location());
             case ')':
-                return Token(TokenType::RightParen);
+                return Token(TokenType::RightParen, start, location());
 
             case '{':
-                return Token(TokenType::LeftBracket);
+                return Token(TokenType::LeftBracket, start, location());
             case '}':
-                return Token(TokenType::RightBracket);
+                return Token(TokenType::RightBracket, start, location());
 
             case '[':
-                return Token(TokenType::LeftSquareBracket);
+                return Token(TokenType::LeftSquareBracket, start, location());
             case ']':
-                return Token(TokenType::RightSquareBracket);
+                return Token(TokenType::RightSquareBracket, start, location());
 
             case ';':
-                return Token(TokenType::Semicolon);
+                return Token(TokenType::Semicolon, start, location());
             case ':':
-                return Token(TokenType::Colon);
+                return Token(TokenType::Colon, start, location());
             case ',':
-                return Token(TokenType::Comma);
+                return Token(TokenType::Comma, start, location());
             case '.':
-                return Token(TokenType::Dot);
+                return Token(TokenType::Dot, start, location());
 
             case '@':
-                return Token(TokenType::Asperand);
+                return Token(TokenType::Asperand, start, location());
 
             case '=':
                 if (peek(1) == '=')
                 {
                     consume();
-                    return Token(TokenType::DoubleEquals);
+                    return Token(TokenType::DoubleEquals, start, location());
                 }
-                return Token(TokenType::Equals);
+                return Token(TokenType::Equals, start, location());
             
             case '+':
                 if (peek(1) == '=')
                 {
                     consume();
-                    return Token(TokenType::PlusEquals);
+                    return Token(TokenType::PlusEquals, start, location());
                 }
-                return Token(TokenType::Plus);
+                return Token(TokenType::Plus, start, location());
             case '-':
                 if (peek(1) == '>')
                 {
                     consume();
-                    return Token(TokenType::RightArrow);
+                    return Token(TokenType::RightArrow, start, location());
                 }
                 else if (peek(1) == '=')
                 {
                     consume();
-                    return Token(TokenType::MinusEquals);
+                    return Token(TokenType::MinusEquals, start, location());
                 }
-                return Token(TokenType::Minus);
+                return Token(TokenType::Minus, start, location());
 
             case '!':
                 if (peek(1) == '=')
                 {
                     consume();
-                    return Token(TokenType::BangEquals);
+                    return Token(TokenType::BangEquals, start, location());
                 }
                 break;
 
@@ -213,33 +227,32 @@ namespace lexing
                 if (peek(1) == '=')
                 {
                     consume();
-                    return Token(TokenType::LessEqual);
+                    return Token(TokenType::LessEqual, start, location());
                 }
-                return Token(TokenType::LessThan);
+                return Token(TokenType::LessThan, start, location());
             case '>':
                 if (peek(1) == '=')
                 {
                     consume();
-                    return Token(TokenType::GreaterEqual);
+                    return Token(TokenType::GreaterEqual, start, location());
                 }
-                return Token(TokenType::GreaterThan);
+                return Token(TokenType::GreaterThan, start, location());
 
             case '|':
-                return Token(TokenType::Pipe);
+                return Token(TokenType::Pipe, start, location());
             case '&':
-                return Token(TokenType::Ampersand);
+                return Token(TokenType::Ampersand, start, location());
             case '^':
-                return Token(TokenType::Caret);
+                return Token(TokenType::Caret, start, location());
             case '~':
-                return Token(TokenType::Tilde);
+                return Token(TokenType::Tilde, start, location());
             case '*':
-                return Token(TokenType::Star);
+                return Token(TokenType::Star, start, location());
 
             case '"':
             {
                 consume();
                 std::string value;
-                int start = mPosition;
                 while(current() != '"')
                 {
                     switch(current())
@@ -277,10 +290,10 @@ namespace lexing
                     }
                     consume();
                 }
-                return Token(TokenType::StringLiteral, value);
+                return Token(TokenType::StringLiteral, value, start, location());
             }
         }
 
-        return Token(TokenType::Error, std::string(1, current())); // Unknown character
+        return Token(TokenType::Error, std::string(1, current()), start, location()); // Unknown character
     }
 }

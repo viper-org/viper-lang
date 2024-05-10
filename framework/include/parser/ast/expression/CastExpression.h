@@ -6,17 +6,20 @@
 
 #include "parser/ast/Node.h"
 
+#include "lexer/Token.h"
+
 namespace parser
 {
     class CastExpression : public ASTNode
     {
     public:
-        CastExpression(ASTNodePtr operand, Type* destType);
+        CastExpression(ASTNodePtr operand, Type* destType, lexing::Token token);
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         ASTNodePtr mOperand;
+        lexing::Token mToken;
     };
 
     using CastExpressionPtr = std::unique_ptr<CastExpression>;

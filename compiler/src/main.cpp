@@ -10,21 +10,21 @@
 
 #include "type/Type.h"
 
+#include "diagnostic/Diagnostic.h"
+
 #include <vipir/IR/IRBuilder.h>
 #include <vipir/Module.h>
 #include <vipir/ABI/SysV.h>
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
 int main(int argc, char** argv)
 {
-    if (argc < 2)
-    {
-        std::cerr << "viper: no input files";
-        std::exit(1);
-    }
+    diagnostic::Diagnostics diag;
+    diag.setErrorSender("viper");
 
     std::string inputFilePath;
     std::string outputFilePath;
@@ -62,9 +62,8 @@ int main(int argc, char** argv)
                     optimize = true;
                     break;
 
-                default: // TODO: Proper error
-                    std::cerr << "Unrecognized command-line option: " << arg << "\n";
-                    std::exit(1);
+                default:
+                    diag.fatalError(std::format("Unrecognized command-line option: {}", arg));
             }
         }
         else
@@ -72,6 +71,16 @@ int main(int argc, char** argv)
             inputFilePath = arg;
         }
     }
+
+    if (inputFilePath.empty())
+    {
+        diag.fatalError("no input files");
+    }
+    if (!std::filesystem::exists(inputFilePath))
+    {
+        diag.fatalError(std::format("{}: no such file or directory", inputFilePath));
+    }
+    diag.setFileName(inputFilePath);
 
     if (outputFilePath.empty())
     {
@@ -88,11 +97,12 @@ int main(int argc, char** argv)
     preprocessor.addText(buffer.str());
     preprocessor.preprocess();
 
+    diag.setText(preprocessor.getText());
     lexing::Lexer lexer(preprocessor.getText());
 
     std::vector<lexing::Token> tokens = lexer.lex();
 
-    parser::Parser parser(tokens);
+    parser::Parser parser(tokens, diag);
     
     vipir::IRBuilder builder;
     vipir::Module module(inputFilePath);
@@ -101,7 +111,7 @@ int main(int argc, char** argv)
 
     for (auto& node : parser.parse())
     {
-        node->emit(builder, module, nullptr);
+        node->emit(builder, module, nullptr, diag);
     }
 
     if (optimize)

@@ -27,7 +27,7 @@ namespace parser
         return mReturnType;
     }
 
-    vipir::Value* Function::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* Function::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         if (!mBody.empty()) scope = mScope.get();
 
@@ -80,7 +80,7 @@ namespace parser
 
         for (auto& node : mBody)
         {
-            node->emit(builder, module, scope);
+            node->emit(builder, module, scope, diag);
         }
 
         if (!dynamic_cast<ReturnStatement*>(mBody.back().get()))

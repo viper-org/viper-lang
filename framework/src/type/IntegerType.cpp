@@ -4,8 +4,11 @@
 #include <iostream>
 #include "type/IntegerType.h"
 
+#include <format>
+
 IntegerType::IntegerType(int bits)
-    : mBits(bits)
+    : Type(std::format("i{}", bits))
+    , mBits(bits)
 {
 }
 

@@ -15,11 +15,12 @@
 
 namespace parser
 {
-    BinaryExpression::BinaryExpression(ASTNodePtr left, lexing::TokenType tokenType, ASTNodePtr right)
+    BinaryExpression::BinaryExpression(ASTNodePtr left, lexing::Token operatorToken, ASTNodePtr right)
         : mLeft(std::move(left))
         , mRight(std::move(right))
+        , mToken(std::move(operatorToken))
     {
-        switch (tokenType)
+        switch (operatorToken.getTokenType())
         {
             case lexing::TokenType::Plus:
                 mOperator = Operator::Add;
@@ -95,17 +96,10 @@ namespace parser
         }
     }
 
-    BinaryExpression::BinaryExpression(ASTNodePtr left, Operator op, ASTNodePtr right)
-        : mLeft(std::move(left))
-        , mOperator(op)
-        , mRight(std::move(right))
+    vipir::Value* BinaryExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
-    }
-
-    vipir::Value* BinaryExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
-    {
-        vipir::Value* left  = mLeft->emit(builder, module, scope);
-        vipir::Value* right = mRight->emit(builder, module, scope);
+        vipir::Value* left  = mLeft->emit(builder, module, scope, diag);
+        vipir::Value* right = mRight->emit(builder, module, scope, diag);
 
         switch (mOperator)
         {
@@ -150,6 +144,7 @@ namespace parser
             case Operator::Assign:
             {
                 vipir::Value* pointerOperand = vipir::getPointerOperand(left);
+                checkAssignmentLvalue(pointerOperand, diag);
 
                 vipir::Instruction* instruction = static_cast<vipir::Instruction*>(left);
                 instruction->eraseFromParent();
@@ -159,7 +154,7 @@ namespace parser
             case Operator::AddAssign:
             {
                 vipir::Value* pointerOperand = vipir::getPointerOperand(left);
-                assert(pointerOperand != nullptr); // TODO: Proper error report
+                checkAssignmentLvalue(pointerOperand, diag);
 
                 vipir::Value* add = builder.CreateAdd(left, right);
                 return builder.CreateStore(pointerOperand, add);
@@ -167,7 +162,7 @@ namespace parser
             case Operator::SubAssign:
             {
                 vipir::Value* pointerOperand = vipir::getPointerOperand(left);
-                assert(pointerOperand != nullptr); // TODO: Proper error report
+                checkAssignmentLvalue(pointerOperand, diag);
 
                 vipir::Value* sub = builder.CreateSub(left, right);
                 return builder.CreateStore(pointerOperand, sub);
@@ -184,6 +179,15 @@ namespace parser
 
                 return builder.CreateLoad(gep);
             }
+        }
+    }
+
+
+    void BinaryExpression::checkAssignmentLvalue(vipir::Value* pointer, diagnostic::Diagnostics& diag)
+    {
+        if (pointer == nullptr)
+        {
+            diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("lvalue required as left operand of assignment"));
         }
     }
 }

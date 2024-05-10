@@ -7,13 +7,14 @@
 
 namespace parser
 {
-    VariableExpression::VariableExpression(std::string&& name, Type* type)
+    VariableExpression::VariableExpression(std::string&& name, Type* type, lexing::Token token)
         : mName(std::move(name))
+        , mToken(std::move(token))
     {
         mType = type;
     }
 
-    vipir::Value* VariableExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* VariableExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         LocalSymbol* local = scope->findVariable(mName);
 
@@ -29,9 +30,7 @@ namespace parser
         {
             return builder.CreateLoad(GlobalVariables.at(mName).global);
         }
-        else
-        {
-            return nullptr; // TODO: Error
-        }
+        diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("identifier '{}{}{}' undeclared",
+            fmt::bold, mName, fmt::defaults));
     }
 }

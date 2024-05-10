@@ -27,14 +27,14 @@ namespace parser
         mType = mFunction->getType();
     }
 
-    vipir::Value* CallExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* CallExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         std::vector<Type*> manglingArguments;
         std::vector<vipir::Value*> parameters;
         for (auto& parameter : mParameters)
         {
             manglingArguments.push_back(parameter->getType());
-            parameters.push_back(parameter->emit(builder, module, scope));
+            parameters.push_back(parameter->emit(builder, module, scope, diag));
         }
 
         if (VariableExpression* variable = dynamic_cast<VariableExpression*>(mFunction.get()))
@@ -54,7 +54,7 @@ namespace parser
             std::string_view methodName = member->mField;
             std::string mangledName;
 
-            vipir::Value* value = member->mStruct->emit(builder, module, scope);
+            vipir::Value* value = member->mStruct->emit(builder, module, scope, diag);
 
             if (member->mStruct->getType()->isStructType())
             {
@@ -94,13 +94,35 @@ namespace parser
                 }
             }
 
+            if (GlobalFunctions.find(mangledName) == GlobalFunctions.end())
+            {
+                diag.compilerError(member->mFieldToken.getStart(), member->mFieldToken.getEnd(), std::format("'{}struct {}{}' has no member named '{}{}{}'",
+                    fmt::bold, structType->getName(), fmt::defaults, fmt::bold, methodName, fmt::defaults));
+            }
+            if (GlobalFunctions.at(mangledName).priv && scope->owner != structType)
+            {
+                diag.compilerError(member->mFieldToken.getStart(), member->mFieldToken.getEnd(), std::format("'{}{}{}' is a private member of '{}struct {}{}'",
+                fmt::bold, member->mField, fmt::defaults, fmt::bold, structType->getName(), fmt::defaults));
+            }
+
+            if (GlobalFunctions.find(mangledName) == GlobalFunctions.end())
+            {
+                diag.compilerError(member->mFieldToken.getStart(), member->mFieldToken.getEnd(), std::format("'{}struct {}{}' has no member named '{}{}{}'",
+                    fmt::bold, structType->getName(), fmt::defaults, fmt::bold, methodName, fmt::defaults));
+            }
+            if (GlobalFunctions.at(mangledName).priv && scope->owner != structType)
+            {
+                diag.compilerError(member->mFieldToken.getStart(), member->mFieldToken.getEnd(), std::format("'{}{}{}' is a private member of '{}struct {}{}'",
+                fmt::bold, member->mField, fmt::defaults, fmt::bold, structType->getName(), fmt::defaults));
+            }
+
             vipir::Function* function = GlobalFunctions.at(mangledName).function;
 
             return builder.CreateCall(function, std::move(parameters));
         }
         else
         {
-            vipir::Function* function = static_cast<vipir::Function*>(mFunction->emit(builder, module, scope));
+            vipir::Function* function = static_cast<vipir::Function*>(mFunction->emit(builder, module, scope, diag));
 
             return builder.CreateCall(function, std::move(parameters));
         }

@@ -14,13 +14,13 @@ namespace parser
         mType = type;
     }
 
-    vipir::Value* VariableDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* VariableDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::AllocaInst* alloca = builder.CreateAlloca(mType->getVipirType());
 
         if (mInitialValue)
         {
-            vipir::Value* initalValue = mInitialValue->emit(builder, module, scope);
+            vipir::Value* initalValue = mInitialValue->emit(builder, module, scope, diag);
             builder.CreateStore(alloca, initalValue);
         }
 

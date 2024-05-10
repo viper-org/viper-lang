@@ -15,10 +15,11 @@
 
 namespace parser
 {
-    MemberAccess::MemberAccess(ASTNodePtr struc, std::string field, bool pointer)
+    MemberAccess::MemberAccess(ASTNodePtr struc, std::string field, bool pointer, lexing::Token fieldToken)
         : mStruct(std::move(struc))
-        , mField(std::move(field))
+        , mField(field)
         , mPointer(pointer)
+        , mFieldToken(std::move(fieldToken))
     {
 
         StructType* structType;
@@ -34,16 +35,16 @@ namespace parser
         mType = structType->getField(mField).type;
     }
 
-    vipir::Value* MemberAccess::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* MemberAccess::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::Value* struc;
         if (mPointer)
         {
-            struc = mStruct->emit(builder, module, scope);
+            struc = mStruct->emit(builder, module, scope, diag);
         }
         else
         {
-            vipir::Value* structValue = mStruct->emit(builder, module, scope);
+            vipir::Value* structValue = mStruct->emit(builder, module, scope, diag);
             struc = vipir::getPointerOperand(structValue);
 
             vipir::Instruction* instruction = static_cast<vipir::Instruction*>(structValue);
@@ -60,9 +61,15 @@ namespace parser
             structType = static_cast<StructType*>(mStruct->getType());
         }
 
+        if (!structType->hasField(mField))
+        {
+            diag.compilerError(mFieldToken.getStart(), mFieldToken.getEnd(), std::format("'{}struct {}{}' has no member named '{}{}{}'",
+                fmt::bold, structType->getName(), fmt::defaults, fmt::bold, mField, fmt::defaults));
+        }
         if (structType->getField(mField).priv && scope->owner != structType)
-        { // TODO: Proper error
-            std::cerr << std::format("{} is a private member of struct {}\n", mField, structType->getName());
+        {
+            diag.compilerError(mFieldToken.getStart(), mFieldToken.getEnd(), std::format("'{}{}{}' is a private member of '{}struct {}{}'",
+                fmt::bold, mField, fmt::defaults, fmt::bold, structType->getName(), fmt::defaults));
         }
 
         vipir::Value* gep = builder.CreateStructGEP(struc, structType->getFieldOffset(mField));

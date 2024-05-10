@@ -11,12 +11,12 @@ namespace parser
     {
     }
 
-    vipir::Value* ReturnStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* ReturnStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::Value* returnValue = nullptr;
         if (mReturnValue)
         {
-            returnValue = mReturnValue->emit(builder, module, scope);
+            returnValue = mReturnValue->emit(builder, module, scope, diag);
         }
 
         return builder.CreateRet(returnValue);

@@ -12,7 +12,7 @@ namespace parser
     public:
         NullptrLiteral(Type* type);
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
     };
     using NullptrLiteralPtr = std::unique_ptr<NullptrLiteral>;
 }

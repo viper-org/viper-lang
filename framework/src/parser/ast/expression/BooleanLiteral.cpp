@@ -17,7 +17,7 @@ namespace parser
         return mValue;
     }
 
-    vipir::Value* BooleanLiteral::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* BooleanLiteral::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         return builder.CreateConstantBool(mValue);
     }

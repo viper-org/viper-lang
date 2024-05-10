@@ -2,6 +2,7 @@
 CMakeFiles/
 cmake-build-debug-wsl/
 _deps/
+build/
 
 *.cmake
 *.so

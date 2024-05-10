@@ -11,15 +11,16 @@
 
 namespace parser
 {
-    CastExpression::CastExpression(ASTNodePtr operand, Type* destType)
+    CastExpression::CastExpression(ASTNodePtr operand, Type* destType, lexing::Token token)
         : mOperand(std::move(operand))
+        , mToken(std::move(token))
     {
         mType = destType;
     }
 
-    vipir::Value* CastExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* CastExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
-        vipir::Value* operand = mOperand->emit(builder, module, scope);
+        vipir::Value* operand = mOperand->emit(builder, module, scope, diag);
         if (mType->isPointerType())
         {
             if (mOperand->getType()->isPointerType())
@@ -59,6 +60,8 @@ namespace parser
                 return builder.CreateIntToPtr(operand, mType->getVipirType());
             }
         }
-        return nullptr; // TODO: Error
+
+        diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("value has type '{}{}{}' which cannot be converted to '{}{}{}",
+            fmt::bold, mOperand->getType()->getName(), fmt::defaults, fmt::bold, mType->getName(), fmt::defaults));
     }
 }

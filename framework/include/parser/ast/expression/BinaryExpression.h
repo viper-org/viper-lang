@@ -30,15 +30,17 @@ namespace parser
             ArrayAccess,
         };
 
-        BinaryExpression(ASTNodePtr left, lexing::TokenType op, ASTNodePtr right);
-        BinaryExpression(ASTNodePtr left, Operator op, ASTNodePtr right);
+        BinaryExpression(ASTNodePtr left, lexing::Token operatorToken, ASTNodePtr right);
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         ASTNodePtr mLeft;
         Operator mOperator;
+        lexing::Token mToken;
         ASTNodePtr mRight;
+
+        void checkAssignmentLvalue(vipir::Value* pointer, diagnostic::Diagnostics& diag);
     };
 
     using BinaryExpressionPtr = std::unique_ptr<BinaryExpression>;

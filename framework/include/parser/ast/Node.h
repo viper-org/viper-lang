@@ -7,6 +7,8 @@
 
 #include "type/Type.h"
 
+#include "diagnostic/Diagnostic.h"
+
 #include <vipir/IR/IRBuilder.h>
 
 #include <memory>
@@ -21,7 +23,7 @@ namespace parser
 
         Type* getType() const { return mType; }
 
-        virtual vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) = 0;
+        virtual vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) = 0;
     
     protected:
         Type* mType;

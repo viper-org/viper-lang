@@ -15,9 +15,9 @@ namespace parser
     {
     }
 
-    vipir::Value* IfStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* IfStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
-        vipir::Value* condition = mCondition->emit(builder, module, scope);
+        vipir::Value* condition = mCondition->emit(builder, module, scope, diag);
 
         vipir::BasicBlock* trueBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
         vipir::BasicBlock* falseBasicBlock;
@@ -38,13 +38,13 @@ namespace parser
         }
 
         builder.setInsertPoint(trueBasicBlock);
-        mBody->emit(builder, module, scope);
+        mBody->emit(builder, module, scope, diag);
         builder.CreateBr(mergeBasicBlock);
 
         if (mElseBody)
         {
             builder.setInsertPoint(falseBasicBlock);
-            mElseBody->emit(builder, module, scope);
+            mElseBody->emit(builder, module, scope, diag);
             builder.CreateBr(mergeBasicBlock);
         }
 

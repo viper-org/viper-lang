@@ -7,12 +7,14 @@
 #include <vipir/Type/PointerType.h>
 
 #include <algorithm>
+#include <format>
 #include <unordered_map>
 
 extern std::unordered_map<std::string, std::unique_ptr<Type>> types;
 
 PointerType::PointerType(Type* base)
-    : mBase(base)
+    : Type(std::format("{}*", base->getName()))
+    , mBase(base)
 {
 }
 

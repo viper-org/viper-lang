@@ -22,7 +22,8 @@ public:
     std::string_view getName() const;
 
     const std::vector<Field>& getFields() const;
-    Field& getField(std::string fieldName);
+    bool hasField(std::string_view fieldName);
+    Field& getField(std::string_view fieldName);
     int getFieldOffset(std::string fieldName);
 
     int getSize() const override;

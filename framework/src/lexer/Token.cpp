@@ -7,18 +7,19 @@
 
 namespace lexing
 {
-    Token::Token(const TokenType tokenType, const std::string& text)
-        :mTokenType(tokenType), mText(text)
+    Token::Token(const TokenType tokenType, std::string text, SourceLocation start, SourceLocation end)
+        : mTokenType(tokenType)
+        , mText(std::move(text))
+        , mStart(start)
+        , mEnd(end)
     {
     }
 
-    Token::Token(const TokenType tokenType, std::string&& text)
-        :mTokenType(tokenType), mText(std::move(text))
-    {
-    }
-
-    Token::Token(const TokenType tokenType)
-        :mTokenType(tokenType), mText("")
+    Token::Token(const TokenType tokenType, SourceLocation start, SourceLocation end)
+        : mTokenType(tokenType)
+        , mText("")
+        , mStart(start)
+        , mEnd(end)
     {
     }
 
@@ -27,9 +28,117 @@ namespace lexing
         return mTokenType;
     }
 
+    std::string Token::getId() const
+    {
+        switch (mTokenType)
+        {
+            case TokenType::Identifier:
+                return "identifier";
+            case TokenType::IntegerLiteral:
+                return "integer literal";
+            case TokenType::StringLiteral:
+                return "string literal";
+            case TokenType::LeftParen:
+                return "(";
+            case TokenType::RightParen:
+                return ")";
+            case TokenType::LeftBracket:
+                return "{";
+            case TokenType::RightBracket:
+                return "}";
+            case TokenType::LeftSquareBracket:
+                return "[";
+            case TokenType::RightSquareBracket:
+                return "]";
+            case TokenType::Semicolon:
+                return ";";
+            case TokenType::Colon:
+                return ":";
+            case TokenType::Comma:
+                return ",";
+            case TokenType::Equals:
+                return "=";
+            case TokenType::Plus:
+                return "+";
+            case TokenType::Minus:
+                return "-";
+            case TokenType::PlusEquals:
+                return "+=";
+            case TokenType::MinusEquals:
+                return "-=";
+            case TokenType::DoubleEquals:
+                return "==";
+            case TokenType::BangEquals:
+                return "!=";
+            case TokenType::LessThan:
+                return "<";
+            case TokenType::GreaterThan:
+                return ">";
+            case TokenType::LessEqual:
+                return "<=";
+            case TokenType::GreaterEqual:
+                return ">=";
+            case TokenType::Asperand:
+                return "@";
+            case TokenType::Ampersand:
+                return "&";
+            case TokenType::Pipe:
+                return "|";
+            case TokenType::Caret:
+                return "^";
+            case TokenType::Tilde:
+                return "~";
+            case TokenType::Star:
+                return "*";
+            case TokenType::RightArrow:
+                return "->";
+            case TokenType::Dot:
+                return ".";
+            case TokenType::Type:
+                return "type";
+            case TokenType::FuncKeyword:
+                return "func";
+            case TokenType::ReturnKeyword:
+                return "return";
+            case TokenType::LetKeyword:
+                return "let";
+            case TokenType::GlobalKeyword:
+                return "global";
+            case TokenType::IfKeyword:
+                return "if";
+            case TokenType::ElseKeyword:
+                return "else";
+            case TokenType::WhileKeyword:
+                return "while";
+            case TokenType::ForKeyword:
+                return "for";
+            case TokenType::TrueKeyword:
+                return "true";
+            case TokenType::FalseKeyword:
+                return "false";
+            case TokenType::NullptrKeyword:
+                return "nullptr";
+            case TokenType::StructKeyword:
+                return "struct";
+            case TokenType::PrivateKeyword:
+                return "private";
+            case TokenType::Error:
+                return mText;
+        }
+    }
+
     const std::string& Token::getText() const
     {
         return mText;
+    }
+
+    SourceLocation Token::getStart()
+    {
+        return mStart;
+    }
+    SourceLocation Token::getEnd()
+    {
+        return mEnd;
     }
 
     static inline const char* TypeToString(TokenType tokenType)

@@ -4,6 +4,7 @@
 #include "type/BooleanType.h"
 
 BooleanType::BooleanType()
+    : Type("bool")
 {
 }
 

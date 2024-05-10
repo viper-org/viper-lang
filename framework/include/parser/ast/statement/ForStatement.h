@@ -10,7 +10,7 @@ namespace parser
     public:
         ForStatement(ASTNodePtr&& init, ASTNodePtr&& condition, std::vector<ASTNodePtr>&& loopExpr, ASTNodePtr&& body, Scope* scope);
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         ASTNodePtr mInit;

@@ -47,15 +47,26 @@ namespace lexing
         StructKeyword, PrivateKeyword,
     };
 
+    struct SourceLocation
+    {
+        int column;
+        int line;
+
+        int position; // actual position into the text
+    };
+
     class Token
     {
     public:
-        Token(const TokenType tokenType, const std::string& text);
-        Token(const TokenType tokenType, std::string&& text);
-        Token(const TokenType tokenType);
+        Token(const TokenType tokenType, std::string text, SourceLocation start, SourceLocation end);
+        Token(const TokenType tokenType, SourceLocation start, SourceLocation end);
 
         TokenType getTokenType() const;
+        std::string getId() const;
         const std::string& getText() const;
+
+        SourceLocation getStart();
+        SourceLocation getEnd();
 
         std::string toString() const;
 
@@ -65,6 +76,9 @@ namespace lexing
         TokenType mTokenType{ TokenType::Error };
 
         std::string mText;
+
+        SourceLocation mStart;
+        SourceLocation mEnd;
     };
 }
 

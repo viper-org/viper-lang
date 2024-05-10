@@ -16,7 +16,7 @@ namespace parser
         mType = PointerType::Create(Type::Get("i8"));
     }
 
-    vipir::Value* StringLiteral::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* StringLiteral::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::GlobalString* string = vipir::GlobalString::Create(module, std::move(mValue));
 

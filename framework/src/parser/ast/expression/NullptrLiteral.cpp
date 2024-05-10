@@ -12,7 +12,7 @@ namespace parser
         mType = type;
     }
 
-    vipir::Value* NullptrLiteral::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* NullptrLiteral::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         return vipir::ConstantNullPtr::Get(module, mType->getVipirType());
     }

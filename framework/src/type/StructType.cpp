@@ -10,7 +10,8 @@
 #include <map>
 
 StructType::StructType(std::string name, std::vector<Field> fields)
-    : mName(std::move(name))
+    : Type(name)
+    , mName(std::move(name))
     , mFields(std::move(fields))
 {
 }
@@ -25,7 +26,14 @@ const std::vector<StructType::Field>& StructType::getFields() const
     return mFields;
 }
 
-StructType::Field& StructType::getField(std::string fieldName)
+bool StructType::hasField(std::string_view fieldName)
+{
+    return std::find_if(mFields.begin(), mFields.end(), [&fieldName](const Field& field){
+        return fieldName == field.name;
+    }) != mFields.end();
+}
+
+StructType::Field& StructType::getField(std::string_view fieldName)
 {
     return *std::find_if(mFields.begin(), mFields.end(), [&fieldName](const Field& field){
         return fieldName == field.name;

@@ -12,7 +12,7 @@ namespace parser
     public:
         CompoundStatement(std::vector<ASTNodePtr>&& body, Scope* scope);
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         std::vector<ASTNodePtr> mBody;

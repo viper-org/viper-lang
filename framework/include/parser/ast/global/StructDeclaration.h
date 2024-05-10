@@ -30,7 +30,10 @@ namespace parser
     public:
         StructDeclaration(std::string name, std::vector<StructField> fields, std::vector<StructMethod> methods);
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
+
+        std::vector<StructField>& getFields();
+        std::vector<StructMethod>& getMethods();
 
     private:
         std::string mName;

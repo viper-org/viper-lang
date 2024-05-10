@@ -12,7 +12,7 @@ namespace parser
     public:
         StructInitializer(Type* type, std::vector<ASTNodePtr>&& body);
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         std::vector<ASTNodePtr> mBody;

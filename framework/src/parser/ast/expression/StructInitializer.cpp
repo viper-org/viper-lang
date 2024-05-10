@@ -13,12 +13,12 @@ namespace parser
         mType = type;
     }
 
-    vipir::Value* StructInitializer::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope)
+    vipir::Value* StructInitializer::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         std::vector<vipir::Value*> values;
         for (auto& value : mBody)
         {
-            values.push_back(value->emit(builder, module, scope));
+            values.push_back(value->emit(builder, module, scope, diag));
         }
         return vipir::ConstantStruct::Get(module, mType->getVipirType(), std::move(values));
     }

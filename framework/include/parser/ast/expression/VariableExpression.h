@@ -5,18 +5,21 @@
 
 #include "parser/ast/Node.h"
 
+#include "lexer/Token.h"
+
 namespace parser
 {
     class VariableExpression : public ASTNode
     {
     friend class CallExpression;
     public:
-        VariableExpression(std::string&& name, Type* type);
+        VariableExpression(std::string&& name, Type* type, lexing::Token token);
 
-        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope) override;
+        vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         std::string mName;
+        lexing::Token mToken;
     };
     using VariableExpressionPtr = std::unique_ptr<VariableExpression>;
 }
