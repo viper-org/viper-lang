@@ -1,8 +1,8 @@
 // Copyright 2024 solar-mist
 
 
-#ifndef VIPER_FRAMEWORK_SCOPE_SCOPE_H
-#define VIPER_FRAMEWORK_SCOPE_SCOPE_H 1
+#ifndef VIPER_FRAMEWORK_SYMBOL_SCOPE_H
+#define VIPER_FRAMEWORK_SYMBOL_SCOPE_H 1
 
 #include "type/StructType.h"
 
@@ -52,4 +52,4 @@ struct Scope
 };
 using ScopePtr = std::unique_ptr<Scope>;
 
-#endif // VIPER_FRAMEWORK_SCOPE_SCOPE_H
+#endif // VIPER_FRAMEWORK_SYMBOL_SCOPE_H

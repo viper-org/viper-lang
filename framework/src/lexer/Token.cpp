@@ -122,6 +122,8 @@ namespace lexing
                 return "struct";
             case TokenType::PrivateKeyword:
                 return "private";
+            case TokenType::ImportKeyword:
+                return "import";
             case TokenType::Error:
                 return mText;
         }

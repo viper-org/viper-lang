@@ -12,6 +12,8 @@
 
 #include "diagnostic/Diagnostic.h"
 
+#include "symbol/Import.h"
+
 #include <vipir/IR/IRBuilder.h>
 #include <vipir/Module.h>
 #include <vipir/ABI/SysV.h>
@@ -32,6 +34,7 @@ int main(int argc, char** argv)
     bool optimize = false;
 
     preprocessor::Preprocessor preprocessor;
+    symbol::ImportManager importManager;
 
     for (int i = 1; i < argc; ++i)
     {
@@ -42,9 +45,15 @@ int main(int argc, char** argv)
             {
                 case 'I':
                     if (arg.length() == 2)
+                    {
+                        importManager.addSearchPath(argv[++i]);
                         preprocessor.addIncludePath(argv[++i]);
+                    }
                     else
+                    {
+                        importManager.addSearchPath(arg.substr(2));
                         preprocessor.addIncludePath(arg.substr(2));
+                    }
                     break;
 
                 case 'i':
@@ -102,7 +111,7 @@ int main(int argc, char** argv)
 
     std::vector<lexing::Token> tokens = lexer.lex();
 
-    parser::Parser parser(tokens, diag);
+    parser::Parser parser(tokens, diag, importManager, false);
     
     vipir::IRBuilder builder;
     vipir::Module module(inputFilePath);

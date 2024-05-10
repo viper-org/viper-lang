@@ -23,6 +23,8 @@
 
 #include "lexer/Token.h"
 
+#include "symbol/Import.h"
+
 #include "diagnostic/Diagnostic.h"
 
 #include <vector>
@@ -38,13 +40,18 @@ namespace parser
     class Parser
     {
     public:
-        Parser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag);
+        Parser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager, bool exportSymbols);
 
         std::vector<ASTNodePtr> parse();
+
+        std::vector<Symbol> getSymbols();
 
     private:
         std::vector<lexing::Token>& mTokens;
         int mPosition;
+
+        bool mExportSymbols;
+        symbol::ImportManager& mImportManager;
 
         Scope* mScope;
         std::vector<Symbol> mSymbols;
@@ -63,7 +70,7 @@ namespace parser
 
         Type* parseType();
 
-        ASTNodePtr parseGlobal();
+        ASTNodePtr parseGlobal(std::vector<ASTNodePtr>& nodes);
         ASTNodePtr parseExpression(Type* preferredType = nullptr, int precedence = 1);
         ASTNodePtr parsePrimary(Type* preferredType = nullptr);
         ASTNodePtr parseParenthesizedExpression(Type* preferredType = nullptr);
@@ -71,6 +78,7 @@ namespace parser
         FunctionPtr parseFunction();
         StructDeclarationPtr parseStructDeclaration();
         GlobalDeclarationPtr parseGlobalDeclaration();
+        std::pair<std::vector<ASTNodePtr>, std::vector<Symbol>> parseImportStatement();
 
         CompoundStatementPtr parseCompoundStatement();
         ReturnStatementPtr parseReturnStatement();

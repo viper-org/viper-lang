@@ -11,19 +11,23 @@
 
 #include "lexer/Token.h"
 
-#include "parser/ast/global/Function.h"
+#include "symbol/Import.h"
+
 #include "type/PointerType.h"
 #include "type/StructType.h"
 #include "type/ArrayType.h"
 
 #include <algorithm>
+#include <filesystem>
 #include <format>
 #include <iostream>
 
 namespace parser
 {
-    Parser::Parser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag)
+    Parser::Parser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager, bool exportSymbols)
         : mTokens(tokens)
+        , mExportSymbols(exportSymbols)
+        , mImportManager(importManager)
         , mPosition(0)
         , mScope(nullptr)
         , mDiag(diag)
@@ -61,13 +65,22 @@ namespace parser
 
         while (mPosition < mTokens.size())
         {
-            result.push_back(parseGlobal());
+            auto node = parseGlobal(result);
+            if (node)
+            {
+                result.push_back(std::move(node));
+            }
         }
 
         return result;
     }
 
-    ASTNodePtr Parser::parseGlobal()
+    std::vector<Symbol> Parser::getSymbols()
+    {
+        return mSymbols;
+    }
+
+    ASTNodePtr Parser::parseGlobal(std::vector<ASTNodePtr>& nodes)
     {
         switch (current().getTokenType())
         {
@@ -77,6 +90,13 @@ namespace parser
                 return parseStructDeclaration();
             case lexing::TokenType::GlobalKeyword:
                 return parseGlobalDeclaration();
+            case lexing::TokenType::ImportKeyword:
+            {
+                auto symbols = parseImportStatement();
+                std::move(symbols.first.begin(), symbols.first.end(), std::back_inserter(nodes));
+                std::move(symbols.second.begin(), symbols.second.end(), std::back_inserter(mSymbols));
+                return nullptr;
+            }
             default:
                 mDiag.compilerError(current().getStart(), current().getEnd(), "Unexpected token. Expected global statement");
         }
@@ -399,6 +419,12 @@ namespace parser
 
         mScope = functionScope->parent;
 
+        if (mExportSymbols)
+        {
+            body.clear();
+            delete functionScope;
+            functionScope = nullptr;
+        }
         return std::make_unique<Function>(type, std::move(arguments), std::move(struc), std::move(name), std::move(body), functionScope);
     }
 
@@ -539,6 +565,32 @@ namespace parser
         mSymbols.push_back({name, type});
 
         return std::make_unique<GlobalDeclaration>(std::move(name), type, std::move(initVal));
+    }
+
+    std::pair<std::vector<ASTNodePtr>, std::vector<Symbol>> Parser::parseImportStatement()
+    {
+        consume(); // import
+
+        std::filesystem::path path;
+        while (current().getTokenType() != lexing::TokenType::Semicolon)
+        {
+            expectToken(lexing::TokenType::Identifier);
+            path /= consume().getText();
+
+            if (current().getTokenType() != lexing::TokenType::Semicolon)
+            {
+                expectToken(lexing::TokenType::Dot);
+                consume();
+            }
+        }
+        consume();
+
+        std::cout << path.string() << "\n";
+        if (!mExportSymbols)
+        {
+            return mImportManager.ImportSymbols(path, mDiag);
+        }
+        return {};
     }
 
     CompoundStatementPtr Parser::parseCompoundStatement()

@@ -46,6 +46,7 @@ set(SOURCES
 
     "src/symbol/Scope.cpp"
     "src/symbol/NameMangling.cpp"
+    "src/symbol/Import.cpp"
 
     "src/diagnostic/Diagnostic.cpp"
 )
@@ -89,8 +90,10 @@ set(HEADERS
     "include/type/PointerType.h"
     "include/type/StructType.h"
     "include/type/ArrayType.h"
+
     "include/symbol/Scope.h"
     "include/symbol/NameMangling.h"
+    "include/symbol/Import.h"
 
     "include/diagnostic/Diagnostic.h"
 )

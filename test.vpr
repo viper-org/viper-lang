@@ -1,22 +1,10 @@
-struct Test {
-    field: i32;
-    private another: i32;
-    
-    func @pubMethod(balls: i32) -> i32;
-    private func @method(balls: i32) -> i32;
-}
-
-func Test@pubMethod(balls: i32) -> i32 {
-    return this->method(balls);
-}
-
-func Test@method(balls: i32) -> i32 {
-    return this->another + balls;
-}
+import hello;
 
 func @main() -> i32 {
     let test: struct Test = struct Test { 1, 2 };
     let ptr: struct Test* = &test;
 
-    return ptr->pubMethod(2);
+    let var: i32 = hello();
+
+    return var;
 }

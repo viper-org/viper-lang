@@ -8,6 +8,11 @@ namespace symbol
         assert(!names.empty());
         //TODO: reserved identifiers
 
+        if (names.size() == 1 && names.front() == "main")
+        {
+            return "main";
+        }
+
         std::string res = "_F"; // function
 
         for (auto& name : names)

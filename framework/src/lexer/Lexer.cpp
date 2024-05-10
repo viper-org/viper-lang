@@ -30,6 +30,7 @@ namespace lexing
         { "nullptr", TokenType::NullptrKeyword },
         { "struct",  TokenType::StructKeyword },
         { "private", TokenType::PrivateKeyword },
+        { "import",  TokenType::ImportKeyword },
     };
 
     std::vector<Token> Lexer::lex()
