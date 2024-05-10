@@ -99,7 +99,7 @@ int main(int argc, char** argv)
     Type::Init();
 
     diag.setText(buffer.str());
-    lexing::Lexer lexer(buffer.str());
+    lexing::Lexer lexer(buffer.str(), diag);
 
     std::vector<lexing::Token> tokens = lexer.lex();
 

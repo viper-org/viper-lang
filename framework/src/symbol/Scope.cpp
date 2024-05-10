@@ -8,8 +8,9 @@
 std::unordered_map<std::string, FunctionSymbol> GlobalFunctions;
 std::unordered_map<std::string, GlobalSymbol>   GlobalVariables;
 
-LocalSymbol::LocalSymbol(vipir::AllocaInst* alloca)
+LocalSymbol::LocalSymbol(vipir::AllocaInst* alloca, Type* type)
     : alloca{alloca}
+    , type(type)
 {
 }
 

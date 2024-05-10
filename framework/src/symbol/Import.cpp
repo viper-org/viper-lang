@@ -22,7 +22,7 @@ namespace symbol
         mSearchPaths.push_back(path);
     }
 
-    std::pair<std::vector<parser::ASTNodePtr>, std::vector<parser::Symbol>> ImportManager::ImportSymbols(std::filesystem::path path, diagnostic::Diagnostics& diag)
+    std::pair<std::vector<parser::ASTNodePtr>, std::vector<parser::GlobalSymbol>> ImportManager::ImportSymbols(std::filesystem::path path, diagnostic::Diagnostics& diag)
     {
         path += ".vpr";
 
@@ -37,7 +37,7 @@ namespace symbol
         std::stringstream buf;
         buf << stream.rdbuf();
 
-        lexing::Lexer lexer(buf.str());
+        lexing::Lexer lexer(buf.str(), diag);
         auto tokens = lexer.lex();
 
         parser::Parser parser(tokens, diag, *this, true);

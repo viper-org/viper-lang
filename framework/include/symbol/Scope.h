@@ -16,9 +16,10 @@
 struct LocalSymbol
 {
     LocalSymbol() = default;
-    LocalSymbol(vipir::AllocaInst* alloca);
+    LocalSymbol(vipir::AllocaInst* alloca, Type* type);
 
     vipir::AllocaInst* alloca;
+    Type* type;
 };
 
 struct FunctionSymbol

@@ -20,7 +20,6 @@
 #include <algorithm>
 #include <filesystem>
 #include <format>
-#include <iostream>
 
 namespace parser
 {
@@ -75,7 +74,7 @@ namespace parser
         return result;
     }
 
-    std::vector<Symbol> Parser::getSymbols()
+    std::vector<GlobalSymbol> Parser::getSymbols()
     {
         return mSymbols;
     }
@@ -359,11 +358,15 @@ namespace parser
         std::vector<FunctionArgument> arguments;
         StructType* structType = nullptr;
 
+        Scope* functionScope = new Scope(mScope, structType);
+        mScope = functionScope;
+
         if (struc.has_value())
         {
             structType = StructType::Get(struc.value());
+            functionScope->owner = structType;
 
-            mSymbols.push_back({"this", PointerType::Create(structType)});
+            mScope->locals["this"] = LocalSymbol(nullptr, PointerType::Create(structType));
             arguments.push_back({"this", PointerType::Create(structType)});
         }
 
@@ -376,7 +379,7 @@ namespace parser
             consume();
 
             Type* type = parseType();
-            mSymbols.push_back({name, type});
+            mScope->locals[name] = LocalSymbol(nullptr, type);
             arguments.push_back({std::move(name), type});
 
             if (current().getTokenType() != lexing::TokenType::RightParen)
@@ -401,9 +404,6 @@ namespace parser
             consume();
             return std::make_unique<Function>(type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
         }
-
-        Scope* functionScope = new Scope(mScope, structType);
-        mScope = functionScope;
 
         expectToken(lexing::TokenType::LeftBracket);
         consume();
@@ -471,7 +471,6 @@ namespace parser
                     consume();
 
                     Type* type = parseType();
-                    mSymbols.push_back({name, type});
                     arguments.push_back({std::move(name), type});
 
                     if (current().getTokenType() != lexing::TokenType::RightParen)
@@ -567,7 +566,7 @@ namespace parser
         return std::make_unique<GlobalDeclaration>(std::move(name), type, std::move(initVal));
     }
 
-    std::pair<std::vector<ASTNodePtr>, std::vector<Symbol>> Parser::parseImportStatement()
+    std::pair<std::vector<ASTNodePtr>, std::vector<GlobalSymbol>> Parser::parseImportStatement()
     {
         consume(); // import
 
@@ -585,7 +584,6 @@ namespace parser
         }
         consume();
 
-        std::cout << path.string() << "\n";
         if (!mExportSymbols)
         {
             return mImportManager.ImportSymbols(path, mDiag);
@@ -638,8 +636,8 @@ namespace parser
         consume();
 
         Type* type = parseType();
-
-        mSymbols.push_back({name, type});
+        
+        mScope->locals[name] = LocalSymbol(nullptr, type);
 
         if (current().getTokenType() == lexing::TokenType::Semicolon)
         {
@@ -762,7 +760,13 @@ namespace parser
         lexing::Token nameToken = current();
         std::string name = consume().getText();
 
-        auto it = std::find_if(mSymbols.begin(), mSymbols.end(), [&name](const Symbol& symbol) {
+        auto local = mScope->findVariable(name);
+        if (local)
+        {
+            return std::make_unique<VariableExpression>(std::move(name), local->type, std::move(nameToken));
+        }
+
+        auto it = std::find_if(mSymbols.begin(), mSymbols.end(), [&name](const GlobalSymbol& symbol) {
             return symbol.name == name;
         });
 

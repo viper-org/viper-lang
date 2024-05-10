@@ -71,14 +71,14 @@ namespace parser
             int index = 0;
 
             vipir::AllocaInst* alloca = builder.CreateAlloca(vipir::Type::GetPointerType(mType->getVipirType()));
-            scope->locals["this"] = LocalSymbol(alloca);
+            scope->locals["this"].alloca = alloca;
 
             builder.CreateStore(alloca, func->getArgument(index++));
 
             for (auto& argument : method.arguments)
             {
                 vipir::AllocaInst* alloca = builder.CreateAlloca(argument.type->getVipirType());
-                scope->locals[argument.name] = LocalSymbol(alloca);
+                scope->locals[argument.name].alloca = alloca;
 
                 builder.CreateStore(alloca, func->getArgument(index++));
             }

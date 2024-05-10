@@ -31,10 +31,10 @@
 
 namespace parser
 {
-    struct Symbol
+    struct GlobalSymbol
     {
         std::string name;
-        Type* type; // returnType for functions
+        Type* type;
     };
 
     class Parser
@@ -44,7 +44,7 @@ namespace parser
 
         std::vector<ASTNodePtr> parse();
 
-        std::vector<Symbol> getSymbols();
+        std::vector<GlobalSymbol> getSymbols();
 
     private:
         std::vector<lexing::Token>& mTokens;
@@ -54,7 +54,7 @@ namespace parser
         symbol::ImportManager& mImportManager;
 
         Scope* mScope;
-        std::vector<Symbol> mSymbols;
+        std::vector<GlobalSymbol> mSymbols;
 
         diagnostic::Diagnostics& mDiag;
 
@@ -78,7 +78,7 @@ namespace parser
         FunctionPtr parseFunction();
         StructDeclarationPtr parseStructDeclaration();
         GlobalDeclarationPtr parseGlobalDeclaration();
-        std::pair<std::vector<ASTNodePtr>, std::vector<Symbol>> parseImportStatement();
+        std::pair<std::vector<ASTNodePtr>, std::vector<GlobalSymbol>> parseImportStatement();
 
         CompoundStatementPtr parseCompoundStatement();
         ReturnStatementPtr parseReturnStatement();

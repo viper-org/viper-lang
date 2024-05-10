@@ -12,7 +12,7 @@
 
 namespace parser
 {
-    class Symbol;
+    class GlobalSymbol;
 }
 
 namespace symbol
@@ -23,7 +23,7 @@ namespace symbol
         ImportManager();
 
         void addSearchPath(std::string path);
-        std::pair<std::vector<parser::ASTNodePtr>, std::vector<parser::Symbol>> ImportSymbols(std::filesystem::path path, diagnostic::Diagnostics& diag);
+        std::pair<std::vector<parser::ASTNodePtr>, std::vector<parser::GlobalSymbol>> ImportSymbols(std::filesystem::path path, diagnostic::Diagnostics& diag);
 
     private:
         std::vector<std::string> mSearchPaths;

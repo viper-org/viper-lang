@@ -5,13 +5,14 @@
 
 #include "type/Type.h"
 
-#include <iostream>
+#include <format>
 #include <unordered_map>
 
 namespace lexing
 {
-    Lexer::Lexer(const std::string& text)
+    Lexer::Lexer(const std::string& text, diagnostic::Diagnostics& diag)
         : mText(text)
+        , mDiag(diag)
         , mPosition(0)
     {
     }
@@ -100,8 +101,8 @@ namespace lexing
 
             if (text.length() >= 2 && text[0] == '_' && std::isupper(text[1]))
             {
-                std::cerr << "Identifiers cannot begin with _ and an uppercase character. (" << text << ")\n";
-                std::exit(1);
+                mDiag.compilerError(start, location(), std::format("Identifier '{}{}{}' contains a reserved sequence '{}{}{}'",
+                    fmt::bold, text, fmt::defaults, fmt::bold, text.substr(0,2), fmt::defaults));
             }
 
             return Token(TokenType::Identifier, std::move(text), start, location());
@@ -280,8 +281,8 @@ namespace lexing
                                     break;
                                 default:
                                 {
-                                    std::cerr << "Unknown escape sequence in string. Stop\n";
-                                    std::exit(1);
+                                    mDiag.compilerError(start, location(), std::format("Unknown escape sequence '{}\\{}{}' in string",
+                                        fmt::bold, current(), fmt::defaults));
                                 }
                             }
                             break;

@@ -3,6 +3,8 @@
 #ifndef VIPER_FRAMEWORK_LEXER_LEXER_H
 #define VIPER_FRAMEWORK_LEXER_LEXER_H
 
+#include "diagnostic/Diagnostic.h"
+
 #include <optional>
 #include <string>
 #include <vector>
@@ -15,11 +17,12 @@ namespace lexing
     class Lexer
     {
     public:
-        Lexer(const std::string& text);
+        Lexer(const std::string& text, diagnostic::Diagnostics& diag);
 
         std::vector<Token> lex();
     private:
         std::string mText;
+        diagnostic::Diagnostics& mDiag;
         int mPosition{ 0 };
         int mColumn{ 1 };
         int mLine{ 1 };
