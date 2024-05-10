@@ -18,5 +18,5 @@ func @main() -> i32 {
     let test: struct Test = struct Test { 1, 2 };
     let ptr: struct Test* = &test;
 
-    return q->pubMethod(2);
+    return ptr->pubMethod(2);
 }
