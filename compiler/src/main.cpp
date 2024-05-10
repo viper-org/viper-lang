@@ -1,8 +1,6 @@
 // Copyright 2024 solar-mist
 
 
-#include "preprocessor/Preprocessor.h"
-
 #include "lexer/Lexer.h"
 #include "lexer/Token.h"
 
@@ -33,7 +31,6 @@ int main(int argc, char** argv)
     bool outputIR = false;
     bool optimize = false;
 
-    preprocessor::Preprocessor preprocessor;
     symbol::ImportManager importManager;
 
     for (int i = 1; i < argc; ++i)
@@ -47,12 +44,10 @@ int main(int argc, char** argv)
                     if (arg.length() == 2)
                     {
                         importManager.addSearchPath(argv[++i]);
-                        preprocessor.addIncludePath(argv[++i]);
                     }
                     else
                     {
                         importManager.addSearchPath(arg.substr(2));
-                        preprocessor.addIncludePath(arg.substr(2));
                     }
                     break;
 
@@ -103,11 +98,8 @@ int main(int argc, char** argv)
 
     Type::Init();
 
-    preprocessor.addText(buffer.str());
-    preprocessor.preprocess();
-
-    diag.setText(preprocessor.getText());
-    lexing::Lexer lexer(preprocessor.getText());
+    diag.setText(buffer.str());
+    lexing::Lexer lexer(buffer.str());
 
     std::vector<lexing::Token> tokens = lexer.lex();
 
