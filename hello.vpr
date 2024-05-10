@@ -11,9 +11,10 @@ struct Test {
 }
 
 func Test@pubMethod(balls: i32) -> i32 {
+    this->another = 0;
     return this->method(balls);
 }
 
 func Test@method(balls: i32) -> i32 {
-    return balls;
+    return this->another + balls;
 }

@@ -72,10 +72,8 @@ namespace parser
                     value = builder.CreateAddrOf(self);
                 }
 
-                mParameters.insert(mParameters.begin(), std::move(member->mStruct));
                 parameters.insert(parameters.begin(), value);
-                manglingArguments.insert(manglingArguments.begin(), mParameters[0]->getType());
-
+                manglingArguments.insert(manglingArguments.begin(), PointerType::Create(member->mStruct->getType()));
                 mangledName = symbol::mangleFunctionName({structType->getName(), methodName}, std::move(manglingArguments));
             }
             else
@@ -84,25 +82,6 @@ namespace parser
                 parameters.insert(parameters.begin(), value);
                 manglingArguments.insert(manglingArguments.begin(), mParameters[0]->getType());
                 mangledName = symbol::mangleFunctionName({structType->getName(), methodName}, std::move(manglingArguments));
-            }
-
-            if (GlobalFunctions.at(mangledName).priv)
-            {
-                if (scope->owner != structType)
-                { // TODO: Proper error
-                    std::cerr << std::format("{} is a private member of struct {}\n", member->mField, structType->getName());
-                }
-            }
-
-            if (GlobalFunctions.find(mangledName) == GlobalFunctions.end())
-            {
-                diag.compilerError(member->mFieldToken.getStart(), member->mFieldToken.getEnd(), std::format("'{}struct {}{}' has no member named '{}{}{}'",
-                    fmt::bold, structType->getName(), fmt::defaults, fmt::bold, methodName, fmt::defaults));
-            }
-            if (GlobalFunctions.at(mangledName).priv && scope->owner != structType)
-            {
-                diag.compilerError(member->mFieldToken.getStart(), member->mFieldToken.getEnd(), std::format("'{}{}{}' is a private member of '{}struct {}{}'",
-                fmt::bold, member->mField, fmt::defaults, fmt::bold, structType->getName(), fmt::defaults));
             }
 
             if (GlobalFunctions.find(mangledName) == GlobalFunctions.end())
