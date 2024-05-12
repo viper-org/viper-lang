@@ -6,7 +6,7 @@ func @main() -> i32 {
     let var: i32 = Hello::hello();
     while (true) {
         var += 1;
-        if (var == 100) break;
+        if (var == 1_000) break;
     }
 
     return test.pubMethod(var);
