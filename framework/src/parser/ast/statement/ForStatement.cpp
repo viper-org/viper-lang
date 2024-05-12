@@ -19,8 +19,9 @@ namespace parser
         vipir::BasicBlock* bodyBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
         vipir::BasicBlock* doneBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
 
-        scope = mScope;
+        scope = mScope.get();
         scope->breakTo = doneBasicBlock;
+        scope->continueTo = conditionBasicBlock;
 
         conditionBasicBlock->loopEnd() = doneBasicBlock;
         bodyBasicBlock->loopEnd() = doneBasicBlock;

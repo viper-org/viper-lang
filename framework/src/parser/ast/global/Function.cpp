@@ -1,7 +1,6 @@
 // Copyright 2024 solar-mist
 
 #include "parser/ast/global/Function.h"
-#include "parser/ast/global/StructDeclaration.h"
 #include "parser/ast/statement/ReturnStatement.h"
 #include "symbol/NameMangling.h"
 
@@ -9,13 +8,14 @@
 #include <vipir/IR/BasicBlock.h>
 #include <vipir/IR/Constant/ConstantInt.h>
 #include <cassert>
+#include <utility>
 
 namespace parser
 {
     Function::Function(Type* returnType, std::vector<FunctionArgument> arguments, std::optional<std::string> struc, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope)
         : mReturnType(returnType)
         , mArguments(std::move(arguments))
-        , mStruct(struc)
+        , mStruct(std::move(struc))
         , mName(name)
         , mBody(std::move(body))
         , mScope(scope)
@@ -86,7 +86,14 @@ namespace parser
 
         if (!dynamic_cast<ReturnStatement*>(mBody.back().get()))
         {
-            builder.CreateRet(vipir::ConstantInt::Get(module, 0, func->getFunctionType()->getReturnType())); //TODO: get null value for types
+            if (mReturnType->isVoidType())
+            {
+                builder.CreateRet(nullptr);
+            }
+            else
+            {
+                builder.CreateRet(vipir::ConstantInt::Get(module, 0,func->getFunctionType()->getReturnType())); //TODO: get null value for type
+            }
         }
 
         return func;
