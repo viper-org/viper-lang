@@ -8,6 +8,7 @@
 #include "parser/ast/expression/BooleanLiteral.h"
 #include "parser/ast/expression/NullptrLiteral.h"
 #include "parser/ast/expression/CastExpression.h"
+#include "parser/ast/statement/BreakStatement.h"
 
 #include "lexer/Token.h"
 
@@ -294,6 +295,8 @@ namespace parser
                 return parseWhileStatement();
             case lexing::TokenType::ForKeyword:
                 return parseForStatement();
+            case lexing::TokenType::BreakKeyword:
+                return std::make_unique<BreakStatement>(std::move(consume()));
 
             case lexing::TokenType::TrueKeyword:
                 consume();

@@ -26,6 +26,7 @@ namespace lexing
         { "else",    TokenType::ElseKeyword },
         { "while",   TokenType::WhileKeyword },
         { "for",     TokenType::ForKeyword },
+        { "break",  TokenType::BreakKeyword },
         { "true",    TokenType::TrueKeyword },
         { "false",   TokenType::FalseKeyword },
         { "nullptr", TokenType::NullptrKeyword },

@@ -47,9 +47,11 @@ struct Scope
     std::unordered_map<std::string, LocalSymbol> locals;
 
     LocalSymbol* findVariable(const std::string& name);
+    vipir::BasicBlock* findBreakBB();
 
     Scope* parent;
     StructType* owner;
+    vipir::BasicBlock* breakTo;
 };
 using ScopePtr = std::unique_ptr<Scope>;
 

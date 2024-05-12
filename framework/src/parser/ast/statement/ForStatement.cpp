@@ -20,6 +20,7 @@ namespace parser
         vipir::BasicBlock* doneBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
 
         scope = mScope;
+        scope->breakTo = doneBasicBlock;
 
         conditionBasicBlock->loopEnd() = doneBasicBlock;
         bodyBasicBlock->loopEnd() = doneBasicBlock;
@@ -39,6 +40,8 @@ namespace parser
             }
 
             builder.CreateBr(bodyBasicBlock);
+
+            builder.setInsertPoint(doneBasicBlock);
 
             return nullptr;
         }
@@ -62,8 +65,9 @@ namespace parser
             else
             {
                 builder.CreateBr(doneBasicBlock);
-                builder.setInsertPoint(doneBasicBlock);
             }
+
+            builder.setInsertPoint(doneBasicBlock);
             return nullptr;
         }
 

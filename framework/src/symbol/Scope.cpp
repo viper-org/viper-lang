@@ -28,6 +28,7 @@ GlobalSymbol::GlobalSymbol(vipir::GlobalVar* global)
 Scope::Scope(Scope* parent, StructType* owner)
     : parent(parent)
     , owner(owner)
+    , breakTo(nullptr)
 {
 }
 
@@ -39,6 +40,22 @@ LocalSymbol* Scope::findVariable(const std::string& name)
         if (scope->locals.find(name) != scope->locals.end())
         {
             return &scope->locals.at(name);
+        }
+
+        scope = scope->parent;
+    }
+
+    return nullptr;
+}
+
+vipir::BasicBlock* Scope::findBreakBB()
+{
+    Scope* scope = this;
+    while (scope)
+    {
+        if (scope->breakTo)
+        {
+            return scope->breakTo;
         }
 
         scope = scope->parent;

@@ -112,6 +112,8 @@ namespace lexing
                 return "while";
             case TokenType::ForKeyword:
                 return "for";
+            case TokenType::BreakKeyword:
+                return "break";
             case TokenType::TrueKeyword:
                 return "true";
             case TokenType::FalseKeyword:

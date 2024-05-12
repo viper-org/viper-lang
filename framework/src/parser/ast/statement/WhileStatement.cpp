@@ -24,6 +24,8 @@ namespace parser
         conditionBasicBlock->loopEnd() = doneBasicBlock;
         bodyBasicBlock->loopEnd() = doneBasicBlock;
 
+        scope->breakTo = doneBasicBlock;
+
         if (auto boolean = dynamic_cast<BooleanLiteral*>(mCondition.get()))
         {
             bodyBasicBlock->loopEnd() = nullptr;
@@ -38,8 +40,8 @@ namespace parser
             else
             {
                 builder.CreateBr(doneBasicBlock);
-                builder.setInsertPoint(doneBasicBlock);
             }
+            builder.setInsertPoint(doneBasicBlock);
             return nullptr;
         }
 

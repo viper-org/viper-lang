@@ -4,6 +4,10 @@ func @main() -> i32 {
     let test: struct Test = struct Test { 1, 2 };
 
     let var: i32 = hello();
+    while (true) {
+        var += 1;
+        if (var == 100) break;
+    }
 
     return test.pubMethod(var);
 }
