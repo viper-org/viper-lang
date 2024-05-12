@@ -90,6 +90,22 @@ vipir::BasicBlock* Scope::findBreakBB()
     return nullptr;
 }
 
+vipir::BasicBlock* Scope::findContinueBB()
+{
+    Scope* scope = this;
+    while (scope)
+    {
+        if (scope->continueTo)
+        {
+            return scope->continueTo;
+        }
+
+        scope = scope->parent;
+    }
+
+    return nullptr;
+}
+
 std::vector<std::string> Scope::getNamespaces()
 {
     std::vector<std::string> ret;

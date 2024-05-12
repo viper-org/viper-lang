@@ -114,6 +114,8 @@ namespace lexing
                 return "for";
             case TokenType::BreakKeyword:
                 return "break";
+            case TokenType::ContinueKeyword:
+                return "continue";
             case TokenType::TrueKeyword:
                 return "true";
             case TokenType::FalseKeyword:
