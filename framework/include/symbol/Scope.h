@@ -50,11 +50,13 @@ struct Scope
 
     LocalSymbol* findVariable(const std::string& name);
     vipir::BasicBlock* findBreakBB();
+    vipir::BasicBlock* findContinueBB();
     std::vector<std::string> getNamespaces();
 
     Scope* parent;
     StructType* owner;
     vipir::BasicBlock* breakTo;
+    vipir::BasicBlock* continueTo;
     std::string namespaceName;
 };
 using ScopePtr = std::unique_ptr<Scope>;

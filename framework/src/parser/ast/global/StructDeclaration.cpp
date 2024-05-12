@@ -58,7 +58,7 @@ namespace parser
             std::string name = symbol::mangleFunctionName(names, std::move(manglingArguments));
 
             vipir::Function* func = vipir::Function::Create(functionType, module, name);
-            GlobalFunctions[name] = FunctionSymbol(func, method.priv); //TODO: make this better or sum
+            GlobalFunctions[name] = FunctionSymbol(func, method.priv);
             GlobalFunctions[name].names = names;
 
             if (method.body.empty())

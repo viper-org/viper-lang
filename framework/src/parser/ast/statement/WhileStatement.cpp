@@ -9,9 +9,10 @@
 
 namespace parser
 {
-    WhileStatement::WhileStatement(ASTNodePtr&& condition, ASTNodePtr&& body)
+    WhileStatement::WhileStatement(ASTNodePtr&& condition, ASTNodePtr&& body, Scope* scope)
         : mCondition(std::move(condition))
         , mBody(std::move(body))
+        , mScope(scope)
     {
     }
 
@@ -24,7 +25,9 @@ namespace parser
         conditionBasicBlock->loopEnd() = doneBasicBlock;
         bodyBasicBlock->loopEnd() = doneBasicBlock;
 
+        scope = mScope.get();
         scope->breakTo = doneBasicBlock;
+        scope->continueTo = conditionBasicBlock;
 
         if (auto boolean = dynamic_cast<BooleanLiteral*>(mCondition.get()))
         {

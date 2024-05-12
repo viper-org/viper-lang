@@ -10,6 +10,7 @@
 #include "parser/ast/expression/CastExpression.h"
 #include "parser/ast/expression/ScopeResolution.h"
 #include "parser/ast/statement/BreakStatement.h"
+#include "parser/ast/statement/ContinueStatement.h"
 
 #include "lexer/Token.h"
 
@@ -317,6 +318,8 @@ namespace parser
                 return parseForStatement();
             case lexing::TokenType::BreakKeyword:
                 return std::make_unique<BreakStatement>(std::move(consume()));
+            case lexing::TokenType::ContinueKeyword:
+                return std::make_unique<ContinueStatement>(std::move(consume()));
 
             case lexing::TokenType::TrueKeyword:
                 consume();
@@ -745,6 +748,9 @@ namespace parser
         expectToken(lexing::TokenType::LeftParen);
         consume();
 
+        Scope* whileScope = new Scope(mScope, nullptr);
+        mScope = whileScope;
+
         ASTNodePtr condition = parseExpression();
 
         expectToken(lexing::TokenType::RightParen);
@@ -752,7 +758,9 @@ namespace parser
 
         ASTNodePtr body = parseExpression();
 
-        return std::make_unique<WhileStatement>(std::move(condition), std::move(body));
+        mScope = whileScope->parent;
+
+        return std::make_unique<WhileStatement>(std::move(condition), std::move(body), whileScope);
     }
 
     ForStatementPtr Parser::parseForStatement()

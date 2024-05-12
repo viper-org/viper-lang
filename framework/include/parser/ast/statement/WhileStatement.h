@@ -10,13 +10,14 @@ namespace parser
     class WhileStatement : public ASTNode
     {
     public:
-        WhileStatement(ASTNodePtr&& condition, ASTNodePtr&& body);
+        WhileStatement(ASTNodePtr&& condition, ASTNodePtr&& body, Scope* scope);
 
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         ASTNodePtr mCondition;
         ASTNodePtr mBody;
+        ScopePtr mScope;
     };
     using WhileStatementPtr = std::unique_ptr<WhileStatement>;
 }
