@@ -17,7 +17,7 @@ namespace parser
         ASTNodePtr mCondition;
         std::vector<ASTNodePtr> mLoopExpr;
         ASTNodePtr mBody;
-        Scope* mScope;
+        ScopePtr mScope;
     };
 
     using ForStatementPtr = std::unique_ptr<ForStatement>;
