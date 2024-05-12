@@ -29,7 +29,7 @@ namespace parser
             }
             else if (mOperand->getType()->isIntegerType())
             {
-                vipir::Value* ptrtoint = builder.CreatePtrToInt(operand, mType->getVipirType());
+                vipir::Value* ptrtoint = builder.CreateIntToPtr(operand, mType->getVipirType());
                 if (mOperand->getType()->getSize() > mType->getSize())
                 {
                     return builder.CreateTrunc(ptrtoint, mType->getVipirType());
@@ -57,7 +57,7 @@ namespace parser
                     vipir::Type* pointerIntegerType = vipir::Type::GetIntegerType(mOperand->getType()->getVipirType()->getSizeInBits());
                     operand = builder.CreateSExt(operand, pointerIntegerType);
                 }
-                return builder.CreateIntToPtr(operand, mType->getVipirType());
+                return builder.CreatePtrToInt(operand, mType->getVipirType());
             }
         }
 
