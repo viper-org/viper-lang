@@ -34,6 +34,8 @@ namespace lexing
         SourceLocation location();
 
         std::optional<Token> nextToken();
+
+        static inline bool isDigitSep(const char c) { return c == '_'; }
     };
 }
 

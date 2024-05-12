@@ -8,6 +8,7 @@ build/
 *.so
 *.a
 *.o
+*.i
 
 viper
 viper_tests
