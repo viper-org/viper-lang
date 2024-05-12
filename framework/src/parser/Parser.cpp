@@ -758,6 +758,8 @@ namespace parser
 
         ASTNodePtr body = parseExpression();
 
+        mScope = whileScope->parent;
+
         return std::make_unique<WhileStatement>(std::move(condition), std::move(body), whileScope);
     }
 
