@@ -33,6 +33,7 @@ namespace lexing
         { "struct",  TokenType::StructKeyword },
         { "private", TokenType::PrivateKeyword },
         { "import",  TokenType::ImportKeyword },
+        { "namespace",  TokenType::NamespaceKeyword },
     };
 
     std::vector<Token> Lexer::lex()
@@ -181,6 +182,11 @@ namespace lexing
             case ';':
                 return Token(TokenType::Semicolon, start, location());
             case ':':
+                if (peek(1) == ':')
+                {
+                    consume();
+                    return Token(TokenType::DoubleColon, start, location());
+                }
                 return Token(TokenType::Colon, start, location());
             case ',':
                 return Token(TokenType::Comma, start, location());

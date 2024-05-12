@@ -1,9 +1,9 @@
 import hello;
 
 func @main() -> i32 {
-    let test: struct Test = struct Test { 1, 2 };
+    let test: struct Hello::Test = struct Hello::Test { 1, 2 };
 
-    let var: i32 = hello();
+    let var: i32 = Hello::hello();
     while (true) {
         var += 1;
         if (var == 100) break;

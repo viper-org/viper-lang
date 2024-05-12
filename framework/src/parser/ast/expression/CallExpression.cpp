@@ -3,9 +3,13 @@
 
 #include "parser/ast/expression/CallExpression.h"
 #include "parser/ast/expression/MemberAccess.h"
-#include "parser/ast/global/StructDeclaration.h"
 #include "parser/ast/expression/VariableExpression.h"
+#include "parser/ast/expression/ScopeResolution.h"
+
+#include "parser/ast/global/StructDeclaration.h"
+
 #include "symbol/NameMangling.h"
+
 #include "type/PointerType.h"
 #include "type/StructType.h"
 
@@ -37,12 +41,14 @@ namespace parser
             parameters.push_back(parameter->emit(builder, module, scope, diag));
         }
 
+        auto namespaceNames = scope->getNamespaces();
+
         if (VariableExpression* variable = dynamic_cast<VariableExpression*>(mFunction.get()))
         {
             std::string name = variable->mName;
-            std::string mangledName = symbol::mangleFunctionName({name}, std::move(manglingArguments));
+            namespaceNames.push_back(name);
 
-            vipir::Function* function = GlobalFunctions.at(mangledName).function;
+            vipir::Function* function = FindFunction(namespaceNames, manglingArguments)->function;
 
             return builder.CreateCall(function, std::move(parameters));
         }
@@ -51,8 +57,11 @@ namespace parser
             StructType* structType = member->mPointer
                 ? static_cast<StructType*>(static_cast<PointerType*>(member->mStruct->getType())->getBaseType())
                 : static_cast<StructType*>(member->mStruct->getType());
-            std::string_view methodName = member->mField;
-            std::string mangledName;
+            std::string methodName = member->mField;
+
+            std::vector<std::string> structNames = structType->getNames();
+            std::copy(structNames.begin(), structNames.end(), std::back_inserter(namespaceNames));
+            namespaceNames.push_back(methodName);
 
             vipir::Value* value = member->mStruct->emit(builder, module, scope, diag);
 
@@ -74,30 +83,39 @@ namespace parser
 
                 parameters.insert(parameters.begin(), value);
                 manglingArguments.insert(manglingArguments.begin(), PointerType::Create(member->mStruct->getType()));
-                mangledName = symbol::mangleFunctionName({structType->getName(), methodName}, std::move(manglingArguments));
             }
             else
             {
                 mParameters.insert(mParameters.begin(), std::move(member->mStruct));
                 parameters.insert(parameters.begin(), value);
                 manglingArguments.insert(manglingArguments.begin(), mParameters[0]->getType());
-                mangledName = symbol::mangleFunctionName({structType->getName(), methodName}, std::move(manglingArguments));
             }
 
-            if (GlobalFunctions.find(mangledName) == GlobalFunctions.end())
+            FunctionSymbol* func = FindFunction(namespaceNames, manglingArguments);
+
+            if (func == nullptr)
             {
                 diag.compilerError(member->mFieldToken.getStart(), member->mFieldToken.getEnd(), std::format("'{}struct {}{}' has no member named '{}{}{}'",
                     fmt::bold, structType->getName(), fmt::defaults, fmt::bold, methodName, fmt::defaults));
             }
-            if (GlobalFunctions.at(mangledName).priv && scope->owner != structType)
+            if (func->priv && scope->owner != structType)
             {
                 diag.compilerError(member->mFieldToken.getStart(), member->mFieldToken.getEnd(), std::format("'{}{}{}' is a private member of '{}struct {}{}'",
                 fmt::bold, member->mField, fmt::defaults, fmt::bold, structType->getName(), fmt::defaults));
             }
 
-            vipir::Function* function = GlobalFunctions.at(mangledName).function;
+            vipir::Function* function = func->function;
 
             return builder.CreateCall(function, std::move(parameters));
+        }
+        else if (auto scopeRes = dynamic_cast<ScopeResolution*>(mFunction.get()))
+        {
+            auto names = scopeRes->getNames();
+            std::move(names.begin(), names.end(), std::back_inserter(namespaceNames));
+
+            FunctionSymbol* func = FindFunction(namespaceNames, manglingArguments);
+
+            return builder.CreateCall(func->function, std::move(parameters));
         }
         else
         {

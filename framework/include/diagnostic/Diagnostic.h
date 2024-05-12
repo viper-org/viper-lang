@@ -35,7 +35,7 @@ namespace diagnostic
         std::string mFileName;
         std::string mSender;
         std::string mText;
-        bool mImported;
+        bool mImported{ false };
 
         int getLinePosition(int lineNumber);
     };

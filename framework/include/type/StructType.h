@@ -17,9 +17,10 @@ public:
         Type* type;
     };
 
-    StructType(std::string name, std::vector<Field> fields);
+    StructType(std::vector<std::string> names, std::vector<Field> fields);
 
     std::string_view getName() const;
+    std::vector<std::string> getNames() const;
 
     const std::vector<Field>& getFields() const;
     bool hasField(std::string_view fieldName);
@@ -32,11 +33,11 @@ public:
 
     bool isStructType() const override;
 
-    static StructType* Get(std::string name);
-    static StructType* Create(std::string name, std::vector<Field> fields);
+    static StructType* Get(std::vector<std::string> names);
+    static StructType* Create(std::vector<std::string> names, std::vector<Field> fields);
 
 private:
-    std::string mName;
+    std::vector<std::string> mNames;
     std::vector<Field> mFields;
 };
 

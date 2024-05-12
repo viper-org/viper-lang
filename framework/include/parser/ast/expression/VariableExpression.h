@@ -14,6 +14,8 @@ namespace parser
     friend class CallExpression;
     public:
         VariableExpression(std::string&& name, Type* type, lexing::Token token);
+        
+        std::string getName();
 
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 

@@ -9,16 +9,21 @@
 #include <algorithm>
 #include <map>
 
-StructType::StructType(std::string name, std::vector<Field> fields)
-    : Type(name)
-    , mName(std::move(name))
+StructType::StructType(std::vector<std::string> names, std::vector<Field> fields)
+    : Type(names.back())
+    , mNames(std::move(names))
     , mFields(std::move(fields))
 {
 }
 
 std::string_view StructType::getName() const
 {
-    return mName;
+    return mNames.back();
+}
+
+std::vector<std::string> StructType::getNames() const
+{
+    return mNames;
 }
 
 const std::vector<StructType::Field>& StructType::getFields() const
@@ -64,7 +69,12 @@ vipir::Type* StructType::getVipirType() const
 
 std::string StructType::getMangleID() const
 {
-    return "S" + std::to_string(mName.length()) + mName;
+    std::string ret = "S";
+    for (auto name : mNames)
+    {
+        ret += std::to_string(name.length()) + name;
+    }
+    return ret;
 }
 
 bool StructType::isStructType() const
@@ -73,24 +83,28 @@ bool StructType::isStructType() const
 }
 
 
-static std::map<std::string, std::unique_ptr<StructType> > structTypes;
+static std::vector<std::unique_ptr<StructType> > structTypes;
 
-StructType* StructType::Get(std::string name)
+StructType* StructType::Get(std::vector<std::string> names)
 {
-    return structTypes.at(name).get();
+    auto it = std::find_if(structTypes.begin(), structTypes.end(), [&names](const auto& type){
+        return type->mNames == names;
+    });
+    if (it == structTypes.end()) return nullptr;
+    return it->get();
 }
 
-StructType* StructType::Create(std::string name, std::vector<StructType::Field> fields)
+StructType* StructType::Create(std::vector<std::string> names, std::vector<StructType::Field> fields)
 {
-    auto it = std::find_if(structTypes.begin(), structTypes.end(), [&name](const auto& type){
-        return type.first == name;
+    auto it = std::find_if(structTypes.begin(), structTypes.end(), [&names](const auto& type){
+        return type->mNames == names;
     });
 
     if (it != structTypes.end())
     {
-        return it->second.get();
+        return it->get();
     }
 
-    structTypes[name] = std::make_unique<StructType>(name, std::move(fields));
-    return structTypes.at(name).get();
+    structTypes.push_back(std::make_unique<StructType>(names, std::move(fields)));
+    return structTypes.back().get();
 }

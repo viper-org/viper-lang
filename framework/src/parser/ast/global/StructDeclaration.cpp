@@ -13,8 +13,8 @@
 
 namespace parser
 {
-    StructDeclaration::StructDeclaration(std::string name, std::vector<StructField> fields, std::vector<StructMethod> methods)
-        : mName(std::move(name))
+    StructDeclaration::StructDeclaration(std::vector<std::string> names, std::vector<StructField> fields, std::vector<StructMethod> methods)
+        : mNames(std::move(names))
         , mFields(std::move(fields))
         , mMethods(std::move(methods))
     {
@@ -24,7 +24,7 @@ namespace parser
             fieldTypes.push_back({field.priv, field.name, field.type});
         }
 
-        mType = StructType::Create(mName, std::move(fieldTypes));
+        mType = StructType::Create(mNames, std::move(fieldTypes));
     }
 
     std::vector<StructField>& StructDeclaration::getFields()
@@ -41,8 +41,6 @@ namespace parser
     {
         for (StructMethod& method : mMethods)
         {
-            scope = method.scope.get();
-
             std::vector<Type*> manglingArguments;
             std::vector<vipir::Type*> argumentTypes;
 
@@ -55,15 +53,20 @@ namespace parser
                 argumentTypes.push_back(argument.type->getVipirType());
             }
             vipir::FunctionType* functionType = vipir::FunctionType::Create(method.returnType->getVipirType(), argumentTypes);
-            std::string name = symbol::mangleFunctionName({mName, method.name}, std::move(manglingArguments));
+            std::vector<std::string> names = mNames;
+            names.push_back(method.name);
+            std::string name = symbol::mangleFunctionName(names, std::move(manglingArguments));
 
             vipir::Function* func = vipir::Function::Create(functionType, module, name);
             GlobalFunctions[name] = FunctionSymbol(func, method.priv); //TODO: make this better or sum
+            GlobalFunctions[name].names = names;
 
             if (method.body.empty())
             {
                 continue;
             }
+
+            scope = method.scope.get();
 
             vipir::BasicBlock* entryBasicBlock = vipir::BasicBlock::Create("", func);
             builder.setInsertPoint(entryBasicBlock);

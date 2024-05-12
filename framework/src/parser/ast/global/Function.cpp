@@ -39,12 +39,12 @@ namespace parser
             argumentTypes.push_back(argument.type->getVipirType());
         }
 
-        std::vector<std::string_view> names;
+        std::vector<std::string> names = scope->getNamespaces();
         if (mStruct.has_value())
             names.push_back(mStruct.value());
         names.push_back(mName);
 
-        std::string name = symbol::mangleFunctionName(std::move(names), std::move(manglingArguments));
+        std::string name = symbol::mangleFunctionName(names, std::move(manglingArguments));
 
         vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType(), argumentTypes);
         vipir::Function* func;
@@ -59,6 +59,7 @@ namespace parser
         {
             func = vipir::Function::Create(functionType, module, name);
             GlobalFunctions[name] = FunctionSymbol(func, false);
+            GlobalFunctions[name].names = names;
         }
 
         if (mBody.empty())

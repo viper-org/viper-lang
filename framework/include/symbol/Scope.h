@@ -28,6 +28,7 @@ struct FunctionSymbol
     FunctionSymbol(vipir::Function* function, bool priv);
 
     vipir::Function* function;
+    std::vector<std::string> names;
     bool priv;
 };
 struct GlobalSymbol
@@ -39,6 +40,7 @@ struct GlobalSymbol
 };
 extern std::unordered_map<std::string, FunctionSymbol> GlobalFunctions;
 extern std::unordered_map<std::string, GlobalSymbol> GlobalVariables;
+FunctionSymbol* FindFunction(std::vector<std::string> names, std::vector<Type*> arguments);
 
 struct Scope
 {
@@ -48,10 +50,12 @@ struct Scope
 
     LocalSymbol* findVariable(const std::string& name);
     vipir::BasicBlock* findBreakBB();
+    std::vector<std::string> getNamespaces();
 
     Scope* parent;
     StructType* owner;
     vipir::BasicBlock* breakTo;
+    std::string namespaceName;
 };
 using ScopePtr = std::unique_ptr<Scope>;
 

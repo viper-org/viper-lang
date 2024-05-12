@@ -7,6 +7,7 @@
 #include "parser/ast/global/Function.h"
 #include "parser/ast/global/StructDeclaration.h"
 #include "parser/ast/global/GlobalDeclaration.h"
+#include "parser/ast/global/Namespace.h"
 #include "parser/ast/statement/ReturnStatement.h"
 #include "parser/ast/statement/VariableDeclaration.h"
 #include "parser/ast/statement/IfStatement.h"
@@ -58,6 +59,8 @@ namespace parser
 
         diagnostic::Diagnostics& mDiag;
 
+        std::vector<std::string> mNamespaces;
+
         lexing::Token current() const;
         lexing::Token consume();
         lexing::Token peek(int offset) const;
@@ -76,6 +79,7 @@ namespace parser
         ASTNodePtr parseParenthesizedExpression(Type* preferredType = nullptr);
 
         FunctionPtr parseFunction();
+        NamespacePtr parseNamespace();
         StructDeclarationPtr parseStructDeclaration();
         GlobalDeclarationPtr parseGlobalDeclaration();
         std::pair<std::vector<ASTNodePtr>, std::vector<GlobalSymbol>> parseImportStatement();

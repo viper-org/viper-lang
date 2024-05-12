@@ -126,6 +126,8 @@ namespace lexing
                 return "private";
             case TokenType::ImportKeyword:
                 return "import";
+            case TokenType::NamespaceKeyword:
+                return "namespace";
             case TokenType::Error:
                 return mText;
         }

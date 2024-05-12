@@ -8,6 +8,7 @@
 #include "parser/ast/expression/BooleanLiteral.h"
 #include "parser/ast/expression/NullptrLiteral.h"
 #include "parser/ast/expression/CastExpression.h"
+#include "parser/ast/expression/ScopeResolution.h"
 #include "parser/ast/statement/BreakStatement.h"
 
 #include "lexer/Token.h"
@@ -97,6 +98,8 @@ namespace parser
                 std::move(symbols.second.begin(), symbols.second.end(), std::back_inserter(mSymbols));
                 return nullptr;
             }
+            case lexing::TokenType::NamespaceKeyword:
+                return parseNamespace();
             default:
                 mDiag.compilerError(current().getStart(), current().getEnd(), "Unexpected token. Expected global statement");
         }
@@ -106,6 +109,9 @@ namespace parser
     {
         switch (tokenType)
         {
+            case lexing::TokenType::DoubleColon:
+                return 100;
+
             case lexing::TokenType::LeftParen:
             case lexing::TokenType::LeftSquareBracket:
             case lexing::TokenType::Dot:
@@ -177,8 +183,18 @@ namespace parser
         if (current().getTokenType() == lexing::TokenType::StructKeyword)
         {
             consume();
+            std::vector<std::string> names;
             expectToken(lexing::TokenType::Identifier);
-            type = StructType::Get(consume().getText());
+            while (current().getTokenType() == lexing::TokenType::Identifier)
+            {
+                names.push_back(consume().getText());
+                if (peek(1).getTokenType() == lexing::TokenType::Identifier)
+                {
+                    expectToken(lexing::TokenType::DoubleColon);
+                    consume();
+                }
+            }
+            type = StructType::Get(names);
         }
         else
         {
@@ -260,9 +276,13 @@ namespace parser
             {
                 lhs = parseMemberAccess(std::move(lhs), true);
             }
+            else if (operatorToken.getTokenType() == lexing::TokenType::DoubleColon)
+            {
+                lhs = std::make_unique<ScopeResolution>(std::move(lhs), std::move(operatorToken), parseExpression(nullptr, binaryOperatorPrecedence));
+            }
             else
             {
-                ASTNodePtr rhs = parseExpression(lhs->getType(), precedence);
+                ASTNodePtr rhs = parseExpression(lhs->getType(), binaryOperatorPrecedence);
                 lhs = std::make_unique<BinaryExpression>(std::move(lhs), std::move(operatorToken), std::move(rhs));
             }
 
@@ -366,7 +386,10 @@ namespace parser
 
         if (struc.has_value())
         {
-            structType = StructType::Get(struc.value());
+            std::vector<std::string> names = mNamespaces;
+            names.push_back(struc.value());
+
+            structType = StructType::Get(std::move(names));
             functionScope->owner = structType;
 
             mScope->locals["this"] = LocalSymbol(nullptr, PointerType::Create(structType));
@@ -429,6 +452,38 @@ namespace parser
             functionScope = nullptr;
         }
         return std::make_unique<Function>(type, std::move(arguments), std::move(struc), std::move(name), std::move(body), functionScope);
+    }
+
+    NamespacePtr Parser::parseNamespace()
+    {
+        consume(); // namespace
+
+        expectToken(lexing::TokenType::Identifier);
+        std::string name = consume().getText();
+        mNamespaces.push_back(name);
+
+        expectToken(lexing::TokenType::LeftBracket);
+        consume();
+
+        Scope* scope = new Scope(mScope, nullptr);
+        mScope = scope;
+        
+        std::vector<ASTNodePtr> body;
+        while(current().getTokenType() != lexing::TokenType::RightBracket)
+        {
+            ASTNodePtr node = parseGlobal(body);
+            if (node)
+            {
+                body.push_back(std::move(node));
+            }
+        }
+        consume();
+        mSymbols.push_back({name, nullptr});
+
+        mScope = scope->parent;
+        mNamespaces.pop_back();
+
+        return std::make_unique<Namespace>(std::move(name), std::move(body), scope);
     }
 
     StructDeclarationPtr Parser::parseStructDeclaration()
@@ -541,7 +596,9 @@ namespace parser
         }
         consume();
 
-        return std::make_unique<StructDeclaration>(std::move(name), std::move(fields), std::move(methods));
+        std::vector<std::string> names = mNamespaces;
+        names.push_back(name);
+        return std::make_unique<StructDeclaration>(std::move(names), std::move(fields), std::move(methods));
     }
 
     GlobalDeclarationPtr Parser::parseGlobalDeclaration()
@@ -808,9 +865,7 @@ namespace parser
 
     StructInitializerPtr Parser::parseStructInitializer()
     {
-        consume(); // struct
-
-        StructType* type = StructType::Get(consume().getText());
+        StructType* type = static_cast<StructType*>(parseType());
 
         expectToken(lexing::TokenType::LeftBracket);
         consume();

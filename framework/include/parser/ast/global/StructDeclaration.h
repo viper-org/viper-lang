@@ -28,7 +28,7 @@ namespace parser
     class StructDeclaration : public ASTNode
     {
     public:
-        StructDeclaration(std::string name, std::vector<StructField> fields, std::vector<StructMethod> methods);
+        StructDeclaration(std::vector<std::string> names, std::vector<StructField> fields, std::vector<StructMethod> methods);
 
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
@@ -36,7 +36,7 @@ namespace parser
         std::vector<StructMethod>& getMethods();
 
     private:
-        std::string mName;
+        std::vector<std::string> mNames;
         std::vector<StructField> mFields;
         std::vector<StructMethod> mMethods;
     };

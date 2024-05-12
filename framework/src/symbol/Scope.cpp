@@ -2,8 +2,9 @@
 
 
 #include "symbol/Scope.h"
+#include "symbol/NameMangling.h"
 
-#include <iostream>
+#include <algorithm>
 
 std::unordered_map<std::string, FunctionSymbol> GlobalFunctions;
 std::unordered_map<std::string, GlobalSymbol>   GlobalVariables;
@@ -23,6 +24,31 @@ FunctionSymbol::FunctionSymbol(vipir::Function* function, bool priv)
 GlobalSymbol::GlobalSymbol(vipir::GlobalVar* global)
     : global(global)
 {
+}
+
+FunctionSymbol* FindFunction(std::vector<std::string> names, std::vector<Type*> arguments)
+{
+    auto last = std::unique(names.begin(), names.end());
+    names.erase(last, names.end());
+    for (auto& [name, func] : GlobalFunctions)
+    {
+        auto funcNames = func.names;
+        auto namesCopy = names;
+
+        bool hasNames = true;
+        for (auto name : funcNames)
+        {
+            if (std::find(namesCopy.begin(), namesCopy.end(), name) == namesCopy.end())
+            {
+                hasNames = false;
+            }
+        }
+        if (!hasNames) continue;
+
+        std::string mangledName = symbol::mangleFunctionName(names, arguments);
+        if (mangledName == name) return &func;
+    }
+    return nullptr;
 }
 
 Scope::Scope(Scope* parent, StructType* owner)
@@ -62,4 +88,22 @@ vipir::BasicBlock* Scope::findBreakBB()
     }
 
     return nullptr;
+}
+
+std::vector<std::string> Scope::getNamespaces()
+{
+    std::vector<std::string> ret;
+
+    Scope* scope = this;
+    while (scope)
+    {
+        if (!scope->namespaceName.empty())
+        {
+            ret.push_back(scope->namespaceName);
+        }
+
+        scope = scope->parent;
+    }
+
+    return ret;
 }

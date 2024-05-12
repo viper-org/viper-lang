@@ -18,7 +18,7 @@ namespace lexing
         LeftParen, RightParen,
         LeftBracket, RightBracket,
         LeftSquareBracket, RightSquareBracket,
-        Semicolon, Colon,
+        Semicolon, Colon, DoubleColon,
         Comma,
 
         Equals,
@@ -46,6 +46,7 @@ namespace lexing
         NullptrKeyword,
         StructKeyword, PrivateKeyword,
         ImportKeyword,
+        NamespaceKeyword,
     };
 
     struct SourceLocation

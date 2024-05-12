@@ -14,6 +14,11 @@ namespace parser
         mType = type;
     }
 
+    std::string VariableExpression::getName()
+    {
+        return mName;
+    }
+
     vipir::Value* VariableExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         LocalSymbol* local = scope->findVariable(mName);

@@ -15,6 +15,7 @@ set(SOURCES
     "src/parser/ast/global/Function.cpp"
     "src/parser/ast/global/StructDeclaration.cpp"
     "src/parser/ast/global/GlobalDeclaration.cpp"
+    "src/parser/ast/global/Namespace.cpp"
     "src/parser/ast/statement/ReturnStatement.cpp"
     "src/parser/ast/statement/VariableDeclaration.cpp"
     "src/parser/ast/statement/IfStatement.cpp"
@@ -34,6 +35,7 @@ set(SOURCES
     "src/parser/ast/expression/StructInitializer.cpp"
     "src/parser/ast/expression/ArrayInitializer.cpp"
     "src/parser/ast/expression/CastExpression.cpp"
+    "src/parser/ast/expression/ScopeResolution.cpp"
 
     "src/type/Type.cpp"
     "src/type/IntegerType.cpp"
@@ -59,6 +61,7 @@ set(HEADERS
     "include/parser/ast/global/Function.h"
     "include/parser/ast/global/StructDeclaration.h"
     "include/parser/ast/global/GlobalDeclaration.h"
+    "include/parser/ast/global/Namespace.h"
     "include/parser/ast/statement/ReturnStatement.h"
     "include/parser/ast/statement/VariableDeclaration.h"
     "include/parser/ast/statement/IfStatement.h"
@@ -78,6 +81,7 @@ set(HEADERS
     "include/parser/ast/expression/StructInitializer.h"
     "include/parser/ast/expression/ArrayInitializer.h"
     "include/parser/ast/expression/CastExpression.h"
+    "include/parser/ast/expression/ScopeResolution.h"
 
     "include/type/Type.h"
     "include/type/IntegerType.h"

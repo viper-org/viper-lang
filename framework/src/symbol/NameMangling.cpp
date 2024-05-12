@@ -1,9 +1,10 @@
-#include <cassert>
 #include "symbol/NameMangling.h"
+
+#include <cassert>
 
 namespace symbol
 {
-    std::string mangleFunctionName(std::vector<std::string_view> names, std::vector<Type*> arguments)
+    std::string mangleFunctionName(std::vector<std::string>& names, std::vector<Type*> arguments)
     {
         assert(!names.empty());
         //TODO: reserved identifiers
