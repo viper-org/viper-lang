@@ -1,6 +1,8 @@
 namespace Hello {
-    func @hello() -> i32 {
-        return 69;
+    namespace Qwerty {
+        func @hello() -> i32 {
+            return 69;
+        }
     }
 
     struct Test {

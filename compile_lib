@@ -1,2 +1,0 @@
-#!/bin/bash
-gcc -O3 -Wall -Wextra -Wpedantic -Werror -c -o lib.o lib.c

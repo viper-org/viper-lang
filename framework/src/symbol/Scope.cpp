@@ -121,5 +121,6 @@ std::vector<std::string> Scope::getNamespaces()
         scope = scope->parent;
     }
 
+    std::reverse(ret.begin(), ret.end());
     return ret;
 }
