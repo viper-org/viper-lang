@@ -3,14 +3,14 @@ import hello;
 func @main() -> i32 {
     let test: struct Hello::Test = struct Hello::Test { 1, 2 };
 
-    let var: i32 = Hello::hello();
+    let var: i32 = hey;
     while (true) {
         if (var + 1 == 50) continue;
         var += 1;
     }
 
     testing();
-    Test::Ball::balls();
+    Hello::Ball::balls();
 
     return test.pubMethod(var);
 }

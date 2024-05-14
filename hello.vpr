@@ -1,4 +1,5 @@
 namespace Hello {
+
     namespace Ball {
         export func @balls() -> void {
             return;
@@ -30,3 +31,5 @@ namespace Hello {
 export func @testing() -> void {
     return;
 }
+
+export global hey: i32 = 59;
