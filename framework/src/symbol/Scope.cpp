@@ -55,6 +55,7 @@ Scope::Scope(Scope* parent, StructType* owner)
     : parent(parent)
     , owner(owner)
     , breakTo(nullptr)
+    , continueTo(nullptr)
 {
 }
 
