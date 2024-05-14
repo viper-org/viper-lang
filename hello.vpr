@@ -1,8 +1,12 @@
-namespace Hello {
-    namespace Qwerty {
-        func @hello() -> i32 {
-            return 69;
+export namespace Hello {
+    namespace Ball {
+        func @balls() -> void {
+            return;
         }
+    }
+
+    func @hello() -> i32 {
+        return 69;
     }
 
     struct Test {

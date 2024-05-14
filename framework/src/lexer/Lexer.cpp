@@ -35,6 +35,7 @@ namespace lexing
         { "private",    TokenType::PrivateKeyword },
         { "import",     TokenType::ImportKeyword },
         { "namespace",  TokenType::NamespaceKeyword },
+        { "export",     TokenType::ExportKeyword },
     };
 
     std::vector<Token> Lexer::lex()

@@ -34,6 +34,7 @@ namespace parser
 {
     struct GlobalSymbol
     {
+        bool exported;
         std::string name;
         Type* type;
     };
@@ -56,6 +57,7 @@ namespace parser
 
         Scope* mScope;
         std::vector<GlobalSymbol> mSymbols;
+        bool mExportGlobal;
 
         diagnostic::Diagnostics& mDiag;
 
@@ -66,6 +68,7 @@ namespace parser
         lexing::Token peek(int offset) const;
 
         void expectToken(lexing::TokenType tokenType);
+        void expectEitherToken(std::vector<lexing::TokenType> tokenTypes);
 
         int getBinaryOperatorPrecedence(lexing::TokenType tokenType);
         int getPrefixUnaryOperatorPrecedence(lexing::TokenType tokenType);
