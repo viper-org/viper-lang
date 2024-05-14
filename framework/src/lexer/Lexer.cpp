@@ -125,6 +125,8 @@ namespace lexing
                     {
                         consume();
                         text += current();
+                        if (isDigitSep(peek(1)))
+                            consume();
                     }
                 }
                 else if (peek(1) == 'b') // binary
@@ -136,6 +138,8 @@ namespace lexing
                     {
                         consume();
                         text += current();
+                        if (isDigitSep(peek(1)))
+                            consume();
                     }
                 }
                 else // octal
@@ -144,15 +148,21 @@ namespace lexing
                     {
                         consume();
                         text += current();
+                        if (isDigitSep(peek(1)))
+                            consume();
                     }
                 }
             }
             else // decimal
             {
+                if (isDigitSep(peek(1)))
+                    consume();
                 while (std::isdigit(peek(1)))
                 {
                     consume();
                     text += current();
+                    if (isDigitSep(peek(1)))
+                        consume();
                 }
             }
             return Token(TokenType::IntegerLiteral, std::move(text), start, location());

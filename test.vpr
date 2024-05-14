@@ -5,7 +5,7 @@ func @main() -> i32 {
 
     let var: i32 = Hello::hello();
     while (true) {
-        if (var + 1 == 50) continue;
+        if (var + 1 == 5_000) continue;
         var += 1;
     }
 
