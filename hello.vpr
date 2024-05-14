@@ -1,11 +1,11 @@
-export namespace Hello {
+namespace Hello {
     namespace Ball {
-        func @balls() -> void {
+        export func @balls() -> void {
             return;
         }
     }
 
-    func @hello() -> i32 {
+    export func @hello() -> i32 {
         return 69;
     }
 
@@ -25,4 +25,8 @@ export namespace Hello {
     func Test@method(balls: i32) -> i32 {
         return this->another + balls;
     }
+}
+
+export func @testing() -> void {
+    return;
 }

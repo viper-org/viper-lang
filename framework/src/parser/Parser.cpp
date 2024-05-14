@@ -137,7 +137,7 @@ namespace parser
                 return parseNamespace();
             case lexing::TokenType::ExportKeyword:
                 consume();
-                expectEitherToken({ lexing::TokenType::FuncKeyword, lexing::TokenType::GlobalKeyword, lexing::TokenType::StructKeyword, lexing::TokenType::NamespaceKeyword });
+                expectEitherToken({ lexing::TokenType::FuncKeyword, lexing::TokenType::GlobalKeyword, lexing::TokenType::StructKeyword });
                 mExportGlobal = true;
                 return parseGlobal(nodes);
             default:

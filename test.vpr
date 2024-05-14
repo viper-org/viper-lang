@@ -9,7 +9,8 @@ func @main() -> i32 {
         var += 1;
     }
 
-    Hello::Ball::balls();
+    testing();
+    Test::Ball::balls();
 
     return test.pubMethod(var);
 }
