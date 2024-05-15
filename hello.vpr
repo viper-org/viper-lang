@@ -1,8 +1,13 @@
 namespace Hello {
-    namespace Qwerty {
-        func @hello() -> i32 {
-            return 69;
+
+    namespace Ball {
+        export func @balls() -> void {
+            return;
         }
+    }
+
+    export func @hello() -> i32 {
+        return 69;
     }
 
     struct Test {
@@ -22,3 +27,9 @@ namespace Hello {
         return this->another + balls;
     }
 }
+
+export func @testing() -> void {
+    return;
+}
+
+export global hey: i32 = 59;

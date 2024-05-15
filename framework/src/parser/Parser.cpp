@@ -32,6 +32,7 @@ namespace parser
         , mImportManager(importManager)
         , mPosition(0)
         , mScope(nullptr)
+        , mExportGlobal(false)
         , mDiag(diag)
     {
     }
@@ -61,6 +62,24 @@ namespace parser
         }
     }
 
+    void Parser::expectEitherToken(std::vector<lexing::TokenType> tokenTypes)
+    {
+        std::string tokensString;
+        for (auto& tokenType : tokenTypes)
+        {
+            if (current().getTokenType() == tokenType)
+                return;
+
+            lexing::Token temp(tokenType, {0, 0}, {0, 0});
+            tokensString += std::format("'{}{}{}', ", fmt::bold, temp.getId(), fmt::defaults);
+        }
+
+        tokensString = tokensString.substr(0, tokensString.size() - 2);
+
+        mDiag.compilerError(current().getStart(), current().getEnd(), std::format("expected either {} before '{}{}{}' token",
+            tokensString, fmt::bold, current().getId(), fmt::defaults));
+    }
+
     std::vector<ASTNodePtr> Parser::parse()
     {
         std::vector<ASTNodePtr> result;
@@ -72,6 +91,8 @@ namespace parser
             {
                 result.push_back(std::move(node));
             }
+
+            mExportGlobal = false;
         }
 
         return result;
@@ -79,6 +100,19 @@ namespace parser
 
     std::vector<GlobalSymbol> Parser::getSymbols()
     {
+        if (mExportSymbols)
+        {
+            std::vector<GlobalSymbol> res;
+
+            for (auto& symbol : mSymbols)
+            {
+                if (symbol.exported)
+                    res.push_back(symbol);
+            }
+
+            return std::move(res);
+        }
+
         return mSymbols;
     }
 
@@ -101,6 +135,11 @@ namespace parser
             }
             case lexing::TokenType::NamespaceKeyword:
                 return parseNamespace();
+            case lexing::TokenType::ExportKeyword:
+                consume();
+                expectEitherToken({ lexing::TokenType::FuncKeyword, lexing::TokenType::GlobalKeyword, lexing::TokenType::StructKeyword });
+                mExportGlobal = true;
+                return parseGlobal(nodes);
             default:
                 mDiag.compilerError(current().getStart(), current().getEnd(), "Unexpected token. Expected global statement");
         }
@@ -426,7 +465,7 @@ namespace parser
             type = parseType();
         }
 
-        mSymbols.push_back({name, type});
+        mSymbols.push_back({mExportGlobal, name, type});
 
         if (current().getTokenType() == lexing::TokenType::Semicolon) // Extern function declaration
         {
@@ -481,7 +520,7 @@ namespace parser
             }
         }
         consume();
-        mSymbols.push_back({name, nullptr});
+        mSymbols.push_back({mExportGlobal, name, nullptr});
 
         mScope = scope->parent;
         mNamespaces.pop_back();
@@ -624,7 +663,7 @@ namespace parser
         expectToken(lexing::TokenType::Semicolon);
         consume();
 
-        mSymbols.push_back({name, type});
+        mSymbols.push_back({mExportGlobal, name, type});
 
         return std::make_unique<GlobalDeclaration>(std::move(name), type, std::move(initVal));
     }

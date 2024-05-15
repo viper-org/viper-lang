@@ -130,6 +130,8 @@ namespace lexing
                 return "import";
             case TokenType::NamespaceKeyword:
                 return "namespace";
+            case TokenType::ExportKeyword:
+                return "export";
             case TokenType::Error:
                 return mText;
         }
