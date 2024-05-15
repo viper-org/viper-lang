@@ -36,6 +36,7 @@ namespace lexing
         { "import",     TokenType::ImportKeyword },
         { "namespace",  TokenType::NamespaceKeyword },
         { "export",     TokenType::ExportKeyword },
+        { "using",      TokenType::UsingKeyword },
     };
 
     std::vector<Token> Lexer::lex()

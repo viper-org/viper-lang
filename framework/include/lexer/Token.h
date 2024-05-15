@@ -49,6 +49,7 @@ namespace lexing
         StructKeyword, PrivateKeyword,
         ImportKeyword,
         NamespaceKeyword, ExportKeyword,
+        UsingKeyword,
     };
 
     struct SourceLocation

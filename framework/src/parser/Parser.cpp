@@ -105,7 +105,7 @@ namespace parser
         if (current().getTokenType() == lexing::TokenType::ExportKeyword)
         {
             consume();
-            expectEitherToken({ lexing::TokenType::FuncKeyword, lexing::TokenType::GlobalKeyword, lexing::TokenType::StructKeyword });
+            expectEitherToken({ lexing::TokenType::FuncKeyword, lexing::TokenType::GlobalKeyword, lexing::TokenType::StructKeyword, lexing::TokenType::UsingKeyword });
         }
 
         switch (current().getTokenType())
@@ -125,6 +125,8 @@ namespace parser
             }
             case lexing::TokenType::NamespaceKeyword:
                 return parseNamespace();
+            case lexing::TokenType::UsingKeyword:
+                return parseUsingDeclaration();
             default:
                 mDiag.compilerError(current().getStart(), current().getEnd(), "Unexpected token. Expected global statement");
         }
@@ -222,13 +224,17 @@ namespace parser
             type = StructType::Get(names);
             if (!type)
             {
-                mDiag.compilerError(peek(-1).getStart(), peek(-1).getEnd(), std::format("unknown type name {}", names.back()));
+                mDiag.compilerError(peek(-1).getStart(), peek(-1).getEnd(), std::format("unknown type name '{}{}{}'", fmt::bold, names.back(), fmt::defaults));
             }
         }
         else
         {
-            expectToken(lexing::TokenType::Type);
-            type = Type::Get(consume().getText());
+            lexing::Token token = consume();
+            type = Type::Get(token.getText());
+            if (!type)
+            {
+                mDiag.compilerError(token.getStart(), token.getEnd(), std::format("unknown type name '{}{}{}'", fmt::bold, token.getText(), fmt::defaults));
+            }
         }
 
         while(current().getTokenType() == lexing::TokenType::Star || current().getTokenType() == lexing::TokenType::LeftSquareBracket)
@@ -676,6 +682,23 @@ namespace parser
         consume();
 
         return mImportManager.ImportSymbols(path, mDiag);
+    }
+    
+    UsingDeclarationPtr Parser::parseUsingDeclaration()
+    {
+        consume(); // using
+
+        std::string name = consume().getText();
+
+        expectToken(lexing::TokenType::Equals);
+        consume();
+
+        Type* type = parseType();
+
+        expectToken(lexing::TokenType::Semicolon);
+        consume();
+
+        return std::make_unique<UsingDeclaration>(std::move(name), type);
     }
 
     CompoundStatementPtr Parser::parseCompoundStatement()

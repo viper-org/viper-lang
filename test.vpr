@@ -1,7 +1,7 @@
 import hello;
 
 func @main() -> i32 {
-    let test: struct Hello::Test = struct Hello::Test { 1, 2 };
+    let test: struc = struct Hello::Test { 1, 2 };
 
     let var: i32 = Hello::hello();
     while (true) {

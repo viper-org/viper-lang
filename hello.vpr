@@ -27,6 +27,8 @@ namespace Hello {
     }
 }
 
+export using struc = struct Hello::Test;
+
 [[NoMangle]]
 export func @testing() -> void {
     return;

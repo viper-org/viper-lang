@@ -127,6 +127,8 @@ namespace parser
             }
             case lexing::TokenType::NamespaceKeyword:
                 return parseNamespace();
+            case lexing::TokenType::UsingKeyword:
+                return parseUsingDeclaration(exported);
             default:
                 mDiag.compilerError(current().getStart(), current().getEnd(), "Unexpected token. Expected global statement");
         }
@@ -152,13 +154,17 @@ namespace parser
             type = StructType::Get(names);
             if (!type)
             {
-                mDiag.compilerError(peek(-1).getStart(), peek(-1).getEnd(), std::format("unknown type name {}", names.back()));
+                mDiag.compilerError(peek(-1).getStart(), peek(-1).getEnd(), std::format("unknown type name '{}{}{}'", fmt::bold, names.back(), fmt::defaults));
             }
         }
         else
         {
-            expectToken(lexing::TokenType::Type);
-            type = Type::Get(consume().getText());
+            lexing::Token token = consume();
+            type = Type::Get(token.getText());
+            if (!type)
+            {
+                mDiag.compilerError(token.getStart(), token.getEnd(), std::format("unknown type name '{}{}{}'", fmt::bold, token.getText(), fmt::defaults));
+            }
         }
 
         while(current().getTokenType() == lexing::TokenType::Star || current().getTokenType() == lexing::TokenType::LeftSquareBracket)
@@ -453,6 +459,26 @@ namespace parser
             return mImportManager.ImportSymbols(path, mDiag);
         }
         return {};
+    }
+    
+    UsingDeclarationPtr ImportParser::parseUsingDeclaration(bool exported)
+    {
+        consume(); // using
+
+        std::string name = consume().getText();
+
+        expectToken(lexing::TokenType::Equals);
+        consume();
+
+        Type* type = parseType();
+
+        expectToken(lexing::TokenType::Semicolon);
+        consume();
+
+        if (exported)
+            return std::make_unique<UsingDeclaration>(std::move(name), type);
+
+        return nullptr;
     }
 
     void ImportParser::parseAttributes(std::vector<GlobalAttribute>& attributes)

@@ -8,6 +8,7 @@
 #include "parser/ast/global/StructDeclaration.h"
 #include "parser/ast/global/GlobalDeclaration.h"
 #include "parser/ast/global/Namespace.h"
+#include "parser/ast/global/UsingDeclaration.h"
 #include "parser/ast/statement/ReturnStatement.h"
 #include "parser/ast/statement/VariableDeclaration.h"
 #include "parser/ast/statement/IfStatement.h"
@@ -81,6 +82,7 @@ namespace parser
         StructDeclarationPtr parseStructDeclaration();
         GlobalDeclarationPtr parseGlobalDeclaration();
         std::pair<std::vector<ASTNodePtr>, std::vector<GlobalSymbol>> parseImportStatement();
+        UsingDeclarationPtr parseUsingDeclaration();
 
         CompoundStatementPtr parseCompoundStatement();
         ReturnStatementPtr parseReturnStatement();

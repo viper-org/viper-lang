@@ -9,6 +9,7 @@
 #include <unordered_map>
 
 std::unordered_map<std::string, std::unique_ptr<Type>> types;
+std::unordered_map<std::string, Type*> aliases;
 
 void Type::Init()
 {
@@ -27,10 +28,25 @@ void Type::Init()
 
 bool Type::Exists(const std::string& name)
 {
-    return types.find(name) != types.end();
+    auto type = types.find(name);
+    if (type != types.end()) return true;
+
+    auto alias = aliases.find(name);
+    return alias != aliases.end();
+}
+
+void Type::AddAlias(const std::string& name, Type* type)
+{
+    aliases[name] = type;
 }
 
 Type* Type::Get(const std::string& name)
 {
-    return types.at(name).get();
+    auto type = types.find(name);
+    if (type != types.end()) return type->second.get();
+
+    auto alias =  aliases.find(name);
+    if (alias != aliases.end()) return alias->second;
+
+    return nullptr;
 }

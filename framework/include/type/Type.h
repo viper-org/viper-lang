@@ -26,6 +26,7 @@ public:
 
     static void Init();
     static bool Exists(const std::string& name);
+    static void AddAlias(const std::string& name, Type* type);
     static Type* Get(const std::string& name);
 
     std::string_view getName() { return mName; }
