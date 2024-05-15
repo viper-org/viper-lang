@@ -156,7 +156,16 @@ namespace parser
                 vipir::Value* pointerOperand = vipir::getPointerOperand(left);
                 checkAssignmentLvalue(pointerOperand, diag);
 
-                vipir::Value* add = builder.CreateAdd(left, right);
+                vipir::Value* add;
+                if (left->getType()->isPointerType())
+                {
+                    add = builder.CreateGEP(left, right);
+                }
+                else
+                {
+                    add = builder.CreateAdd(left, right);
+                }
+
                 return builder.CreateStore(pointerOperand, add);
             }
             case Operator::SubAssign:
