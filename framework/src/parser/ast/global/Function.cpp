@@ -1,19 +1,24 @@
 // Copyright 2024 solar-mist
 
 #include "parser/ast/global/Function.h"
+
 #include "parser/ast/statement/ReturnStatement.h"
+
 #include "symbol/NameMangling.h"
 
 #include <vipir/IR/Function.h>
 #include <vipir/IR/BasicBlock.h>
 #include <vipir/IR/Constant/ConstantInt.h>
+
+#include <algorithm>
 #include <cassert>
 #include <utility>
 
 namespace parser
 {
-    Function::Function(Type* returnType, std::vector<FunctionArgument> arguments, std::optional<std::string> struc, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope)
-        : mReturnType(returnType)
+    Function::Function(std::vector<GlobalAttribute> attributes, Type* returnType, std::vector<FunctionArgument> arguments, std::optional<std::string> struc, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope)
+        : mAttributes(std::move(attributes))
+        , mReturnType(returnType)
         , mArguments(std::move(arguments))
         , mStruct(std::move(struc))
         , mName(name)
@@ -44,7 +49,15 @@ namespace parser
             names.push_back(mStruct.value());
         names.push_back(mName);
 
-        std::string name = symbol::mangleFunctionName(names, std::move(manglingArguments));
+        bool mangled = std::find_if(mAttributes.begin(), mAttributes.end(), [](const auto& attribute){
+            return attribute.getType() == GlobalAttributeType::NoMangle;
+        }) == mAttributes.end();
+
+        std::string name;
+        if (mangled)
+            name = symbol::mangleFunctionName(names, std::move(manglingArguments));
+        else
+            name = mName;
 
         vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType(), argumentTypes);
         vipir::Function* func;
@@ -58,7 +71,7 @@ namespace parser
         else
         {
             func = vipir::Function::Create(functionType, module, name);
-            GlobalFunctions[name] = FunctionSymbol(func, false);
+            GlobalFunctions[name] = FunctionSymbol(func, false, mangled);
             GlobalFunctions[name].names = names;
         }
 

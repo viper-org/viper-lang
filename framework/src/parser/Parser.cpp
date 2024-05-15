@@ -96,6 +96,12 @@ namespace parser
 
     ASTNodePtr Parser::parseGlobal(std::vector<ASTNodePtr>& nodes)
     {
+        std::vector<GlobalAttribute> attributes;
+        if (current().getTokenType() == lexing::TokenType::DoubleLeftSquareBracket)
+        {
+            parseAttributes(attributes);
+        }
+
         if (current().getTokenType() == lexing::TokenType::ExportKeyword)
         {
             consume();
@@ -105,7 +111,7 @@ namespace parser
         switch (current().getTokenType())
         {
             case lexing::TokenType::FuncKeyword:
-                return parseFunction();
+                return parseFunction(attributes);
             case lexing::TokenType::StructKeyword:
                 return parseStructDeclaration();
             case lexing::TokenType::GlobalKeyword:
@@ -383,7 +389,7 @@ namespace parser
         return expression;
     }
 
-    FunctionPtr Parser::parseFunction()
+    FunctionPtr Parser::parseFunction(std::vector<GlobalAttribute> attributes)
     {
         consume();
 
@@ -459,7 +465,7 @@ namespace parser
         if (current().getTokenType() == lexing::TokenType::Semicolon) // Extern function declaration
         {
             consume();
-            return std::make_unique<Function>(type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
+            return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
         }
 
         expectToken(lexing::TokenType::LeftBracket);
@@ -476,7 +482,7 @@ namespace parser
 
         mScope = functionScope->parent;
 
-        return std::make_unique<Function>(type, std::move(arguments), std::move(struc), std::move(name), std::move(body), functionScope);
+        return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::move(body), functionScope);
     }
 
     NamespacePtr Parser::parseNamespace()
@@ -933,5 +939,31 @@ namespace parser
         consume();
 
         return std::make_unique<ArrayInitializer>(std::move(values));
+    }
+
+    void Parser::parseAttributes(std::vector<GlobalAttribute>& attributes)
+    {
+        consume(); // [[
+
+        while (current().getTokenType() != lexing::TokenType::DoubleRightSquareBracket)
+        {
+            lexing::Token token = consume();
+
+            if (token.getText() == "NoMangle")
+            {
+                attributes.push_back(GlobalAttribute(GlobalAttributeType::NoMangle));
+            }
+            else
+            {
+                mDiag.compilerError(token.getStart(), token.getEnd(), std::format("unknown attribute '{}{}{}'", fmt::bold, token.getText(), fmt::defaults));
+            }
+
+            if (current().getTokenType() != lexing::TokenType::DoubleRightSquareBracket)
+            {
+                expectToken(lexing::TokenType::Comma);
+                consume();
+            }
+        }
+        consume();
     }
 }

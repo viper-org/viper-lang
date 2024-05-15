@@ -76,7 +76,7 @@ namespace parser
         ASTNodePtr parsePrimary(Type* preferredType = nullptr);
         ASTNodePtr parseParenthesizedExpression(Type* preferredType = nullptr);
 
-        FunctionPtr parseFunction();
+        FunctionPtr parseFunction(std::vector<GlobalAttribute> attributes);
         NamespacePtr parseNamespace();
         StructDeclarationPtr parseStructDeclaration();
         GlobalDeclarationPtr parseGlobalDeclaration();
@@ -96,6 +96,8 @@ namespace parser
         MemberAccessPtr parseMemberAccess(ASTNodePtr struc, bool pointer);
         StructInitializerPtr parseStructInitializer();
         ArrayInitializerPtr parseArrayInitializer(Type* preferredType = nullptr);
+
+        void parseAttributes(std::vector<GlobalAttribute>& attributes);
     };
 }
 

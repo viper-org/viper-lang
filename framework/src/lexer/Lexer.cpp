@@ -187,8 +187,18 @@ namespace lexing
                 return Token(TokenType::RightBracket, start, location());
 
             case '[':
+                if (peek(1) == '[')
+                {
+                    consume();
+                    return Token(TokenType::DoubleLeftSquareBracket, start, location());
+                }
                 return Token(TokenType::LeftSquareBracket, start, location());
             case ']':
+                if (peek(1) == ']')
+                {
+                    consume();
+                    return Token(TokenType::DoubleRightSquareBracket, start, location());
+                }
                 return Token(TokenType::RightSquareBracket, start, location());
 
             case ';':

@@ -27,6 +27,7 @@ namespace Hello {
     }
 }
 
+[[NoMangle]]
 export func @testing() -> void {
     return;
 }

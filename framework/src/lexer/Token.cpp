@@ -50,10 +50,16 @@ namespace lexing
                 return "[";
             case TokenType::RightSquareBracket:
                 return "]";
+            case TokenType::DoubleLeftSquareBracket:
+                return "[[";
+            case TokenType::DoubleRightSquareBracket:
+                return "]]";
             case TokenType::Semicolon:
                 return ";";
             case TokenType::Colon:
                 return ":";
+            case TokenType::DoubleColon:
+                return "::";
             case TokenType::Comma:
                 return ",";
             case TokenType::Equals:

@@ -54,11 +54,13 @@ namespace parser
         Type* parseType();
 
         ASTNodePtr parseGlobal(std::vector<ASTNodePtr>& nodes);
-        FunctionPtr parseFunction(bool exported);
+        FunctionPtr parseFunction(bool exported, std::vector<GlobalAttribute> attributes);
         NamespacePtr parseNamespace();
         StructDeclarationPtr parseStructDeclaration(bool exported);
         GlobalDeclarationPtr parseGlobalDeclaration(bool exported);
         std::pair<std::vector<ASTNodePtr>, std::vector<GlobalSymbol>> parseImportStatement(bool exported);
+
+        void parseAttributes(std::vector<GlobalAttribute>& attributes);
     };
 }
 

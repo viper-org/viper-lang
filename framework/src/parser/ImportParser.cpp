@@ -97,6 +97,12 @@ namespace parser
 
     ASTNodePtr ImportParser::parseGlobal(std::vector<ASTNodePtr>& nodes)
     {
+        std::vector<GlobalAttribute> attributes;
+        if (current().getTokenType() == lexing::TokenType::DoubleLeftSquareBracket)
+        {
+            parseAttributes(attributes);
+        }
+
         bool exported = false;
         if (current().getTokenType() == lexing::TokenType::ExportKeyword)
         {
@@ -107,7 +113,7 @@ namespace parser
         switch (current().getTokenType())
         {
             case lexing::TokenType::FuncKeyword:
-                return parseFunction(exported);
+                return parseFunction(exported, attributes);
             case lexing::TokenType::StructKeyword:
                 return parseStructDeclaration(exported);
             case lexing::TokenType::GlobalKeyword:
@@ -176,7 +182,7 @@ namespace parser
         return type;
     }
 
-    FunctionPtr ImportParser::parseFunction(bool exported)
+    FunctionPtr ImportParser::parseFunction(bool exported, std::vector<GlobalAttribute> attributes)
     {
         consume();
 
@@ -247,7 +253,7 @@ namespace parser
         {
             consume();
             if (exported)
-                return std::make_unique<Function>(type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
+                return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
             return nullptr;
         }
 
@@ -263,7 +269,7 @@ namespace parser
         if (exported)
         {
             mSymbols.push_back({name, type});
-            return std::make_unique<Function>(type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
+            return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
         }
         return nullptr;
     }
@@ -447,5 +453,31 @@ namespace parser
             return mImportManager.ImportSymbols(path, mDiag);
         }
         return {};
+    }
+
+    void ImportParser::parseAttributes(std::vector<GlobalAttribute>& attributes)
+    {
+        consume(); // [[
+
+        while (current().getTokenType() != lexing::TokenType::DoubleRightSquareBracket)
+        {
+            lexing::Token token = consume();
+
+            if (token.getText() == "NoMangle")
+            {
+                attributes.push_back(GlobalAttribute(GlobalAttributeType::NoMangle));
+            }
+            else
+            {
+                mDiag.compilerError(token.getStart(), token.getEnd(), std::format("unknown attribute '{}{}{}'", fmt::bold, token.getText(), fmt::defaults));
+            }
+
+            if (current().getTokenType() != lexing::TokenType::DoubleRightSquareBracket)
+            {
+                expectToken(lexing::TokenType::Comma);
+                consume();
+            }
+        }
+        consume();
     }
 }

@@ -25,11 +25,12 @@ struct LocalSymbol
 struct FunctionSymbol
 {
     FunctionSymbol() = default;
-    FunctionSymbol(vipir::Function* function, bool priv);
+    FunctionSymbol(vipir::Function* function, bool priv, bool mangle = true);
 
     vipir::Function* function;
     std::vector<std::string> names;
     bool priv;
+    bool mangle;
 };
 struct GlobalSymbol
 {

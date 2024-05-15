@@ -15,9 +15,10 @@ LocalSymbol::LocalSymbol(vipir::AllocaInst* alloca, Type* type)
 {
 }
 
-FunctionSymbol::FunctionSymbol(vipir::Function* function, bool priv)
+FunctionSymbol::FunctionSymbol(vipir::Function* function, bool priv, bool mangle)
     : function(function)
     , priv(priv)
+    , mangle(mangle)
 {
 }
 
@@ -28,6 +29,10 @@ GlobalSymbol::GlobalSymbol(vipir::GlobalVar* global)
 
 FunctionSymbol* FindFunction(std::vector<std::string> names, std::vector<Type*> arguments)
 {
+    if (names[0] == "testing")
+    {
+        names[0];
+    }
     auto last = std::unique(names.begin(), names.end());
     names.erase(last, names.end());
     for (auto& [name, func] : GlobalFunctions)
@@ -45,8 +50,15 @@ FunctionSymbol* FindFunction(std::vector<std::string> names, std::vector<Type*> 
         }
         if (!hasNames) continue;
 
-        std::string mangledName = symbol::mangleFunctionName(names, arguments);
-        if (mangledName == name) return &func;
+        if (func.mangle)
+        {
+            std::string mangledName = symbol::mangleFunctionName(names, arguments);
+            if (mangledName == name) return &func;
+        }
+        else
+        {
+            if (names.back() == name) return &func;
+        }
     }
     return nullptr;
 }
