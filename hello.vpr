@@ -1,7 +1,7 @@
 namespace Hello {
     namespace Ball {
-        export func @balls() -> void {
-            return;
+        export func @balls() -> u32 {
+            return 6;
         }
     }
 

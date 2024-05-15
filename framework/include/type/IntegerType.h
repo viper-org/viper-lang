@@ -8,7 +8,7 @@
 class IntegerType : public Type
 {
 public:
-    IntegerType(int bits);
+    IntegerType(int bits, bool isSigned);
 
     int getSize() const override;
     vipir::Type* getVipirType() const override;
@@ -16,8 +16,11 @@ public:
 
     bool isIntegerType() const override;
 
+    bool isSigned() const;
+
 private:
     int mBits;
+    bool mSigned;
 };
 
 #endif // VIPER_FRAMEWORK_TYPE_INTEGER_TYPE_H

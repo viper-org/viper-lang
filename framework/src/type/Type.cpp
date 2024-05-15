@@ -12,10 +12,14 @@ std::unordered_map<std::string, std::unique_ptr<Type>> types;
 
 void Type::Init()
 {
-    types["i8"]  = std::make_unique<IntegerType>(8);
-    types["i16"] = std::make_unique<IntegerType>(16);
-    types["i32"] = std::make_unique<IntegerType>(32);
-    types["i64"] = std::make_unique<IntegerType>(64);
+    types["i8"]  = std::make_unique<IntegerType>(8, false);
+    types["i16"] = std::make_unique<IntegerType>(16, false);
+    types["i32"] = std::make_unique<IntegerType>(32, false);
+    types["i64"] = std::make_unique<IntegerType>(64, false);
+    types["u8"]  = std::make_unique<IntegerType>(8, true);
+    types["u16"] = std::make_unique<IntegerType>(16, true);
+    types["u32"] = std::make_unique<IntegerType>(32, true);
+    types["u64"] = std::make_unique<IntegerType>(64, true);
 
     types["void"] = std::make_unique<VoidType>();
     types["bool"] = std::make_unique<BooleanType>();

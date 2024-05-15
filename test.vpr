@@ -5,12 +5,12 @@ func @main() -> i32 {
 
     let var: i32 = Hello::hello();
     while (true) {
-        if (var + 1 == 50) continue;
+        if (var + 1 == 500) break;
         var += 1;
     }
 
     testing();
-    Hello::Ball::balls();
+    let blah: u32 = Hello::Ball::balls();
 
     return test.pubMethod(var);
 }

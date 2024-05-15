@@ -6,9 +6,10 @@
 
 #include <format>
 
-IntegerType::IntegerType(int bits)
-    : Type(std::format("i{}", bits))
+IntegerType::IntegerType(int bits, bool isSigned)
+    : Type(std::format("{}{}", (isSigned ? "i" : "u"), bits))
     , mBits(bits)
+    , mSigned(isSigned)
 {
 }
 
@@ -24,24 +25,36 @@ vipir::Type* IntegerType::getVipirType() const
 
 std::string IntegerType::getMangleID() const
 {
+    std::string ret;
+    if (!mSigned) ret = "u";
     switch (mBits)
     {
         case 8:
-            return "b"; // byte
+            ret += "b"; // byte
+            break;
         case 16:
-            return "s"; // short
+            ret += "s"; // short
+            break;
         case 32:
-            return "i"; // int
+            ret += "i"; // int
+            break;
         case 64:
-            return "l"; // long
+            ret += "l"; // long
+            break;
 
         default:
             std::cerr << "Warning: Unknown integer type size for mangling: " << mBits << ". Defaulting to 'I" << mBits << "'.\n";
-            return "I" + std::to_string(mBits);
+            return (mSigned ? "I" : "U") + std::to_string(mBits);
     }
+    return ret;
 }
 
 bool IntegerType::isIntegerType() const
 {
     return true;
+}
+
+bool IntegerType::isSigned() const
+{
+    return mSigned;
 }

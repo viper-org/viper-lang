@@ -3,8 +3,11 @@
 
 #include "parser/ast/expression/CastExpression.h"
 
+#include "type/IntegerType.h"
+
 #include <vipir/IR/Instruction/PtrCastInst.h>
 #include <vipir/IR/Instruction/SExtInst.h>
+#include <vipir/IR/Instruction/ZExtInst.h>
 #include <vipir/IR/Instruction/TruncInst.h>
 #include <vipir/IR/Instruction/IntToPtrInst.h>
 #include <vipir/IR/Instruction/PtrToIntInst.h>
@@ -29,35 +32,56 @@ namespace parser
             }
             else if (mOperand->getType()->isIntegerType())
             {
-                vipir::Value* ptrtoint = builder.CreateIntToPtr(operand, mType->getVipirType());
-                if (mOperand->getType()->getSize() > mType->getSize())
+                if (mOperand->getType()->getSize() < mType->getSize())
                 {
-                    return builder.CreateTrunc(ptrtoint, mType->getVipirType());
+                    auto operandIntegerType = static_cast<IntegerType*>(mOperand->getType());
+                    auto pointerIntegerType = vipir::Type::GetIntegerType(mType->getVipirType()->getSizeInBits());
+                    if (operandIntegerType->isSigned())
+                    {
+                        operand = builder.CreateSExt(operand, pointerIntegerType);
+                    }
+                    else
+                    {
+                        operand = builder.CreateZExt(operand, pointerIntegerType);
+                    }
                 }
-                return ptrtoint;
+                return builder.CreateIntToPtr(operand, mType->getVipirType());
             }
         }
         else if (mType->isIntegerType())
         {
+            auto integerType = static_cast<IntegerType*>(mType);
             if (mOperand->getType()->isIntegerType())
             {
+                auto operandIntegerType = static_cast<IntegerType*>(mOperand->getType());
+                
                 if (mType->getSize() > mOperand->getType()->getSize())
                 {
+                    if (operandIntegerType->isSigned())
+                    {
+                        return builder.CreateZExt(operand, mType->getVipirType());
+                    }
                     return builder.CreateSExt(operand, mType->getVipirType());
                 }
-                else
+                else if (mType->getSize() < mOperand->getType()->getSize())
                 {
                     return builder.CreateTrunc(operand, mType->getVipirType());
+                }
+                else if ((integerType->isSigned() && !operandIntegerType->isSigned()) ||
+                         (!integerType->isSigned() && operandIntegerType->isSigned()))
+                {
+                    return operand;
                 }
             }
             else if (mOperand->getType()->isPointerType())
             {
-                if (mOperand->getType()->getSize() < mType->getSize())
+                auto ptrtoint = builder.CreatePtrToInt(operand, mType->getVipirType());
+
+                if (mType->getSize() < mOperand->getType()->getSize())
                 {
-                    vipir::Type* pointerIntegerType = vipir::Type::GetIntegerType(mOperand->getType()->getVipirType()->getSizeInBits());
-                    operand = builder.CreateSExt(operand, pointerIntegerType);
+                    return builder.CreateTrunc(ptrtoint, mType->getVipirType());
                 }
-                return builder.CreatePtrToInt(operand, mType->getVipirType());
+                return ptrtoint;
             }
         }
 
