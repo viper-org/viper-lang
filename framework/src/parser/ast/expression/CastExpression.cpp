@@ -57,7 +57,7 @@ namespace parser
                 
                 if (mType->getSize() > mOperand->getType()->getSize())
                 {
-                    if (operandIntegerType->isSigned())
+                    if (!operandIntegerType->isSigned())
                     {
                         return builder.CreateZExt(operand, mType->getVipirType());
                     }
