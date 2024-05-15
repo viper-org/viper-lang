@@ -108,3 +108,12 @@ StructType* StructType::Create(std::vector<std::string> names, std::vector<Struc
     structTypes.push_back(std::make_unique<StructType>(names, std::move(fields)));
     return structTypes.back().get();
 }
+
+void StructType::Erase(Type* type)
+{
+    auto structType = static_cast<StructType*>(type);
+    
+    structTypes.erase(std::remove_if(structTypes.begin(), structTypes.end(), [structType](const auto& type){
+        return type.get() == structType;
+    }), structTypes.end());
+}

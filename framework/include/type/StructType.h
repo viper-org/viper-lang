@@ -35,6 +35,7 @@ public:
 
     static StructType* Get(std::vector<std::string> names);
     static StructType* Create(std::vector<std::string> names, std::vector<Field> fields);
+    static void Erase(Type* type);
 
 private:
     std::vector<std::string> mNames;

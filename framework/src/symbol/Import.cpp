@@ -48,7 +48,7 @@ namespace symbol
         lexing::Lexer lexer(buf.str(), importerDiag);
         auto tokens = lexer.lex();
 
-        parser::ImportParser parser(tokens, importerDiag, *this, true);
+        parser::ImportParser parser(tokens, importerDiag, *this);
         
         auto nodes = parser.parse();
         return {std::move(nodes), parser.getSymbols()};

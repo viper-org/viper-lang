@@ -24,7 +24,7 @@ namespace parser
     class ImportParser
     {
     public:
-        ImportParser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager, bool exportSymbols);
+        ImportParser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager);
 
         std::vector<ASTNodePtr> parse();
 
@@ -34,11 +34,11 @@ namespace parser
         std::vector<lexing::Token>& mTokens;
         int mPosition;
 
-        bool mExportSymbols;
         symbol::ImportManager& mImportManager;
 
         Scope* mScope;
         std::vector<GlobalSymbol> mSymbols;
+        std::vector<Type*> mStructTypesToRemove;
 
         diagnostic::Diagnostics& mDiag;
 

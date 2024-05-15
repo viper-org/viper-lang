@@ -18,9 +18,8 @@
 
 namespace parser
 {
-    ImportParser::ImportParser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager, bool exportSymbols)
+    ImportParser::ImportParser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager)
         : mTokens(tokens)
-        , mExportSymbols(exportSymbols)
         , mImportManager(importManager)
         , mPosition(0)
         , mScope(nullptr)
@@ -82,6 +81,10 @@ namespace parser
             {
                 result.push_back(std::move(node));
             }
+        }
+        for (auto type : mStructTypesToRemove)
+        {
+            StructType::Erase(type);
         }
 
         return result;
@@ -386,11 +389,10 @@ namespace parser
 
         std::vector<std::string> names = mNamespaces;
         names.push_back(name);
-        if (exported)
-        {
-            return std::make_unique<StructDeclaration>(std::move(names), std::move(fields), std::move(methods));
-        }
-        return nullptr;
+        auto decl = std::make_unique<StructDeclaration>(std::move(names), std::move(fields), std::move(methods));
+        if (!exported)
+            mStructTypesToRemove.push_back(decl->getType());
+        return std::move(decl);
     }
 
     GlobalDeclarationPtr ImportParser::parseGlobalDeclaration(bool exported)
