@@ -29,10 +29,6 @@ GlobalSymbol::GlobalSymbol(vipir::GlobalVar* global)
 
 FunctionSymbol* FindFunction(std::vector<std::string> names, std::vector<Type*> arguments)
 {
-    if (names[0] == "testing")
-    {
-        names[0];
-    }
     auto last = std::unique(names.begin(), names.end());
     names.erase(last, names.end());
     for (auto& [name, func] : GlobalFunctions)
