@@ -3,7 +3,7 @@ import hello;
 func @main() -> i32 {
     let test: struct Hello::Test = struct Hello::Test { 1, 2 };
 
-    let var: i32 = hey;
+    let var: i32 = Hello::hello();
     while (true) {
         if (var + 1 == 50) continue;
         var += 1;

@@ -1,5 +1,4 @@
 namespace Hello {
-
     namespace Ball {
         export func @balls() -> void {
             return;
@@ -10,7 +9,7 @@ namespace Hello {
         return 69;
     }
 
-    struct Test {
+    export struct Test {
         field: i32;
         private another: i32;
         
@@ -31,5 +30,3 @@ namespace Hello {
 export func @testing() -> void {
     return;
 }
-
-export global hey: i32 = 59;

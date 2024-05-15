@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 
     std::vector<lexing::Token> tokens = lexer.lex();
 
-    parser::Parser parser(tokens, diag, importManager, false);
+    parser::Parser parser(tokens, diag, importManager);
     
     vipir::IRBuilder builder;
     vipir::Module module(inputFilePath);
