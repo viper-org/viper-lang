@@ -34,7 +34,6 @@ namespace parser
 {
     struct GlobalSymbol
     {
-        bool exported;
         std::string name;
         Type* type;
     };
@@ -42,22 +41,18 @@ namespace parser
     class Parser
     {
     public:
-        Parser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager, bool exportSymbols);
+        Parser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager);
 
         std::vector<ASTNodePtr> parse();
-
-        std::vector<GlobalSymbol> getSymbols();
 
     private:
         std::vector<lexing::Token>& mTokens;
         int mPosition;
 
-        bool mExportSymbols;
         symbol::ImportManager& mImportManager;
 
         Scope* mScope;
         std::vector<GlobalSymbol> mSymbols;
-        bool mExportGlobal;
 
         diagnostic::Diagnostics& mDiag;
 

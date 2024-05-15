@@ -7,6 +7,7 @@
 #include "lexer/Token.h"
 
 #include "parser/Parser.h"
+#include "parser/ImportParser.h"
 
 #include <fstream>
 
@@ -47,7 +48,7 @@ namespace symbol
         lexing::Lexer lexer(buf.str(), importerDiag);
         auto tokens = lexer.lex();
 
-        parser::Parser parser(tokens, importerDiag, *this, true);
+        parser::ImportParser parser(tokens, importerDiag, *this, true);
         
         auto nodes = parser.parse();
         return {std::move(nodes), parser.getSymbols()};

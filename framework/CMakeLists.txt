@@ -12,6 +12,7 @@ set(SOURCES
     "src/lexer/Token.cpp"
 
     "src/parser/Parser.cpp"
+    "src/parser/ImportParser.cpp"
     "src/parser/ast/global/Function.cpp"
     "src/parser/ast/global/StructDeclaration.cpp"
     "src/parser/ast/global/GlobalDeclaration.cpp"
@@ -58,6 +59,7 @@ set(HEADERS
     "include/lexer/Token.h"
 
     "include/parser/Parser.h"
+    "include/parser/ImportParser.h"
     "include/parser/ast/Node.h"
     "include/parser/ast/global/Function.h"
     "include/parser/ast/global/StructDeclaration.h"
