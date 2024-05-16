@@ -318,10 +318,15 @@ namespace parser
 
         expectToken(lexing::TokenType::Identifier);
         std::string name = consume().getText();
+        std::vector<std::string> names = mNamespaces;
+        names.push_back(name);
 
         expectToken(lexing::TokenType::LeftBracket);
         consume();
 
+        StructType* structType = StructType::Create(names, {});
+
+        std::vector<StructType::Field>& fieldTypes = structType->getFields();
         std::vector<StructField> fields;
         std::vector<StructMethod> methods;
         while (current().getTokenType() != lexing::TokenType::RightBracket)
@@ -391,6 +396,7 @@ namespace parser
 
                 Type* type = parseType();
 
+                fieldTypes.push_back({priv, name, type});
                 fields.push_back({priv, std::move(name), type});
 
                 expectToken(lexing::TokenType::Semicolon);
@@ -399,8 +405,6 @@ namespace parser
         }
         consume();
 
-        std::vector<std::string> names = mNamespaces;
-        names.push_back(name);
         auto decl = std::make_unique<StructDeclaration>(std::move(names), std::move(fields), std::move(methods));
         if (!exported)
             mStructTypesToRemove.push_back(decl->getType());

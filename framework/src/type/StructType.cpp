@@ -26,7 +26,7 @@ std::vector<std::string> StructType::getNames() const
     return mNames;
 }
 
-const std::vector<StructType::Field>& StructType::getFields() const
+std::vector<StructType::Field>& StructType::getFields()
 {
     return mFields;
 }

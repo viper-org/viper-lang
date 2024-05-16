@@ -18,13 +18,7 @@ namespace parser
         , mFields(std::move(fields))
         , mMethods(std::move(methods))
     {
-        std::vector<StructType::Field> fieldTypes;
-        for (auto& field : mFields)
-        {
-            fieldTypes.push_back({field.priv, field.name, field.type});
-        }
-
-        mType = StructType::Create(mNames, std::move(fieldTypes));
+        mType = StructType::Get(mNames);
     }
 
     std::vector<StructField>& StructDeclaration::getFields()
@@ -52,6 +46,7 @@ namespace parser
                 manglingArguments.push_back(argument.type);
                 argumentTypes.push_back(argument.type->getVipirType());
             }
+
             vipir::FunctionType* functionType = vipir::FunctionType::Create(method.returnType->getVipirType(), argumentTypes);
             std::vector<std::string> names = mNames;
             names.push_back(method.name);

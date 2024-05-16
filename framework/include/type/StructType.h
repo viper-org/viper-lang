@@ -22,7 +22,7 @@ public:
     std::string_view getName() const;
     std::vector<std::string> getNames() const;
 
-    const std::vector<Field>& getFields() const;
+    std::vector<Field>& getFields();
     bool hasField(std::string_view fieldName);
     Field& getField(std::string_view fieldName);
     int getFieldOffset(std::string fieldName);
