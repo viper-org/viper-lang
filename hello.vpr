@@ -9,7 +9,7 @@ namespace Hello {
         return 69;
     }
 
-    export struct Test {
+    export using struct Test {
         field: i32;
         private another: i32;
         
@@ -26,7 +26,7 @@ namespace Hello {
         return this->another + balls;
     }
 
-    export using struc = struct Test;
+    export using struc = Test;
 }
 
 [[NoMangle]]

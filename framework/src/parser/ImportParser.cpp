@@ -129,6 +129,14 @@ namespace parser
             case lexing::TokenType::NamespaceKeyword:
                 return parseNamespace();
             case lexing::TokenType::UsingKeyword:
+                if (peek(1).getTokenType() == lexing::TokenType::StructKeyword)
+                {
+                    consume();
+                    StructDeclarationPtr structDecl = parseStructDeclaration(exported);
+                    if (exported)
+                        Type::AddAlias(structDecl->getNames(), structDecl->getType());
+                    return structDecl;
+                }
                 return parseUsingDeclaration(exported);
             default:
                 mDiag.compilerError(current().getStart(), current().getEnd(), "Unexpected token. Expected global statement");

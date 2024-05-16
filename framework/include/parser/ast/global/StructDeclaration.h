@@ -32,6 +32,7 @@ namespace parser
 
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
+        std::vector<std::string>& getNames();
         std::vector<StructField>& getFields();
         std::vector<StructMethod>& getMethods();
 

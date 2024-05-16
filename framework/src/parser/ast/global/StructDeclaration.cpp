@@ -32,6 +32,11 @@ namespace parser
         symbol::AddIdentifier(mType->getMangleID(), mNames);
     }
 
+    std::vector<std::string>& StructDeclaration::getNames()
+    {
+        return mNames;
+    }
+
     std::vector<StructField>& StructDeclaration::getFields()
     {
         return mFields;
