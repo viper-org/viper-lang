@@ -26,7 +26,7 @@ std::vector<std::string> StructType::getNames() const
     return mNames;
 }
 
-const std::vector<StructType::Field>& StructType::getFields() const
+std::vector<StructType::Field>& StructType::getFields()
 {
     return mFields;
 }
@@ -54,13 +54,13 @@ int StructType::getFieldOffset(std::string fieldName)
 
 int StructType::getSize() const
 {
-    return 64;
+    return getVipirType()->getSizeInBits();
 }
 
 vipir::Type* StructType::getVipirType() const
 {
     std::vector<vipir::Type*> fieldTypes;
-    for (auto [_, _x, field] : mFields)
+    for (const auto& [_, _x, field] : mFields)
     {
         fieldTypes.push_back(field->getVipirType());
     }

@@ -37,6 +37,7 @@ namespace lexing
         { "namespace",  TokenType::NamespaceKeyword },
         { "export",     TokenType::ExportKeyword },
         { "using",      TokenType::UsingKeyword },
+        { "sizeof",     TokenType::SizeofKeyword },
     };
 
     std::vector<Token> Lexer::lex()
@@ -280,6 +281,23 @@ namespace lexing
                 return Token(TokenType::Tilde, start, location());
             case '*':
                 return Token(TokenType::Star, start, location());
+            case '/':
+                if (peek(1) == '/')
+                {
+                    while (current() != '\n')
+                        consume();
+                    return std::nullopt;
+                }
+                else if (peek(1) == '*')
+                {
+                    mPosition += 2;
+                    while (current() != '*' && peek(1) != '/')
+                        consume();
+                    consume();
+                    return std::nullopt;
+                }
+
+                return Token(TokenType::Error, std::string(1, current()), start, location());; // division at some point
 
             case '"':
             {

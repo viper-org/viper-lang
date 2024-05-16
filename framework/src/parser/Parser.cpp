@@ -406,6 +406,9 @@ namespace parser
                 consume();
                 return std::make_unique<NullptrLiteral>(preferredType);
 
+            case lexing::TokenType::SizeofKeyword:
+                return parseSizeof(preferredType);
+
             case lexing::TokenType::IntegerLiteral:
                 return parseIntegerLiteral(preferredType);
             case lexing::TokenType::StringLiteral:
@@ -574,10 +577,15 @@ namespace parser
 
         expectToken(lexing::TokenType::Identifier);
         std::string name = consume().getText();
+        std::vector<std::string> names = mNamespaces;
+        names.push_back(name);
 
         expectToken(lexing::TokenType::LeftBracket);
         consume();
 
+        StructType* structType = StructType::Create(names, {});
+
+        std::vector<StructType::Field>& fieldTypes = structType->getFields();
         std::vector<StructField> fields;
         std::vector<StructMethod> methods;
         while (current().getTokenType() != lexing::TokenType::RightBracket)
@@ -670,6 +678,7 @@ namespace parser
 
                 Type* type = parseType();
 
+                fieldTypes.push_back({priv, name, type});
                 fields.push_back({priv, std::move(name), type});
 
                 expectToken(lexing::TokenType::Semicolon);
@@ -678,8 +687,6 @@ namespace parser
         }
         consume();
 
-        std::vector<std::string> names = mNamespaces;
-        names.push_back(name);
         return std::make_unique<StructDeclaration>(std::move(names), std::move(fields), std::move(methods));
     }
 
@@ -904,6 +911,20 @@ namespace parser
         mScope = forScope->parent;
 
         return std::make_unique<ForStatement>(std::move(init), std::move(condition), std::move(loopExpr), std::move(body), forScope);
+    }
+
+    SizeofExpressionPtr Parser::parseSizeof(Type* preferredType)
+    {
+        consume();
+        expectToken(lexing::TokenType::LeftParen);
+        consume();
+
+        Type* type = parseType();
+
+        expectToken(lexing::TokenType::RightParen);
+        consume();
+
+        return std::make_unique<SizeofExpression>(preferredType, type);
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral(Type* preferredType)
