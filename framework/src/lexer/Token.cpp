@@ -142,6 +142,8 @@ namespace lexing
                 return "using";
             case TokenType::SizeofKeyword:
                 return "sizeof";
+            case TokenType::EnumKeyword:
+                return "enum";
             case TokenType::Error:
                 return mText;
         }
