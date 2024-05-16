@@ -6,6 +6,8 @@
 
 #include "symbol/Identifier.h"
 
+#include <vipir/IR/Instruction/LoadInst.h>
+
 namespace parser
 {
     ScopeResolution::ScopeResolution(ASTNodePtr left, lexing::Token token, ASTNodePtr right)
@@ -44,7 +46,10 @@ namespace parser
         {
             if (GlobalVariables.find(symbol) != GlobalVariables.end())
             {
-                return GlobalVariables[symbol].global;
+                vipir::Value* value = GlobalVariables[symbol].global;
+                if (value->isConstant()) return value;
+
+                if (value->getType()->isPointerType()) return builder.CreateLoad(value); // TODO: Something better than this
             }
         }
 

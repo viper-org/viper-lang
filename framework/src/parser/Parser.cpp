@@ -699,7 +699,8 @@ namespace parser
         consume(); // global
 
         expectToken(lexing::TokenType::Identifier);
-        std::string name = consume().getText();
+        std::vector<std::string> names = mNamespaces;
+        names.push_back(consume().getText());
 
         expectToken(lexing::TokenType::Colon);
         consume();
@@ -714,9 +715,9 @@ namespace parser
         expectToken(lexing::TokenType::Semicolon);
         consume();
 
-        mSymbols.push_back({name, type});
+        mSymbols.push_back({names.back(), type});
 
-        return std::make_unique<GlobalDeclaration>(std::move(name), type, std::move(initVal));
+        return std::make_unique<GlobalDeclaration>(std::move(names), type, std::move(initVal));
     }
 
     std::pair<std::vector<ASTNodePtr>, std::vector<GlobalSymbol>> Parser::parseImportStatement()

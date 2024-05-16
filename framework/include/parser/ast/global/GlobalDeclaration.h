@@ -10,12 +10,12 @@ namespace parser
     class GlobalDeclaration : public ASTNode
     {
     public:
-        GlobalDeclaration(std::string name, Type* type, ASTNodePtr initVal);
+        GlobalDeclaration(std::vector<std::string> names, Type* type, ASTNodePtr initVal);
 
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
-        std::string mName;
+        std::vector<std::string> mNames;
         ASTNodePtr mInitVal;
     };
     using GlobalDeclarationPtr = std::unique_ptr<GlobalDeclaration>;

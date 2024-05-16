@@ -465,7 +465,8 @@ namespace parser
         consume(); // global
 
         expectToken(lexing::TokenType::Identifier);
-        std::string name = consume().getText();
+        std::vector<std::string> names = mNamespaces;
+        names.push_back(consume().getText());
 
         expectToken(lexing::TokenType::Colon);
         consume();
@@ -483,8 +484,8 @@ namespace parser
 
         if (exported)
         {
-            mSymbols.push_back({name, type});
-            return std::make_unique<GlobalDeclaration>(std::move(name), type, nullptr); // TODO: Extern
+            mSymbols.push_back({names.back(), type});
+            return std::make_unique<GlobalDeclaration>(std::move(names), type, nullptr); // TODO: Extern
         }
         return nullptr;
     }

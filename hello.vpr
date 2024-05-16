@@ -29,7 +29,7 @@ namespace Hello {
     export using struc = Test;
 
     export enum TestEnum {
-        A,
+        A = 500,
         B
     }
 }

@@ -1,5 +1,9 @@
 import hello;
 
+namespace Foo {
+    global x: i32 = 500;
+}
+
 /*
     Very advanced node data structure
 */
@@ -8,7 +12,7 @@ func @main() -> i32 {
 
     let var: i32 = sizeof(Hello::struc);
     while (true) {
-        if (var + 1 == Hello::TestEnum::B) break;
+        if (var + 1 == Foo::x) break;
         var += 1;
     }
 
