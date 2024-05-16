@@ -295,7 +295,7 @@ namespace lexing
                     return std::nullopt;
                 }
 
-                return std::nullopt; // division at some point
+                return Token(TokenType::Error, std::string(1, current()), start, location());; // division at some point
 
             case '"':
             {
