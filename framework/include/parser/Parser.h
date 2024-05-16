@@ -22,6 +22,7 @@
 #include "parser/ast/expression/MemberAccess.h"
 #include "parser/ast/expression/StructInitializer.h"
 #include "parser/ast/expression/ArrayInitializer.h"
+#include "parser/ast/expression/SizeofExpression.h"
 
 #include "lexer/Token.h"
 
@@ -91,6 +92,7 @@ namespace parser
         WhileStatementPtr parseWhileStatement();
         ForStatementPtr parseForStatement();
 
+        SizeofExpressionPtr parseSizeof(Type* preferredType = nullptr);
         IntegerLiteralPtr parseIntegerLiteral(Type* preferredType = nullptr);
         StringLiteralPtr parseStringLiteral();
         VariableExpressionPtr parseVariableExpression(Type* preferredType = nullptr);

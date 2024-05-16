@@ -40,6 +40,7 @@ set(SOURCES
     "src/parser/ast/expression/ArrayInitializer.cpp"
     "src/parser/ast/expression/CastExpression.cpp"
     "src/parser/ast/expression/ScopeResolution.cpp"
+    "src/parser/ast/expression/SizeofExpression.cpp"
 
     "src/type/Type.cpp"
     "src/type/IntegerType.cpp"
@@ -90,6 +91,7 @@ set(HEADERS
     "include/parser/ast/expression/ArrayInitializer.h"
     "include/parser/ast/expression/CastExpression.h"
     "include/parser/ast/expression/ScopeResolution.h"
+    "include/parser/ast/expression/SizeofExpression.h"
 
     "include/type/Type.h"
     "include/type/IntegerType.h"
@@ -104,6 +106,7 @@ set(HEADERS
     "include/symbol/Import.h"
 
     "include/diagnostic/Diagnostic.h"
+    src/parser/ast/expression/SizeofExpression.cpp
 )
 
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})

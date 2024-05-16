@@ -366,6 +366,9 @@ namespace parser
                 consume();
                 return std::make_unique<NullptrLiteral>(preferredType);
 
+            case lexing::TokenType::SizeofKeyword:
+                return parseSizeof(preferredType);
+
             case lexing::TokenType::IntegerLiteral:
                 return parseIntegerLiteral(preferredType);
             case lexing::TokenType::StringLiteral:
@@ -862,6 +865,20 @@ namespace parser
         mScope = forScope->parent;
 
         return std::make_unique<ForStatement>(std::move(init), std::move(condition), std::move(loopExpr), std::move(body), forScope);
+    }
+
+    SizeofExpressionPtr Parser::parseSizeof(Type* preferredType)
+    {
+        consume();
+        expectToken(lexing::TokenType::LeftParen);
+        consume();
+
+        Type* type = parseType();
+
+        expectToken(lexing::TokenType::RightParen);
+        consume();
+
+        return std::make_unique<SizeofExpression>(preferredType, type);
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral(Type* preferredType)

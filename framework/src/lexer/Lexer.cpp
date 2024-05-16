@@ -37,6 +37,7 @@ namespace lexing
         { "namespace",  TokenType::NamespaceKeyword },
         { "export",     TokenType::ExportKeyword },
         { "using",      TokenType::UsingKeyword },
+        { "sizeof",     TokenType::SizeofKeyword },
     };
 
     std::vector<Token> Lexer::lex()
@@ -292,6 +293,7 @@ namespace lexing
                     mPosition += 2;
                     while (current() != '*' && peek(1) != '/')
                         consume();
+                    consume();
                     return std::nullopt;
                 }
 

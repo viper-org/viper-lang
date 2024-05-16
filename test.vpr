@@ -3,15 +3,10 @@ import hello;
 /*
     Very advanced node data structure
 */
-struct Node {
-    next: struct Node*;
-}
-using Node = struct Node;
-
 func @main() -> i32 {
     let test: struc = struct Hello::Test { 1, 2 };
 
-    let var: i32 = Hello::hello() / 2; // why does this compile lmao
+    let var: i32 = sizeof(struc);
     while (true) {
         if (var + 1 == 500) break;
         var += 1;
@@ -19,9 +14,6 @@ func @main() -> i32 {
 
     testing();
     let blah: u32 = Hello::Ball::balls();
-
-    let node: Node;
-    let node1: Node = struct Node { &node };
 
     return test.pubMethod(var);
 }

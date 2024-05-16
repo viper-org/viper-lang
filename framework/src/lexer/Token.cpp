@@ -140,6 +140,8 @@ namespace lexing
                 return "export";
             case TokenType::UsingKeyword:
                 return "using";
+            case TokenType::SizeofKeyword:
+                return "sizeof";
             case TokenType::Error:
                 return mText;
         }
