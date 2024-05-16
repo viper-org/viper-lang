@@ -2,9 +2,12 @@
 
 
 #include "parser/ast/global/StructDeclaration.h"
-#include "symbol/NameMangling.h"
+
 #include "type/StructType.h"
 #include "type/PointerType.h"
+
+#include "symbol/NameMangling.h"
+#include "symbol/Identifier.h"
 
 #include <vipir/IR/BasicBlock.h>
 #include <vipir/Type/FunctionType.h>
@@ -25,6 +28,8 @@ namespace parser
         }
 
         mType = StructType::Create(mNames, std::move(fieldTypes));
+
+        symbol::AddIdentifier(mType->getMangleID(), mNames);
     }
 
     std::vector<StructField>& StructDeclaration::getFields()
@@ -53,13 +58,13 @@ namespace parser
                 argumentTypes.push_back(argument.type->getVipirType());
             }
             vipir::FunctionType* functionType = vipir::FunctionType::Create(method.returnType->getVipirType(), argumentTypes);
+
             std::vector<std::string> names = mNames;
             names.push_back(method.name);
             std::string name = symbol::mangleFunctionName(names, std::move(manglingArguments));
 
             vipir::Function* func = vipir::Function::Create(functionType, module, name);
-            GlobalFunctions[name] = FunctionSymbol(func, method.priv);
-            GlobalFunctions[name].names = names;
+            FunctionSymbol::Create(func, name, names, method.priv);
 
             if (method.body.empty())
             {

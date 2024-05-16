@@ -25,9 +25,9 @@ namespace Hello {
     func Test@method(balls: i32) -> i32 {
         return this->another + balls;
     }
-}
 
-export using struc = struct Hello::Test;
+    export using struc = struct Test;
+}
 
 [[NoMangle]]
 export func @testing() -> void {

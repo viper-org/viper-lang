@@ -46,9 +46,8 @@ namespace parser
         if (VariableExpression* variable = dynamic_cast<VariableExpression*>(mFunction.get()))
         {
             std::string name = variable->mName;
-            namespaceNames.push_back(name);
 
-            vipir::Function* function = FindFunction(namespaceNames, manglingArguments)->function;
+            vipir::Function* function = FindFunction({name}, namespaceNames, manglingArguments)->function;
 
             return builder.CreateCall(function, std::move(parameters));
         }
@@ -60,8 +59,7 @@ namespace parser
             std::string methodName = member->mField;
 
             std::vector<std::string> structNames = structType->getNames();
-            std::copy(structNames.begin(), structNames.end(), std::back_inserter(namespaceNames));
-            namespaceNames.push_back(methodName);
+            structNames.push_back(methodName);
 
             vipir::Value* value = member->mStruct->emit(builder, module, scope, diag);
 
@@ -91,7 +89,7 @@ namespace parser
                 manglingArguments.insert(manglingArguments.begin(), mParameters[0]->getType());
             }
 
-            FunctionSymbol* func = FindFunction(namespaceNames, manglingArguments);
+            FunctionSymbol* func = FindFunction(structNames, namespaceNames, manglingArguments);
 
             if (func == nullptr)
             {
@@ -111,9 +109,8 @@ namespace parser
         else if (auto scopeRes = dynamic_cast<ScopeResolution*>(mFunction.get()))
         {
             auto names = scopeRes->getNames();
-            std::move(names.begin(), names.end(), std::back_inserter(namespaceNames));
 
-            FunctionSymbol* func = FindFunction(namespaceNames, manglingArguments);
+            FunctionSymbol* func = FindFunction(names, namespaceNames, manglingArguments);
 
             return builder.CreateCall(func->function, std::move(parameters));
         }

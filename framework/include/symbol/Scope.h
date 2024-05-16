@@ -31,6 +31,8 @@ struct FunctionSymbol
     std::vector<std::string> names;
     bool priv;
     bool mangle;
+
+    static void Create(vipir::Function* function, std::string mangledName, std::vector<std::string> names, bool priv, bool mangle = true);
 };
 struct GlobalSymbol
 {
@@ -41,7 +43,7 @@ struct GlobalSymbol
 };
 extern std::unordered_map<std::string, FunctionSymbol> GlobalFunctions;
 extern std::unordered_map<std::string, GlobalSymbol> GlobalVariables;
-FunctionSymbol* FindFunction(std::vector<std::string> names, std::vector<Type*> arguments);
+FunctionSymbol* FindFunction(std::vector<std::string> givenNames, std::vector<std::string> activeNames, std::vector<Type*> arguments);
 
 struct Scope
 {

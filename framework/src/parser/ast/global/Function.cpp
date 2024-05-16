@@ -71,8 +71,7 @@ namespace parser
         else
         {
             func = vipir::Function::Create(functionType, module, name);
-            GlobalFunctions[name] = FunctionSymbol(func, false, mangled);
-            GlobalFunctions[name].names = names;
+            FunctionSymbol::Create(func, name, names, false, mangled);
         }
 
         if (mBody.empty())

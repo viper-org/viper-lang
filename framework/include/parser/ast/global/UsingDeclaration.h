@@ -10,12 +10,12 @@ namespace parser
     class UsingDeclaration : public ASTNode
     {
     public:
-        UsingDeclaration(std::string_view name, Type* type);
+        UsingDeclaration(std::vector<std::string> names, Type* type);
 
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
-        std::string mName;
+        std::vector<std::string> mNames;
         Type* mType;
     };
     using UsingDeclarationPtr = std::unique_ptr<UsingDeclaration>;

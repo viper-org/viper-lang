@@ -6,6 +6,8 @@
 #include "type/VoidType.h"
 #include "type/BooleanType.h"
 
+#include "symbol/Identifier.h"
+
 #include <unordered_map>
 
 std::unordered_map<std::string, std::unique_ptr<Type>> types;
@@ -35,9 +37,18 @@ bool Type::Exists(const std::string& name)
     return alias != aliases.end();
 }
 
-void Type::AddAlias(const std::string& name, Type* type)
+void Type::AddAlias(std::vector<std::string> names, Type* type)
 {
-    aliases[name] = type;
+    std::string mangledName = "_U";
+    for (auto name : names)
+    {
+        mangledName += std::to_string(name.length());
+        mangledName += name;
+    }
+    mangledName += type->getMangleID();
+    symbol::AddIdentifier(mangledName, names);
+
+    aliases[mangledName] = type;
 }
 
 Type* Type::Get(const std::string& name)

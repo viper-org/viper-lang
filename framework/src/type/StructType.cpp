@@ -85,10 +85,10 @@ bool StructType::isStructType() const
 
 static std::vector<std::unique_ptr<StructType> > structTypes;
 
-StructType* StructType::Get(std::vector<std::string> names)
+StructType* StructType::Get(std::string name)
 {
-    auto it = std::find_if(structTypes.begin(), structTypes.end(), [&names](const auto& type){
-        return type->mNames == names;
+    auto it = std::find_if(structTypes.begin(), structTypes.end(), [&name](const auto& type){
+        return type->getMangleID() == name;
     });
     if (it == structTypes.end()) return nullptr;
     return it->get();
