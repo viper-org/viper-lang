@@ -1,5 +1,8 @@
 import hello;
 
+/*
+    Very advanced node data structure
+*/
 struct Node {
     next: struct Node*;
 }
@@ -8,7 +11,7 @@ using Node = struct Node;
 func @main() -> i32 {
     let test: struc = struct Hello::Test { 1, 2 };
 
-    let var: i32 = Hello::hello();
+    let var: i32 = Hello::hello() / 2; // why does this compile lmao
     while (true) {
         if (var + 1 == 500) break;
         var += 1;

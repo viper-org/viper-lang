@@ -280,6 +280,22 @@ namespace lexing
                 return Token(TokenType::Tilde, start, location());
             case '*':
                 return Token(TokenType::Star, start, location());
+            case '/':
+                if (peek(1) == '/')
+                {
+                    while (current() != '\n')
+                        consume();
+                    return std::nullopt;
+                }
+                else if (peek(1) == '*')
+                {
+                    mPosition += 2;
+                    while (current() != '*' && peek(1) != '/')
+                        consume();
+                    return std::nullopt;
+                }
+
+                return std::nullopt; // division at some point
 
             case '"':
             {
