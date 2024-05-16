@@ -1,5 +1,10 @@
 import hello;
 
+struct Node {
+    next: struct Node*;
+}
+using Node = struct Node;
+
 func @main() -> i32 {
     let test: struc = struct Hello::Test { 1, 2 };
 
@@ -11,6 +16,9 @@ func @main() -> i32 {
 
     testing();
     let blah: u32 = Hello::Ball::balls();
+
+    let node: Node;
+    let node1: Node = struct Node { &node };
 
     return test.pubMethod(var);
 }
