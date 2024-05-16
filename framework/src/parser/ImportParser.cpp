@@ -6,6 +6,7 @@
 
 #include "lexer/Token.h"
 
+#include "symbol/Identifier.h"
 #include "symbol/Import.h"
 
 #include "type/PointerType.h"
@@ -128,6 +129,14 @@ namespace parser
             case lexing::TokenType::NamespaceKeyword:
                 return parseNamespace();
             case lexing::TokenType::UsingKeyword:
+                if (peek(1).getTokenType() == lexing::TokenType::StructKeyword)
+                {
+                    consume();
+                    StructDeclarationPtr structDecl = parseStructDeclaration(exported);
+                    if (exported)
+                        Type::AddAlias(structDecl->getNames(), structDecl->getType());
+                    return structDecl;
+                }
                 return parseUsingDeclaration(exported);
             default:
                 mDiag.compilerError(current().getStart(), current().getEnd(), "Unexpected token. Expected global statement");
@@ -136,7 +145,7 @@ namespace parser
 
     Type* ImportParser::parseType()
     {
-        Type* type;
+        Type* type = nullptr;
         if (current().getTokenType() == lexing::TokenType::StructKeyword)
         {
             consume();
@@ -151,7 +160,12 @@ namespace parser
                     consume();
                 }
             }
-            type = StructType::Get(names);
+            std::vector<std::string> types = symbol::GetSymbol(names, mNamespaces);
+            for (auto& name : types)
+            {
+                type = StructType::Get(name);
+                if (type) break;
+            }
             if (!type)
             {
                 mDiag.compilerError(peek(-1).getStart(), peek(-1).getEnd(), std::format("unknown type name '{}{}{}'", fmt::bold, names.back(), fmt::defaults));
@@ -159,11 +173,38 @@ namespace parser
         }
         else
         {
-            lexing::Token token = consume();
-            type = Type::Get(token.getText());
+            std::vector<std::string> names;
+            if (current().getTokenType() == lexing::TokenType::Type)
+            {
+                names.push_back(consume().getText());
+            }
+            else
+            {
+                while (current().getTokenType() == lexing::TokenType::Identifier)
+                {
+                    names.push_back(consume().getText());
+                    if (peek(1).getTokenType() == lexing::TokenType::Identifier)
+                    {
+                        expectToken(lexing::TokenType::DoubleColon);
+                        consume();
+                    }
+                }
+            }
+
+            std::vector<std::string> types = symbol::GetSymbol(names, mNamespaces);
+
+            lexing::Token token = peek(-1);
+            for (auto& name : types)
+            {
+                type = Type::Get(name);
+                if (type) break;
+            }
             if (!type)
             {
-                mDiag.compilerError(token.getStart(), token.getEnd(), std::format("unknown type name '{}{}{}'", fmt::bold, token.getText(), fmt::defaults));
+                type = Type::Get(names.front());
+
+                if (!type)
+                    mDiag.compilerError(token.getStart(), token.getEnd(), std::format("unknown type name '{}{}{}'", fmt::bold, token.getText(), fmt::defaults));
             }
         }
 
@@ -217,8 +258,13 @@ namespace parser
         {
             std::vector<std::string> names = mNamespaces;
             names.push_back(struc.value());
+            std::vector<std::string> types = symbol::GetSymbol(names, {});
+            for (auto name : types)
+            {
+                structType = StructType::Get(name);
+                if (structType) break;
+            }
 
-            structType = StructType::Get(std::move(names));
             if (!structType)
             {
                 mDiag.compilerError(structNameToken->getStart(),structNameToken->getEnd(), std::format("unknown type name {}", *struc));
@@ -469,7 +515,8 @@ namespace parser
     {
         consume(); // using
 
-        std::string name = consume().getText();
+        std::vector<std::string> names = mNamespaces;
+        names.push_back(consume().getText());
 
         expectToken(lexing::TokenType::Equals);
         consume();
@@ -480,7 +527,7 @@ namespace parser
         consume();
 
         if (exported)
-            return std::make_unique<UsingDeclaration>(std::move(name), type);
+            return std::make_unique<UsingDeclaration>(std::move(names), type);
 
         return nullptr;
     }

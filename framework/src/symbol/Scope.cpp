@@ -3,6 +3,7 @@
 
 #include "symbol/Scope.h"
 #include "symbol/NameMangling.h"
+#include "symbol/Identifier.h"
 
 #include <algorithm>
 
@@ -22,40 +23,31 @@ FunctionSymbol::FunctionSymbol(vipir::Function* function, bool priv, bool mangle
 {
 }
 
+void FunctionSymbol::Create(vipir::Function* function, std::string mangledName, std::vector<std::string> names, bool priv, bool mangle)
+{
+    symbol::AddIdentifier(mangledName, names);
+
+    GlobalFunctions[mangledName] = FunctionSymbol(function, priv, mangle);
+    GlobalFunctions[mangledName].names = std::move(names);
+}
+
 GlobalSymbol::GlobalSymbol(vipir::GlobalVar* global)
     : global(global)
 {
 }
 
-FunctionSymbol* FindFunction(std::vector<std::string> names, std::vector<Type*> arguments)
+FunctionSymbol* FindFunction(std::vector<std::string> givenNames, std::vector<std::string> activeNames, std::vector<Type*> arguments)
 {
-    auto last = std::unique(names.begin(), names.end());
-    names.erase(last, names.end());
-    for (auto& [name, func] : GlobalFunctions)
+    std::vector<std::string> mangledNames = symbol::GetSymbol(givenNames, activeNames);
+
+    for (auto name : mangledNames)
     {
-        auto funcNames = func.names;
-        auto namesCopy = names;
-
-        bool hasNames = true;
-        for (auto name : funcNames)
+        if (GlobalFunctions.find(name) != GlobalFunctions.end())
         {
-            if (std::find(namesCopy.begin(), namesCopy.end(), name) == namesCopy.end())
-            {
-                hasNames = false;
-            }
-        }
-        if (!hasNames) continue;
-
-        if (func.mangle)
-        {
-            std::string mangledName = symbol::mangleFunctionName(names, arguments);
-            if (mangledName == name) return &func;
-        }
-        else
-        {
-            if (names.back() == name) return &func;
+            return &GlobalFunctions.at(name);
         }
     }
+
     return nullptr;
 }
 

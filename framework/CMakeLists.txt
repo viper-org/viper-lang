@@ -53,6 +53,7 @@ set(SOURCES
     "src/symbol/Scope.cpp"
     "src/symbol/NameMangling.cpp"
     "src/symbol/Import.cpp"
+    "src/symbol/Identifier.cpp"
 
     "src/diagnostic/Diagnostic.cpp"
 )
@@ -104,6 +105,7 @@ set(HEADERS
     "include/symbol/Scope.h"
     "include/symbol/NameMangling.h"
     "include/symbol/Import.h"
+    "include/symbol/Identifier.h"
 
     "include/diagnostic/Diagnostic.h"
     src/parser/ast/expression/SizeofExpression.cpp

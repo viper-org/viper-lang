@@ -9,7 +9,7 @@ namespace Hello {
         return 69;
     }
 
-    export struct Test {
+    export using struct Test {
         field: i32;
         private another: i32;
         
@@ -25,9 +25,9 @@ namespace Hello {
     func Test@method(balls: i32) -> i32 {
         return this->another + balls;
     }
-}
 
-export using struc = struct Hello::Test;
+    export using struc = Test;
+}
 
 [[NoMangle]]
 export func @testing() -> void {

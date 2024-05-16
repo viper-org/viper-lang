@@ -33,7 +33,7 @@ public:
 
     bool isStructType() const override;
 
-    static StructType* Get(std::vector<std::string> names);
+    static StructType* Get(std::string names);
     static StructType* Create(std::vector<std::string> names, std::vector<Field> fields);
     static void Erase(Type* type);
 

@@ -5,11 +5,11 @@
 
 namespace parser
 {
-    UsingDeclaration::UsingDeclaration(std::string_view name, Type* type)
-        : mName(name)
+    UsingDeclaration::UsingDeclaration(std::vector<std::string> names, Type* type)
+        : mNames(names)
         , mType(type)
     {
-        Type::AddAlias(mName, mType);
+        Type::AddAlias(mNames, mType);
     }
 
     vipir::Value* UsingDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
