@@ -290,7 +290,8 @@ namespace lexing
                 }
                 else if (peek(1) == '*')
                 {
-                    mPosition += 2;
+                    consume();
+                    consume();
                     while (current() != '*' && peek(1) != '/')
                         consume();
                     consume();

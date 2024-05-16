@@ -451,7 +451,7 @@ namespace parser
         }
         consume();
 
-        auto decl = std::make_unique<StructDeclaration>(std::move(names), std::move(fields), std::move(methods));
+        auto decl = std::make_unique<StructDeclaration>(std::move(names), std::move(fields), std::move(methods), structType);
         if (!exported)
             mStructTypesToRemove.push_back(decl->getType());
         return std::move(decl);

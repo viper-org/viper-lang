@@ -16,13 +16,12 @@
 
 namespace parser
 {
-    StructDeclaration::StructDeclaration(std::vector<std::string> names, std::vector<StructField> fields, std::vector<StructMethod> methods)
+    StructDeclaration::StructDeclaration(std::vector<std::string> names, std::vector<StructField> fields, std::vector<StructMethod> methods, Type* type)
         : mNames(std::move(names))
         , mFields(std::move(fields))
         , mMethods(std::move(methods))
     {
-        mType = StructType::Get(mNames);
-
+        mType = type;
         symbol::AddIdentifier(mType->getMangleID(), mNames);
     }
 

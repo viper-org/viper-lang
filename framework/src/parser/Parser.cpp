@@ -687,7 +687,7 @@ namespace parser
         }
         consume();
 
-        return std::make_unique<StructDeclaration>(std::move(names), std::move(fields), std::move(methods));
+        return std::make_unique<StructDeclaration>(std::move(names), std::move(fields), std::move(methods), structType);
     }
 
     GlobalDeclarationPtr Parser::parseGlobalDeclaration()

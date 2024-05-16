@@ -6,7 +6,7 @@ import hello;
 func @main() -> i32 {
     let test: Hello::struc = struct Hello::Test { 1, 2 };
 
-    let var: i32 = sizeof(struc);
+    let var: i32 = sizeof(Hello::struc);
     while (true) {
         if (var + 1 == 500) break;
         var += 1;
