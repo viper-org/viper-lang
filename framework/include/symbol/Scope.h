@@ -37,9 +37,9 @@ struct FunctionSymbol
 struct GlobalSymbol
 {
     GlobalSymbol() = default;
-    GlobalSymbol(vipir::GlobalVar* global);
+    GlobalSymbol(vipir::Value* global);
 
-    vipir::GlobalVar* global;
+    vipir::Value* global;
 };
 extern std::unordered_map<std::string, FunctionSymbol> GlobalFunctions;
 extern std::unordered_map<std::string, GlobalSymbol> GlobalVariables;

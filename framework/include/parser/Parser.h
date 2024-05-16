@@ -9,12 +9,15 @@
 #include "parser/ast/global/GlobalDeclaration.h"
 #include "parser/ast/global/Namespace.h"
 #include "parser/ast/global/UsingDeclaration.h"
+#include "parser/ast/global/EnumDeclaration.h"
+
 #include "parser/ast/statement/ReturnStatement.h"
 #include "parser/ast/statement/VariableDeclaration.h"
 #include "parser/ast/statement/IfStatement.h"
 #include "parser/ast/statement/WhileStatement.h"
 #include "parser/ast/statement/CompoundStatement.h"
 #include "parser/ast/statement/ForStatement.h"
+
 #include "parser/ast/expression/IntegerLiteral.h"
 #include "parser/ast/expression/StringLiteral.h"
 #include "parser/ast/expression/VariableExpression.h"
@@ -84,6 +87,7 @@ namespace parser
         GlobalDeclarationPtr parseGlobalDeclaration();
         std::pair<std::vector<ASTNodePtr>, std::vector<GlobalSymbol>> parseImportStatement();
         UsingDeclarationPtr parseUsingDeclaration();
+        EnumDeclarationPtr parseEnumDeclaration();
 
         CompoundStatementPtr parseCompoundStatement();
         ReturnStatementPtr parseReturnStatement();

@@ -12,6 +12,8 @@ namespace parser
     public:
         IntegerLiteral(intmax_t value, Type* type);
 
+        intmax_t getValue() const;
+
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:

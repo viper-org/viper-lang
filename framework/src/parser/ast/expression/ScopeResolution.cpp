@@ -4,6 +4,8 @@
 #include "parser/ast/expression/ScopeResolution.h"
 #include "parser/ast/expression/VariableExpression.h"
 
+#include "symbol/Identifier.h"
+
 namespace parser
 {
     ScopeResolution::ScopeResolution(ASTNodePtr left, lexing::Token token, ASTNodePtr right)
@@ -36,6 +38,18 @@ namespace parser
 
     vipir::Value* ScopeResolution::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
-        return nullptr; // Should never be called
+        std::vector<std::string> symbols = symbol::GetSymbol(getNames(), scope->getNamespaces());
+        
+        for (auto symbol : symbols)
+        {
+            if (GlobalVariables.find(symbol) != GlobalVariables.end())
+            {
+                return GlobalVariables[symbol].global;
+            }
+        }
+
+        diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("unknown identifier '{}{}{}'", fmt::bold, getNames().back(), fmt::defaults));
+
+        return nullptr;
     }
 }

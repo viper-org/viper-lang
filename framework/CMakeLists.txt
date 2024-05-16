@@ -19,6 +19,8 @@ set(SOURCES
     "src/parser/ast/global/Namespace.cpp"
     "src/parser/ast/global/GlobalAttribute.cpp"
     "src/parser/ast/global/UsingDeclaration.cpp"
+    "src/parser/ast/global/EnumDeclaration.cpp"
+
     "src/parser/ast/statement/ReturnStatement.cpp"
     "src/parser/ast/statement/VariableDeclaration.cpp"
     "src/parser/ast/statement/IfStatement.cpp"
@@ -27,6 +29,7 @@ set(SOURCES
     "src/parser/ast/statement/BreakStatement.cpp"
     "src/parser/ast/statement/ContinueStatement.cpp"
     "src/parser/ast/statement/CompoundStatement.cpp"
+
     "src/parser/ast/expression/IntegerLiteral.cpp"
     "src/parser/ast/expression/BooleanLiteral.cpp"
     "src/parser/ast/expression/StringLiteral.cpp"
@@ -49,6 +52,7 @@ set(SOURCES
     "src/type/PointerType.cpp"
     "src/type/StructType.cpp"
     "src/type/ArrayType.cpp"
+    "src/type/EnumType.cpp"
 
     "src/symbol/Scope.cpp"
     "src/symbol/NameMangling.cpp"
@@ -71,6 +75,8 @@ set(HEADERS
     "include/parser/ast/global/Namespace.h"
     "include/parser/ast/global/GlobalAttribute.h"
     "include/parser/ast/global/UsingDeclaration.h"
+    "include/parser/ast/global/EnumDeclaration.h"
+
     "include/parser/ast/statement/ReturnStatement.h"
     "include/parser/ast/statement/VariableDeclaration.h"
     "include/parser/ast/statement/IfStatement.h"
@@ -79,6 +85,7 @@ set(HEADERS
     "include/parser/ast/statement/ForStatement.h"
     "include/parser/ast/statement/BreakStatement.h"
     "include/parser/ast/statement/ContinueStatement.h"
+
     "include/parser/ast/expression/IntegerLiteral.h"
     "include/parser/ast/expression/BooleanLiteral.h"
     "include/parser/ast/expression/StringLiteral.h"
@@ -101,6 +108,7 @@ set(HEADERS
     "include/type/PointerType.h"
     "include/type/StructType.h"
     "include/type/ArrayType.h"
+    "include/type/EnumType.h"
 
     "include/symbol/Scope.h"
     "include/symbol/NameMangling.h"
@@ -108,7 +116,6 @@ set(HEADERS
     "include/symbol/Identifier.h"
 
     "include/diagnostic/Diagnostic.h"
-    src/parser/ast/expression/SizeofExpression.cpp
 )
 
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})

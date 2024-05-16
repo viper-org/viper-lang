@@ -23,6 +23,7 @@ public:
     virtual bool isPointerType() const { return false; }
     virtual bool isStructType()  const { return false; }
     virtual bool isArrayType()   const { return false; }
+    virtual bool isEnumType()    const { return false; }
 
     static void Init();
     static bool Exists(const std::string& name);

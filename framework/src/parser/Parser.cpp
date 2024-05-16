@@ -106,7 +106,9 @@ namespace parser
         if (current().getTokenType() == lexing::TokenType::ExportKeyword)
         {
             consume();
-            expectEitherToken({ lexing::TokenType::FuncKeyword, lexing::TokenType::GlobalKeyword, lexing::TokenType::StructKeyword, lexing::TokenType::UsingKeyword });
+            expectEitherToken({ lexing::TokenType::FuncKeyword, lexing::TokenType::GlobalKeyword,
+                                 lexing::TokenType::StructKeyword, lexing::TokenType::UsingKeyword,
+                                 lexing::TokenType::EnumKeyword });
         }
 
         switch (current().getTokenType())
@@ -135,6 +137,9 @@ namespace parser
                     return structDecl;
                 }
                 return parseUsingDeclaration();
+                
+            case lexing::TokenType::EnumKeyword:
+                return parseEnumDeclaration();
             default:
                 mDiag.compilerError(current().getStart(), current().getEnd(), "Unexpected token. Expected global statement");
         }
@@ -223,9 +228,8 @@ namespace parser
             while (current().getTokenType() == lexing::TokenType::Identifier)
             {
                 names.push_back(consume().getText());
-                if (peek(1).getTokenType() == lexing::TokenType::Identifier)
+                if (current().getTokenType() == lexing::TokenType::DoubleColon)
                 {
-                    expectToken(lexing::TokenType::DoubleColon);
                     consume();
                 }
             }
@@ -252,9 +256,8 @@ namespace parser
                 while (current().getTokenType() == lexing::TokenType::Identifier)
                 {
                     names.push_back(consume().getText());
-                    if (peek(1).getTokenType() == lexing::TokenType::Identifier)
+                    if (current().getTokenType() == lexing::TokenType::DoubleColon)
                     {
-                        expectToken(lexing::TokenType::DoubleColon);
                         consume();
                     }
                 }
@@ -353,7 +356,8 @@ namespace parser
             }
             else if (operatorToken.getTokenType() == lexing::TokenType::DoubleColon)
             {
-                lhs = std::make_unique<ScopeResolution>(std::move(lhs), std::move(operatorToken), parseExpression(nullptr, binaryOperatorPrecedence));
+                lexing::Token token = current();
+                lhs = std::make_unique<ScopeResolution>(std::move(lhs), token, parseExpression(nullptr, binaryOperatorPrecedence));
             }
             else
             {
@@ -754,6 +758,43 @@ namespace parser
         return std::make_unique<UsingDeclaration>(std::move(names), type);
     }
 
+    EnumDeclarationPtr Parser::parseEnumDeclaration()
+    {
+        consume(); // enum
+
+        std::vector<std::string> names = mNamespaces;
+        names.push_back(consume().getText());
+
+        expectToken(lexing::TokenType::LeftBracket);
+        consume();
+
+        std::vector<EnumField> fields;
+        int currentValue = 0;
+        while (current().getTokenType() != lexing::TokenType::RightBracket)
+        {
+            expectToken(lexing::TokenType::Identifier);
+            std::string name = consume().getText();
+
+            if (current().getTokenType() == lexing::TokenType::Equals)
+            {
+                consume();
+                IntegerLiteralPtr literal = parseIntegerLiteral();
+                currentValue = literal->getValue();
+            }
+
+            fields.push_back({std::move(name), currentValue++});
+
+            if (current().getTokenType() != lexing::TokenType::RightBracket)
+            {
+                expectToken(lexing::TokenType::Comma);
+                consume();
+            }
+        }
+        consume();
+
+        return std::make_unique<EnumDeclaration>(std::move(names), std::move(fields));
+    }
+
     CompoundStatementPtr Parser::parseCompoundStatement()
     {
         consume(); // left bracket
@@ -957,7 +998,7 @@ namespace parser
             return std::make_unique<VariableExpression>(std::move(name), it->type, std::move(nameToken));
         }
 
-        mDiag.compilerError(nameToken.getStart(), nameToken.getEnd(), std::format("Unknown local symbol '{}{}{}'", fmt::bold, name, fmt::defaults));
+        mDiag.compilerError(nameToken.getStart(), nameToken.getEnd(), std::format("Unknown symbol '{}{}{}'", fmt::bold, name, fmt::defaults));
     }
 
     CallExpressionPtr Parser::parseCallExpression(ASTNodePtr function)

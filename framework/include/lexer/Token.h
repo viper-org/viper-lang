@@ -51,6 +51,7 @@ namespace lexing
         NamespaceKeyword, ExportKeyword,
         UsingKeyword,
         SizeofKeyword,
+        EnumKeyword,
     };
 
     struct SourceLocation

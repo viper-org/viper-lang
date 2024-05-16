@@ -27,6 +27,11 @@ namespace Hello {
     }
 
     export using struc = Test;
+
+    export enum TestEnum {
+        A,
+        B
+    }
 }
 
 [[NoMangle]]

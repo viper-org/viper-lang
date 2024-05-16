@@ -138,6 +138,9 @@ namespace parser
                     return structDecl;
                 }
                 return parseUsingDeclaration(exported);
+
+            case lexing::TokenType::EnumKeyword:
+                return parseEnumDeclaration(exported);
             default:
                 mDiag.compilerError(current().getStart(), current().getEnd(), "Unexpected token. Expected global statement");
         }
@@ -529,6 +532,54 @@ namespace parser
         if (exported)
             return std::make_unique<UsingDeclaration>(std::move(names), type);
 
+        return nullptr;
+    }
+
+
+
+    EnumDeclarationPtr ImportParser::parseEnumDeclaration(bool exported)
+    {
+        consume(); // enum
+
+        std::vector<std::string> names = mNamespaces;
+        names.push_back(consume().getText());
+
+        expectToken(lexing::TokenType::LeftBracket);
+        consume();
+
+        std::vector<EnumField> fields;
+        int currentValue = 0;
+        while (current().getTokenType() != lexing::TokenType::RightBracket)
+        {
+            expectToken(lexing::TokenType::Identifier);
+            std::string name = consume().getText();
+
+            if (current().getTokenType() == lexing::TokenType::Equals)
+            {
+                consume();
+                expectToken(lexing::TokenType::IntegerLiteral);
+                currentValue = std::stoi(consume().getText(), 0, 0);
+            }
+
+            fields.push_back({std::move(name), currentValue++});
+
+            if (current().getTokenType() != lexing::TokenType::RightBracket)
+            {
+                expectToken(lexing::TokenType::Comma);
+                consume();
+            }
+        }
+        consume();
+        
+        if (exported)
+        {
+            mSymbols.push_back({names.back(), nullptr});
+            for (auto field : fields)
+            {
+                mSymbols.push_back({field.name, nullptr});
+            }
+            return std::make_unique<EnumDeclaration>(std::move(names), std::move(fields));
+        }
         return nullptr;
     }
 

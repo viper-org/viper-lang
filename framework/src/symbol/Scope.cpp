@@ -31,7 +31,7 @@ void FunctionSymbol::Create(vipir::Function* function, std::string mangledName, 
     GlobalFunctions[mangledName].names = std::move(names);
 }
 
-GlobalSymbol::GlobalSymbol(vipir::GlobalVar* global)
+GlobalSymbol::GlobalSymbol(vipir::Value* global)
     : global(global)
 {
 }

@@ -38,6 +38,7 @@ namespace lexing
         { "export",     TokenType::ExportKeyword },
         { "using",      TokenType::UsingKeyword },
         { "sizeof",     TokenType::SizeofKeyword },
+        { "enum",       TokenType::EnumKeyword },
     };
 
     std::vector<Token> Lexer::lex()

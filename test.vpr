@@ -8,9 +8,11 @@ func @main() -> i32 {
 
     let var: i32 = sizeof(Hello::struc);
     while (true) {
-        if (var + 1 == 500) break;
+        if (var + 1 == Hello::TestEnum::B) break;
         var += 1;
     }
+
+    let enumTest: Hello::TestEnum = Hello::TestEnum::B;
 
     testing();
     let blah: u32 = Hello::Ball::balls();
