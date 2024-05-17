@@ -71,7 +71,7 @@ namespace parser
         else
         {
             func = vipir::Function::Create(functionType, module, name);
-            FunctionSymbol::Create(func, name, names, false, mangled);
+            FunctionSymbol::Create(func, name, names, mReturnType,false, mangled);
         }
 
         if (mBody.empty())

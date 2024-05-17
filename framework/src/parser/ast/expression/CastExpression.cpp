@@ -24,6 +24,11 @@ namespace parser
     vipir::Value* CastExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::Value* operand = mOperand->emit(builder, module, scope, diag);
+        if (mOperand->getType() == mType)
+        {
+            diag.compilerWarning(mToken.getStart(), mToken.getEnd(), std::format("cast from '{}{}{}' to itself has no effect", fmt::bold, mType->getName(), fmt::defaults));
+            return operand;
+        }
         if (mType->isPointerType())
         {
             if (mOperand->getType()->isPointerType())

@@ -28,7 +28,30 @@ namespace parser
         : mFunction(std::move(function))
         , mParameters(std::move(parameters))
     {
-        mType = mFunction->getType();
+        if (MemberAccess* member = dynamic_cast<MemberAccess*>(mFunction.get()))
+        {
+            std::vector<Type*> manglingArguments;
+
+            StructType* structType = member->mPointer
+                ? static_cast<StructType*>(static_cast<PointerType*>(member->mStruct->getType())->getBaseType())
+                : static_cast<StructType*>(member->mStruct->getType());
+            std::string methodName = member->mField;
+
+            std::vector<std::string> structNames = structType->getNames();
+            structNames.push_back(methodName);
+
+            if (member->mStruct->getType()->isStructType())
+                manglingArguments.insert(manglingArguments.begin(), PointerType::Create(member->mStruct->getType()));
+            else
+                manglingArguments.insert(manglingArguments.begin(), member->mStruct->getType());
+
+            FunctionSymbol* func = FindFunction(structNames, structNames, manglingArguments);
+            mType = func->returnType;
+        }
+        else
+        {
+            mType = mFunction->getType();
+        }
     }
 
     vipir::Value* CallExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
@@ -96,7 +119,7 @@ namespace parser
                 diag.compilerError(member->mFieldToken.getStart(), member->mFieldToken.getEnd(), std::format("'{}struct {}{}' has no member named '{}{}{}'",
                     fmt::bold, structType->getName(), fmt::defaults, fmt::bold, methodName, fmt::defaults));
             }
-            if (func->priv && scope->owner != structType)
+            if (func->priv && scope->findOwner() != structType)
             {
                 diag.compilerError(member->mFieldToken.getStart(), member->mFieldToken.getEnd(), std::format("'{}{}{}' is a private member of '{}struct {}{}'",
                 fmt::bold, member->mField, fmt::defaults, fmt::bold, structType->getName(), fmt::defaults));

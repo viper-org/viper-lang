@@ -21,6 +21,29 @@ namespace parser
         , mMethods(std::move(methods))
     {
         mType = type;
+
+        for (auto& method : mMethods)
+        {
+            std::vector<Type*> manglingArguments;
+            std::vector<vipir::Type*> argumentTypes;
+
+            manglingArguments.push_back(PointerType::Create(mType));
+            argumentTypes.push_back(vipir::Type::GetPointerType(mType->getVipirType()));
+
+            for (auto& argument : method.arguments)
+            {
+                manglingArguments.push_back(argument.type);
+                argumentTypes.push_back(argument.type->getVipirType());
+            }
+
+            vipir::FunctionType* functionType = vipir::FunctionType::Create(method.returnType->getVipirType(), argumentTypes);
+
+            std::vector<std::string> names = mNames;
+            names.push_back(method.name);
+            std::string name = symbol::mangleFunctionName(names, std::move(manglingArguments));
+
+            FunctionSymbol::Create(nullptr, name, names, method.returnType, method.priv);
+        }
     }
 
     std::vector<std::string>& StructDeclaration::getNames()
@@ -61,7 +84,7 @@ namespace parser
             std::string name = symbol::mangleFunctionName(names, std::move(manglingArguments));
 
             vipir::Function* func = vipir::Function::Create(functionType, module, name);
-            FunctionSymbol::Create(func, name, names, method.priv);
+            GlobalFunctions[name].function = func;
 
             if (method.body.empty())
             {

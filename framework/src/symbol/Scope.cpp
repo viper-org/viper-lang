@@ -16,18 +16,19 @@ LocalSymbol::LocalSymbol(vipir::AllocaInst* alloca, Type* type)
 {
 }
 
-FunctionSymbol::FunctionSymbol(vipir::Function* function, bool priv, bool mangle)
+FunctionSymbol::FunctionSymbol(vipir::Function* function, Type* type, bool priv, bool mangle)
     : function(function)
     , priv(priv)
     , mangle(mangle)
+    , returnType(type)
 {
 }
 
-void FunctionSymbol::Create(vipir::Function* function, std::string mangledName, std::vector<std::string> names, bool priv, bool mangle)
+void FunctionSymbol::Create(vipir::Function* function, std::string mangledName, std::vector<std::string> names, Type* type, bool priv, bool mangle)
 {
     symbol::AddIdentifier(mangledName, names);
 
-    GlobalFunctions[mangledName] = FunctionSymbol(function, priv, mangle);
+    GlobalFunctions[mangledName] = FunctionSymbol(function, type, priv, mangle);
     GlobalFunctions[mangledName].names = std::move(names);
 }
 
@@ -99,6 +100,22 @@ vipir::BasicBlock* Scope::findContinueBB()
         if (scope->continueTo)
         {
             return scope->continueTo;
+        }
+
+        scope = scope->parent;
+    }
+
+    return nullptr;
+}
+
+StructType* Scope::findOwner()
+{
+    Scope* scope = this;
+    while (scope)
+    {
+        if (scope->owner)
+        {
+            return scope->owner;
         }
 
         scope = scope->parent;

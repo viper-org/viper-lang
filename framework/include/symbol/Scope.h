@@ -25,14 +25,15 @@ struct LocalSymbol
 struct FunctionSymbol
 {
     FunctionSymbol() = default;
-    FunctionSymbol(vipir::Function* function, bool priv, bool mangle = true);
+    FunctionSymbol(vipir::Function* function, Type* type, bool priv, bool mangle = true);
 
     vipir::Function* function;
     std::vector<std::string> names;
     bool priv;
     bool mangle;
+    Type* returnType;
 
-    static void Create(vipir::Function* function, std::string mangledName, std::vector<std::string> names, bool priv, bool mangle = true);
+    static void Create(vipir::Function* function, std::string mangledName, std::vector<std::string> names, Type* type, bool priv, bool mangle = true);
 };
 struct GlobalSymbol
 {
@@ -54,6 +55,7 @@ struct Scope
     LocalSymbol* findVariable(const std::string& name);
     vipir::BasicBlock* findBreakBB();
     vipir::BasicBlock* findContinueBB();
+    StructType* findOwner();
     std::vector<std::string> getNamespaces();
 
     Scope* parent;

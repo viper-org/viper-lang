@@ -12,8 +12,9 @@ namespace lexing
 
 namespace fmt
 {
-    constexpr std::string_view bold = "\x1b[1m";
-    constexpr std::string_view red  = "\x1b[31m";
+    constexpr std::string_view bold     = "\x1b[1m";
+    constexpr std::string_view red      = "\x1b[31m";
+    constexpr std::string_view yellow   = "\x1b[93m";
     constexpr std::string_view defaults = "\x1b[0m";
 }
 
@@ -30,6 +31,7 @@ namespace diagnostic
         [[noreturn]] void fatalError(std::string_view message);
 
         [[noreturn]] void compilerError(lexing::SourceLocation start, lexing::SourceLocation end, std::string_view message);
+        void compilerWarning(lexing::SourceLocation start, lexing::SourceLocation end, std::string_view message);
 
     private:
         std::string mFileName;

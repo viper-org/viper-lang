@@ -35,7 +35,9 @@ namespace parser
             structType = static_cast<StructType*>(mStruct->getType());
         }
 
-        mType = structType->getField(mField).type;
+        auto structField = structType->getField(mField);
+        if (structField)
+            mType = structField->type;
     }
 
     vipir::Value* MemberAccess::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
@@ -69,7 +71,7 @@ namespace parser
             diag.compilerError(mFieldToken.getStart(), mFieldToken.getEnd(), std::format("'{}struct {}{}' has no member named '{}{}{}'",
                 fmt::bold, structType->getName(), fmt::defaults, fmt::bold, mField, fmt::defaults));
         }
-        if (structType->getField(mField).priv && scope->owner != structType)
+        if (structType->getField(mField)->priv && scope->findOwner() != structType)
         {
             diag.compilerError(mFieldToken.getStart(), mFieldToken.getEnd(), std::format("'{}{}{}' is a private member of '{}struct {}{}'",
                 fmt::bold, mField, fmt::defaults, fmt::bold, structType->getName(), fmt::defaults));
@@ -78,11 +80,12 @@ namespace parser
         vipir::Value* gep = builder.CreateStructGEP(struc, structType->getFieldOffset(mField));
 
         // struct types with a pointer to themselves cannot be emitted normally
-        if (structType->getField(mField).type->isPointerType())
+        if (structType->getField(mField)->type->isPointerType())
         {
-            if (static_cast<PointerType*>(structType->getField(mField).type)->getBaseType() == structType)
+            if (static_cast<PointerType*>(structType->getField(mField)->type)->getBaseType() == structType)
             {
-                gep = builder.CreatePtrCast(gep, vipir::PointerType::GetPointerType(structType->getVipirType()));
+                vipir::Type* type = vipir::PointerType::GetPointerType(vipir::PointerType::GetPointerType(structType->getVipirType()));
+                gep = builder.CreatePtrCast(gep, type);
             }
         }
 

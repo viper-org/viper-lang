@@ -43,11 +43,14 @@ bool StructType::hasField(std::string_view fieldName)
     }) != mFields.end();
 }
 
-StructType::Field& StructType::getField(std::string_view fieldName)
+StructType::Field* StructType::getField(std::string_view fieldName)
 {
-    return *std::find_if(mFields.begin(), mFields.end(), [&fieldName](const Field& field){
+    auto it = std::find_if(mFields.begin(), mFields.end(), [&fieldName](const Field& field){
         return fieldName == field.name;
     });
+    if (it == mFields.end()) return nullptr;
+
+    return &*it;
 }
 
 int StructType::getFieldOffset(std::string fieldName)
