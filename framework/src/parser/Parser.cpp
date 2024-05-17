@@ -280,7 +280,8 @@ namespace parser
             }
             if (!type)
             {
-                type = Type::Get(names.front());
+                if (!names.empty())
+                    type = Type::Get(names.front());
 
                 if (!type)
                 {
