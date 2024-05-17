@@ -2,6 +2,8 @@
 
 #include "parser/ast/expression/VariableExpression.h"
 
+#include "symbol/Identifier.h"
+
 #include <vipir/IR/Instruction/AllocaInst.h>
 #include <vipir/IR/Instruction/LoadInst.h>
 
@@ -23,17 +25,25 @@ namespace parser
     {
         LocalSymbol* local = scope->findVariable(mName);
 
+        std::vector<std::string> symbols = symbol::GetSymbol({mName}, scope->getNamespaces());
+
         if (local)
         {
             return builder.CreateLoad(local->alloca);
         }
-        else if (GlobalFunctions.find(mName) != GlobalFunctions.end())
+        else
         {
-            return GlobalFunctions.at(mName).function;
-        }
-        else if (GlobalVariables.find(mName) != GlobalVariables.end())
-        {
-            return builder.CreateLoad(GlobalVariables.at(mName).global);
+            for (auto& symbol : symbols)
+            {
+                if (GlobalFunctions.find(symbol) != GlobalFunctions.end())
+                {
+                    return GlobalFunctions.at(symbol).function;
+                }
+                else if (GlobalVariables.find(symbol) != GlobalVariables.end())
+                {
+                    return builder.CreateLoad(GlobalVariables.at(symbol).global);
+                }
+            }
         }
         diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("identifier '{}{}{}' undeclared",
             fmt::bold, mName, fmt::defaults));
