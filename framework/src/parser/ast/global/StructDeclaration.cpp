@@ -7,7 +7,6 @@
 #include "type/PointerType.h"
 
 #include "symbol/NameMangling.h"
-#include "symbol/Identifier.h"
 
 #include <vipir/IR/BasicBlock.h>
 #include <vipir/Type/FunctionType.h>
@@ -22,7 +21,6 @@ namespace parser
         , mMethods(std::move(methods))
     {
         mType = type;
-        symbol::AddIdentifier(mType->getMangleID(), mNames);
     }
 
     std::vector<std::string>& StructDeclaration::getNames()

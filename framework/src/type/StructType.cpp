@@ -2,18 +2,23 @@
 
 
 #include "type/StructType.h"
+#include "type/PointerType.h"
 
-#include <vector>
+#include "symbol/Identifier.h"
+
 #include <vipir/Type/StructType.h>
+#include <vipir/Type/PointerType.h>
 
 #include <algorithm>
 #include <map>
+#include <vector>
 
 StructType::StructType(std::vector<std::string> names, std::vector<Field> fields)
     : Type(names.back())
     , mNames(std::move(names))
     , mFields(std::move(fields))
 {
+    symbol::AddIdentifier(getMangleID(), mNames);
 }
 
 std::string_view StructType::getName() const
@@ -62,6 +67,15 @@ vipir::Type* StructType::getVipirType() const
     std::vector<vipir::Type*> fieldTypes;
     for (auto [_, _x, field] : mFields)
     {
+        if (field->isPointerType())
+        {
+            // struct types with a pointer to themselves cannot be emitted normally
+            if (static_cast<PointerType*>(field)->getBaseType() == this)
+            {
+                fieldTypes.push_back(vipir::PointerType::GetPointerType(vipir::Type::GetIntegerType(8)));
+                continue;
+            }
+        }
         fieldTypes.push_back(field->getVipirType());
     }
     return vipir::Type::GetStructType(std::move(fieldTypes));

@@ -8,6 +8,9 @@
 
 #include <vipir/IR/Instruction/GEPInst.h>
 #include <vipir/IR/Instruction/LoadInst.h>
+#include <vipir/IR/Instruction/PtrCastInst.h>
+
+#include <vipir/Type/PointerType.h>
 
 #include <vipir/Module.h>
 
@@ -73,6 +76,15 @@ namespace parser
         }
 
         vipir::Value* gep = builder.CreateStructGEP(struc, structType->getFieldOffset(mField));
+
+        // struct types with a pointer to themselves cannot be emitted normally
+        if (structType->getField(mField).type->isPointerType())
+        {
+            if (static_cast<PointerType*>(structType->getField(mField).type)->getBaseType() == structType)
+            {
+                gep = builder.CreatePtrCast(gep, vipir::PointerType::GetPointerType(structType->getVipirType()));
+            }
+        }
 
         return builder.CreateLoad(gep);
     }
