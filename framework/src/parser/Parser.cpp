@@ -159,6 +159,7 @@ namespace parser
                 return 90;
 
             case lexing::TokenType::Star:
+            case lexing::TokenType::Slash:
                 return 75;
 
             case lexing::TokenType::Plus:

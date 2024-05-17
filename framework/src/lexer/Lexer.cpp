@@ -299,7 +299,7 @@ namespace lexing
                     return std::nullopt;
                 }
 
-                return Token(TokenType::Error, std::string(1, current()), start, location());; // division at some point
+                return Token(lexing::TokenType::Slash, start, location());
 
             case '"':
             {

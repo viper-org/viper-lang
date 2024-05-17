@@ -4,6 +4,7 @@
 #include "parser/ast/expression/BinaryExpression.h"
 
 #include "type/ArrayType.h"
+#include "type/IntegerType.h"
 
 #include <vipir/Module.h>
 #include <vipir/IR/Instruction/BinaryInst.h>
@@ -33,6 +34,10 @@ namespace parser
 
             case lexing::TokenType::Star:
                 mOperator = Operator::Mul;
+                mType = mLeft->getType();
+                break;
+            case lexing::TokenType::Slash:
+                mOperator = Operator::Div;
                 mType = mLeft->getType();
                 break;
 
@@ -117,7 +122,22 @@ namespace parser
                 return builder.CreateSub(left, right);
 
             case Operator::Mul:
-                return builder.CreateIMul(left, right);
+                if (mType->isIntegerType())
+                {
+                    if (static_cast<IntegerType*>(mType)->isSigned())
+                        return builder.CreateSMul(left, right);
+                    return builder.CreateUMul(left, right);
+                }
+                break; // TODO: Error?
+
+            case Operator::Div:
+                if (mType->isIntegerType())
+                {
+                    if (static_cast<IntegerType*>(mType)->isSigned())
+                        return builder.CreateSDiv(left, right);
+                    return builder.CreateUDiv(left, right);
+                }
+                break; // TODO: Error?
 
             case Operator::BitwiseOr:
                 return builder.CreateBWOr(left, right);
@@ -189,6 +209,8 @@ namespace parser
                 return builder.CreateLoad(gep);
             }
         }
+
+        return nullptr; // unreachable, just to silence warnings
     }
 
 

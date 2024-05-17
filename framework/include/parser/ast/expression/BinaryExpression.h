@@ -16,7 +16,7 @@ namespace parser
         enum class Operator
         {
             Add, Sub,
-            Mul,
+            Mul, Div,
 
             BitwiseOr, BitwiseAnd, BitwiseXor,
 
