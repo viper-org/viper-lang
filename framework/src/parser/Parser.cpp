@@ -218,8 +218,9 @@ namespace parser
         }
     }
 
-    Type* Parser::parseType()
+    Type* Parser::parseType(bool failable)
     {
+        int startPosition = mPosition;
         Type* type = nullptr;
         if (current().getTokenType() == lexing::TokenType::StructKeyword)
         {
@@ -242,6 +243,11 @@ namespace parser
             }
             if (!type)
             {
+                if (failable)
+                {
+                    mPosition = startPosition;
+                    return nullptr;
+                }
                 mDiag.compilerError(peek(-1).getStart(), peek(-1).getEnd(), std::format("unknown type name '{}{}{}'", fmt::bold, names.back(), fmt::defaults));
             }
         }
@@ -277,7 +283,15 @@ namespace parser
                 type = Type::Get(names.front());
 
                 if (!type)
+                {
+                    if (failable)
+                    {
+                        mPosition = startPosition;
+                        return nullptr;
+                    }
+
                     mDiag.compilerError(token.getStart(), token.getEnd(), std::format("unknown type name '{}{}{}'", fmt::bold, token.getText(), fmt::defaults));
+                }
             }
         }
 
@@ -311,9 +325,8 @@ namespace parser
             lexing::Token operatorToken = consume();
             if (operatorToken.getTokenType() == lexing::TokenType::LeftParen) // Cast expression or parenthesized expression
             {
-                if (current().getTokenType() == lexing::TokenType::StructKeyword || current().getTokenType() == lexing::TokenType::Type) // Cast
+                if (Type* type = parseType(true)) // Cast
                 {
-                    Type* type = parseType();
                     expectToken(lexing::TokenType::RightParen);
                     consume();
                     lhs = std::make_unique<CastExpression>(parseExpression(nullptr, prefixOperatorPrecedence), type, std::move(operatorToken));

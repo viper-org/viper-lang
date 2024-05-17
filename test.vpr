@@ -7,14 +7,11 @@ namespace Foo {
 /*
     Very advanced node data structure
 */
-struct Node {
+using struct Node {
     next: struct Node*;
 }
 
 func @main() -> i32 {
-    let node: struct Node;
-    let nodePtr: struct Node* = node.next;
-
     let test: Hello::struc = struct Hello::Test { 1, 2 };
 
     let var: i32 = sizeof(Hello::struc);

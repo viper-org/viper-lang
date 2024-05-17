@@ -74,7 +74,7 @@ namespace parser
         int getPrefixUnaryOperatorPrecedence(lexing::TokenType tokenType);
         int getPostfixUnaryOperatorPrecedence(lexing::TokenType tokenType);
 
-        Type* parseType();
+        Type* parseType(bool failable = false);
 
         ASTNodePtr parseGlobal(std::vector<ASTNodePtr>& nodes);
         ASTNodePtr parseExpression(Type* preferredType = nullptr, int precedence = 1);
