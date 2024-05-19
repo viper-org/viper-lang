@@ -1,13 +1,9 @@
 namespace Hello {
     namespace Ball {
-        export func @balls() -> u32 {
-            return 6;
-        }
+        export func @balls() -> u32 = 6;
     }
 
-    export func @hello() -> i32 {
-        return 69;
-    }
+    export func @hello() -> i32 = 69;
 
     export using struct Test {
         field: i32;
@@ -15,6 +11,7 @@ namespace Hello {
         
         func @pubMethod(balls: i32) -> i32;
         private func @method(balls: i32) -> i32;
+        private func @wrapperMethod(balls: i32) -> void;
     }
 
     func Test@pubMethod(balls: i32) -> i32 {
@@ -22,9 +19,11 @@ namespace Hello {
         return this->method(balls);
     }
 
-    func Test@method(balls: i32) -> i32 {
-        return this->another + balls;
-    }
+    func Test@method(balls: i32) -> i32 =
+        this->another + balls;
+
+    func Test@wrapperMethod(balls: i32) -> void =
+        this->another = this->another + balls;
 
     export using struc = Test;
 

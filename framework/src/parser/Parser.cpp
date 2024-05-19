@@ -541,17 +541,31 @@ namespace parser
             return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
         }
 
-        expectToken(lexing::TokenType::LeftBracket);
+        expectEitherToken({lexing::TokenType::LeftBracket, lexing::TokenType::Equals});
+        bool isExpressionBodied = current().getTokenType() == lexing::TokenType::Equals;
         consume();
 
         std::vector<ASTNodePtr> body;
-        while (current().getTokenType() != lexing::TokenType::RightBracket)
+        if (isExpressionBodied)
         {
-            body.push_back(parseExpression());
+            ASTNodePtr exp = parseExpression(type);
+            if (type->isVoidType())
+                body.push_back(std::move(exp));
+            else
+                body.push_back(std::make_unique<ReturnStatement>(std::move(exp)));
             expectToken(lexing::TokenType::Semicolon);
             consume();
         }
-        consume();
+        else
+        {
+            while (current().getTokenType() != lexing::TokenType::RightBracket)
+            {
+                body.push_back(parseExpression());
+                expectToken(lexing::TokenType::Semicolon);
+                consume();
+            }
+            consume();
+        }
 
         mScope = functionScope->parent;
 

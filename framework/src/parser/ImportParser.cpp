@@ -312,13 +312,16 @@ namespace parser
             return nullptr;
         }
 
-        expectToken(lexing::TokenType::LeftBracket);
+        expectEitherToken({lexing::TokenType::LeftBracket, lexing::TokenType::Equals});
+        bool isExpressionBodied = current().getTokenType() == lexing::TokenType::Equals;
         consume();
 
-        while (current().getTokenType() != lexing::TokenType::RightBracket)
-        {
-            consume();
-        }
+        if (isExpressionBodied)
+            while (current().getTokenType() != lexing::TokenType::Semicolon)
+                consume();
+        else
+            while (current().getTokenType() != lexing::TokenType::RightBracket)
+                consume();
         consume();
 
         if (exported)
