@@ -1,13 +1,9 @@
 namespace Hello {
     namespace Ball {
-        export func @balls() -> u32 {
-            return 6;
-        }
+        export func @balls() -> u32 = 6;
     }
 
-    export func @hello() -> i32 {
-        return 69;
-    }
+    export func @hello() -> i32 = 69;
 
     export using struct Test {
         field: i32;

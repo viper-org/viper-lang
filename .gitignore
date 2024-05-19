@@ -1,3 +1,4 @@
+.vscode/
 .cache/
 CMakeFiles/
 cmake-build-debug-wsl/
