@@ -11,6 +11,7 @@ namespace Hello {
         
         func @pubMethod(balls: i32) -> i32;
         private func @method(balls: i32) -> i32;
+        private func @wrapperMethod(balls: i32) -> void;
     }
 
     func Test@pubMethod(balls: i32) -> i32 {
@@ -18,9 +19,11 @@ namespace Hello {
         return this->method(balls);
     }
 
-    func Test@method(balls: i32) -> i32 {
-        return this->another + balls;
-    }
+    func Test@method(balls: i32) -> i32 =
+        this->another + balls;
+
+    func Test@wrapperMethod(balls: i32) -> void =
+        this->another = this->another + balls;
 
     export using struc = Test;
 
