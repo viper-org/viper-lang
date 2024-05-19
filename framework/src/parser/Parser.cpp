@@ -548,11 +548,11 @@ namespace parser
         std::vector<ASTNodePtr> body;
         if (isExpressionBodied)
         {
-            ASTNodePtr exp = parseExpression();
-            if (!type->isVoidType())
-                body.push_back(std::make_unique<ReturnStatement>(std::move(exp)));
-            else
+            ASTNodePtr exp = parseExpression(type);
+            if (type->isVoidType())
                 body.push_back(std::move(exp));
+            else
+                body.push_back(std::make_unique<ReturnStatement>(std::move(exp)));
             expectToken(lexing::TokenType::Semicolon);
             consume();
         }
