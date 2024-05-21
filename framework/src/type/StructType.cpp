@@ -62,7 +62,11 @@ int StructType::getFieldOffset(std::string fieldName)
 
 int StructType::getSize() const
 {
-    return 64;
+    int size = 0;
+    for (auto& field : mFields)
+        size += field.type->getSize();
+    
+    return size;
 }
 
 vipir::Type* StructType::getVipirType() const
