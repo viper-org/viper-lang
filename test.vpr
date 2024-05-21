@@ -24,6 +24,8 @@ func @main() -> i32 {
     while (true) {
         if (var + 1 == Foo::x) break;
         var += 1;
+    }
+
     let viperIsGood: bool;
     let choice: i32 = 2;
     switch (choice) {
