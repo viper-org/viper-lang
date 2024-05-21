@@ -17,6 +17,26 @@ func @wrapperFunc(balls: i32) -> void =
 func @getterFunc(balls: i32) -> i32 =
     Foo::x + balls;
 
+func @switchCase() -> bool {
+    let viperIsGood: bool;
+    let choice: i32 = 2;
+    switch (choice) {
+        case 0:
+        case 1: {
+            let temp: i32 = 3222;
+            viperIsGood = false;
+            break;
+        }
+        case 2:
+            viperIsGood = false;
+            // Fallthrough
+        default:
+            viperIsGood = true;
+            break;
+    }
+    return viperIsGood;
+}
+
 func @main() -> i32 {
     let test: Hello::struc = struct Hello::Test { 1, 2 };
 
