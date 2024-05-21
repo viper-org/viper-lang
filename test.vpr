@@ -1,35 +1,5 @@
-import hello;
-
-namespace Foo {
-    global x: i32 = 500;
-}
-
-/*
-    Very advanced node data structure
-*/
-using struct Node {
-    next: struct Node*;
-}
-
-func @wrapperFunc(balls: i32) -> void =
-    Foo::x = balls;
-
-func @getterFunc(balls: i32) -> i32 =
-    Foo::x + balls;
-
 func @main() -> i32 {
-    let test: Hello::struc = struct Hello::Test { 1, 2 };
-
-    let var: i32 = sizeof(Hello::struc);
-    while (true) {
-        if (var + 1 == Foo::x) break;
-        var += 1;
-    }
-
-    let enumTest: Hello::TestEnum = Hello::TestEnum::B;
-
-    testing();
-    let blah: u32 = Hello::Ball::balls();
-
-    return test.pubMethod(var);
+    return add(34, 35);
 }
+
+func @add(a: i32, b: i32) -> i32 = a + b;

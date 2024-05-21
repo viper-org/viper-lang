@@ -19,12 +19,13 @@
 
 namespace parser
 {
-    ImportParser::ImportParser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager)
+    ImportParser::ImportParser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager, bool hoistingParser)
         : mTokens(tokens)
         , mImportManager(importManager)
         , mPosition(0)
         , mScope(nullptr)
         , mDiag(diag)
+        , mHoistingParser(hoistingParser)
     {
     }
 
@@ -104,7 +105,7 @@ namespace parser
             parseAttributes(attributes);
         }
 
-        bool exported = false;
+        bool exported = mHoistingParser;
         if (current().getTokenType() == lexing::TokenType::ExportKeyword)
         {
             exported = true;
@@ -257,6 +258,9 @@ namespace parser
         std::vector<FunctionArgument> arguments;
         StructType* structType = nullptr;
 
+        Scope* functionScope = new Scope(mScope, structType);
+        mScope = functionScope;
+
         if (struc.has_value())
         {
             std::vector<std::string> names = mNamespaces;
@@ -303,10 +307,10 @@ namespace parser
             type = parseType();
         }
 
-
         if (current().getTokenType() == lexing::TokenType::Semicolon) // Extern function declaration
         {
             consume();
+            mScope = functionScope->parent;
             if (exported)
                 return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
             return nullptr;
@@ -323,6 +327,8 @@ namespace parser
             while (current().getTokenType() != lexing::TokenType::RightBracket)
                 consume();
         consume();
+
+        mScope = functionScope->parent;
 
         if (exported)
         {

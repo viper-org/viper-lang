@@ -25,6 +25,8 @@
 #include <filesystem>
 #include <format>
 
+#include "parser/ImportParser.h"
+
 namespace parser
 {
     Parser::Parser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager)
@@ -82,6 +84,16 @@ namespace parser
     std::vector<ASTNodePtr> Parser::parse()
     {
         std::vector<ASTNodePtr> result;
+
+        auto tokensCopy = mTokens;
+
+        ImportParser hoistingParser(tokensCopy, mDiag, mImportManager, true);
+
+        auto nodes = hoistingParser.parse();
+        auto symbols = hoistingParser.getSymbols();
+
+        std::move(nodes.begin(), nodes.end(), std::back_inserter(result));
+        std::move(symbols.begin(), symbols.end(), std::back_inserter(mSymbols));
 
         while (mPosition < mTokens.size())
         {
@@ -538,6 +550,7 @@ namespace parser
         if (current().getTokenType() == lexing::TokenType::Semicolon) // Extern function declaration
         {
             consume();
+            mScope = functionScope->parent;
             return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
         }
 
