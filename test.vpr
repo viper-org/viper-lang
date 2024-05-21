@@ -24,6 +24,19 @@ func @main() -> i32 {
     while (true) {
         if (var + 1 == Foo::x) break;
         var += 1;
+    let viperIsGood: bool;
+    let choice: i32 = 2;
+    switch (choice) {
+        case 0:
+        case 1:
+            viperIsGood = false;
+            break;
+        case 2:
+            viperIsGood = true;
+            break;
+        default:
+            viperIsGood = true;
+            break;
     }
 
     let enumTest: Hello::TestEnum = Hello::TestEnum::B;

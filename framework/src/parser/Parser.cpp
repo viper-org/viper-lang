@@ -409,6 +409,8 @@ namespace parser
                 return parseWhileStatement();
             case lexing::TokenType::ForKeyword:
                 return parseForStatement();
+            case lexing::TokenType::SwitchKeyword:
+                return parseSwitchStatement();
             case lexing::TokenType::BreakKeyword:
                 return std::make_unique<BreakStatement>(std::move(consume()));
             case lexing::TokenType::ContinueKeyword:
@@ -982,6 +984,61 @@ namespace parser
         mScope = forScope->parent;
 
         return std::make_unique<ForStatement>(std::move(init), std::move(condition), std::move(loopExpr), std::move(body), forScope);
+    }
+
+    SwitchStatementPtr Parser::parseSwitchStatement()
+    {
+        consume();
+
+        expectToken(lexing::TokenType::LeftParen);
+        consume();
+
+        ASTNodePtr value = parseExpression();
+
+        expectToken(lexing::TokenType::RightParen);
+        consume();
+
+        expectToken(lexing::TokenType::LeftBracket);
+        consume();
+    
+        Scope* switchScope = new Scope(mScope, nullptr);
+        mScope = switchScope;
+
+        std::vector<SwitchSection> sections;
+
+        while (current().getTokenType() != lexing::TokenType::RightBracket)
+        {
+            expectEitherToken({lexing::TokenType::CaseKeyword, lexing::TokenType::DefaultKeyword});
+            bool defSection = current().getTokenType() == lexing::TokenType::DefaultKeyword;
+            consume();
+
+            ASTNodePtr value = defSection ? nullptr : parseExpression();
+
+            expectToken(lexing::TokenType::Colon);
+            consume();
+
+            std::vector<ASTNodePtr> body;
+            while (current().getTokenType() != lexing::TokenType::RightBracket &&
+                current().getTokenType() != lexing::TokenType::CaseKeyword &&
+                current().getTokenType() != lexing::TokenType::DefaultKeyword)
+            {
+                body.push_back(parseExpression());
+                if (current().getTokenType() != lexing::TokenType::RightBracket)
+                {
+                    expectToken(lexing::TokenType::Semicolon);
+                    consume();
+                }
+            }
+
+            sections.push_back({std::move(value), std::move(body)});
+        }
+        consume();
+
+        mTokens.insert(mTokens.begin() + mPosition, lexing::Token(lexing::TokenType::Semicolon, {0, 0}, {0, 0}));
+
+        mScope = switchScope->parent;
+
+        return std::make_unique<SwitchStatement>(std::move(value), std::move(sections), switchScope);
     }
 
     SizeofExpressionPtr Parser::parseSizeof(Type* preferredType)

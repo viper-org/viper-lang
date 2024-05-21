@@ -17,6 +17,7 @@
 #include "parser/ast/statement/WhileStatement.h"
 #include "parser/ast/statement/CompoundStatement.h"
 #include "parser/ast/statement/ForStatement.h"
+#include "parser/ast/statement/SwitchStatement.h"
 
 #include "parser/ast/expression/IntegerLiteral.h"
 #include "parser/ast/expression/StringLiteral.h"
@@ -95,6 +96,7 @@ namespace parser
         IfStatementPtr parseIfStatement();
         WhileStatementPtr parseWhileStatement();
         ForStatementPtr parseForStatement();
+        SwitchStatementPtr parseSwitchStatement();
 
         SizeofExpressionPtr parseSizeof(Type* preferredType = nullptr);
         IntegerLiteralPtr parseIntegerLiteral(Type* preferredType = nullptr);
