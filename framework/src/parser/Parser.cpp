@@ -541,6 +541,7 @@ namespace parser
         {
             consume();
             mScope = functionScope->parent;
+            delete functionScope;
             return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(name), std::vector<ASTNodePtr>(), nullptr);
         }
 
