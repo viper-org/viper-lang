@@ -38,7 +38,7 @@ namespace parser
         vipir::Value* initVal = mInitVal->emit(builder, module, scope, diag);
         global->setInitialValue(initVal);
 
-        GlobalVariables[mangledName] = global;
+        GlobalVariables[mangledName] = GlobalSymbol(global, mType);
 
         return nullptr;
     }

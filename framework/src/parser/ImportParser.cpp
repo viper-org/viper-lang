@@ -267,12 +267,19 @@ namespace parser
         }
         consume();
 
-        Type* type = Type::Get("void");
+        Type* returnType = Type::Get("void");
         if (current().getTokenType() == lexing::TokenType::RightArrow)
         {
             consume();
-            type = parseType();
+            returnType = parseType();
         }
+
+        std::vector<Type*> argumentTypes;
+        for (auto& argument : arguments)
+        {
+            argumentTypes.push_back(argument.type);
+        }
+        Type* type = FunctionType::Create(returnType, std::move(argumentTypes));
 
         if (current().getTokenType() == lexing::TokenType::Semicolon) // Extern function declaration
         {
@@ -404,14 +411,19 @@ namespace parser
                 }
                 consume();
 
-                Type* type = Type::Get("void");
+                Type* returnType = Type::Get("void");
                 if (current().getTokenType() == lexing::TokenType::RightArrow)
                 {
                     consume();
-                    type = parseType();
+                    returnType = parseType();
                 }
 
-                //expectToken(lexing::TokenType::Semicolon);
+                std::vector<Type*> argumentTypes { PointerType::Create(structType) };
+                for (auto& argument : arguments)
+                {
+                    argumentTypes.push_back(argument.type);
+                }
+                Type* type = FunctionType::Create(returnType, std::move(argumentTypes));
 
                 if (current().getTokenType() == lexing::TokenType::Semicolon)
                 {

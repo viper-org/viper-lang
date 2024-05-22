@@ -19,7 +19,7 @@ namespace parser
     {
         bool priv;
         std::string name;
-        Type* returnType;
+        Type* type;
         std::vector<FunctionArgument> arguments;
         std::vector<ASTNodePtr> body;
         ScopePtr scope;

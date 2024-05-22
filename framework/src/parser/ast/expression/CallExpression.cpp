@@ -46,11 +46,11 @@ namespace parser
                 manglingArguments.insert(manglingArguments.begin(), member->mStruct->getType());
 
             FunctionSymbol* func = FindFunction(structNames, structNames, manglingArguments);
-            mType = func->returnType;
+            mType = func->type->getReturnType();
         }
         else
         {
-            mType = mFunction->getType();
+            mType = static_cast<FunctionType*>(mFunction->getType())->getReturnType();
         }
     }
 

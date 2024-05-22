@@ -16,9 +16,9 @@
 
 namespace parser
 {
-    Function::Function(std::vector<GlobalAttribute> attributes, Type* returnType, std::vector<FunctionArgument> arguments, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope)
+    Function::Function(std::vector<GlobalAttribute> attributes, Type* type, std::vector<FunctionArgument> arguments, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope)
         : mAttributes(std::move(attributes))
-        , mReturnType(returnType)
+        , mType(type)
         , mArguments(std::move(arguments))
         , mName(name)
         , mBody(std::move(body))
@@ -28,7 +28,7 @@ namespace parser
 
     Type* Function::getReturnType() const
     {
-        return mReturnType;
+        return static_cast<FunctionType*>(mType)->getReturnType();
     }
 
     vipir::Value* Function::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
@@ -56,7 +56,7 @@ namespace parser
         else
             name = mName;
 
-        vipir::FunctionType* functionType = vipir::FunctionType::Create(mReturnType->getVipirType(), argumentTypes);
+        vipir::FunctionType* functionType = static_cast<vipir::FunctionType*>(mType->getVipirType());
         vipir::Function* func;
 
         if (GlobalFunctions.contains(name))
@@ -68,7 +68,7 @@ namespace parser
         else
         {
             func = vipir::Function::Create(functionType, module, name);
-            FunctionSymbol::Create(func, name, names, mReturnType,false, mangled);
+            FunctionSymbol::Create(func, name, names, mType,false, mangled);
         }
 
         if (mBody.empty())
@@ -95,7 +95,7 @@ namespace parser
 
         if (!dynamic_cast<ReturnStatement*>(mBody.back().get()))
         {
-            if (mReturnType->isVoidType())
+            if (getReturnType()->isVoidType())
             {
                 builder.CreateRet(nullptr);
             }

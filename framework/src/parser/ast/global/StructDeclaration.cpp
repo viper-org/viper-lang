@@ -36,13 +36,13 @@ namespace parser
                 argumentTypes.push_back(argument.type->getVipirType());
             }
 
-            vipir::FunctionType* functionType = vipir::FunctionType::Create(method.returnType->getVipirType(), argumentTypes);
+            vipir::FunctionType* functionType = static_cast<vipir::FunctionType*>(method.type->getVipirType());
 
             std::vector<std::string> names = mNames;
             names.push_back(method.name);
             std::string name = symbol::mangleFunctionName(names, std::move(manglingArguments));
 
-            FunctionSymbol::Create(nullptr, name, names, method.returnType, method.priv);
+            FunctionSymbol::Create(nullptr, name, names, method.type, method.priv);
         }
     }
 
@@ -77,7 +77,7 @@ namespace parser
                 argumentTypes.push_back(argument.type->getVipirType());
             }
 
-            vipir::FunctionType* functionType = vipir::FunctionType::Create(method.returnType->getVipirType(), argumentTypes);
+            vipir::FunctionType* functionType = static_cast<vipir::FunctionType*>(method.type->getVipirType());
 
             std::vector<std::string> names = mNames;
             names.push_back(method.name);

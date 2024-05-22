@@ -16,8 +16,8 @@ namespace parser
         : mNames(std::move(names))
         , mFields(std::move(fields))
     {
-        auto type = EnumType::Create(mNames);
-        symbol::AddIdentifier(type->getMangleID(), mNames);
+        mType = EnumType::Create(mNames);
+        symbol::AddIdentifier(mType->getMangleID(), mNames);
 
         for (auto& field : mFields)
         {
@@ -37,7 +37,7 @@ namespace parser
             std::string mangledName = "_EM" + field.name;
 
             vipir::Value* constant = vipir::ConstantInt::Get(module, field.value, vipir::Type::GetIntegerType(32));
-            GlobalVariables[mangledName] = GlobalSymbol(constant);
+            GlobalVariables[mangledName] = GlobalSymbol(constant, mType);
         }
 
         return nullptr;

@@ -5,6 +5,7 @@
 #define VIPER_FRAMEWORK_SYMBOL_SCOPE_H 1
 
 #include "type/StructType.h"
+#include "type/FunctionType.h"
 
 #include <vipir/IR/Instruction/AllocaInst.h>
 #include <vipir/IR/Function.h>
@@ -31,16 +32,17 @@ struct FunctionSymbol
     std::vector<std::string> names;
     bool priv;
     bool mangle;
-    Type* returnType;
+    FunctionType* type;
 
     static void Create(vipir::Function* function, std::string mangledName, std::vector<std::string> names, Type* type, bool priv, bool mangle = true);
 };
 struct GlobalSymbol
 {
     GlobalSymbol() = default;
-    GlobalSymbol(vipir::Value* global);
+    GlobalSymbol(vipir::Value* global, Type* type);
 
     vipir::Value* global;
+    Type* type;
 };
 extern std::unordered_map<std::string, FunctionSymbol> GlobalFunctions;
 extern std::unordered_map<std::string, GlobalSymbol> GlobalVariables;

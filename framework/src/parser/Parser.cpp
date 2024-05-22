@@ -485,9 +485,8 @@ namespace parser
         consume();
 
         std::vector<FunctionArgument> arguments;
-        StructType* structType = nullptr;
 
-        Scope* functionScope = new Scope(mScope, structType);
+        Scope* functionScope = new Scope(mScope, nullptr);
         mScope = functionScope;
 
         while (current().getTokenType() != lexing::TokenType::RightParen)
@@ -510,12 +509,19 @@ namespace parser
         }
         consume();
 
-        Type* type = Type::Get("void");
+        Type* returnType = Type::Get("void");
         if (current().getTokenType() == lexing::TokenType::RightArrow)
         {
             consume();
-            type = parseType();
+            returnType = parseType();
         }
+
+        std::vector<Type*> argumentTypes;
+        for (auto& argument : arguments)
+        {
+            argumentTypes.push_back(argument.type);
+        }
+        Type* type = FunctionType::Create(returnType, std::move(argumentTypes));
 
         mSymbols.push_back({name, type});
 
@@ -647,14 +653,19 @@ namespace parser
                 }
                 consume();
 
-                Type* type = Type::Get("void");
+                Type* returnType = Type::Get("void");
                 if (current().getTokenType() == lexing::TokenType::RightArrow)
                 {
                     consume();
-                    type = parseType();
+                    returnType = parseType();
                 }
 
-                //expectToken(lexing::TokenType::Semicolon);
+                std::vector<Type*> argumentTypes { PointerType::Create(structType) };
+                for (auto& argument : arguments)
+                {
+                    argumentTypes.push_back(argument.type);
+                }
+                Type* type = FunctionType::Create(returnType, std::move(argumentTypes));
 
                 if (current().getTokenType() == lexing::TokenType::Semicolon)
                 {
@@ -662,8 +673,6 @@ namespace parser
                     methods.push_back({priv, std::move(name), type, std::move(arguments), std::vector<ASTNodePtr>(), nullptr});
                     continue;
                 }
-
-                // if definition in struct will ever be readded
 
                 Scope* scope = new Scope(mScope, structType);
                 mScope = scope;

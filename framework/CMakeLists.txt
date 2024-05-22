@@ -54,6 +54,7 @@ set(SOURCES
     "src/type/StructType.cpp"
     "src/type/ArrayType.cpp"
     "src/type/EnumType.cpp"
+    "src/type/FunctionType.cpp"
 
     "src/symbol/Scope.cpp"
     "src/symbol/NameMangling.cpp"
@@ -111,6 +112,7 @@ set(HEADERS
     "include/type/StructType.h"
     "include/type/ArrayType.h"
     "include/type/EnumType.h"
+    "include/type/FunctionType.h"
 
     "include/symbol/Scope.h"
     "include/symbol/NameMangling.h"

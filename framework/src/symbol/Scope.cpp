@@ -20,7 +20,7 @@ FunctionSymbol::FunctionSymbol(vipir::Function* function, Type* type, bool priv,
     : function(function)
     , priv(priv)
     , mangle(mangle)
-    , returnType(type)
+    , type(static_cast<FunctionType*>(type))
 {
 }
 
@@ -32,8 +32,9 @@ void FunctionSymbol::Create(vipir::Function* function, std::string mangledName, 
     GlobalFunctions[mangledName].names = std::move(names);
 }
 
-GlobalSymbol::GlobalSymbol(vipir::Value* global)
+GlobalSymbol::GlobalSymbol(vipir::Value* global, Type* type)
     : global(global)
+    , type(type)
 {
 }
 
