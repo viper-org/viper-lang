@@ -61,6 +61,22 @@ namespace parser
         return mMethods;
     }
 
+    void StructDeclaration::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        for (auto& method : mMethods)
+        {
+            if (method.scope)
+            {
+                scope = method.scope.get();
+                method.scope->currentReturnType = static_cast<FunctionType*>(method.type)->getReturnType();
+            }
+            for (auto& node : method.body)
+            {
+                node->typeCheck(scope, diag);
+            }
+        }
+    }
+
     vipir::Value* StructDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         for (StructMethod& method : mMethods)

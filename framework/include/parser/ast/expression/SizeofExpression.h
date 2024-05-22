@@ -8,8 +8,9 @@ namespace parser
     class SizeofExpression : public ASTNode
     {
     public:
-        SizeofExpression(Type* expressionType, Type* type);
+        SizeofExpression(Type* expressionType, Type* type, lexing::Token token);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:

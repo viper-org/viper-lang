@@ -21,7 +21,7 @@ namespace parser
         , mRight(std::move(right))
         , mToken(std::move(operatorToken))
     {
-        switch (operatorToken.getTokenType())
+        switch (mToken.getTokenType())
         {
             case lexing::TokenType::Plus:
                 mOperator = Operator::Add;
@@ -99,6 +99,72 @@ namespace parser
             default:
                 break;
         }
+
+        mPreferredDebugToken = mToken;
+    }
+
+    void BinaryExpression::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        switch (mOperator)
+        {
+            case Operator::Add:
+                if (mLeft->getType()->isPointerType())
+                {
+                    if (!mRight->getType()->isIntegerType())
+                    {
+                        diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("No match for '{}operator+{} with types '{}{}{}' and '{}{}{}",
+                            fmt::bold, fmt::defaults,
+                            fmt::bold, mLeft->getType()->getName(), fmt::defaults,
+                            fmt::bold, mRight->getType()->getName(), fmt::defaults));
+                    }
+                }
+                if (mRight->getType()->isPointerType())
+                {
+                    if (!mRight->getType()->isIntegerType())
+                    {
+                        diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("No match for '{}operator+{} with types '{}{}{}' and '{}{}{}'",
+                            fmt::bold, fmt::defaults,
+                            fmt::bold, mLeft->getType()->getName(), fmt::defaults,
+                            fmt::bold, mRight->getType()->getName(), fmt::defaults));
+                    }
+                }
+            case Operator::Sub:
+            case Operator::Mul:
+            case Operator::Div:
+            case Operator::BitwiseAnd:
+            case Operator::BitwiseOr:
+            case Operator::BitwiseXor:
+            case Operator::Equal:
+            case Operator::NotEqual:
+            case Operator::LessThan:
+            case Operator::GreaterThan:
+            case Operator::LessEqual:
+            case Operator::GreaterEqual:
+            case Operator::Assign:
+            case Operator::AddAssign:
+            case Operator::SubAssign:
+                if (mLeft->getType() != mRight->getType() || !mLeft->getType()->isIntegerType())
+                {
+                    diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("No match for '{}operator{}{} with types '{}{}{}' and '{}{}{}'",
+                            fmt::bold, mToken.getId(),               fmt::defaults,
+                            fmt::bold, mLeft->getType()->getName(),  fmt::defaults,
+                            fmt::bold, mRight->getType()->getName(), fmt::defaults));
+                }
+                break;
+
+            case Operator::ArrayAccess:
+                if (!mLeft->getType()->isArrayType() || !mRight->getType()->isIntegerType())
+                {
+                    diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("No match for '{}operator[]{} with types '{}{}{}' and '{}{}{}'",
+                            fmt::bold, fmt::defaults,
+                            fmt::bold, mLeft->getType()->getName(),  fmt::defaults,
+                            fmt::bold, mRight->getType()->getName(), fmt::defaults));
+                }
+                break;
+        }
+
+        mLeft->typeCheck(scope, diag);
+        mRight->typeCheck(scope, diag);
     }
 
     vipir::Value* BinaryExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)

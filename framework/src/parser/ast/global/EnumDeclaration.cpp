@@ -30,6 +30,10 @@ namespace parser
         }
     }
 
+    void EnumDeclaration::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+    }
+
     vipir::Value* EnumDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         for (auto& field : mFields)

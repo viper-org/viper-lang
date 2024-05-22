@@ -12,6 +12,7 @@ namespace parser
     public:
         UsingDeclaration(std::vector<std::string> names, Type* type);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:

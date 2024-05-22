@@ -62,6 +62,7 @@ struct Scope
 
     Scope* parent;
     StructType* owner;
+    Type* currentReturnType;
     vipir::BasicBlock* breakTo;
     vipir::BasicBlock* continueTo;
     std::string namespaceName;

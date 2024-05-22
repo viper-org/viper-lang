@@ -18,6 +18,7 @@ namespace parser
     public:
         EnumDeclaration(std::vector<std::string> names, std::vector<EnumField> fields);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:

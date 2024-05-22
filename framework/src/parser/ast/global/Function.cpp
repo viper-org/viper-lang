@@ -31,6 +31,19 @@ namespace parser
         return static_cast<FunctionType*>(mType)->getReturnType();
     }
 
+    void Function::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        if (mScope)
+        {
+            scope = mScope.get();
+            mScope->currentReturnType = getReturnType();
+        }
+        for (auto& node : mBody)
+        {
+            node->typeCheck(scope, diag);
+        }
+    }
+
     vipir::Value* Function::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         if (!mBody.empty()) scope = mScope.get();

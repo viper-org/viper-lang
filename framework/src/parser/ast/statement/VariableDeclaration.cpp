@@ -14,6 +14,20 @@ namespace parser
         mType = type;
     }
 
+    void VariableDeclaration::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        if (mInitialValue)
+        {
+            if (mInitialValue->getType() != mType)
+            {
+                diag.compilerError(mInitialValue->getDebugToken().getStart(), mInitialValue->getDebugToken().getEnd(), std::format("Variable of type '{}{}{}' cannot be initialized with a value of type '{}{}{}'",
+                    fmt::bold, mType->getName(), fmt::defaults,
+                    fmt::bold, mInitialValue->getType()->getName(), fmt::defaults));
+            }
+            mInitialValue->typeCheck(scope, diag);
+        }
+    }
+
     vipir::Value* VariableDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::AllocaInst* alloca = builder.CreateAlloca(mType->getVipirType());

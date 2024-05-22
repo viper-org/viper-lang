@@ -12,6 +12,7 @@ namespace parser
     public:
         GlobalDeclaration(std::vector<std::string> names, Type* type, ASTNodePtr initVal);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:

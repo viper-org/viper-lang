@@ -16,6 +16,17 @@ namespace parser
     {
     }
 
+    void WhileStatement::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        if (!mCondition->getType()->isBooleanType())
+        {
+            diag.compilerError(mCondition->getDebugToken().getStart(), mCondition->getDebugToken().getEnd(), std::format("While-statement condition must have type '{}bool{}'",
+                fmt::bold, fmt::defaults));
+        }
+        mCondition->typeCheck(scope, diag);
+        mBody->typeCheck(scope, diag);
+    }
+
     vipir::Value* WhileStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::BasicBlock* conditionBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());

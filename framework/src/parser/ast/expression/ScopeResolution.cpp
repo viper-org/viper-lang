@@ -28,6 +28,13 @@ namespace parser
                 mType = GlobalFunctions[symbol].type;
             }
         }
+        mPreferredDebugToken = token;
+    }
+
+    void ScopeResolution::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        mLeft->typeCheck(scope, diag);
+        mRight->typeCheck(scope, diag);
     }
 
     std::vector<std::string> ScopeResolution::getNames()

@@ -10,12 +10,15 @@ namespace parser
     class StructInitializer : public ASTNode
     {
     public:
-        StructInitializer(Type* type, std::vector<ASTNodePtr>&& body);
+        StructInitializer(Type* type, std::vector<ASTNodePtr>&& body, lexing::Token typeToken);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         std::vector<ASTNodePtr> mBody;
+        
+        lexing::Token mTypeToken;
     };
     using StructInitializerPtr = std::unique_ptr<StructInitializer>;
 }
