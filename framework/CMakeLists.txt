@@ -30,6 +30,7 @@ set(SOURCES
     "src/parser/ast/statement/BreakStatement.cpp"
     "src/parser/ast/statement/ContinueStatement.cpp"
     "src/parser/ast/statement/CompoundStatement.cpp"
+    "src/parser/ast/statement/ConstexprStatement.cpp"
 
     "src/parser/ast/expression/IntegerLiteral.cpp"
     "src/parser/ast/expression/BooleanLiteral.cpp"
@@ -87,6 +88,7 @@ set(HEADERS
     "include/parser/ast/statement/ForStatement.h"
     "include/parser/ast/statement/BreakStatement.h"
     "include/parser/ast/statement/ContinueStatement.h"
+    "include/parser/ast/statement/ConstexprStatement.h"
 
     "include/parser/ast/expression/IntegerLiteral.h"
     "include/parser/ast/expression/BooleanLiteral.h"

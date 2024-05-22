@@ -415,6 +415,9 @@ namespace parser
             case lexing::TokenType::LetKeyword:
                 return parseVariableDeclaration();
 
+            case lexing::TokenType::ConstexprKeyword:
+
+
             case lexing::TokenType::IfKeyword:
                 return parseIfStatement();
             case lexing::TokenType::WhileKeyword:

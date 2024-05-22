@@ -93,6 +93,7 @@ namespace parser
         CompoundStatementPtr parseCompoundStatement();
         ReturnStatementPtr parseReturnStatement();
         VariableDeclarationPtr parseVariableDeclaration();
+
         IfStatementPtr parseIfStatement();
         WhileStatementPtr parseWhileStatement();
         ForStatementPtr parseForStatement();

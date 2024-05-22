@@ -1,11 +1,7 @@
-func @main2() -> i32 {
-    return 0;
-}
-
 func @main() -> i32 {
-    let vec: struct Vec3 = struct Vec3 { 1, 2, 3 };
+    constexpr x: i32 = 69;
 
-    return (i32) vec.addAll();
+    return x;
 }
 
 using struct Vec3 {

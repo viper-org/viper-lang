@@ -41,7 +41,7 @@ namespace lexing
         Type,
         FuncKeyword,
         ReturnKeyword,
-        LetKeyword, GlobalKeyword,
+        LetKeyword, GlobalKeyword, ConstexprKeyword,
         IfKeyword, ElseKeyword,
         WhileKeyword, ForKeyword,
         SwitchKeyword, CaseKeyword, DefaultKeyword,

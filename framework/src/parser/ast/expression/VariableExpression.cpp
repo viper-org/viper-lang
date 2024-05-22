@@ -29,7 +29,10 @@ namespace parser
 
         if (local)
         {
-            return builder.CreateLoad(local->alloca);
+            if (dynamic_cast<vipir::AllocaInst*>(local->alloca))
+                return builder.CreateLoad(local->alloca);
+            else
+                return local->alloca;
         }
         else
         {
