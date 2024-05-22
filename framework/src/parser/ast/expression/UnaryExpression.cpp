@@ -76,19 +76,19 @@ namespace parser
 
             case Operator::PostfixDoublePlus:
             {
-                vipir::Value* copy = builder.CreateAlloca(mType->getVipirType());
-                builder.CreateStore(copy, operand);
-                vipir::Value* added = builder.CreateAdd(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
-                builder.CreateStore(operand, added);
-                return builder.CreateLoad(copy);
+                vipir::Value* ptr = vipir::getPointerOperand(operand);
+                vipir::Value* load = builder.CreateLoad(ptr);
+                vipir::Value* add = builder.CreateAdd(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+                builder.CreateStore(ptr, add);
+                return load;
             }
             case Operator::PostfixDoubleMinus:
             {
-                vipir::Value* copy = builder.CreateAlloca(mType->getVipirType());
-                builder.CreateStore(copy, operand);
-                vipir::Value* subbed = builder.CreateSub(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
-                builder.CreateStore(operand, subbed);
-                return builder.CreateLoad(copy);
+                vipir::Value* ptr = vipir::getPointerOperand(operand);
+                vipir::Value* load = builder.CreateLoad(ptr);
+                vipir::Value* add = builder.CreateSub(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+                builder.CreateStore(ptr, add);
+                return load;
             }
             case Operator::Negate:
                 return builder.CreateNeg(operand);
