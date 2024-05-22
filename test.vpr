@@ -36,7 +36,7 @@ func @switchCase() -> bool {
             viperIsGood = false;
             break;
         }
-        case false:
+        case 2:
             viperIsGood = false;
             // Fallthrough
         default:
