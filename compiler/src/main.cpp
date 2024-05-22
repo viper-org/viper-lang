@@ -109,8 +109,8 @@ int main(int argc, char** argv)
     vipir::Module module(inputFilePath);
     module.setABI<vipir::abi::SysV>();
 
-
-    for (auto& node : parser.parse())
+    auto nodes = parser.parse();
+    for (auto& node : nodes)
     {
         node->emit(builder, module, nullptr, diag);
     }

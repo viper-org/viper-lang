@@ -33,10 +33,18 @@ namespace parser
             mangledName += name;
         }
 
-        vipir::GlobalVar* global = module.createGlobalVar(mType->getVipirType());
+        vipir::GlobalVar* global;
 
-        vipir::Value* initVal = mInitVal->emit(builder, module, scope, diag);
-        global->setInitialValue(initVal);
+        if (GlobalVariables.contains(mangledName))
+            global = dynamic_cast<vipir::GlobalVar*>(GlobalVariables[mangledName].global);
+        else
+            global = module.createGlobalVar(mType->getVipirType());
+
+        if (mInitVal)
+        {
+            vipir::Value* initVal = mInitVal->emit(builder, module, scope, diag);
+            global->setInitialValue(initVal);
+        }
 
         GlobalVariables[mangledName] = global;
 

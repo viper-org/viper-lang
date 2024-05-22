@@ -119,8 +119,8 @@ namespace parser
         {
             consume();
             expectEitherToken({ lexing::TokenType::FuncKeyword, lexing::TokenType::GlobalKeyword,
-                                 lexing::TokenType::StructKeyword, lexing::TokenType::UsingKeyword,
-                                 lexing::TokenType::EnumKeyword });
+                                lexing::TokenType::ConstexprKeyword, lexing::TokenType::StructKeyword,
+                                lexing::TokenType::UsingKeyword, lexing::TokenType::EnumKeyword });
         }
 
         switch (current().getTokenType())
@@ -129,6 +129,7 @@ namespace parser
                 return parseFunction(attributes);
             case lexing::TokenType::StructKeyword:
                 return parseStructDeclaration();
+            case lexing::TokenType::ConstexprKeyword:
             case lexing::TokenType::GlobalKeyword:
                 return parseGlobalDeclaration();
             case lexing::TokenType::ImportKeyword:
@@ -416,7 +417,7 @@ namespace parser
                 return parseVariableDeclaration();
 
             case lexing::TokenType::ConstexprKeyword:
-
+                return parseConstexprStatement();
 
             case lexing::TokenType::IfKeyword:
                 return parseIfStatement();
@@ -884,6 +885,25 @@ namespace parser
         consume();
 
         return std::make_unique<VariableDeclaration>(type, std::move(name), parseExpression(type));
+    }
+
+    ConstexprStatementPtr Parser::parseConstexprStatement()
+    {
+        consume(); // constexpr
+
+        std::string name = consume().getText();
+
+        expectToken(lexing::TokenType::Colon);
+        consume();
+
+        Type* type = parseType();
+
+        mScope->locals[name] = LocalSymbol(nullptr, type);
+
+        expectToken(lexing::TokenType::Equals);
+        consume();
+
+        return std::make_unique<ConstexprStatement>(type, std::move(name), parseExpression(type));
     }
 
     IfStatementPtr Parser::parseIfStatement()

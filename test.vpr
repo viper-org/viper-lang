@@ -1,6 +1,6 @@
-func @main() -> i32 {
-    constexpr x: i32 = 69;
+constexpr x: i32 = 69;
 
+func @main() -> i32 {
     return x;
 }
 

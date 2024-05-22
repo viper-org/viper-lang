@@ -118,6 +118,7 @@ namespace parser
                 return parseFunction(exported, attributes);
             case lexing::TokenType::StructKeyword:
                 return parseStructDeclaration(exported);
+            case lexing::TokenType::ConstexprKeyword:
             case lexing::TokenType::GlobalKeyword:
                 return parseGlobalDeclaration(exported);
             case lexing::TokenType::ImportKeyword:
