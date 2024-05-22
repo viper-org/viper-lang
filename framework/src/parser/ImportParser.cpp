@@ -257,7 +257,6 @@ namespace parser
             consume();
 
             Type* type = parseType();
-            mScope->locals[name] = LocalSymbol(nullptr, type);
             arguments.push_back({std::move(name), type});
 
             if (current().getTokenType() != lexing::TokenType::RightParen)
