@@ -15,6 +15,9 @@ namespace parser
     public:
         enum class Operator
         {
+            PostfixDoublePlus, PostfixDoubleMinus,
+            PrefixDoublePlus, PrefixDoubleMinus,
+
             Negate,
             
             BitwiseNot,
@@ -22,7 +25,7 @@ namespace parser
             AddressOf, Indirection,
         };
 
-        UnaryExpression(ASTNodePtr operand, lexing::TokenType op);
+        UnaryExpression(ASTNodePtr operand, lexing::TokenType op, bool postfix = false);
         UnaryExpression(ASTNodePtr operand, Operator op);
 
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;

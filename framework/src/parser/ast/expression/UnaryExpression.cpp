@@ -5,20 +5,33 @@
 
 #include "type/PointerType.h"
 
+#include <vipir/IR/Constant/ConstantInt.h>
+#include <vipir/IR/Instruction/BinaryInst.h>
 #include <vipir/IR/Instruction/UnaryInst.h>
 #include <vipir/IR/Instruction/AddrInst.h>
 #include <vipir/IR/Instruction/LoadInst.h>
 #include <vipir/IR/Instruction/GEPInst.h>
 
 #include <vipir/Module.h>
+#include <iostream>
 
 namespace parser
 {
-    UnaryExpression::UnaryExpression(ASTNodePtr operand, lexing::TokenType tokenType)
+    UnaryExpression::UnaryExpression(ASTNodePtr operand, lexing::TokenType tokenType, bool postfix)
         : mOperand(std::move(operand))
     {
         switch(tokenType)
         {
+            case lexing::TokenType::DoublePlus:
+                mOperator = postfix ? Operator::PostfixDoublePlus : Operator::PrefixDoublePlus;
+                mType = mOperand->getType();
+                break;
+
+            case lexing::TokenType::DoubleMinus:
+                mOperator = postfix ? Operator::PostfixDoubleMinus : Operator::PrefixDoubleMinus;
+                mType = mOperand->getType();
+                break;
+
             case lexing::TokenType::Minus:
                 mOperator = Operator::Negate;
                 mType = mOperand->getType();
@@ -55,6 +68,28 @@ namespace parser
 
         switch(mOperator)
         {
+            case Operator::PrefixDoublePlus:
+                return builder.CreateAdd(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+
+            case Operator::PrefixDoubleMinus:
+                return builder.CreateSub(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+
+            case Operator::PostfixDoublePlus:
+            {
+                vipir::Value* copy = builder.CreateAlloca(mType->getVipirType());
+                builder.CreateStore(copy, operand);
+                vipir::Value* added = builder.CreateAdd(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+                builder.CreateStore(operand, added);
+                return builder.CreateLoad(copy);
+            }
+            case Operator::PostfixDoubleMinus:
+            {
+                vipir::Value* copy = builder.CreateAlloca(mType->getVipirType());
+                builder.CreateStore(copy, operand);
+                vipir::Value* subbed = builder.CreateSub(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+                builder.CreateStore(operand, subbed);
+                return builder.CreateLoad(copy);
+            }
             case Operator::Negate:
                 return builder.CreateNeg(operand);
 

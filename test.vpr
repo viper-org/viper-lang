@@ -1,5 +1,6 @@
 func @main2() -> i32 {
-    return 0;
+    let i: i32 = 0;
+    return i--;
 }
 
 func @main() -> i32 {
