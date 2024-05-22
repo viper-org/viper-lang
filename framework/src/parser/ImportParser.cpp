@@ -248,9 +248,6 @@ namespace parser
 
         std::vector<FunctionArgument> arguments;
 
-        Scope* functionScope = new Scope(mScope, nullptr);
-        mScope = functionScope;
-
         while (current().getTokenType() != lexing::TokenType::RightParen)
         {
             expectToken(lexing::TokenType::Identifier);
@@ -281,7 +278,6 @@ namespace parser
         if (current().getTokenType() == lexing::TokenType::Semicolon) // Extern function declaration
         {
             consume();
-            mScope = functionScope->parent;
             if (exported)
                 return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(name), std::vector<ASTNodePtr>(), nullptr);
             return nullptr;
@@ -308,8 +304,6 @@ namespace parser
             }
         }
         consume();
-
-        mScope = functionScope->parent;
 
         if (exported)
         {
