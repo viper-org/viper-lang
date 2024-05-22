@@ -104,7 +104,7 @@ namespace parser
         VariableExpressionPtr parseVariableExpression(Type* preferredType = nullptr);
         CallExpressionPtr parseCallExpression(ASTNodePtr function);
         MemberAccessPtr parseMemberAccess(ASTNodePtr struc, bool pointer);
-        StructInitializerPtr parseStructInitializer();
+        StructInitializerPtr parseStructInitializer(Type* type);
         ArrayInitializerPtr parseArrayInitializer(Type* preferredType = nullptr);
 
         void parseAttributes(std::vector<GlobalAttribute>& attributes);

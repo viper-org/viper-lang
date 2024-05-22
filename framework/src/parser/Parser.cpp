@@ -448,10 +448,14 @@ namespace parser
                 return parseStringLiteral();
 
             case lexing::TokenType::Identifier:
+                if (auto type = parseType(true))
+                {
+                    return parseStructInitializer(type);
+                }
                 return parseVariableExpression(preferredType);
 
             case lexing::TokenType::StructKeyword:
-                return parseStructInitializer();
+                return parseStructInitializer(nullptr);
 
             case lexing::TokenType::LeftSquareBracket:
                 return parseArrayInitializer(preferredType);
@@ -1119,9 +1123,12 @@ namespace parser
         return std::make_unique<MemberAccess>(std::move(struc), std::string(nameToken.getText()), pointer, std::move(nameToken));
     }
 
-    StructInitializerPtr Parser::parseStructInitializer()
+    StructInitializerPtr Parser::parseStructInitializer(Type* type)
     {
-        StructType* type = static_cast<StructType*>(parseType());
+        if (current().getTokenType() == lexing::TokenType::StructKeyword)
+            type = parseType();
+
+        StructType* structType = static_cast<StructType*>(type);
 
         expectToken(lexing::TokenType::LeftBracket);
         consume();
@@ -1130,7 +1137,7 @@ namespace parser
         int index = 0;
         while (current().getTokenType() != lexing::TokenType::RightBracket)
         {
-            body.push_back(parseExpression(type->getFields()[index++].type));
+            body.push_back(parseExpression(structType->getFields()[index++].type));
 
             if (current().getTokenType() != lexing::TokenType::RightBracket)
             {

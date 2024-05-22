@@ -1,9 +1,5 @@
-func @main2() -> i32 {
-    return 0;
-}
-
 func @main() -> i32 {
-    let vec: struct Vec3 = struct Vec3 { 1, 2, 3 };
+    let vec: Vec3 = Vec3 { 1, 2, 3 };
 
     return (i32) vec.addAll();
 }
