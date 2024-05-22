@@ -1,5 +1,23 @@
 func @main() -> i32 {
-    return add(34, 35);
+    let vec: struct Vec3 = struct Vec3 { 1, 2, 3 };
+
+    return (i32) vec.addAll();
 }
 
-func @add(a: i32, b: i32) -> i32 = a + b;
+using struct Vec3 {
+    private x: i64;
+    private y: i64;
+    private z: i64;
+
+    func @addAll() -> i64 {
+        return this->getX() + this->getY() + this->getZ();
+    }
+
+    func @getX() -> i64 = this->x;
+
+    func @getY() -> i64 = this->y;
+
+    func @getZ() -> i64 {
+        return this->z;
+    }
+}

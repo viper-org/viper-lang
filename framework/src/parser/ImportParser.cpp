@@ -237,15 +237,6 @@ namespace parser
     {
         consume();
 
-        std::optional<std::string> struc;
-        std::optional<lexing::Token> structNameToken;
-
-        if (current().getTokenType() == lexing::TokenType::Identifier)
-        {
-            structNameToken = current();
-            struc = consume().getText();
-        }
-
         expectToken(lexing::TokenType::Asperand);
         consume();
 
@@ -256,29 +247,9 @@ namespace parser
         consume();
 
         std::vector<FunctionArgument> arguments;
-        StructType* structType = nullptr;
 
-        Scope* functionScope = new Scope(mScope, structType);
+        Scope* functionScope = new Scope(mScope, nullptr);
         mScope = functionScope;
-
-        if (struc.has_value())
-        {
-            std::vector<std::string> names = mNamespaces;
-            names.push_back(struc.value());
-            std::vector<std::string> types = symbol::GetSymbol(names, {});
-            for (auto name : types)
-            {
-                structType = StructType::Get(name);
-                if (structType) break;
-            }
-
-            if (!structType)
-            {
-                mDiag.compilerError(structNameToken->getStart(),structNameToken->getEnd(), std::format("unknown type name {}", *struc));
-            }
-
-            arguments.push_back({"this", PointerType::Create(structType)});
-        }
 
         while (current().getTokenType() != lexing::TokenType::RightParen)
         {
@@ -312,7 +283,7 @@ namespace parser
             consume();
             mScope = functionScope->parent;
             if (exported)
-                return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
+                return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(name), std::vector<ASTNodePtr>(), nullptr);
             return nullptr;
         }
 
@@ -324,8 +295,18 @@ namespace parser
             while (current().getTokenType() != lexing::TokenType::Semicolon)
                 consume();
         else
-            while (current().getTokenType() != lexing::TokenType::RightBracket)
+        {
+            int bracketCount = 1;
+            while (bracketCount > 0)
+            {
+                if (current().getTokenType() == lexing::TokenType::LeftBracket)
+                    bracketCount++;
+                else if (current().getTokenType() == lexing::TokenType::RightBracket)
+                    bracketCount--;
+
                 consume();
+            }
+        }
         consume();
 
         mScope = functionScope->parent;
@@ -333,7 +314,7 @@ namespace parser
         if (exported)
         {
             mSymbols.push_back({name, type});
-            return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
+            return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(name), std::vector<ASTNodePtr>(), nullptr);
         }
         return nullptr;
     }
@@ -435,7 +416,7 @@ namespace parser
                     type = parseType();
                 }
 
-                expectToken(lexing::TokenType::Semicolon);
+                //expectToken(lexing::TokenType::Semicolon);
 
                 if (current().getTokenType() == lexing::TokenType::Semicolon)
                 {
@@ -443,6 +424,37 @@ namespace parser
                     methods.push_back({priv, std::move(name), type, std::move(arguments), std::vector<ASTNodePtr>(), nullptr});
                     continue;
                 }
+
+                Scope* scope = new Scope(mScope, /*structType*/nullptr);
+                mScope = scope;
+
+                expectEitherToken({lexing::TokenType::LeftBracket, lexing::TokenType::Equals});
+                bool isExpressionBodied = current().getTokenType() == lexing::TokenType::Equals;
+                consume();
+
+                if (isExpressionBodied)
+                {
+                    while (current().getTokenType() != lexing::TokenType::Semicolon)
+                        consume();
+                    consume();
+                }
+                else
+                {
+                    int bracketCount = 1;
+                    while (bracketCount > 0)
+                    {
+                        if (current().getTokenType() == lexing::TokenType::LeftBracket)
+                            bracketCount++;
+                        else if (current().getTokenType() == lexing::TokenType::RightBracket)
+                            bracketCount--;
+
+                        consume();
+                    }
+                }
+
+                mScope = scope->parent;
+
+                methods.push_back({priv, std::move(name), type, std::move(arguments), std::vector<ASTNodePtr>(), ScopePtr(scope)});
             }
             else
             {

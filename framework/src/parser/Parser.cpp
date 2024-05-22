@@ -473,15 +473,6 @@ namespace parser
     {
         consume();
 
-        std::optional<std::string> struc;
-        std::optional<lexing::Token> structNameToken;
-
-        if (current().getTokenType() == lexing::TokenType::Identifier)
-        {
-            structNameToken = current();
-            struc = consume().getText();
-        }
-
         expectToken(lexing::TokenType::Asperand);
         consume();
 
@@ -496,27 +487,6 @@ namespace parser
 
         Scope* functionScope = new Scope(mScope, structType);
         mScope = functionScope;
-
-        if (struc.has_value())
-        {
-            std::vector<std::string> names = mNamespaces;
-            names.push_back(struc.value());
-            std::vector<std::string> types = symbol::GetSymbol(names, {});
-            for (auto name : types)
-            {
-                structType = StructType::Get(name);
-                if (structType) break;
-            }
-
-            if (!structType)
-            {
-                mDiag.compilerError(structNameToken->getStart(),structNameToken->getEnd(), std::format("unknown type name {}", *struc));
-            }
-            functionScope->owner = structType;
-
-            mScope->locals["this"] = LocalSymbol(nullptr, PointerType::Create(structType));
-            arguments.push_back({"this", PointerType::Create(structType)});
-        }
 
         while (current().getTokenType() != lexing::TokenType::RightParen)
         {
@@ -551,7 +521,7 @@ namespace parser
         {
             consume();
             mScope = functionScope->parent;
-            return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
+            return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(name), std::vector<ASTNodePtr>(), nullptr);
         }
 
         expectEitherToken({lexing::TokenType::LeftBracket, lexing::TokenType::Equals});
@@ -582,7 +552,7 @@ namespace parser
 
         mScope = functionScope->parent;
 
-        return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::move(body), functionScope);
+        return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(name), std::move(body), functionScope);
     }
 
     NamespacePtr Parser::parseNamespace()
@@ -682,7 +652,7 @@ namespace parser
                     type = parseType();
                 }
 
-                expectToken(lexing::TokenType::Semicolon);
+                //expectToken(lexing::TokenType::Semicolon);
 
                 if (current().getTokenType() == lexing::TokenType::Semicolon)
                 {
@@ -693,22 +663,36 @@ namespace parser
 
                 // if definition in struct will ever be readded
 
-                Scope* scope = new Scope(mScope, /*structType*/nullptr);
+                Scope* scope = new Scope(mScope, structType);
                 mScope = scope;
 
-                //mSymbols.push_back({"this", PointerType::Create(structType)});
+                mScope->locals["this"] = LocalSymbol(nullptr, PointerType::Create(structType));
 
-                expectToken(lexing::TokenType::LeftBracket);
+                expectEitherToken({lexing::TokenType::LeftBracket, lexing::TokenType::Equals});
+                bool isExpressionBodied = current().getTokenType() == lexing::TokenType::Equals;
                 consume();
 
                 std::vector<ASTNodePtr> body;
-                while (current().getTokenType() != lexing::TokenType::RightBracket)
+                if (isExpressionBodied)
                 {
-                    body.push_back(parseExpression());
+                    ASTNodePtr exp = parseExpression(type);
+                    if (type->isVoidType())
+                        body.push_back(std::move(exp));
+                    else
+                        body.push_back(std::make_unique<ReturnStatement>(std::move(exp)));
                     expectToken(lexing::TokenType::Semicolon);
                     consume();
                 }
-                consume();
+                else
+                {
+                    while (current().getTokenType() != lexing::TokenType::RightBracket)
+                    {
+                        body.push_back(parseExpression());
+                        expectToken(lexing::TokenType::Semicolon);
+                        consume();
+                    }
+                    consume();
+                }
 
                 mScope = mScope->parent;
 
