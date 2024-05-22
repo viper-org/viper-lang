@@ -1,5 +1,9 @@
 #include "parser/ast/statement/SwitchStatement.h"
 
+#include "parser/ast/statement/BreakStatement.h"
+#include "parser/ast/statement/ContinueStatement.h"
+#include "parser/ast/statement/ReturnStatement.h"
+
 #include <vipir/IR/Instruction/BinaryInst.h>
 
 namespace parser
@@ -12,15 +16,13 @@ namespace parser
 
     vipir::Value* SwitchStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
-        std::vector<vipir::BasicBlock*> conditionBlocks;
-        std::vector<vipir::BasicBlock*> bodyBlocks;
-
         vipir::Value* value = mValue->emit(builder, module, scope, diag);
 
         if (mSections.empty())
-        {
             return nullptr;
-        }
+
+        std::vector<vipir::BasicBlock*> conditionBlocks;
+        std::vector<vipir::BasicBlock*> bodyBlocks;
 
         for (auto& sec : mSections)
             conditionBlocks.push_back(vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent()));
