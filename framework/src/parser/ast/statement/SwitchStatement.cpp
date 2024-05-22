@@ -4,10 +4,9 @@
 
 namespace parser
 {
-    SwitchStatement::SwitchStatement(ASTNodePtr&& value, std::vector<SwitchSection>&& sections, Scope* scope)
+    SwitchStatement::SwitchStatement(ASTNodePtr&& value, std::vector<SwitchSection>&& sections)
         : mValue(std::move(value))
         , mSections(std::move(sections))
-        , mScope(scope)
     {
     }
 
@@ -15,8 +14,6 @@ namespace parser
     {
         std::vector<vipir::BasicBlock*> conditionBlocks;
         std::vector<vipir::BasicBlock*> bodyBlocks;
-
-        scope = mScope.get();
 
         vipir::Value* value = mValue->emit(builder, module, scope, diag);
 

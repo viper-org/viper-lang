@@ -997,9 +997,6 @@ namespace parser
 
         expectToken(lexing::TokenType::LeftBracket);
         consume();
-    
-        Scope* switchScope = new Scope(mScope, nullptr);
-        mScope = switchScope;
 
         std::vector<SwitchSection> sections;
 
@@ -1033,9 +1030,7 @@ namespace parser
 
         mTokens.insert(mTokens.begin() + mPosition, lexing::Token(lexing::TokenType::Semicolon, {0, 0}, {0, 0}));
 
-        mScope = switchScope->parent;
-
-        return std::make_unique<SwitchStatement>(std::move(value), std::move(sections), switchScope);
+        return std::make_unique<SwitchStatement>(std::move(value), std::move(sections));
     }
 
     SizeofExpressionPtr Parser::parseSizeof(Type* preferredType)
