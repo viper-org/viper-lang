@@ -1003,26 +1003,48 @@ namespace parser
         expectToken(lexing::TokenType::LeftParen);
         consume();
 
+        static auto isSwitchableType = [](Type* type)
+        {
+            return type &&
+                   (type->isEnumType() ||
+                   type->isIntegerType());
+        };
+
+        lexing::Token valueToken = current();
         ASTNodePtr value = parseExpression();
+        if (!isSwitchableType(value->getType()))
+        {
+            mDiag.compilerError(valueToken.getStart(), valueToken.getEnd(), "Expression must have integral or enum type");
+        }
 
         expectToken(lexing::TokenType::RightParen);
         consume();
 
         expectToken(lexing::TokenType::LeftBracket);
         consume();
-    
-        Scope* switchScope = new Scope(mScope, nullptr);
-        mScope = switchScope;
 
         std::vector<SwitchSection> sections;
+        bool hasDefaultSection = false;
 
         while (current().getTokenType() != lexing::TokenType::RightBracket)
         {
+            lexing::Token sectionToken = current();
             expectEitherToken({lexing::TokenType::CaseKeyword, lexing::TokenType::DefaultKeyword});
             bool defSection = current().getTokenType() == lexing::TokenType::DefaultKeyword;
             consume();
 
-            ASTNodePtr value = defSection ? nullptr : parseExpression();
+            if (hasDefaultSection && defSection)
+            {
+                mDiag.compilerError(sectionToken.getStart(), sectionToken.getEnd(), "Default label has already appeared in this switch");
+            }
+            hasDefaultSection |= defSection;
+
+            lexing::Token labelToken = current();
+            ASTNodePtr label = defSection ? nullptr : parseExpression();
+            if (label && !isSwitchableType(label->getType()))
+            {
+                mDiag.compilerError(labelToken.getStart(), labelToken.getEnd(), "Expression must have integral or enum type");
+            }
 
             expectToken(lexing::TokenType::Colon);
             consume();
@@ -1033,22 +1055,20 @@ namespace parser
                 current().getTokenType() != lexing::TokenType::DefaultKeyword)
             {
                 body.push_back(parseExpression());
-                if (current().getTokenType() != lexing::TokenType::RightBracket)
+                if (current().getTokenType() != lexing::TokenType::RightBracket) // Switch end }
                 {
                     expectToken(lexing::TokenType::Semicolon);
                     consume();
                 }
             }
 
-            sections.push_back({std::move(value), std::move(body)});
+            sections.push_back({std::move(label), std::move(body)});
         }
         consume();
 
         mTokens.insert(mTokens.begin() + mPosition, lexing::Token(lexing::TokenType::Semicolon, {0, 0}, {0, 0}));
 
-        mScope = switchScope->parent;
-
-        return std::make_unique<SwitchStatement>(std::move(value), std::move(sections), switchScope);
+        return std::make_unique<SwitchStatement>(std::move(value), std::move(sections));
     }
 
     SizeofExpressionPtr Parser::parseSizeof(Type* preferredType)

@@ -21,3 +21,23 @@ using struct Vec3 {
         return this->z;
     }
 }
+
+func @switchCase() -> bool {
+    let viperIsGood: bool;
+    let choice: i32 = 2;
+    switch (choice) {
+        case 0:
+        case 1: {
+            let temp: i32 = 3222;
+            viperIsGood = false;
+            break;
+        }
+        case 2:
+            viperIsGood = false;
+            // Fallthrough
+        default:
+            viperIsGood = true;
+            break;
+    }
+    return viperIsGood;
+}
