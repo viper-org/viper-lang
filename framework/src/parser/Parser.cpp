@@ -209,6 +209,8 @@ namespace parser
     {
         switch(tokenType)
         {
+            case lexing::TokenType::DoublePlus:
+            case lexing::TokenType::DoubleMinus:
             case lexing::TokenType::Minus:
             case lexing::TokenType::Tilde:
             case lexing::TokenType::Ampersand:
@@ -225,6 +227,9 @@ namespace parser
     {
         switch(tokenType)
         {
+            case lexing::TokenType::DoublePlus:
+            case lexing::TokenType::DoubleMinus:
+                return 95;
             default:
                 return 0;
         }
@@ -397,6 +402,19 @@ namespace parser
                 expectToken(lexing::TokenType::RightSquareBracket);
                 consume();
             }
+        }
+
+        while(true)
+        {
+            int postfixOperatorPrecedence = getPostfixUnaryOperatorPrecedence(current().getTokenType());
+            if (postfixOperatorPrecedence < precedence)
+            {
+                break;
+            }
+
+            lexing::Token operatorToken = consume();
+
+            lhs = std::make_unique<UnaryExpression>(std::move(lhs), operatorToken.getTokenType(), true);
         }
 
         return lhs;
