@@ -418,9 +418,6 @@ namespace parser
                     continue;
                 }
 
-                Scope* scope = new Scope(mScope, /*structType*/nullptr);
-                mScope = scope;
-
                 expectEitherToken({lexing::TokenType::LeftBracket, lexing::TokenType::Equals});
                 bool isExpressionBodied = current().getTokenType() == lexing::TokenType::Equals;
                 consume();
@@ -445,9 +442,7 @@ namespace parser
                     }
                 }
 
-                mScope = scope->parent;
-
-                methods.push_back({priv, std::move(name), type, std::move(arguments), std::vector<ASTNodePtr>(), ScopePtr(scope)});
+                methods.push_back({priv, std::move(name), type, std::move(arguments), std::vector<ASTNodePtr>(), nullptr});
             }
             else
             {
