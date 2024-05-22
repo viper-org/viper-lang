@@ -120,6 +120,12 @@ namespace lexing
                 return "while";
             case TokenType::ForKeyword:
                 return "for";
+            case TokenType::SwitchKeyword:
+                return "switch";
+            case TokenType::CaseKeyword:
+                return "case";
+            case TokenType::DefaultKeyword:
+                return "default";
             case TokenType::BreakKeyword:
                 return "break";
             case TokenType::ContinueKeyword:
