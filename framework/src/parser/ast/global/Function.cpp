@@ -16,11 +16,10 @@
 
 namespace parser
 {
-    Function::Function(std::vector<GlobalAttribute> attributes, Type* returnType, std::vector<FunctionArgument> arguments, std::optional<std::string> struc, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope)
+    Function::Function(std::vector<GlobalAttribute> attributes, Type* returnType, std::vector<FunctionArgument> arguments, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope)
         : mAttributes(std::move(attributes))
         , mReturnType(returnType)
         , mArguments(std::move(arguments))
-        , mStruct(std::move(struc))
         , mName(name)
         , mBody(std::move(body))
         , mScope(scope)
@@ -45,8 +44,6 @@ namespace parser
         }
 
         std::vector<std::string> names = scope->getNamespaces();
-        if (mStruct.has_value())
-            names.push_back(mStruct.value());
         names.push_back(mName);
 
         bool mangled = std::find_if(mAttributes.begin(), mAttributes.end(), [](const auto& attribute){

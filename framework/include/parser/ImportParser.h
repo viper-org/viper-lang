@@ -26,7 +26,7 @@ namespace parser
     class ImportParser
     {
     public:
-        ImportParser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager);
+        ImportParser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager, bool hoistingParser = false);
 
         std::vector<ASTNodePtr> parse();
 
@@ -45,6 +45,8 @@ namespace parser
         diagnostic::Diagnostics& mDiag;
 
         std::vector<std::string> mNamespaces;
+
+        bool mHoistingParser;
 
         lexing::Token current() const;
         lexing::Token consume();

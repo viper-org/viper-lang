@@ -19,12 +19,13 @@
 
 namespace parser
 {
-    ImportParser::ImportParser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager)
+    ImportParser::ImportParser(std::vector<lexing::Token>& tokens, diagnostic::Diagnostics& diag, symbol::ImportManager& importManager, bool hoistingParser)
         : mTokens(tokens)
         , mImportManager(importManager)
         , mPosition(0)
         , mScope(nullptr)
         , mDiag(diag)
+        , mHoistingParser(hoistingParser)
     {
     }
 
@@ -104,7 +105,7 @@ namespace parser
             parseAttributes(attributes);
         }
 
-        bool exported = false;
+        bool exported = mHoistingParser;
         if (current().getTokenType() == lexing::TokenType::ExportKeyword)
         {
             exported = true;
@@ -236,15 +237,6 @@ namespace parser
     {
         consume();
 
-        std::optional<std::string> struc;
-        std::optional<lexing::Token> structNameToken;
-
-        if (current().getTokenType() == lexing::TokenType::Identifier)
-        {
-            structNameToken = current();
-            struc = consume().getText();
-        }
-
         expectToken(lexing::TokenType::Asperand);
         consume();
 
@@ -255,26 +247,6 @@ namespace parser
         consume();
 
         std::vector<FunctionArgument> arguments;
-        StructType* structType = nullptr;
-
-        if (struc.has_value())
-        {
-            std::vector<std::string> names = mNamespaces;
-            names.push_back(struc.value());
-            std::vector<std::string> types = symbol::GetSymbol(names, {});
-            for (auto name : types)
-            {
-                structType = StructType::Get(name);
-                if (structType) break;
-            }
-
-            if (!structType)
-            {
-                mDiag.compilerError(structNameToken->getStart(),structNameToken->getEnd(), std::format("unknown type name {}", *struc));
-            }
-
-            arguments.push_back({"this", PointerType::Create(structType)});
-        }
 
         while (current().getTokenType() != lexing::TokenType::RightParen)
         {
@@ -285,7 +257,6 @@ namespace parser
             consume();
 
             Type* type = parseType();
-            mScope->locals[name] = LocalSymbol(nullptr, type);
             arguments.push_back({std::move(name), type});
 
             if (current().getTokenType() != lexing::TokenType::RightParen)
@@ -303,12 +274,11 @@ namespace parser
             type = parseType();
         }
 
-
         if (current().getTokenType() == lexing::TokenType::Semicolon) // Extern function declaration
         {
             consume();
             if (exported)
-                return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
+                return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(name), std::vector<ASTNodePtr>(), nullptr);
             return nullptr;
         }
 
@@ -320,14 +290,24 @@ namespace parser
             while (current().getTokenType() != lexing::TokenType::Semicolon)
                 consume();
         else
-            while (current().getTokenType() != lexing::TokenType::RightBracket)
+        {
+            int bracketCount = 1;
+            while (bracketCount > 0)
+            {
+                if (current().getTokenType() == lexing::TokenType::LeftBracket)
+                    bracketCount++;
+                else if (current().getTokenType() == lexing::TokenType::RightBracket)
+                    bracketCount--;
+
                 consume();
+            }
+        }
         consume();
 
         if (exported)
         {
             mSymbols.push_back({name, type});
-            return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(struc), std::move(name), std::vector<ASTNodePtr>(), nullptr);
+            return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(name), std::vector<ASTNodePtr>(), nullptr);
         }
         return nullptr;
     }
@@ -429,7 +409,7 @@ namespace parser
                     type = parseType();
                 }
 
-                expectToken(lexing::TokenType::Semicolon);
+                //expectToken(lexing::TokenType::Semicolon);
 
                 if (current().getTokenType() == lexing::TokenType::Semicolon)
                 {
@@ -437,6 +417,32 @@ namespace parser
                     methods.push_back({priv, std::move(name), type, std::move(arguments), std::vector<ASTNodePtr>(), nullptr});
                     continue;
                 }
+
+                expectEitherToken({lexing::TokenType::LeftBracket, lexing::TokenType::Equals});
+                bool isExpressionBodied = current().getTokenType() == lexing::TokenType::Equals;
+                consume();
+
+                if (isExpressionBodied)
+                {
+                    while (current().getTokenType() != lexing::TokenType::Semicolon)
+                        consume();
+                    consume();
+                }
+                else
+                {
+                    int bracketCount = 1;
+                    while (bracketCount > 0)
+                    {
+                        if (current().getTokenType() == lexing::TokenType::LeftBracket)
+                            bracketCount++;
+                        else if (current().getTokenType() == lexing::TokenType::RightBracket)
+                            bracketCount--;
+
+                        consume();
+                    }
+                }
+
+                methods.push_back({priv, std::move(name), type, std::move(arguments), std::vector<ASTNodePtr>(), nullptr});
             }
             else
             {
