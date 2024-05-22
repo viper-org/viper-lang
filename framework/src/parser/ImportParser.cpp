@@ -287,8 +287,11 @@ namespace parser
         consume();
 
         if (isExpressionBodied)
+        {
             while (current().getTokenType() != lexing::TokenType::Semicolon)
                 consume();
+            consume();
+        }
         else
         {
             int bracketCount = 1;
@@ -302,7 +305,6 @@ namespace parser
                 consume();
             }
         }
-        consume();
 
         if (exported)
         {
