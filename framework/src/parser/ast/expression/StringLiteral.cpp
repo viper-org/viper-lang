@@ -11,7 +11,7 @@
 namespace parser
 {
     StringLiteral::StringLiteral(std::string value)
-        : mValue(value)
+        : mValue(std::move(value))
     {
         mType = PointerType::Create(Type::Get("i8"));
     }
