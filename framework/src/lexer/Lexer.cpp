@@ -15,6 +15,7 @@ namespace lexing
         , mDiag(diag)
         , mPosition(0)
     {
+        mText += '\n'; // Fixes peeking at EOF
     }
 
     const std::unordered_map<std::string_view, TokenType> keywords = {
