@@ -17,18 +17,19 @@
 
 namespace parser
 {
-    UnaryExpression::UnaryExpression(ASTNodePtr operand, lexing::Token operatorToken)
+    UnaryExpression::UnaryExpression(ASTNodePtr operand, lexing::Token operatorToken, bool postfix)
         : mOperand(std::move(operand))
+        , mPostfix(postfix)
     {
         switch(operatorToken.getTokenType())
         {
             case lexing::TokenType::DoublePlus:
-                mOperator = postfix ? Operator::PostfixDoublePlus : Operator::PrefixDoublePlus;
+                mOperator = postfix ? Operator::PostIncrement : Operator::PreIncrement;
                 mType = mOperand->getType();
                 break;
 
             case lexing::TokenType::DoubleMinus:
-                mOperator = postfix ? Operator::PostfixDoubleMinus : Operator::PrefixDoubleMinus;
+                mOperator = postfix ? Operator::PostDecrement : Operator::PreDecrement;
                 mType = mOperand->getType();
                 break;
 
@@ -61,21 +62,37 @@ namespace parser
     {
         switch (mOperator)
         {
+            case Operator::PreIncrement:
+            case Operator::PreDecrement:
+            case Operator::PostIncrement:
+            case Operator::PostDecrement:
+                if (!(mType->isIntegerType() || mType->isPointerType()))
+                {
+                    diag.compilerError(mPreferredDebugToken.getStart(), mPreferredDebugToken.getEnd(),
+                        std::format("No match for '{}operator{}{}' with type '{}{}{}'",
+                        fmt::bold, mPreferredDebugToken.getId(), fmt::defaults,
+                        fmt::bold, mType->getName(),             fmt::defaults));
+                }
+                break;
+            
             case Operator::Indirection:
                 if (!mType->isPointerType())
                 {
-                    diag.compilerError(mPreferredDebugToken.getStart(), mPreferredDebugToken.getEnd(), std::format("No match for '{}operator*{}' with type '{}{}{}'",
+                    diag.compilerError(mPreferredDebugToken.getStart(), mPreferredDebugToken.getEnd(),
+                        std::format("No match for '{}operator*{}' with type '{}{}{}'",
                         fmt::bold, fmt::defaults,
                         fmt::bold, mType->getName(), fmt::defaults));
                 }
+                break;
 
             case Operator::Negate:
             case Operator::BitwiseNot:
                 if (!mOperand->getType()->isIntegerType())
                 {
-                    diag.compilerError(mPreferredDebugToken.getStart(), mPreferredDebugToken.getEnd(), std::format("No match for '{}operator{}{} with type '{}{}{}'",
-                            fmt::bold, mPreferredDebugToken.getId(),    fmt::defaults,
-                            fmt::bold, mOperand->getType()->getName(),  fmt::defaults));
+                    diag.compilerError(mPreferredDebugToken.getStart(), mPreferredDebugToken.getEnd(),
+                        std::format("No match for '{}operator{}{} with type '{}{}{}'",
+                        fmt::bold, mPreferredDebugToken.getId(),    fmt::defaults,
+                        fmt::bold, mOperand->getType()->getName(),  fmt::defaults));
                 }
                 break;
             
@@ -92,25 +109,41 @@ namespace parser
 
         switch(mOperator)
         {
-            case Operator::PrefixDoublePlus:
-                return builder.CreateAdd(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+            case Operator::PreIncrement:
+                if (mType->isPointerType())
+                    return builder.CreateGEP(operand, vipir::ConstantInt::Get(module, 1, vipir::Type::GetIntegerType(32))); // TODO: fix GEP 123 +1 = -1
+                else
+                    return builder.CreateAdd(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
 
-            case Operator::PrefixDoubleMinus:
-                return builder.CreateSub(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+            case Operator::PreDecrement:
+                if (mType->isPointerType())
+                    return builder.CreateGEP(operand, vipir::ConstantInt::Get(module, -1, vipir::Type::GetIntegerType(32)));
+                else
+                    return builder.CreateSub(operand, vipir::ConstantInt::Get(module, -1, mType->getVipirType()));
 
-            case Operator::PostfixDoublePlus:
+            case Operator::PostIncrement:
             {
+                checkAssignmentLvalue(operand, diag);
                 vipir::Value* ptr = vipir::getPointerOperand(operand);
                 vipir::Value* load = builder.CreateLoad(ptr);
-                vipir::Value* add = builder.CreateAdd(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+                vipir::Value* add = nullptr;
+                if (mType->isPointerType())
+                    add = builder.CreateGEP(operand, vipir::ConstantInt::Get(module, 1, vipir::Type::GetIntegerType(32)));
+                else
+                    add = builder.CreateAdd(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
                 builder.CreateStore(ptr, add);
                 return load;
             }
-            case Operator::PostfixDoubleMinus:
+            case Operator::PostDecrement:
             {
+                checkAssignmentLvalue(operand, diag);
                 vipir::Value* ptr = vipir::getPointerOperand(operand);
                 vipir::Value* load = builder.CreateLoad(ptr);
-                vipir::Value* add = builder.CreateSub(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+                vipir::Value* add = nullptr;
+                if (mType->isPointerType())
+                    add = builder.CreateGEP(operand, vipir::ConstantInt::Get(module, -1, vipir::Type::GetIntegerType(32)));
+                else
+                    add = builder.CreateSub(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
                 builder.CreateStore(ptr, add);
                 return load;
             }
@@ -141,5 +174,16 @@ namespace parser
         }
 
         return nullptr;
+    }
+
+    void UnaryExpression::checkAssignmentLvalue(vipir::Value* value, diagnostic::Diagnostics& diag)
+    {
+        vipir::Value* pointerOperand = vipir::getPointerOperand(value);
+        if (pointerOperand == nullptr)
+        {
+            diag.compilerError(mPreferredDebugToken.getStart(), mPreferredDebugToken.getEnd(),
+                std::format("lvalue required as {} operand of assignment",
+                mPostfix ? "left" : "right"));
+        }
     }
 }

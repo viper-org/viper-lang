@@ -374,7 +374,7 @@ namespace parser
 
             lexing::Token operatorToken = consume();
 
-            lhs = std::make_unique<UnaryExpression>(std::move(lhs), operatorToken.getTokenType(), true);
+            lhs = std::make_unique<UnaryExpression>(std::move(lhs), std::move(operatorToken), true);
         }
 
         while (true)
