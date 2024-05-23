@@ -16,6 +16,7 @@ namespace parser
     public:
         SwitchStatement(ASTNodePtr&& value, std::vector<SwitchSection>&& cases);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:

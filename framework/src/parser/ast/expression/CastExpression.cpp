@@ -21,6 +21,12 @@ namespace parser
         mType = destType;
     }
 
+    void CastExpression::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        mOperand->typeCheck(scope, diag);
+        // maybe check for type compatibility here in future
+    }
+
     vipir::Value* CastExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::Value* operand = mOperand->emit(builder, module, scope, diag);

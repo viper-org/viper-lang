@@ -1,12 +1,5 @@
 func @main() -> i32 {
-    let i: i32 = 0;
-    let t: i32 = i++;
-    let t2: i32 = i++ + 1;
-    return t2;
-}
-
-func @main2() -> i32 {
-    let vec: struct Vec3 = struct Vec3 { 1, 2, 3 };
+    let vec: Vec3 = Vec3 { 1, 2, 3 };
 
     return (i32) vec.addAll();
 }

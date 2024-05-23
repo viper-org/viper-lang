@@ -14,6 +14,18 @@ namespace parser
     {
     }
 
+    void SwitchStatement::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        for (auto& section : mSections)
+        {
+            section.label->typeCheck(scope, diag);
+            for (auto& node : section.body)
+            {
+                node->typeCheck(scope, diag);
+            }
+        }
+    }
+
     vipir::Value* SwitchStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::Value* value = mValue->emit(builder, module, scope, diag);

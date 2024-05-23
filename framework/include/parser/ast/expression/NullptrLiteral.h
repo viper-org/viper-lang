@@ -10,8 +10,9 @@ namespace parser
     class NullptrLiteral : public ASTNode
     {
     public:
-        NullptrLiteral(Type* type);
+        NullptrLiteral(Type* type, lexing::Token token);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
     };
     using NullptrLiteralPtr = std::unique_ptr<NullptrLiteral>;

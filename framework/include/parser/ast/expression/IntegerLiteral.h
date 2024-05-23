@@ -10,10 +10,11 @@ namespace parser
     class IntegerLiteral : public ASTNode
     {
     public:
-        IntegerLiteral(intmax_t value, Type* type);
+        IntegerLiteral(intmax_t value, Type* type, lexing::Token token);
 
         intmax_t getValue() const;
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:

@@ -24,6 +24,17 @@ namespace parser
         symbol::AddIdentifier(mangledName, mNames);
     }
 
+    void GlobalDeclaration::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        if (mInitVal->getType() != mType)
+        {
+            diag.compilerError(mInitVal->getDebugToken().getStart(), mInitVal->getDebugToken().getEnd(), std::format("Global variable of type '{}{}{}' cannot be initialized with a value of type '{}{}{}",
+                fmt::bold, mType->getName(), fmt::defaults,
+                fmt::bold, mInitVal->getType()->getName(), fmt::defaults));
+        }
+        mInitVal->typeCheck(scope, diag);
+    }
+
     vipir::Value* GlobalDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         std::string mangledName = "_G" + mType->getMangleID();
@@ -38,7 +49,7 @@ namespace parser
         vipir::Value* initVal = mInitVal->emit(builder, module, scope, diag);
         global->setInitialValue(initVal);
 
-        GlobalVariables[mangledName] = global;
+        GlobalVariables[mangledName] = GlobalSymbol(global, mType);
 
         return nullptr;
     }

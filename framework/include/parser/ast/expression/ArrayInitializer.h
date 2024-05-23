@@ -5,13 +5,16 @@
 
 #include "parser/ast/Node.h"
 
+#include "lexer/Token.h"
+
 namespace parser
 {
     class ArrayInitializer : public ASTNode
     {
     public:
-        ArrayInitializer(std::vector<ASTNodePtr>&& body);
+        ArrayInitializer(std::vector<ASTNodePtr>&& body, lexing::Token token);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:

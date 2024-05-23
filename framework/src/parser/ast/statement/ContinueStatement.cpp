@@ -7,6 +7,10 @@ namespace parser
     {
     }
 
+    void ContinueStatement::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+    }
+
     vipir::Value* ContinueStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::BasicBlock* continueTo = scope->findContinueBB();

@@ -38,6 +38,13 @@ namespace parser
         auto structField = structType->getField(mField);
         if (structField)
             mType = structField->type;
+
+        mPreferredDebugToken = mFieldToken;
+    }
+
+    void MemberAccess::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        mStruct->typeCheck(scope, diag);
     }
 
     vipir::Value* MemberAccess::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)

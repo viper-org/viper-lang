@@ -17,10 +17,10 @@
 
 namespace parser
 {
-    UnaryExpression::UnaryExpression(ASTNodePtr operand, lexing::TokenType tokenType, bool postfix)
+    UnaryExpression::UnaryExpression(ASTNodePtr operand, lexing::Token operatorToken)
         : mOperand(std::move(operand))
     {
-        switch(tokenType)
+        switch(operatorToken.getTokenType())
         {
             case lexing::TokenType::DoublePlus:
                 mOperator = postfix ? Operator::PostfixDoublePlus : Operator::PrefixDoublePlus;
@@ -54,12 +54,36 @@ namespace parser
             default:
                 break;
         }
+        mPreferredDebugToken = std::move(operatorToken);
     }
 
-    UnaryExpression::UnaryExpression(ASTNodePtr operand, Operator op)
-        : mOperand(std::move(operand))
-        , mOperator(op)
+    void UnaryExpression::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
     {
+        switch (mOperator)
+        {
+            case Operator::Indirection:
+                if (!mType->isPointerType())
+                {
+                    diag.compilerError(mPreferredDebugToken.getStart(), mPreferredDebugToken.getEnd(), std::format("No match for '{}operator*{}' with type '{}{}{}'",
+                        fmt::bold, fmt::defaults,
+                        fmt::bold, mType->getName(), fmt::defaults));
+                }
+
+            case Operator::Negate:
+            case Operator::BitwiseNot:
+                if (!mOperand->getType()->isIntegerType())
+                {
+                    diag.compilerError(mPreferredDebugToken.getStart(), mPreferredDebugToken.getEnd(), std::format("No match for '{}operator{}{} with type '{}{}{}'",
+                            fmt::bold, mPreferredDebugToken.getId(),    fmt::defaults,
+                            fmt::bold, mOperand->getType()->getName(),  fmt::defaults));
+                }
+                break;
+            
+            default:
+                break; // maybe check for address-of actually being a variable here
+        }
+
+        mOperand->typeCheck(scope, diag);
     }
 
     vipir::Value* UnaryExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)

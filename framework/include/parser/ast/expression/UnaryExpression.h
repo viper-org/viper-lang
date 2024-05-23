@@ -25,9 +25,9 @@ namespace parser
             AddressOf, Indirection,
         };
 
-        UnaryExpression(ASTNodePtr operand, lexing::TokenType op, bool postfix = false);
-        UnaryExpression(ASTNodePtr operand, Operator op);
+        UnaryExpression(ASTNodePtr operand, lexing::Token operatorToken);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:

@@ -356,7 +356,7 @@ namespace parser
             }
             else
             {
-                lhs = std::make_unique<UnaryExpression>(parseExpression(preferredType, prefixOperatorPrecedence), operatorToken.getTokenType());
+                lhs = std::make_unique<UnaryExpression>(parseExpression(preferredType, prefixOperatorPrecedence), std::move(operatorToken));
             }
         }
         else
@@ -447,15 +447,12 @@ namespace parser
                 return std::make_unique<ContinueStatement>(std::move(consume()));
 
             case lexing::TokenType::TrueKeyword:
-                consume();
-                return std::make_unique<BooleanLiteral>(true);
+                return std::make_unique<BooleanLiteral>(true, consume());
             case lexing::TokenType::FalseKeyword:
-                consume();
-                return std::make_unique<BooleanLiteral>(false);
+                return std::make_unique<BooleanLiteral>(false, consume());
 
             case lexing::TokenType::NullptrKeyword:
-                consume();
-                return std::make_unique<NullptrLiteral>(preferredType);
+                return std::make_unique<NullptrLiteral>(preferredType, consume());
 
             case lexing::TokenType::SizeofKeyword:
                 return parseSizeof(preferredType);
@@ -466,10 +463,17 @@ namespace parser
                 return parseStringLiteral();
 
             case lexing::TokenType::Identifier:
+            {
+                lexing::Token token = current();
+                if (auto type = parseType(true))
+                {
+                    return parseStructInitializer(type, std::move(token));
+                }
                 return parseVariableExpression(preferredType);
+            }
 
             case lexing::TokenType::StructKeyword:
-                return parseStructInitializer();
+                return parseStructInitializer(nullptr, lexing::Token());
 
             case lexing::TokenType::LeftSquareBracket:
                 return parseArrayInitializer(preferredType);
@@ -503,9 +507,8 @@ namespace parser
         consume();
 
         std::vector<FunctionArgument> arguments;
-        StructType* structType = nullptr;
 
-        Scope* functionScope = new Scope(mScope, structType);
+        Scope* functionScope = new Scope(mScope, nullptr);
         mScope = functionScope;
 
         while (current().getTokenType() != lexing::TokenType::RightParen)
@@ -528,12 +531,19 @@ namespace parser
         }
         consume();
 
-        Type* type = Type::Get("void");
+        Type* returnType = Type::Get("void");
         if (current().getTokenType() == lexing::TokenType::RightArrow)
         {
             consume();
-            type = parseType();
+            returnType = parseType();
         }
+
+        std::vector<Type*> argumentTypes;
+        for (auto& argument : arguments)
+        {
+            argumentTypes.push_back(argument.type);
+        }
+        Type* type = FunctionType::Create(returnType, std::move(argumentTypes));
 
         mSymbols.push_back({name, type});
 
@@ -666,14 +676,19 @@ namespace parser
                 }
                 consume();
 
-                Type* type = Type::Get("void");
+                Type* returnType = Type::Get("void");
                 if (current().getTokenType() == lexing::TokenType::RightArrow)
                 {
                     consume();
-                    type = parseType();
+                    returnType = parseType();
                 }
 
-                //expectToken(lexing::TokenType::Semicolon);
+                std::vector<Type*> argumentTypes { PointerType::Create(structType) };
+                for (auto& argument : arguments)
+                {
+                    argumentTypes.push_back(argument.type);
+                }
+                Type* type = FunctionType::Create(returnType, std::move(argumentTypes));
 
                 if (current().getTokenType() == lexing::TokenType::Semicolon)
                 {
@@ -681,8 +696,6 @@ namespace parser
                     methods.push_back({priv, std::move(name), type, std::move(arguments), std::vector<ASTNodePtr>(), nullptr});
                     continue;
                 }
-
-                // if definition in struct will ever be readded
 
                 Scope* scope = new Scope(mScope, structType);
                 mScope = scope;
@@ -1079,7 +1092,7 @@ namespace parser
 
     SizeofExpressionPtr Parser::parseSizeof(Type* preferredType)
     {
-        consume();
+        lexing::Token token = consume();
         expectToken(lexing::TokenType::LeftParen);
         consume();
 
@@ -1088,17 +1101,21 @@ namespace parser
         expectToken(lexing::TokenType::RightParen);
         consume();
 
-        return std::make_unique<SizeofExpression>(preferredType, type);
+        return std::make_unique<SizeofExpression>(preferredType, type, std::move(token));
     }
 
     IntegerLiteralPtr Parser::parseIntegerLiteral(Type* preferredType)
     {
-        return std::make_unique<IntegerLiteral>(std::stoull(consume().getText(), 0, 0), preferredType);
+        lexing::Token token = consume();
+        unsigned long long value = std::stoull(token.getText(), 0, 0);
+        return std::make_unique<IntegerLiteral>(value, preferredType, std::move(token));
     }
 
     StringLiteralPtr Parser::parseStringLiteral()
     {
-        return std::make_unique<StringLiteral>(consume().getText());
+        lexing::Token token = consume();
+        std::string text = token.getText();
+        return std::make_unique<StringLiteral>(std::move(text), std::move(token));
     }
 
     VariableExpressionPtr Parser::parseVariableExpression(Type*)
@@ -1126,6 +1143,8 @@ namespace parser
 
     CallExpressionPtr Parser::parseCallExpression(ASTNodePtr function)
     {
+        lexing::Token token = peek(-1); // left paren
+
         std::vector<ASTNodePtr> parameters;
         while (current().getTokenType() != lexing::TokenType::RightParen)
         {
@@ -1139,7 +1158,7 @@ namespace parser
         }
         consume();
 
-        return std::make_unique<CallExpression>(std::move(function), std::move(parameters));
+        return std::make_unique<CallExpression>(std::move(function), std::move(parameters), std::move(token));
     }
 
     MemberAccessPtr Parser::parseMemberAccess(ASTNodePtr struc, bool pointer)
@@ -1149,9 +1168,15 @@ namespace parser
         return std::make_unique<MemberAccess>(std::move(struc), std::string(nameToken.getText()), pointer, std::move(nameToken));
     }
 
-    StructInitializerPtr Parser::parseStructInitializer()
+    StructInitializerPtr Parser::parseStructInitializer(Type* type, lexing::Token token)
     {
-        StructType* type = static_cast<StructType*>(parseType());
+        if (current().getTokenType() == lexing::TokenType::StructKeyword)
+        {
+            token = current();
+            type = parseType();
+        }
+
+        StructType* structType = static_cast<StructType*>(type);
 
         expectToken(lexing::TokenType::LeftBracket);
         consume();
@@ -1160,7 +1185,7 @@ namespace parser
         int index = 0;
         while (current().getTokenType() != lexing::TokenType::RightBracket)
         {
-            body.push_back(parseExpression(type->getFields()[index++].type));
+            body.push_back(parseExpression(structType->getFields()[index++].type));
 
             if (current().getTokenType() != lexing::TokenType::RightBracket)
             {
@@ -1170,12 +1195,12 @@ namespace parser
         }
         consume();
 
-        return std::make_unique<StructInitializer>(type, std::move(body));
+        return std::make_unique<StructInitializer>(type, std::move(body), std::move(token));
     }
 
     ArrayInitializerPtr Parser::parseArrayInitializer(Type* preferredType)
     {
-        consume(); // left square bracket
+        lexing::Token token = consume(); // left square bracket
 
         preferredType = static_cast<ArrayType*>(preferredType)->getBaseType();
 
@@ -1192,7 +1217,7 @@ namespace parser
         }
         consume();
 
-        return std::make_unique<ArrayInitializer>(std::move(values));
+        return std::make_unique<ArrayInitializer>(std::move(values), std::move(token));
     }
 
     void Parser::parseAttributes(std::vector<GlobalAttribute>& attributes)

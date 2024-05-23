@@ -12,6 +12,14 @@ namespace parser
     {
     }
 
+    void Namespace::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        for (auto& node : mBody)
+        {
+            node->typeCheck(scope, diag);
+        }
+    }
+
     vipir::Value* Namespace::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         scope = mScope.get();
