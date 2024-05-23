@@ -364,7 +364,20 @@ namespace parser
             lhs = parsePrimary(preferredType);
         }
 
-        while(true)
+        while (true)
+        {
+            int postfixOperatorPrecedence = getPostfixUnaryOperatorPrecedence(current().getTokenType());
+            if (postfixOperatorPrecedence < precedence)
+            {
+                break;
+            }
+
+            lexing::Token operatorToken = consume();
+
+            lhs = std::make_unique<UnaryExpression>(std::move(lhs), operatorToken.getTokenType(), true);
+        }
+
+        while (true)
         {
             int binaryOperatorPrecedence = getBinaryOperatorPrecedence(current().getTokenType());
             if (binaryOperatorPrecedence < precedence)
@@ -402,19 +415,6 @@ namespace parser
                 expectToken(lexing::TokenType::RightSquareBracket);
                 consume();
             }
-        }
-
-        while(true)
-        {
-            int postfixOperatorPrecedence = getPostfixUnaryOperatorPrecedence(current().getTokenType());
-            if (postfixOperatorPrecedence < precedence)
-            {
-                break;
-            }
-
-            lexing::Token operatorToken = consume();
-
-            lhs = std::make_unique<UnaryExpression>(std::move(lhs), operatorToken.getTokenType(), true);
         }
 
         return lhs;
