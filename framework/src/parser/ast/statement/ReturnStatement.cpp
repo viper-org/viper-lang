@@ -3,7 +3,6 @@
 #include "parser/ast/statement/ReturnStatement.h"
 
 #include <vipir/IR/Instruction/RetInst.h>
-#include <iostream>
 
 namespace parser
 {

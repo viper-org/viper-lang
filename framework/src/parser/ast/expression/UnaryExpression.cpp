@@ -10,6 +10,7 @@
 #include <vipir/IR/Instruction/UnaryInst.h>
 #include <vipir/IR/Instruction/AddrInst.h>
 #include <vipir/IR/Instruction/LoadInst.h>
+#include <vipir/IR/Instruction/StoreInst.h>
 #include <vipir/IR/Instruction/GEPInst.h>
 
 #include <vipir/Module.h>
@@ -110,23 +111,35 @@ namespace parser
         switch(mOperator)
         {
             case Operator::PreIncrement:
+            {
+                vipir::Value* ptr = vipir::getPointerOperand(operand);
+                checkAssignmentLvalue(ptr, diag);
+                vipir::Value* add;
                 if (mType->isPointerType())
-                    return builder.CreateGEP(operand, vipir::ConstantInt::Get(module, 1, vipir::Type::GetIntegerType(32))); // TODO: fix GEP 123 +1 = -1
+                    add = builder.CreateGEP(operand, vipir::ConstantInt::Get(module, 1, vipir::Type::GetIntegerType(32)));
                 else
-                    return builder.CreateAdd(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
-
+                    add = builder.CreateAdd(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+                builder.CreateStore(ptr, add);
+                return add;
+            }
             case Operator::PreDecrement:
+            {
+                vipir::Value* ptr = vipir::getPointerOperand(operand);
+                checkAssignmentLvalue(ptr, diag);
+                vipir::Value* sub;
                 if (mType->isPointerType())
-                    return builder.CreateGEP(operand, vipir::ConstantInt::Get(module, -1, vipir::Type::GetIntegerType(32)));
+                    sub = builder.CreateGEP(operand, vipir::ConstantInt::Get(module, -1, vipir::Type::GetIntegerType(32)));
                 else
-                    return builder.CreateSub(operand, vipir::ConstantInt::Get(module, -1, mType->getVipirType()));
-
+                    sub = builder.CreateSub(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+                builder.CreateStore(ptr, sub);
+                return sub;
+            }
             case Operator::PostIncrement:
             {
-                checkAssignmentLvalue(operand, diag);
                 vipir::Value* ptr = vipir::getPointerOperand(operand);
+                checkAssignmentLvalue(ptr, diag);
                 vipir::Value* load = builder.CreateLoad(ptr);
-                vipir::Value* add = nullptr;
+                vipir::Value* add;
                 if (mType->isPointerType())
                     add = builder.CreateGEP(operand, vipir::ConstantInt::Get(module, 1, vipir::Type::GetIntegerType(32)));
                 else
@@ -136,15 +149,15 @@ namespace parser
             }
             case Operator::PostDecrement:
             {
-                checkAssignmentLvalue(operand, diag);
                 vipir::Value* ptr = vipir::getPointerOperand(operand);
+                checkAssignmentLvalue(ptr, diag);
                 vipir::Value* load = builder.CreateLoad(ptr);
-                vipir::Value* add = nullptr;
+                vipir::Value* sub;
                 if (mType->isPointerType())
-                    add = builder.CreateGEP(operand, vipir::ConstantInt::Get(module, -1, vipir::Type::GetIntegerType(32)));
+                    sub = builder.CreateGEP(operand, vipir::ConstantInt::Get(module, -1, vipir::Type::GetIntegerType(32)));
                 else
-                    add = builder.CreateSub(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
-                builder.CreateStore(ptr, add);
+                    sub = builder.CreateSub(operand, vipir::ConstantInt::Get(module, 1, mType->getVipirType()));
+                builder.CreateStore(ptr, sub);
                 return load;
             }
             case Operator::Negate:
@@ -176,10 +189,9 @@ namespace parser
         return nullptr;
     }
 
-    void UnaryExpression::checkAssignmentLvalue(vipir::Value* value, diagnostic::Diagnostics& diag)
+    void UnaryExpression::checkAssignmentLvalue(vipir::Value* ptr, diagnostic::Diagnostics& diag)
     {
-        vipir::Value* pointerOperand = vipir::getPointerOperand(value);
-        if (pointerOperand == nullptr)
+        if (ptr == nullptr)
         {
             diag.compilerError(mPreferredDebugToken.getStart(), mPreferredDebugToken.getEnd(),
                 std::format("lvalue required as {} operand of assignment",
