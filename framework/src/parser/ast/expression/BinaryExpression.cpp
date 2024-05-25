@@ -140,10 +140,18 @@ namespace parser
             case Operator::GreaterThan:
             case Operator::LessEqual:
             case Operator::GreaterEqual:
+                if (mLeft->getType() != mRight->getType() || !mLeft->getType()->isIntegerType())
+                {
+                    diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("No match for '{}operator{}{} with types '{}{}{}' and '{}{}{}'",
+                            fmt::bold, mToken.getId(),               fmt::defaults,
+                            fmt::bold, mLeft->getType()->getName(),  fmt::defaults,
+                            fmt::bold, mRight->getType()->getName(), fmt::defaults));
+                }
+                break;
             case Operator::Assign:
             case Operator::AddAssign:
             case Operator::SubAssign:
-                if (mLeft->getType() != mRight->getType() || !mLeft->getType()->isIntegerType())
+                 if (mLeft->getType() != mRight->getType())
                 {
                     diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("No match for '{}operator{}{} with types '{}{}{}' and '{}{}{}'",
                             fmt::bold, mToken.getId(),               fmt::defaults,

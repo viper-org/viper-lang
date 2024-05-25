@@ -18,7 +18,8 @@ namespace parser
     {
         for (auto& section : mSections)
         {
-            section.label->typeCheck(scope, diag);
+            if (section.label)
+                section.label->typeCheck(scope, diag);
             for (auto& node : section.body)
             {
                 node->typeCheck(scope, diag);
