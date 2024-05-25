@@ -209,6 +209,8 @@ namespace parser
     {
         switch(tokenType)
         {
+            // case lexing::TokenType::DoublePlus:
+            // case lexing::TokenType::DoubleMinus:
             case lexing::TokenType::Minus:
             case lexing::TokenType::Tilde:
             case lexing::TokenType::Ampersand:
@@ -225,6 +227,9 @@ namespace parser
     {
         switch(tokenType)
         {
+            case lexing::TokenType::DoublePlus:
+            case lexing::TokenType::DoubleMinus:
+                return 95;
             default:
                 return 0;
         }
@@ -359,7 +364,20 @@ namespace parser
             lhs = parsePrimary(preferredType);
         }
 
-        while(true)
+        while (true)
+        {
+            int postfixOperatorPrecedence = getPostfixUnaryOperatorPrecedence(current().getTokenType());
+            if (postfixOperatorPrecedence < precedence)
+            {
+                break;
+            }
+
+            lexing::Token operatorToken = consume();
+
+            lhs = std::make_unique<UnaryExpression>(std::move(lhs), std::move(operatorToken), true);
+        }
+
+        while (true)
         {
             int binaryOperatorPrecedence = getBinaryOperatorPrecedence(current().getTokenType());
             if (binaryOperatorPrecedence < precedence)
@@ -533,6 +551,7 @@ namespace parser
         {
             consume();
             mScope = functionScope->parent;
+            delete functionScope;
             return std::make_unique<Function>(std::move(attributes), type, std::move(arguments), std::move(name), std::vector<ASTNodePtr>(), nullptr);
         }
 

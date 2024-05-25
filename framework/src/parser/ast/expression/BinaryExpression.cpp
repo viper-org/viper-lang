@@ -114,7 +114,7 @@ namespace parser
                     {
                         diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("No match for '{}operator+{} with types '{}{}{}' and '{}{}{}",
                             fmt::bold, fmt::defaults,
-                            fmt::bold, mLeft->getType()->getName(), fmt::defaults,
+                            fmt::bold, mLeft->getType()->getName(),  fmt::defaults,
                             fmt::bold, mRight->getType()->getName(), fmt::defaults));
                     }
                 }
@@ -124,10 +124,11 @@ namespace parser
                     {
                         diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("No match for '{}operator+{} with types '{}{}{}' and '{}{}{}'",
                             fmt::bold, fmt::defaults,
-                            fmt::bold, mLeft->getType()->getName(), fmt::defaults,
+                            fmt::bold, mLeft->getType()->getName(),  fmt::defaults,
                             fmt::bold, mRight->getType()->getName(), fmt::defaults));
                     }
                 }
+                break;
             case Operator::Sub:
             case Operator::Mul:
             case Operator::Div:

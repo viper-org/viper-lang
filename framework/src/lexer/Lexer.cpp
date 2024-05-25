@@ -15,6 +15,7 @@ namespace lexing
         , mDiag(diag)
         , mPosition(0)
     {
+        mText += '\n'; // Fixes peeking crash at EOF
     }
 
     const std::unordered_map<std::string_view, TokenType> keywords = {
@@ -238,6 +239,11 @@ namespace lexing
                     consume();
                     return Token(TokenType::PlusEquals, start, location());
                 }
+                else if (peek(1) == '+')
+                {
+                    consume();
+                    return Token(TokenType::DoublePlus, start, location());
+                }
                 return Token(TokenType::Plus, start, location());
             case '-':
                 if (peek(1) == '>')
@@ -249,6 +255,11 @@ namespace lexing
                 {
                     consume();
                     return Token(TokenType::MinusEquals, start, location());
+                }
+                else if (peek(1) == '-')
+                {
+                    consume();
+                    return Token(TokenType::DoubleMinus, start, location());
                 }
                 return Token(TokenType::Minus, start, location());
 

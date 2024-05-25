@@ -13,13 +13,15 @@ namespace parser
 
     void ReturnStatement::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
     {
-        if (mReturnValue->getType() != scope->currentReturnType)
+        Type* returnType = mReturnValue ? mReturnValue->getType() : Type::Get("void");
+        if (returnType != scope->currentReturnType)
         {
             diag.compilerError(mReturnValue->getDebugToken().getStart(), mReturnValue->getDebugToken().getEnd(), std::format("Return value of type '{}{}{}' is incompatible with function with return type '{}{}{}'",
-                fmt::bold, mReturnValue->getType()->getName(), fmt::defaults,
+                fmt::bold, returnType->getName(), fmt::defaults,
                 fmt::bold, scope->currentReturnType->getName(), fmt::defaults));
         }
-        mReturnValue->typeCheck(scope, diag);
+        if (mReturnValue)
+            mReturnValue->typeCheck(scope, diag);
     }
 
     vipir::Value* ReturnStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)

@@ -68,6 +68,10 @@ namespace lexing
                 return "+";
             case TokenType::Minus:
                 return "-";
+            case TokenType::DoublePlus:
+                return "++";
+            case TokenType::DoubleMinus:
+                return "--";
             case TokenType::Slash:
                 return "/";
             case TokenType::PlusEquals:
