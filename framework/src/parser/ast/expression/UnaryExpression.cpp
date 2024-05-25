@@ -14,7 +14,6 @@
 #include <vipir/IR/Instruction/GEPInst.h>
 
 #include <vipir/Module.h>
-#include <iostream>
 
 namespace parser
 {

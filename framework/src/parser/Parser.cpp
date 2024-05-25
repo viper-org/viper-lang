@@ -209,8 +209,8 @@ namespace parser
     {
         switch(tokenType)
         {
-            case lexing::TokenType::DoublePlus:
-            case lexing::TokenType::DoubleMinus:
+            // case lexing::TokenType::DoublePlus:
+            // case lexing::TokenType::DoubleMinus:
             case lexing::TokenType::Minus:
             case lexing::TokenType::Tilde:
             case lexing::TokenType::Ampersand:
