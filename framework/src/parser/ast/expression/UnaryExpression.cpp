@@ -66,7 +66,7 @@ namespace parser
             case Operator::PreDecrement:
             case Operator::PostIncrement:
             case Operator::PostDecrement:
-                if (!(mType->isIntegerType() || mType->isPointerType()))
+                if (!mOperand->getType()->isIntegerType() && !mOperand->getType()->isPointerType())
                 {
                     diag.compilerError(mPreferredDebugToken.getStart(), mPreferredDebugToken.getEnd(),
                         std::format("No match for '{}operator{}{}' with type '{}{}{}'",
@@ -76,7 +76,7 @@ namespace parser
                 break;
             
             case Operator::Indirection:
-                if (!mType->isPointerType())
+                if (!mOperand->getType()->isPointerType())
                 {
                     diag.compilerError(mPreferredDebugToken.getStart(), mPreferredDebugToken.getEnd(),
                         std::format("No match for '{}operator*{}' with type '{}{}{}'",
