@@ -1,7 +1,9 @@
-constexpr x: i32 = 69;
+namespace cheeto {
+    constexpr x: i32 = 69;
+}
 
 func @main() -> i32 {
-    return x;
+    return cheeto::x;
 }
 
 using struct Vec3 {
