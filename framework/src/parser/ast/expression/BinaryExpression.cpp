@@ -149,10 +149,21 @@ namespace parser
                             fmt::bold, mRight->getType()->getName(), fmt::defaults));
                 }
                 break;
-            case Operator::Assign:
+            
             case Operator::AddAssign:
+                if (mLeft->getType()->isPointerType())
+                {
+                    if (!mRight->getType()->isIntegerType() && mRight->getType() != mLeft->getType())
+                    {
+                        diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("No match for '{}operator+={} with types '{}{}{}' and '{}{}{}'",
+                            fmt::bold, fmt::defaults,
+                            fmt::bold, mLeft->getType()->getName(),  fmt::defaults,
+                            fmt::bold, mRight->getType()->getName(), fmt::defaults));
+                    }
+                }
+            case Operator::Assign:
             case Operator::SubAssign:
-                 if (mLeft->getType() != mRight->getType())
+                if (mLeft->getType() != mRight->getType())
                 {
                     diag.compilerError(mToken.getStart(), mToken.getEnd(), std::format("No match for '{}operator{}{} with types '{}{}{}' and '{}{}{}'",
                             fmt::bold, mToken.getId(),               fmt::defaults,
