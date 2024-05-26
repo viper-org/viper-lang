@@ -1,7 +1,9 @@
-func @main() -> i32 {
-    let vec: Vec3 = Vec3 { 1, 2, 3 };
+namespace cheeto {
+    constexpr x: i32 = 69;
+}
 
-    return (i32) vec.addAll();
+func @main() -> i32 {
+    return cheeto::x;
 }
 
 using struct Vec3 {

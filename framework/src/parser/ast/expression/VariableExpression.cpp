@@ -34,6 +34,8 @@ namespace parser
 
         if (local)
         {
+            if (local->alloca->isConstant()) return local->alloca;
+
             return builder.CreateLoad(local->alloca);
         }
         else
@@ -46,7 +48,10 @@ namespace parser
                 }
                 else if (GlobalVariables.find(symbol) != GlobalVariables.end())
                 {
-                    return builder.CreateLoad(GlobalVariables.at(symbol).global);
+                    vipir::Value* value = GlobalVariables[symbol].global;
+                    if (value->isConstant()) return value;
+
+                    if (value->getType()->isPointerType()) return builder.CreateLoad(value); // TODO: Something better than this
                 }
             }
         }

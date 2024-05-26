@@ -10,6 +10,7 @@
 #include "parser/ast/global/Namespace.h"
 #include "parser/ast/global/UsingDeclaration.h"
 #include "parser/ast/global/EnumDeclaration.h"
+#include "parser/ast/statement/ConstexprStatement.h"
 
 #include "lexer/Token.h"
 
@@ -62,6 +63,7 @@ namespace parser
         NamespacePtr parseNamespace();
         StructDeclarationPtr parseStructDeclaration(bool exported);
         GlobalDeclarationPtr parseGlobalDeclaration(bool exported);
+        ConstexprStatementPtr parseConstExpr(bool exported);
         std::pair<std::vector<ASTNodePtr>, std::vector<GlobalSymbol>> parseImportStatement(bool exported);
         UsingDeclarationPtr parseUsingDeclaration(bool exported);
         EnumDeclarationPtr parseEnumDeclaration(bool exported);

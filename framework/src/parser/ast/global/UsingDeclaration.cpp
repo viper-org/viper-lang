@@ -3,10 +3,12 @@
 
 #include "parser/ast/global/UsingDeclaration.h"
 
+#include <utility>
+
 namespace parser
 {
     UsingDeclaration::UsingDeclaration(std::vector<std::string> names, Type* type)
-        : mNames(names)
+        : mNames(std::move(names))
         , mType(type)
     {
         Type::AddAlias(mNames, mType);

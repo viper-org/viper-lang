@@ -18,6 +18,7 @@
 #include "parser/ast/statement/CompoundStatement.h"
 #include "parser/ast/statement/ForStatement.h"
 #include "parser/ast/statement/SwitchStatement.h"
+#include "parser/ast/statement/ConstexprStatement.h"
 
 #include "parser/ast/expression/IntegerLiteral.h"
 #include "parser/ast/expression/StringLiteral.h"
@@ -93,6 +94,7 @@ namespace parser
         CompoundStatementPtr parseCompoundStatement();
         ReturnStatementPtr parseReturnStatement();
         VariableDeclarationPtr parseVariableDeclaration();
+        ConstexprStatementPtr parseConstexprStatement(bool global);
         IfStatementPtr parseIfStatement();
         WhileStatementPtr parseWhileStatement();
         ForStatementPtr parseForStatement();

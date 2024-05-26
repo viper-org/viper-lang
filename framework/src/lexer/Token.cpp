@@ -116,6 +116,8 @@ namespace lexing
                 return "let";
             case TokenType::GlobalKeyword:
                 return "global";
+            case TokenType::ConstexprKeyword:
+                return "constexpr";
             case TokenType::IfKeyword:
                 return "if";
             case TokenType::ElseKeyword:

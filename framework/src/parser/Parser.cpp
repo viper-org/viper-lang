@@ -119,8 +119,8 @@ namespace parser
         {
             consume();
             expectEitherToken({ lexing::TokenType::FuncKeyword, lexing::TokenType::GlobalKeyword,
-                                 lexing::TokenType::StructKeyword, lexing::TokenType::UsingKeyword,
-                                 lexing::TokenType::EnumKeyword });
+                                lexing::TokenType::ConstexprKeyword, lexing::TokenType::StructKeyword,
+                                lexing::TokenType::UsingKeyword, lexing::TokenType::EnumKeyword });
         }
 
         switch (current().getTokenType())
@@ -131,6 +131,8 @@ namespace parser
                 return parseStructDeclaration();
             case lexing::TokenType::GlobalKeyword:
                 return parseGlobalDeclaration();
+            case lexing::TokenType::ConstexprKeyword:
+                return parseConstexprStatement(true);
             case lexing::TokenType::ImportKeyword:
             {
                 auto symbols = parseImportStatement();
@@ -432,6 +434,9 @@ namespace parser
 
             case lexing::TokenType::LetKeyword:
                 return parseVariableDeclaration();
+
+            case lexing::TokenType::ConstexprKeyword:
+                return parseConstexprStatement(false);
 
             case lexing::TokenType::IfKeyword:
                 return parseIfStatement();
@@ -913,6 +918,40 @@ namespace parser
         consume();
 
         return std::make_unique<VariableDeclaration>(type, std::move(name), parseExpression(type));
+    }
+
+    ConstexprStatementPtr Parser::parseConstexprStatement(bool global)
+    {
+        consume(); // constexpr
+
+        lexing::Token token = current();
+        std::string name = consume().getText();
+
+        auto names = mNamespaces;
+        names.push_back(name);
+
+        expectToken(lexing::TokenType::Colon);
+        consume();
+
+        Type* type = parseType();
+
+        if (global)
+            mSymbols.push_back({name, type});
+        else
+            mScope->locals[name] = LocalSymbol(nullptr, type);
+
+        expectToken(lexing::TokenType::Equals);
+        consume();
+
+        ASTNodePtr value = parseExpression(type);
+
+        if (global)
+        {
+            expectToken(lexing::TokenType::Semicolon);
+            consume();
+        }
+
+        return std::make_unique<ConstexprStatement>(type, global ? std::move(names) : std::vector<std::string>{name}, std::move(value), token, global);
     }
 
     IfStatementPtr Parser::parseIfStatement()

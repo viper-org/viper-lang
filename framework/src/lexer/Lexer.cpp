@@ -23,6 +23,7 @@ namespace lexing
         { "return",     TokenType::ReturnKeyword },
         { "let",        TokenType::LetKeyword },
         { "global",     TokenType::GlobalKeyword },
+        { "constexpr",  TokenType::ConstexprKeyword },
         { "if",         TokenType::IfKeyword },
         { "else",       TokenType::ElseKeyword },
         { "while",      TokenType::WhileKeyword },

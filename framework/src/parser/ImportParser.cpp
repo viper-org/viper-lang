@@ -120,6 +120,8 @@ namespace parser
                 return parseStructDeclaration(exported);
             case lexing::TokenType::GlobalKeyword:
                 return parseGlobalDeclaration(exported);
+            case lexing::TokenType::ConstexprKeyword:
+                return parseConstExpr(exported);
             case lexing::TokenType::ImportKeyword:
             {
                 auto symbols = parseImportStatement(exported);
@@ -509,6 +511,37 @@ namespace parser
         {
             mSymbols.push_back({names.back(), type});
             return std::make_unique<GlobalDeclaration>(std::move(names), type, nullptr); // TODO: Extern
+        }
+        return nullptr;
+    }
+
+    ConstexprStatementPtr ImportParser::parseConstExpr(bool exported)
+    {
+        consume(); // constexpr
+
+        expectToken(lexing::TokenType::Identifier);
+        lexing::Token token = current();
+        std::vector<std::string> names = mNamespaces;
+        names.push_back(consume().getText());
+
+        expectToken(lexing::TokenType::Colon);
+        consume();
+
+        Type* type = parseType();
+
+        expectToken(lexing::TokenType::Equals);
+        consume();
+
+        while(current().getTokenType() != lexing::TokenType::Semicolon)
+        {
+            consume();
+        }
+        consume();
+
+        if (exported)
+        {
+            mSymbols.push_back({names.back(), type});
+            return std::make_unique<ConstexprStatement>(type, std::move(names), nullptr, token, true);
         }
         return nullptr;
     }
