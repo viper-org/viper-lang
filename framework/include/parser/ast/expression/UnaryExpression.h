@@ -15,6 +15,9 @@ namespace parser
     public:
         enum class Operator
         {
+            PreIncrement, PreDecrement,
+            PostIncrement, PostDecrement,
+
             Negate,
             
             BitwiseNot,
@@ -22,14 +25,17 @@ namespace parser
             AddressOf, Indirection,
         };
 
-        UnaryExpression(ASTNodePtr operand, lexing::TokenType op);
-        UnaryExpression(ASTNodePtr operand, Operator op);
+        UnaryExpression(ASTNodePtr operand, lexing::Token operatorToken, bool postfix = false);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         ASTNodePtr mOperand;
         Operator mOperator;
+        bool mPostfix;
+
+        void checkAssignmentLvalue(vipir::Value* pointer, diagnostic::Diagnostics& diag);
     };
 
     using UnaryExpressionPtr = std::unique_ptr<UnaryExpression>;

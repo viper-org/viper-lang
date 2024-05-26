@@ -13,6 +13,27 @@ namespace parser
     {
     }
 
+    void ForStatement::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        if (mInit)
+            mInit->typeCheck(scope, diag);
+        if (mCondition)
+        {
+            if (!mCondition->getType()->isBooleanType())
+            {
+                diag.compilerError(mCondition->getDebugToken().getStart(), mCondition->getDebugToken().getEnd(), std::format("For-expression condition must have type '{}bool{}'",
+                    fmt::bold, fmt::defaults));
+            }
+            mCondition->typeCheck(scope, diag);
+        }
+        for (auto& node : mLoopExpr)
+        {
+            node->typeCheck(scope, diag);
+        }
+
+        mBody->typeCheck(scope, diag);
+    }
+
     vipir::Value* ForStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::BasicBlock* conditionBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());

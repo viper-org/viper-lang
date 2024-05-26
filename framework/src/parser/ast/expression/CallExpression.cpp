@@ -24,7 +24,7 @@
 
 namespace parser
 {
-    CallExpression::CallExpression(ASTNodePtr function, std::vector<ASTNodePtr> parameters)
+    CallExpression::CallExpression(ASTNodePtr function, std::vector<ASTNodePtr> parameters, lexing::Token token)
         : mFunction(std::move(function))
         , mParameters(std::move(parameters))
     {
@@ -46,11 +46,30 @@ namespace parser
                 manglingArguments.insert(manglingArguments.begin(), member->mStruct->getType());
 
             FunctionSymbol* func = FindFunction(structNames, structNames, manglingArguments);
-            mType = func->returnType;
+            mFunctionType = func->type;
         }
         else
         {
-            mType = mFunction->getType();
+            mFunctionType = static_cast<FunctionType*>(mFunction->getType());
+        }
+
+        mType = mFunctionType->getReturnType();
+        mPreferredDebugToken = mFunction->getDebugToken();
+    }
+
+    void CallExpression::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        int index = 0;
+        for (auto& param : mParameters)
+        {
+            if (param->getType() != mFunctionType->getArgumentTypes()[index])
+            {
+                diag.compilerError(param->getDebugToken().getStart(), param->getDebugToken().getEnd(), std::format("Function argument of type '{}{}{}' may not be passed a parameter of type '{}{}{}'",
+                    fmt::bold, mFunctionType->getArgumentTypes()[index]->getName(), fmt::defaults,
+                    fmt::bold, param->getType()->getName(), fmt::defaults));
+            }
+            param->typeCheck(scope, diag);
+            ++index;
         }
     }
 

@@ -17,13 +17,14 @@ public:
     virtual vipir::Type* getVipirType() const = 0;
     virtual std::string getMangleID() const = 0;
 
-    virtual bool isIntegerType() const { return false; }
-    virtual bool isVoidType()    const { return false; }
-    virtual bool isBooleanType() const { return false; }
-    virtual bool isPointerType() const { return false; }
-    virtual bool isStructType()  const { return false; }
-    virtual bool isArrayType()   const { return false; }
-    virtual bool isEnumType()    const { return false; }
+    virtual bool isIntegerType()  const { return false; }
+    virtual bool isVoidType()     const { return false; }
+    virtual bool isBooleanType()  const { return false; }
+    virtual bool isPointerType()  const { return false; }
+    virtual bool isStructType()   const { return false; }
+    virtual bool isArrayType()    const { return false; }
+    virtual bool isEnumType()     const { return false; }
+    virtual bool isFunctionType() const { return false; }
 
     static void Init();
     static bool Exists(const std::string& name);

@@ -9,6 +9,8 @@
 
 #include "diagnostic/Diagnostic.h"
 
+#include "lexer/Token.h"
+
 #include <vipir/IR/IRBuilder.h>
 
 #include <memory>
@@ -22,11 +24,15 @@ namespace parser
         virtual ~ASTNode() { }
 
         Type* getType() const { return mType; }
+        lexing::Token& getDebugToken() { return mPreferredDebugToken; }
 
+        virtual void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) = 0;
         virtual vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) = 0;
     
     protected:
         Type* mType;
+
+        lexing::Token mPreferredDebugToken;
     };
     using ASTNodePtr = std::unique_ptr<ASTNode>;
 }

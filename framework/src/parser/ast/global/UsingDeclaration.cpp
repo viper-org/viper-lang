@@ -14,6 +14,10 @@ namespace parser
         Type::AddAlias(mNames, mType);
     }
 
+    void UsingDeclaration::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+    }
+
     vipir::Value* UsingDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         return nullptr;

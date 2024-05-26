@@ -109,8 +109,14 @@ int main(int argc, char** argv)
     vipir::Module module(inputFilePath);
     module.setABI<vipir::abi::SysV>();
 
-    auto nodes = parser.parse();
-    for (auto& node : nodes)
+    auto ast = parser.parse();
+
+    for (auto& node : ast)
+    {
+        node->typeCheck(nullptr, diag);
+    }
+    
+    for (auto& node : ast)
     {
         node->emit(builder, module, nullptr, diag);
     }

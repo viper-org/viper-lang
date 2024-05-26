@@ -15,6 +15,26 @@ namespace parser
         , mToken(std::move(token))
         , mRight(std::move(right))
     {
+        std::vector<std::string> symbols = symbol::GetSymbol(getNames(), getNames());
+        
+        for (auto symbol : symbols)
+        {
+            if (GlobalVariables.contains(symbol))
+            {
+                mType = GlobalVariables[symbol].type;
+            }
+            else if (GlobalFunctions.contains(symbol))
+            {
+                mType = GlobalFunctions[symbol].type;
+            }
+        }
+        mPreferredDebugToken = token;
+    }
+
+    void ScopeResolution::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        mLeft->typeCheck(scope, diag);
+        mRight->typeCheck(scope, diag);
     }
 
     std::vector<std::string> ScopeResolution::getNames()

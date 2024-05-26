@@ -14,11 +14,16 @@ namespace parser
         , mToken(std::move(token))
     {
         mType = type;
+        mPreferredDebugToken = mToken;
     }
 
     std::string VariableExpression::getName()
     {
         return mName;
+    }
+
+    void VariableExpression::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
     }
 
     vipir::Value* VariableExpression::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)

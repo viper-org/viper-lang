@@ -32,6 +32,7 @@ namespace parser
 
         BinaryExpression(ASTNodePtr left, lexing::Token operatorToken, ASTNodePtr right);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:

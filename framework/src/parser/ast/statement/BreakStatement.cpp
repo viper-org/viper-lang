@@ -10,6 +10,10 @@ namespace parser
     {
     }
 
+    void BreakStatement::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+    }
+
     vipir::Value* BreakStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         vipir::BasicBlock* breakTo = scope->findBreakBB();

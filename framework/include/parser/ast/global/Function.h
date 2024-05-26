@@ -18,16 +18,17 @@ namespace parser
     class Function : public ASTNode
     {
     public:
-        Function(std::vector<GlobalAttribute> attributes, Type* returnType, std::vector<FunctionArgument> arguments, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope);
+        Function(std::vector<GlobalAttribute> attributes, Type* type, std::vector<FunctionArgument> arguments, std::string_view name, std::vector<ASTNodePtr>&& body, Scope* scope);
 
         Type* getReturnType() const;
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
         std::vector<GlobalAttribute> mAttributes;
 
-        Type* mReturnType;
+        Type* mType;
         std::vector<FunctionArgument> mArguments;
         std::string mName;
         std::vector<ASTNodePtr> mBody;

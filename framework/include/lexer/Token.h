@@ -24,6 +24,7 @@ namespace lexing
 
         Equals,
         Plus, Minus,
+        DoublePlus, DoubleMinus,
         Slash,
         PlusEquals, MinusEquals,
         DoubleEquals, BangEquals,
@@ -67,6 +68,7 @@ namespace lexing
     class Token
     {
     public:
+        Token() = default;
         Token(const TokenType tokenType, std::string text, SourceLocation start, SourceLocation end);
         Token(const TokenType tokenType, SourceLocation start, SourceLocation end);
 

@@ -1,29 +1,41 @@
 #include "parser/ast/statement/SwitchStatement.h"
 
+#include "parser/ast/statement/BreakStatement.h"
+#include "parser/ast/statement/ContinueStatement.h"
+#include "parser/ast/statement/ReturnStatement.h"
+
 #include <vipir/IR/Instruction/BinaryInst.h>
 
 namespace parser
 {
-    SwitchStatement::SwitchStatement(ASTNodePtr&& value, std::vector<SwitchSection>&& sections, Scope* scope)
+    SwitchStatement::SwitchStatement(ASTNodePtr&& value, std::vector<SwitchSection>&& sections)
         : mValue(std::move(value))
         , mSections(std::move(sections))
-        , mScope(scope)
     {
+    }
+
+    void SwitchStatement::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        for (auto& section : mSections)
+        {
+            if (section.label)
+                section.label->typeCheck(scope, diag);
+            for (auto& node : section.body)
+            {
+                node->typeCheck(scope, diag);
+            }
+        }
     }
 
     vipir::Value* SwitchStatement::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
-        std::vector<vipir::BasicBlock*> conditionBlocks;
-        std::vector<vipir::BasicBlock*> bodyBlocks;
-
-        scope = mScope.get();
-
         vipir::Value* value = mValue->emit(builder, module, scope, diag);
 
         if (mSections.empty())
-        {
             return nullptr;
-        }
+
+        std::vector<vipir::BasicBlock*> conditionBlocks;
+        std::vector<vipir::BasicBlock*> bodyBlocks;
 
         for (auto& sec : mSections)
             conditionBlocks.push_back(vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent()));

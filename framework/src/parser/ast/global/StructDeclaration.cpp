@@ -36,13 +36,13 @@ namespace parser
                 argumentTypes.push_back(argument.type->getVipirType());
             }
 
-            vipir::FunctionType* functionType = vipir::FunctionType::Create(method.returnType->getVipirType(), argumentTypes);
+            vipir::FunctionType* functionType = static_cast<vipir::FunctionType*>(method.type->getVipirType());
 
             std::vector<std::string> names = mNames;
             names.push_back(method.name);
             std::string name = symbol::mangleFunctionName(names, std::move(manglingArguments));
 
-            FunctionSymbol::Create(nullptr, name, names, method.returnType, method.priv);
+            FunctionSymbol::Create(nullptr, name, names, method.type, method.priv);
         }
     }
 
@@ -61,6 +61,22 @@ namespace parser
         return mMethods;
     }
 
+    void StructDeclaration::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
+    {
+        for (auto& method : mMethods)
+        {
+            if (method.scope)
+            {
+                scope = method.scope.get();
+                method.scope->currentReturnType = static_cast<FunctionType*>(method.type)->getReturnType();
+            }
+            for (auto& node : method.body)
+            {
+                node->typeCheck(scope, diag);
+            }
+        }
+    }
+
     vipir::Value* StructDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
     {
         for (StructMethod& method : mMethods)
@@ -77,7 +93,7 @@ namespace parser
                 argumentTypes.push_back(argument.type->getVipirType());
             }
 
-            vipir::FunctionType* functionType = vipir::FunctionType::Create(method.returnType->getVipirType(), argumentTypes);
+            vipir::FunctionType* functionType = static_cast<vipir::FunctionType*>(method.type->getVipirType());
 
             std::vector<std::string> names = mNames;
             names.push_back(method.name);

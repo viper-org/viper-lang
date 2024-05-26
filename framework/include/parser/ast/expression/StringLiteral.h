@@ -10,8 +10,9 @@ namespace parser
     class StringLiteral : public ASTNode
     {
     public:
-        StringLiteral(std::string value);
+        StringLiteral(std::string value, lexing::Token token);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
