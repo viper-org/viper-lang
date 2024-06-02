@@ -661,6 +661,9 @@ namespace parser
                 expectToken(lexing::TokenType::LeftParen);
                 consume();
 
+                Scope* scope = new Scope(mScope, structType);
+                mScope = scope;
+
                 std::vector<FunctionArgument> arguments;
                 while (current().getTokenType() != lexing::TokenType::RightParen)
                 {
@@ -671,6 +674,7 @@ namespace parser
                     consume();
 
                     Type* type = parseType();
+                    mScope->locals[name] = LocalSymbol(nullptr, type);
                     arguments.push_back({std::move(name), type});
 
                     if (current().getTokenType() != lexing::TokenType::RightParen)
@@ -701,9 +705,6 @@ namespace parser
                     methods.push_back({priv, std::move(name), type, std::move(arguments), std::vector<ASTNodePtr>(), nullptr});
                     continue;
                 }
-
-                Scope* scope = new Scope(mScope, structType);
-                mScope = scope;
 
                 mScope->locals["this"] = LocalSymbol(nullptr, PointerType::Create(structType));
 
