@@ -408,7 +408,7 @@ namespace parser
             }
             else
             {
-                ASTNodePtr rhs = parseExpression(lhs->getType(), binaryOperatorPrecedence);
+                ASTNodePtr rhs = parseExpression(nullptr, binaryOperatorPrecedence);
                 lhs = std::make_unique<BinaryExpression>(std::move(lhs), std::move(operatorToken), std::move(rhs));
             }
 
