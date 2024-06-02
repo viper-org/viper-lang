@@ -161,6 +161,8 @@ namespace parser
                             fmt::bold, mRight->getType()->getName(), fmt::defaults));
                     }
                 }
+                break;
+
             case Operator::Assign:
             case Operator::SubAssign:
                 if (mLeft->getType() != mRight->getType())
