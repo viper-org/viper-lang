@@ -22,17 +22,21 @@ namespace parser
             mangledName += name;
         }
         symbol::AddIdentifier(mangledName, mNames);
+        GlobalVariables[mangledName] = GlobalSymbol(nullptr, mType);
     }
 
     void GlobalDeclaration::typeCheck(Scope* scope, diagnostic::Diagnostics& diag)
     {
-        if (mInitVal->getType() != mType)
+        if (mInitVal)
         {
-            diag.compilerError(mInitVal->getDebugToken().getStart(), mInitVal->getDebugToken().getEnd(), std::format("Global variable of type '{}{}{}' cannot be initialized with a value of type '{}{}{}",
-                fmt::bold, mType->getName(), fmt::defaults,
-                fmt::bold, mInitVal->getType()->getName(), fmt::defaults));
+            if (mInitVal->getType() != mType)
+            {
+                diag.compilerError(mInitVal->getDebugToken().getStart(), mInitVal->getDebugToken().getEnd(), std::format("Global variable of type '{}{}{}' cannot be initialized with a value of type '{}{}{}",
+                    fmt::bold, mType->getName(), fmt::defaults,
+                    fmt::bold, mInitVal->getType()->getName(), fmt::defaults));
+            }
+            mInitVal->typeCheck(scope, diag);
         }
-        mInitVal->typeCheck(scope, diag);
     }
 
     vipir::Value* GlobalDeclaration::emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag)
@@ -47,9 +51,17 @@ namespace parser
         vipir::GlobalVar* global;
 
         if (GlobalVariables.contains(mangledName))
+        {
             global = dynamic_cast<vipir::GlobalVar*>(GlobalVariables[mangledName].global);
+            if (!global)
+            {
+                global = module.createGlobalVar(mType->getVipirType());
+            }
+        }
         else
+        {
             global = module.createGlobalVar(mType->getVipirType());
+        }
 
         if (mInitVal)
         {

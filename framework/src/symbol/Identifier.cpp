@@ -3,6 +3,7 @@
 
 #include "symbol/Identifier.h"
 
+#include <algorithm>
 #include <unordered_map>
 
 namespace symbol
@@ -18,7 +19,12 @@ namespace symbol
 
     void AddIdentifier(std::string mangledName, std::vector<std::string> names)
     {
-        identifiers.push_back({std::move(mangledName), std::move(names)});
+        if (std::find_if(identifiers.begin(), identifiers.end(), [&mangledName](const auto& ident){
+                return ident.mangledName == mangledName;
+            }) == identifiers.end())
+        {
+            identifiers.push_back({std::move(mangledName), std::move(names)});
+        }
     }
 
     std::vector<std::string> GetSymbol(std::vector<std::string> givenNames, std::vector<std::string> activeNames)

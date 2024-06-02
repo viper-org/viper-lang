@@ -20,6 +20,21 @@ namespace parser
                 mangledName += name;
             }
             symbol::AddIdentifier(mangledName, mNames);
+            GlobalVariables[mangledName] = GlobalSymbol(nullptr, mType);
+        }
+    }
+
+    void ConstexprStatement::typeCheck(Scope *scope, diagnostic::Diagnostics &diag)
+    {
+        if (mValue)
+        {
+            if (mValue->getType() != mType)
+            {
+                diag.compilerError(mValue->getDebugToken().getStart(), mValue->getDebugToken().getEnd(), std::format("Constexpr Variable of type '{}{}{}' cannot be initialized with a value of type '{}{}{}'",
+                    fmt::bold, mType->getName(), fmt::defaults,
+                    fmt::bold, mValue->getType()->getName(), fmt::defaults));
+            }
+            mValue->typeCheck(scope, diag);
         }
     }
 
@@ -46,7 +61,7 @@ namespace parser
             }
 
             vipir::Value* constant = mValue->emit(builder, module, scope, diag);
-            GlobalVariables[mangledName] = GlobalSymbol(constant);
+            GlobalVariables[mangledName] = GlobalSymbol(constant, mType);
         }
 
         return nullptr;

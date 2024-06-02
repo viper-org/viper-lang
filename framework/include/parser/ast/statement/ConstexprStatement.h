@@ -11,6 +11,7 @@ namespace parser
     public:
         ConstexprStatement(Type* type, std::vector<std::string> names, ASTNodePtr&& value, lexing::Token token, bool global);
 
+        void typeCheck(Scope* scope, diagnostic::Diagnostics& diag) override;
         vipir::Value* emit(vipir::IRBuilder& builder, vipir::Module& module, Scope* scope, diagnostic::Diagnostics& diag) override;
 
     private:
