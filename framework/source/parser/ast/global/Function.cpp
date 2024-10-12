@@ -7,7 +7,7 @@
 namespace parser
 {
     Function::Function(std::string name, FunctionType* type, std::vector<ASTNodePtr> body, ScopePtr scope, lexer::Token token)
-        : ASTNode(scope.get(), type->getReturnType(), token)
+        : ASTNode(scope.get(), type, token)
         , mName(std::move(name))
         , mBody(std::move(body))
         , mOwnScope(std::move(scope))
@@ -17,7 +17,7 @@ namespace parser
 
     vipir::Value* Function::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
     {
-        auto functionType = vipir::FunctionType::Create(vipir::Type::GetIntegerType(32), {});
+        auto functionType = static_cast<vipir::FunctionType*>(mType->getVipirType());
         auto function = vipir::Function::Create(functionType, module, mName);
 
         auto entryBB = vipir::BasicBlock::Create("", function);

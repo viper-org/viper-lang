@@ -27,6 +27,8 @@ namespace lexer
                 return "return";
             case TokenType::TypeKeyword:
                 return "a type";
+            case TokenType::LetKeyword:
+                return "let";
             case TokenType::RightArrow:
                 return "->";
             case TokenType::LeftParen:
@@ -39,6 +41,10 @@ namespace lexer
                 return "}";
             case TokenType::Semicolon:
                 return ";";
+            case TokenType::Colon:
+                return ":";
+            case TokenType::Equal:
+                return "=";
             case TokenType::IntegerLiteral:
                 return "integer literal";
             case TokenType::Identifier:

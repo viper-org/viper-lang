@@ -25,6 +25,11 @@ namespace parser
 
     void ReturnStatement::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
     {
+        if (mReturnValue)
+        {
+            mReturnValue->typeCheck(diag, exit);
+        }
+
         auto returnType = mScope->currentReturnType;
         if (returnType->isVoidType())
         {
@@ -67,11 +72,6 @@ namespace parser
                     exit = true;
                 }
             }
-        }
-
-        if (mReturnValue)
-        {
-            mReturnValue->typeCheck(diag, exit);
         }
     }
 

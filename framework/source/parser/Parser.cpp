@@ -96,8 +96,14 @@ namespace parser
             case lexer::TokenType::ReturnKeyword:
                 return parseReturnStatement();
 
+            case lexer::TokenType::LetKeyword:
+                return parseVariableDeclaration();
+
             case lexer::TokenType::IntegerLiteral:
                 return parseIntegerLiteral();
+
+            case lexer::TokenType::Identifier:
+                return parseVariableExpression();
 
             default:
                 mDiag.reportCompilerError(
@@ -162,6 +168,30 @@ namespace parser
         return std::make_unique<ReturnStatement>(mActiveScope, parseExpression(), std::move(token));
     }
 
+    VariableDeclarationPtr Parser::parseVariableDeclaration()
+    {
+        consume(); // LetKeyword
+
+        expectToken(lexer::TokenType::Identifier);
+        auto token = consume();
+        std::string name = std::string(token.getText());
+        
+        expectToken(lexer::TokenType::Colon);
+        consume();
+
+        auto type = parseType();
+
+        ASTNodePtr initValue = nullptr;
+        if (current().getTokenType() == lexer::TokenType::Equal)
+        {
+            consume();
+
+            initValue = parseExpression();
+        }
+
+        return std::make_unique<VariableDeclaration>(mActiveScope, std::move(name), type, std::move(initValue), std::move(token));
+    }
+
 
     IntegerLiteralPtr Parser::parseIntegerLiteral()
     {
@@ -169,5 +199,13 @@ namespace parser
         std::string text = std::string(token.getText());
 
         return std::make_unique<IntegerLiteral>(mActiveScope, std::strtoimax(text.c_str(), nullptr, 0), std::move(token));
+    }
+
+    VariableExpressionPtr Parser::parseVariableExpression()
+    {
+        auto token = consume();
+        std::string text = std::string(token.getText());
+
+        return std::make_unique<VariableExpression>(mActiveScope, std::move(text), std::move(token));
     }
 }

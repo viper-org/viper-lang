@@ -19,6 +19,7 @@ namespace lexer
     static const std::unordered_map<std::string_view, TokenType> keywords = {
         { "func",   TokenType::FuncKeyword },
         { "return", TokenType::ReturnKeyword },
+        { "let",    TokenType::LetKeyword },
         { "i8",     TokenType::TypeKeyword },
         { "i16",    TokenType::TypeKeyword },
         { "i32",    TokenType::TypeKeyword },
@@ -202,6 +203,12 @@ namespace lexer
 
             case ';':
                 return Token(";", TokenType::Semicolon, start, mSourceLocation);
+
+            case ':':
+                return Token(":", TokenType::Colon, start, mSourceLocation);
+
+            case '=':
+                return Token("=", TokenType::Equal, start, mSourceLocation);
 
             default:
                 return Token(std::string(1, current()), TokenType::Error, start, mSourceLocation);

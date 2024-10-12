@@ -15,6 +15,7 @@ namespace lexer
         FuncKeyword,
         ReturnKeyword,
         TypeKeyword,
+        LetKeyword,
 
         // Symbols
         RightArrow,
@@ -23,6 +24,8 @@ namespace lexer
         LeftBrace,
         RightBrace,
         Semicolon,
+        Colon,
+        Equal,
 
         // Literals
         IntegerLiteral,
