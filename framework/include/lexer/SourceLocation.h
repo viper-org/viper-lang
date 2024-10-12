@@ -13,6 +13,7 @@ namespace lexer
 
         unsigned int line;
         unsigned int col;
+        unsigned int position;
     };
 }
 

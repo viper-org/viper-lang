@@ -1,6 +1,6 @@
 // Copyright 2024 solar-mist
 
-#include <lexer/Token.h>
+#include "lexer/Token.h"
 
 namespace lexer
 {

@@ -3,7 +3,8 @@
 #ifndef VIPER_FRAMEWORK_LEXER_LEXER_H
 #define VIPER_FRAMEWORK_LEXER_LEXER_H 1
 
-#include <lexer/SourceLocation.h>
+#include "lexer/SourceLocation.h"
+#include "diagnostic/Diagnostic.h"
 
 #include <istream>
 #include <optional>
@@ -17,12 +18,14 @@ namespace lexer
     class Lexer
     {
     public:
-        Lexer(std::string text, std::string_view fileName);
+        Lexer(std::string_view text, std::string_view fileName);
 
         std::vector<Token> lex();
 
+        void scanInvalidTokens(std::vector<Token>& tokens, diagnostic::Diagnostics& diag);
+
     private:
-        std::string mText;
+        std::string_view mText;
         std::string_view mFileName;
 
         SourceLocation mSourceLocation;

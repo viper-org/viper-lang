@@ -1,16 +1,17 @@
 // Copyright 2024 solar-mist
 
-#include <lexer/Lexer.h>
-#include <lexer/Token.h>
+#include "lexer/Lexer.h"
+#include "lexer/Token.h"
 
+#include <format>
 #include <unordered_map>
 
 namespace lexer
 {
-    Lexer::Lexer(std::string text, std::string_view fileName)
+    Lexer::Lexer(std::string_view text, std::string_view fileName)
         : mText(text)
         , mFileName(fileName)
-        , mSourceLocation({fileName, 1, 1})
+        , mSourceLocation({fileName, 1, 1, 0})
         , mPosition(0)
     {
     }
@@ -38,6 +39,26 @@ namespace lexer
 
         return ret;
     }
+    
+    void Lexer::scanInvalidTokens(std::vector<Token>& tokens, diagnostic::Diagnostics& diag)
+    {
+        bool foundInvalidTokens = false;
+        for (auto& token : tokens)
+        {
+            if (token.getTokenType() == TokenType::Error)
+            {
+                foundInvalidTokens = true;
+                diag.reportCompilerError(token.getStartLocation(),
+                    token.getEndLocation(),
+                    std::format("stray '{}{}{}' in program", fmt::bold, token.getText(), fmt::defaults));
+            }
+        }
+
+        if (foundInvalidTokens)
+        {
+            std::exit(EXIT_FAILURE);
+        }
+    }
 
 
     char Lexer::current()
@@ -53,6 +74,7 @@ namespace lexer
             mSourceLocation.col = 0;
             mSourceLocation.line += 1;
         }
+        mSourceLocation.position += 1;
         return current();
     }
 
@@ -181,7 +203,7 @@ namespace lexer
                 return Token(";", TokenType::Semicolon, start, mSourceLocation);
 
             default:
-                return Token(std::string(current(), 1), TokenType::Error, start, mSourceLocation);
+                return Token(std::string(1, current()), TokenType::Error, start, mSourceLocation);
         }
     }
 }

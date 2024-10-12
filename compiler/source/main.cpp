@@ -1,6 +1,8 @@
 #include <lexer/Lexer.h>
 #include <lexer/Token.h>
 
+#include <diagnostic/Diagnostic.h>
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -22,13 +24,14 @@ int main(int argc, char** argv)
 
     std::stringstream ss;
     ss << inputFile.rdbuf();
+    std::string text = ss.str();
 
-    lexer::Lexer lexer(ss.str(), argv[1]);
+    diagnostic::Diagnostics diag;
+    diag.setText(text);
+
+    lexer::Lexer lexer(text, argv[1]);
     auto tokens = lexer.lex();
-    for (auto& token : tokens)
-    {
-        std::cout << token.getText() << "\n";
-    }
+    lexer.scanInvalidTokens(tokens, diag);
 
     return 0;
 }

@@ -3,7 +3,7 @@
 #ifndef VIPER_FRAMEWORK_LEXER_TOKEN_H
 #define VIPER_FRAMEWORK_LEXER_TOKEN_H 1
 
-#include <lexer/SourceLocation.h>
+#include "lexer/SourceLocation.h"
 
 #include <string>
 
