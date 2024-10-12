@@ -4,6 +4,8 @@
 
 #include <vipir/IR/Constant/ConstantInt.h>
 
+#include <cmath>
+
 namespace parser
 {
     IntegerLiteral::IntegerLiteral(Scope* scope, std::uintmax_t value, lexer::Token token)
@@ -19,5 +21,31 @@ namespace parser
     
     void IntegerLiteral::typeCheck(diagnostic::Diagnostics&, bool&)
     {
+    }
+
+    bool IntegerLiteral::implicitCast(diagnostic::Diagnostics& diag, Type* destType)
+    {
+        return triviallyImplicitCast(diag, destType);
+    }
+
+    bool IntegerLiteral::triviallyImplicitCast(diagnostic::Diagnostics& diag, Type* destType)
+    {
+        if (destType->isIntegerType())
+        {
+            if (mValue >= std::pow(2, destType->getSize()))
+            {
+                diag.compilerWarning(
+                    mErrorToken.getStartLocation(),
+                    mErrorToken.getEndLocation(),
+                    std::format("integer literal with value '{}{}{}' is being narrowed to '{}{}{}'",
+                        fmt::bold, mValue, fmt::defaults,
+                        fmt::bold, mValue % (int)std::pow(2, destType->getSize()), fmt::defaults)
+                );
+            }
+
+            mType = destType;
+            return true;
+        }
+        return false;
     }
 }

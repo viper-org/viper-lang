@@ -55,14 +55,17 @@ namespace parser
             }
             else if (returnType != mReturnValue->getType())
             {
-                diag.reportCompilerError(
-                    mReturnValue->getErrorToken().getStartLocation(),
-                    mReturnValue->getErrorToken().getEndLocation(),
-                    std::format("value of type '{}{}{}' is not compatible with return type '{}{}{}'",
-                        fmt::bold, mReturnValue->getType()->getName(), fmt::defaults,
-                        fmt::bold, returnType->getName(), fmt::defaults)
-                );
-                exit = true;
+                if (!mReturnValue->implicitCast(diag, returnType))
+                {
+                    diag.reportCompilerError(
+                        mReturnValue->getErrorToken().getStartLocation(),
+                        mReturnValue->getErrorToken().getEndLocation(),
+                        std::format("value of type '{}{}{}' is not compatible with return type '{}{}{}'",
+                            fmt::bold, mReturnValue->getType()->getName(), fmt::defaults,
+                            fmt::bold, returnType->getName(), fmt::defaults)
+                    );
+                    exit = true;
+                }
             }
         }
 
@@ -70,5 +73,15 @@ namespace parser
         {
             mReturnValue->typeCheck(diag, exit);
         }
+    }
+
+    bool ReturnStatement::implicitCast(diagnostic::Diagnostics&, Type*)
+    {
+        return false;
+    }
+
+    bool ReturnStatement::triviallyImplicitCast(diagnostic::Diagnostics&, Type*)
+    {
+        return false;
     }
 }

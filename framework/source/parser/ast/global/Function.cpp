@@ -38,4 +38,14 @@ namespace parser
             node->typeCheck(diag, exit);
         }
     }
+
+    bool Function::implicitCast(diagnostic::Diagnostics&, Type*)
+    {
+        return false;
+    }
+
+    bool Function::triviallyImplicitCast(diagnostic::Diagnostics&, Type*)
+    {
+        return false;
+    }
 }
