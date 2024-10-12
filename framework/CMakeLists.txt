@@ -1,10 +1,14 @@
 cmake_minimum_required(VERSION 3.8)
 
 set(SOURCES
-    "source/test.cpp"
+    "source/lexer/Lexer.cpp"
+    "source/lexer/Token.cpp"
 )
 
 set(HEADERS
+    "include/lexer/Lexer.h"
+    "include/lexer/SourceLocation.h"
+    "include/lexer/Token.h"
 )
 
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})
