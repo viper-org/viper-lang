@@ -1,18 +1,11 @@
-.vscode/
-.cache/
+*.cmake
+Makefile
+*.txt
+!CMakeLists.txt
+*.a
+
 CMakeFiles/
-cmake-build-debug-wsl/
-_deps/
 build/
 
-*.cmake
-*.so
-*.a
-*.o
-*.i
-
 viper
-viper_tests
-Makefile
-CMakeCache.txt
 compile_commands.json
