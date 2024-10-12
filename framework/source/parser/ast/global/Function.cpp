@@ -6,12 +6,13 @@
 
 namespace parser
 {
-    Function::Function(std::string name, std::vector<ASTNodePtr> body, ScopePtr scope)
-        : ASTNode(scope.get())
+    Function::Function(std::string name, FunctionType* type, std::vector<ASTNodePtr> body, ScopePtr scope, lexer::Token token)
+        : ASTNode(scope.get(), type->getReturnType(), token)
         , mName(std::move(name))
         , mBody(std::move(body))
         , mOwnScope(std::move(scope))
     {
+        
     }
 
     vipir::Value* Function::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
@@ -28,5 +29,13 @@ namespace parser
         }
 
         return nullptr;
+    }
+    
+    void Function::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
+    {
+        for (auto& node : mBody)
+        {
+            node->typeCheck(diag, exit);
+        }
     }
 }

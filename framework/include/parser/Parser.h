@@ -17,6 +17,8 @@
 
 #include "symbol/Scope.h"
 
+#include "type/Type.h"
+
 namespace parser
 {
     class Parser
@@ -40,6 +42,8 @@ namespace parser
         lexer::Token peek(int offset) const;
 
         void expectToken(lexer::TokenType tokenType);
+
+        Type* parseType();
 
         ASTNodePtr parseGlobal();
         ASTNodePtr parseExpression();

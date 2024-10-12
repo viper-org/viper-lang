@@ -18,6 +18,11 @@ set(SOURCES
     "source/parser/ast/statement/ReturnStatement.cpp"
     "source/parser/ast/expression/IntegerLiteral.cpp"
 
+    "source/type/Type.cpp"
+    "source/type/IntegerType.cpp"
+    "source/type/VoidType.cpp"
+    "source/type/FunctionType.cpp"
+
     "source/diagnostic/Diagnostic.cpp"
 )
 
@@ -33,6 +38,11 @@ set(HEADERS
     "include/parser/ast/global/Function.h"
     "include/parser/ast/statement/ReturnStatement.h"
     "include/parser/ast/expression/IntegerLiteral.h"
+
+    "include/type/Type.h"
+    "include/type/IntegerType.h"
+    "include/type/VoidType.h"
+    "include/type/FunctionType.h"
 
     "include/diagnostic/Diagnostic.h"
 )

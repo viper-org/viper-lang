@@ -14,7 +14,7 @@ namespace lexer
         // Keywords
         FuncKeyword,
         ReturnKeyword,
-        I32Keyword, // TODO: Add proper types
+        TypeKeyword,
 
         // Symbols
         RightArrow,

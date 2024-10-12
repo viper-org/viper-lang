@@ -25,8 +25,8 @@ namespace lexer
                 return "func";
             case TokenType::ReturnKeyword:
                 return "return";
-            case TokenType::I32Keyword:
-                return "i32";
+            case TokenType::TypeKeyword:
+                return "a type";
             case TokenType::RightArrow:
                 return "->";
             case TokenType::LeftParen:

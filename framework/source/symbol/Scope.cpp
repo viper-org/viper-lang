@@ -2,10 +2,11 @@
 
 #include "symbol/Scope.h"
 
-Scope::Scope(Scope* parent, std::string namespaceName, bool isGlobalScope)
+Scope::Scope(Scope* parent, std::string namespaceName, bool isGlobalScope, Type* currentReturnType)
     : parent(parent)
     , namespaceName(std::move(namespaceName))
     , isGlobalScope(isGlobalScope)
+    , currentReturnType(currentReturnType)
 {
 }
 

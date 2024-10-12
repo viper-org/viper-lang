@@ -58,6 +58,12 @@ namespace parser
         }
     }
 
+    Type* Parser::parseType()
+    {
+        expectToken(lexer::TokenType::TypeKeyword);
+        return Type::Get(std::string(consume().getText()));
+    }
+
 
     ASTNodePtr Parser::parseGlobal()
     {
@@ -106,7 +112,7 @@ namespace parser
 
     FunctionPtr Parser::parseFunction()
     {
-        consume(); // FuncKeyword
+        auto token = consume(); // FuncKeyword
 
         expectToken(lexer::TokenType::Identifier);
         std::string name = std::string(consume().getText());
@@ -119,11 +125,11 @@ namespace parser
 
         expectToken(lexer::TokenType::RightArrow);
         consume();
-        // TODO: Parse type
-        expectToken(lexer::TokenType::I32Keyword);
-        consume();
+        Type* returnType = parseType();
 
-        ScopePtr scope = std::make_unique<Scope>(mActiveScope, "", false);
+        FunctionType* functionType = FunctionType::Create(returnType);
+
+        ScopePtr scope = std::make_unique<Scope>(mActiveScope, "", false, returnType);
         mActiveScope = scope.get();
 
         std::vector<ASTNodePtr> body;
@@ -140,27 +146,28 @@ namespace parser
 
         mActiveScope = scope->parent;
 
-        return std::make_unique<Function>(std::move(name), std::move(body), std::move(scope));
+        return std::make_unique<Function>(std::move(name), functionType, std::move(body), std::move(scope), std::move(token));
     }
 
 
     ReturnStatementPtr Parser::parseReturnStatement()
     {
-        consume(); // ReturnKeyword
+        auto token = consume(); // ReturnKeyword
 
         if (current().getTokenType() == lexer::TokenType::Semicolon)
         {
-            return std::make_unique<ReturnStatement>(mActiveScope, nullptr);
+            return std::make_unique<ReturnStatement>(mActiveScope, nullptr, std::move(token));
         }
 
-        return std::make_unique<ReturnStatement>(mActiveScope, parseExpression());
+        return std::make_unique<ReturnStatement>(mActiveScope, parseExpression(), std::move(token));
     }
 
 
     IntegerLiteralPtr Parser::parseIntegerLiteral()
     {
-        std::string text = std::string(consume().getText());
+        auto token = consume();
+        std::string text = std::string(token.getText());
 
-        return std::make_unique<IntegerLiteral>(mActiveScope, std::strtoimax(text.c_str(), nullptr, 0));
+        return std::make_unique<IntegerLiteral>(mActiveScope, std::strtoimax(text.c_str(), nullptr, 0), std::move(token));
     }
 }

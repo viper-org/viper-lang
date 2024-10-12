@@ -19,7 +19,10 @@ namespace lexer
     static const std::unordered_map<std::string_view, TokenType> keywords = {
         { "func",   TokenType::FuncKeyword },
         { "return", TokenType::ReturnKeyword },
-        { "i32",    TokenType::I32Keyword },
+        { "i8",     TokenType::TypeKeyword },
+        { "i16",    TokenType::TypeKeyword },
+        { "i32",    TokenType::TypeKeyword },
+        { "i64",    TokenType::TypeKeyword },
     };
 
 

@@ -5,6 +5,8 @@
 
 #include <parser/Parser.h>
 
+#include <type/Type.h>
+
 #include <vipir/Module.h>
 #include <vipir/ABI/SysV.h>
 
@@ -36,6 +38,8 @@ int main(int argc, char** argv)
     diagnostic::Diagnostics diag;
     diag.setText(text);
 
+    Type::Init();
+
     lexer::Lexer lexer(text, argv[1]);
     auto tokens = lexer.lex();
     lexer.scanInvalidTokens(tokens, diag);
@@ -43,6 +47,16 @@ int main(int argc, char** argv)
     Scope globalScope(nullptr, "", true);
     parser::Parser parser(tokens, diag, &globalScope);
     auto ast = parser.parse();
+
+    bool hadTypeCheckerErrors = false;
+    for (auto& node : ast)
+    {
+        node->typeCheck(diag, hadTypeCheckerErrors);
+    }
+    if (hadTypeCheckerErrors)
+    {
+        return EXIT_FAILURE;
+    }
 
     vipir::Module module(argv[1]);
     vipir::IRBuilder builder;

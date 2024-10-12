@@ -6,8 +6,8 @@
 
 namespace parser
 {
-    IntegerLiteral::IntegerLiteral(Scope* scope, std::uintmax_t value)
-        : ASTNode(scope)
+    IntegerLiteral::IntegerLiteral(Scope* scope, std::uintmax_t value, lexer::Token token)
+        : ASTNode(scope, Type::Get("i32"), token)
         , mValue(value)
     {
     }
@@ -15,5 +15,9 @@ namespace parser
     vipir::Value* IntegerLiteral::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
     {
         return vipir::ConstantInt::Get(module, mValue, vipir::Type::GetIntegerType(32));
+    }
+    
+    void IntegerLiteral::typeCheck(diagnostic::Diagnostics&, bool&)
+    {
     }
 }
