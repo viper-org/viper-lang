@@ -5,9 +5,14 @@
 
 #include <parser/Parser.h>
 
+#include <vipir/Module.h>
+#include <vipir/ABI/SysV.h>
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
+
+using namespace std::literals;
 
 int main(int argc, char** argv)
 {
@@ -38,6 +43,17 @@ int main(int argc, char** argv)
     Scope globalScope(nullptr, "", true);
     parser::Parser parser(tokens, diag, &globalScope);
     auto ast = parser.parse();
+
+    vipir::Module module(argv[1]);
+    vipir::IRBuilder builder;
+    for (auto& node : ast)
+    {
+        node->codegen(builder, module, diag);
+    }
+
+    std::ofstream outputFile(argv[1] + ".o"s);
+    module.setABI<vipir::abi::SysV>();
+    module.emit(outputFile, vipir::OutputFormat::ELF);
 
     return 0;
 }

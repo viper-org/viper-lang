@@ -3,9 +3,12 @@ Makefile
 *.txt
 !CMakeLists.txt
 *.a
+*.o
 
 CMakeFiles/
 build/
+_deps/
 
 viper
 compile_commands.json
+a.out

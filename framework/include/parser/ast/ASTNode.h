@@ -5,6 +5,10 @@
 
 #include "symbol/Scope.h"
 
+#include "diagnostic/Diagnostic.h"
+
+#include <vipir/IR/IRBuilder.h>
+
 #include <memory>
 
 namespace parser
@@ -12,10 +16,12 @@ namespace parser
     class ASTNode
     {
     public:
-        ASTNode() { }
+        ASTNode(Scope* scope) : mScope(scope) { }
         virtual ~ASTNode() { }
 
         Scope* getScope() const { return mScope; }
+
+        virtual vipir::Value* codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag) = 0;
 
     protected:
         Scope* mScope;

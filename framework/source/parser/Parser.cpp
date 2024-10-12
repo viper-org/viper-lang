@@ -2,6 +2,7 @@
 
 #include "parser/Parser.h"
 
+#include <cinttypes>
 #include <format>
 
 namespace parser
@@ -122,6 +123,9 @@ namespace parser
         expectToken(lexer::TokenType::I32Keyword);
         consume();
 
+        ScopePtr scope = std::make_unique<Scope>(mActiveScope, "", false);
+        mActiveScope = scope.get();
+
         std::vector<ASTNodePtr> body;
         expectToken(lexer::TokenType::LeftBrace);
         consume();
@@ -134,7 +138,9 @@ namespace parser
         }
         consume();
 
-        return std::make_unique<Function>(std::move(name), std::move(body));
+        mActiveScope = scope->parent;
+
+        return std::make_unique<Function>(std::move(name), std::move(body), std::move(scope));
     }
 
 
@@ -144,10 +150,10 @@ namespace parser
 
         if (current().getTokenType() == lexer::TokenType::Semicolon)
         {
-            return std::make_unique<ReturnStatement>(nullptr);
+            return std::make_unique<ReturnStatement>(mActiveScope, nullptr);
         }
 
-        return std::make_unique<ReturnStatement>(parseExpression());
+        return std::make_unique<ReturnStatement>(mActiveScope, parseExpression());
     }
 
 
@@ -155,6 +161,6 @@ namespace parser
     {
         std::string text = std::string(consume().getText());
 
-        return std::make_unique<IntegerLiteral>(std::stoull(text));
+        return std::make_unique<IntegerLiteral>(mActiveScope, std::strtoimax(text.c_str(), nullptr, 0));
     }
 }
