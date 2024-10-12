@@ -17,7 +17,6 @@ namespace lexer
         I32Keyword, // TODO: Add proper types
 
         // Symbols
-        Asperand,
         RightArrow,
         LeftParen,
         RightParen,
@@ -39,6 +38,7 @@ namespace lexer
         Token(std::string text, TokenType tokenType, SourceLocation startLocation, SourceLocation endLocation);
 
         std::string_view getText() const;
+        std::string_view getName() const; // For diagnostics
         TokenType getTokenType() const;
 
         SourceLocation getStartLocation() const;

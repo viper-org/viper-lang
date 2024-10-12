@@ -3,6 +3,8 @@
 
 #include <diagnostic/Diagnostic.h>
 
+#include <parser/Parser.h>
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -32,6 +34,10 @@ int main(int argc, char** argv)
     lexer::Lexer lexer(text, argv[1]);
     auto tokens = lexer.lex();
     lexer.scanInvalidTokens(tokens, diag);
+
+    Scope globalScope(nullptr, "", true);
+    parser::Parser parser(tokens, diag, &globalScope);
+    auto ast = parser.parse();
 
     return 0;
 }

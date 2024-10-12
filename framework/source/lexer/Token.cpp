@@ -17,6 +17,38 @@ namespace lexer
         return mText;
     }
 
+    std::string_view Token::getName() const
+    {
+        switch (mTokenType)
+        {
+            case TokenType::FuncKeyword:
+                return "func";
+            case TokenType::ReturnKeyword:
+                return "return";
+            case TokenType::I32Keyword:
+                return "i32";
+            case TokenType::RightArrow:
+                return "->";
+            case TokenType::LeftParen:
+                return "(";
+            case TokenType::RightParen:
+                return ")";
+            case TokenType::LeftBrace:
+                return "{";
+            case TokenType::RightBrace:
+                return "}";
+            case TokenType::Semicolon:
+                return ";";
+            case TokenType::IntegerLiteral:
+                return "integer literal";
+            case TokenType::Identifier:
+                return "an identifier";
+            case TokenType::Error:
+                return "Error";
+        }
+        return "";
+    }
+
     TokenType Token::getTokenType() const
     {
         return mTokenType;

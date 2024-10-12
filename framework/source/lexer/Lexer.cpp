@@ -179,8 +179,6 @@ namespace lexer
 
         switch (current())
         {
-            case '@':
-                return Token("@", TokenType::Asperand, start, mSourceLocation);
             case '-':
                 if (peek(1) == '>')
                 {
