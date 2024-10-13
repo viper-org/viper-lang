@@ -1,4 +1,4 @@
 func main() -> i8 {
-    let test: i8 = 257;
+    let test: i32 = 257;
     return test;
 }

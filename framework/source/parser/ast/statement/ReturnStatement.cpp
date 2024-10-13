@@ -60,7 +60,11 @@ namespace parser
             }
             else if (returnType != mReturnValue->getType())
             {
-                if (!mReturnValue->implicitCast(diag, returnType))
+                if (mReturnValue->implicitCast(diag, returnType))
+                {
+                    mReturnValue = Cast(mReturnValue, returnType);
+                }
+                else
                 {
                     diag.reportCompilerError(
                         mReturnValue->getErrorToken().getStartLocation(),
@@ -73,11 +77,6 @@ namespace parser
                 }
             }
         }
-    }
-
-    bool ReturnStatement::implicitCast(diagnostic::Diagnostics&, Type*)
-    {
-        return false;
     }
 
     bool ReturnStatement::triviallyImplicitCast(diagnostic::Diagnostics&, Type*)

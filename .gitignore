@@ -8,6 +8,7 @@ Makefile
 CMakeFiles/
 build/
 _deps/
+.cache/
 
 viper
 compile_commands.json

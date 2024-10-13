@@ -7,14 +7,25 @@
 
 #include <memory>
 
+
 class Type
 {
 public:
+    enum class CastLevel
+    {
+        Implicit,
+        ImplicitWarning,
+        Explicit,
+        Disallowed
+    };
+
     Type(std::string name) : mName(std::move(name)) { }
     virtual ~Type() {}
 
     virtual int getSize() const = 0;
     virtual vipir::Type* getVipirType() const = 0;
+    virtual CastLevel castTo(Type* destType) const = 0;
+    virtual std::string getImplicitCastWarning(Type* destType) const { return ""; }
 
     virtual bool isIntegerType()  const { return false; }
     virtual bool isVoidType()     const { return false; }

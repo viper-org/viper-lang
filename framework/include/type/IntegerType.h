@@ -10,8 +10,10 @@ class IntegerType : public Type
 public:
     IntegerType(int bits, bool isSigned);
 
-    int getSize() const override;
-    vipir::Type* getVipirType() const override;
+    virtual int getSize() const override;
+    virtual vipir::Type* getVipirType() const override;
+    virtual CastLevel castTo(Type* destType) const override;
+    virtual std::string getImplicitCastWarning(Type* destType) const override;
 
     bool isIntegerType() const override;
 

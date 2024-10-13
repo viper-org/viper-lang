@@ -28,6 +28,11 @@ vipir::Type* FunctionType::getVipirType() const
     return vipir::FunctionType::Create(mReturnType->getVipirType(), {});
 }
 
+Type::CastLevel FunctionType::castTo(Type* destType) const
+{
+    return CastLevel::Disallowed;
+}
+
 bool FunctionType::isFunctionType() const
 {
     return true;

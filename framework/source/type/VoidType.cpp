@@ -14,6 +14,11 @@ int VoidType::getSize() const
     return 0;
 }
 
+Type::CastLevel VoidType::castTo(Type* destType) const
+{
+    return CastLevel::Disallowed;
+}
+
 vipir::Type* VoidType::getVipirType() const
 {
     return vipir::Type::GetVoidType();

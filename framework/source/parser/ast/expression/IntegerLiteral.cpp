@@ -23,11 +23,6 @@ namespace parser
     {
     }
 
-    bool IntegerLiteral::implicitCast(diagnostic::Diagnostics& diag, Type* destType)
-    {
-        return triviallyImplicitCast(diag, destType);
-    }
-
     bool IntegerLiteral::triviallyImplicitCast(diagnostic::Diagnostics& diag, Type* destType)
     {
         if (destType->isIntegerType())

@@ -10,8 +10,9 @@ class VoidType : public Type
 public:
     VoidType();
 
-    int getSize() const override;
-    vipir::Type* getVipirType() const override;
+    virtual int getSize() const override;
+    virtual vipir::Type* getVipirType() const override;
+    virtual CastLevel castTo(Type* destType) const override;
 
     bool isVoidType() const override;
 };
