@@ -62,6 +62,9 @@ namespace parser
     {
         switch (tokenType) 
         {
+            case lexer::TokenType::LeftParen:
+                return 90;
+
             case lexer::TokenType::Star:
             case lexer::TokenType::Slash:
                 return 75;
@@ -166,8 +169,15 @@ namespace parser
 
             lexer::Token operatorToken = consume();
 
-            ASTNodePtr right = parseExpression(binaryOperatorPrecedence);
-            left = std::make_unique<BinaryExpression>(mActiveScope, std::move(left), operatorToken.getTokenType(), std::move(right), std::move(operatorToken));
+            if (operatorToken.getTokenType() == lexer::TokenType::LeftParen)
+            {
+                left = parseCallExpression(std::move(left));
+            }
+            else
+            {
+                ASTNodePtr right = parseExpression(binaryOperatorPrecedence);
+                left = std::make_unique<BinaryExpression>(mActiveScope, std::move(left), operatorToken.getTokenType(), std::move(right), std::move(operatorToken));
+            }
         }
 
         return left;
@@ -322,5 +332,13 @@ namespace parser
         std::string text = std::string(token.getText());
 
         return std::make_unique<VariableExpression>(mActiveScope, std::move(text), std::move(token));
+    }
+
+    CallExpressionPtr Parser::parseCallExpression(ASTNodePtr callee)
+    {
+        expectToken(lexer::TokenType::RightParen);
+        consume();
+
+        return std::make_unique<CallExpression>(mActiveScope, std::move(callee));
     }
 }

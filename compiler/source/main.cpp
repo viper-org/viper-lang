@@ -59,6 +59,7 @@ int main(int argc, char** argv)
     }
 
     vipir::Module module(argv[1]);
+    module.setABI<vipir::abi::SysV>();
     vipir::IRBuilder builder;
     for (auto& node : ast)
     {
@@ -66,7 +67,6 @@ int main(int argc, char** argv)
     }
 
     std::ofstream outputFile(argv[1] + ".o"s);
-    module.setABI<vipir::abi::SysV>();
     module.emit(outputFile, vipir::OutputFormat::ELF);
 
     return 0;

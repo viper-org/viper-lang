@@ -34,10 +34,15 @@ std::vector<std::string> Scope::getNamespaces()
 Symbol* Scope::resolveSymbol(std::string name)
 {
     // TODO: Namespace lookups
-    auto it = std::find_if(symbols.begin(), symbols.end(), [&name](const auto& symbol){
-        return symbol.name == name;
-    });
+    Scope* current = this;
+    while (current)
+    {
+        auto it = std::find_if(current->symbols.begin(), current->symbols.end(), [&name](const auto& symbol){
+            return symbol.name == name;
+        });
 
-    if (it != symbols.end()) return &*it;
+        if (it != current->symbols.end()) return &*it;
+        current = current->parent;
+    }
     return nullptr;
 }

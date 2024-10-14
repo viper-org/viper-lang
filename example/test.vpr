@@ -1,9 +1,13 @@
+func thing() -> i32 {
+    return 100;
+}
+
 func main() -> i32 {
     let test2: i16 = 3;
     let test3: i8 = 12;
     test3 = 2;
-    let test: i32 = 0;
-    if (test != 0)
+    let test: i32 = thing();
+    if (test == 0)
         test = test2 + test3;
     return -test;
 }

@@ -2,6 +2,7 @@
 
 #include "parser/ast/expression/VariableExpression.h"
 
+#include <vipir/IR/Function.h>
 #include <vipir/IR/Instruction/LoadInst.h>
 
 #include <cmath>
@@ -17,6 +18,7 @@ namespace parser
     vipir::Value* VariableExpression::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
     {
         auto symbol = mScope->resolveSymbol(mName);
+        if (dynamic_cast<vipir::Function*>(symbol->value)) return symbol->value;
         
         return builder.CreateLoad(symbol->value);
     }
