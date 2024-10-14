@@ -29,6 +29,14 @@ namespace lexer
                 return "a type";
             case TokenType::LetKeyword:
                 return "let";
+            case TokenType::Plus:
+                return "+";
+            case TokenType::Minus:
+                return "-";
+            case TokenType::Star:
+                return "*";
+            case TokenType::Slash:
+                return "/";
             case TokenType::RightArrow:
                 return "->";
             case TokenType::LeftParen:
@@ -52,7 +60,7 @@ namespace lexer
             case TokenType::Error:
                 return "Error";
         }
-        return "";
+        return "forgot to add new token to Token::getName()";
     }
 
     TokenType Token::getTokenType() const

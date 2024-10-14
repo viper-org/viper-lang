@@ -10,7 +10,9 @@
 #include "parser/ast/statement/ReturnStatement.h"
 #include "parser/ast/statement/VariableDeclaration.h"
 
+#include "parser/ast/expression/BinaryExpression.h"
 #include "parser/ast/expression/IntegerLiteral.h"
+#include "parser/ast/expression/UnaryExpression.h"
 #include "parser/ast/expression/VariableExpression.h"
 
 #include "lexer/Token.h"
@@ -45,10 +47,14 @@ namespace parser
 
         void expectToken(lexer::TokenType tokenType);
 
+        int getBinaryOperatorPrecedence(lexer::TokenType tokenType);
+        int getPrefixUnaryOperatorPrecedence(lexer::TokenType tokenType);
+        int getPostfixUnaryOperatorPrecedence(lexer::TokenType tokenType);
+
         Type* parseType();
 
         ASTNodePtr parseGlobal();
-        ASTNodePtr parseExpression();
+        ASTNodePtr parseExpression(int precedence = 1);
         ASTNodePtr parsePrimary();
 
         FunctionPtr parseFunction();
