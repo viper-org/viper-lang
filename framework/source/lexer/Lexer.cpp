@@ -20,6 +20,8 @@ namespace lexer
         { "func",   TokenType::FuncKeyword },
         { "return", TokenType::ReturnKeyword },
         { "let",    TokenType::LetKeyword },
+        { "if",     TokenType::IfKeyword },
+        { "else",   TokenType::ElseKeyword },
         { "i8",     TokenType::TypeKeyword },
         { "i16",    TokenType::TypeKeyword },
         { "i32",    TokenType::TypeKeyword },
@@ -29,6 +31,7 @@ namespace lexer
         { "u32",    TokenType::TypeKeyword },
         { "u64",    TokenType::TypeKeyword },
         { "void",   TokenType::TypeKeyword },
+        { "bool",   TokenType::TypeKeyword },
     };
 
 
@@ -227,6 +230,29 @@ namespace lexer
                 }
                 return Token("/", TokenType::Slash, start, mSourceLocation);
 
+            case '<':
+                if (peek(1) == '=')
+                {
+                    consume();
+                    return Token("<=", TokenType::LessEqual, start, mSourceLocation);
+                }
+                return Token("<", TokenType::LessThan, start, mSourceLocation);
+            case '>':
+                if (peek(1) == '=')
+                {
+                    consume();
+                    return Token(">=", TokenType::GreaterEqual, start, mSourceLocation);
+                }
+                return Token(">", TokenType::GreaterThan, start, mSourceLocation);
+
+            case '!':
+                if (peek(1) == '=')
+                {
+                    consume();
+                    return Token("!=", TokenType::BangEqual, start, mSourceLocation);
+                }
+                return Token("!", TokenType::Error, start, mSourceLocation);
+
             case '(':
                 return Token("(", TokenType::LeftParen, start, mSourceLocation);
             case ')':
@@ -244,6 +270,11 @@ namespace lexer
                 return Token(":", TokenType::Colon, start, mSourceLocation);
 
             case '=':
+                if (peek(1) == '=')
+                {
+                    consume();
+                    return Token("==", TokenType::DoubleEqual, start, mSourceLocation);
+                }
                 return Token("=", TokenType::Equal, start, mSourceLocation);
 
             default:

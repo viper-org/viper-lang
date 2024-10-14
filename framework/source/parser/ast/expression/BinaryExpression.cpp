@@ -30,6 +30,25 @@ namespace parser
             case lexer::TokenType::Slash:
                 mOperator = Operator::Div;
                 break;
+            
+            case lexer::TokenType::DoubleEqual:
+                mOperator = Operator::Equal;
+                break;
+            case lexer::TokenType::BangEqual:
+                mOperator = Operator::NotEqual;
+                break;
+            case lexer::TokenType::LessThan:
+                mOperator = Operator::LessThan;
+                break;
+            case lexer::TokenType::GreaterThan:
+                mOperator = Operator::GreaterThan;
+                break;
+            case lexer::TokenType::LessEqual:
+                mOperator = Operator::LessEqual;
+                break;
+            case lexer::TokenType::GreaterEqual:
+                mOperator = Operator::GreaterEqual;
+                break;
 
             case lexer::TokenType::Equal:
                 mOperator = Operator::Assign;
@@ -76,6 +95,19 @@ namespace parser
                 diag.reportCompilerError(mErrorToken.getStartLocation(), mErrorToken.getEndLocation(), "Can't divide a non-integer type");
                 std::exit(1);
                 break;
+
+            case Operator::Equal:
+                return builder.CreateCmpEQ(left, right);
+            case Operator::NotEqual:
+                return builder.CreateCmpNE(left, right);
+            case Operator::LessThan:
+                return builder.CreateCmpLT(left, right);
+            case Operator::GreaterThan:
+                return builder.CreateCmpGT(left, right);
+            case Operator::LessEqual:
+                return builder.CreateCmpLE(left, right);
+            case Operator::GreaterEqual:
+                return builder.CreateCmpGE(left, right);
 
             case Operator::Assign:
             {
@@ -131,6 +163,42 @@ namespace parser
                         fmt::bold, mRight->getType()->getName(), fmt::defaults));
                     exit = true;
                 }
+                break;
+            
+            case Operator::Equal:
+            case Operator::NotEqual:
+            case Operator::LessThan:
+            case Operator::GreaterThan:
+            case Operator::LessEqual:
+            case Operator::GreaterEqual:
+                if (mLeft->getType() != mRight->getType())
+                {
+                    if (mLeft->getType()->getSize() > mRight->getType()->getSize()) // lhs > rhs
+                    {
+                        if (mRight->implicitCast(diag, mLeft->getType()))
+                        {
+                            mRight = Cast(mRight, mLeft->getType());
+                        }
+                        mType = mLeft->getType();
+                    }
+                    else // rhs > lhs
+                    {
+                        if (mLeft->implicitCast(diag, mRight->getType()))
+                        {
+                            mLeft = Cast(mLeft, mRight->getType());
+                        }
+                        mType = mRight->getType();
+                    }
+                }
+                if (mLeft->getType() != mRight->getType()) // unable to cast
+                {
+                    diag.reportCompilerError(mErrorToken.getStartLocation(), mErrorToken.getEndLocation(), std::format("No match for '{}operator{}{} with types '{}{}{}' and '{}{}{}'",
+                        fmt::bold, mErrorToken.getName(), fmt::defaults,
+                        fmt::bold, mLeft->getType()->getName(), fmt::defaults,
+                        fmt::bold, mRight->getType()->getName(), fmt::defaults));
+                    exit = true;
+                }
+                mType = Type::Get("bool");
                 break;
 
             case Operator::Assign:

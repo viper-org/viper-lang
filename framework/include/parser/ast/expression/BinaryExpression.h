@@ -20,6 +20,14 @@ namespace parser
             Mul,
             Div,
 
+            // Comparison
+            Equal,
+            NotEqual,
+            LessThan,
+            GreaterThan,
+            LessEqual,
+            GreaterEqual,
+
             // Assignment
             Assign,
         };

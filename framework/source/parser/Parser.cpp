@@ -69,6 +69,16 @@ namespace parser
             case lexer::TokenType::Minus:
                 return 70;
 
+            case lexer::TokenType::LessThan:
+            case lexer::TokenType::GreaterThan:
+            case lexer::TokenType::LessEqual:
+            case lexer::TokenType::GreaterEqual:
+                return 55;
+
+            case lexer::TokenType::DoubleEqual:
+            case lexer::TokenType::BangEqual:
+                return 50;
+
             case lexer::TokenType::Equal:
                 return 20;
 
@@ -173,6 +183,9 @@ namespace parser
             case lexer::TokenType::LetKeyword:
                 return parseVariableDeclaration();
 
+            case lexer::TokenType::IfKeyword:
+                return parseIfStatement();
+
             case lexer::TokenType::IntegerLiteral:
                 return parseIntegerLiteral();
 
@@ -264,6 +277,34 @@ namespace parser
         }
 
         return std::make_unique<VariableDeclaration>(mActiveScope, std::move(name), type, std::move(initValue), std::move(token));
+    }
+
+    IfStatementPtr Parser::parseIfStatement()
+    {
+        auto token = consume();
+
+        expectToken(lexer::TokenType::LeftParen);
+        consume();
+
+        auto condition = parseExpression();
+
+        expectToken(lexer::TokenType::RightParen);
+        consume();
+
+        auto body = parseExpression();
+        ASTNodePtr elseBody = nullptr;
+
+        if (peek(1).getTokenType() == lexer::TokenType::ElseKeyword)
+        {
+            expectToken(lexer::TokenType::Semicolon);
+            consume();
+
+            consume(); // ElseKeyword
+
+            elseBody = parseExpression();
+        }
+
+        return std::make_unique<IfStatement>(mActiveScope, std::move(condition), std::move(body), std::move(elseBody), std::move(token));
     }
 
 

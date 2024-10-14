@@ -29,6 +29,10 @@ namespace lexer
                 return "a type";
             case TokenType::LetKeyword:
                 return "let";
+            case TokenType::IfKeyword:
+                return "if";
+            case TokenType::ElseKeyword:
+                return "else";
             case TokenType::Plus:
                 return "+";
             case TokenType::Minus:
@@ -37,6 +41,18 @@ namespace lexer
                 return "*";
             case TokenType::Slash:
                 return "/";
+            case TokenType::DoubleEqual:
+                return "==";
+            case TokenType::BangEqual:
+                return "!=";
+            case TokenType::LessThan:
+                return "<";
+            case TokenType::GreaterThan:
+                return ">";
+            case TokenType::LessEqual:
+                return "<=";
+            case TokenType::GreaterEqual:
+                return ">=";
             case TokenType::RightArrow:
                 return "->";
             case TokenType::LeftParen:

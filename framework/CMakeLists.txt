@@ -18,6 +18,7 @@ set(SOURCES
     "source/parser/ast/global/Function.cpp"
     "source/parser/ast/statement/ReturnStatement.cpp"
     "source/parser/ast/statement/VariableDeclaration.cpp"
+    "source/parser/ast/statement/IfStatement.cpp"
     "source/parser/ast/expression/BinaryExpression.cpp" 
     "source/parser/ast/expression/IntegerLiteral.cpp"
     "source/parser/ast/expression/UnaryExpression.cpp"
@@ -28,6 +29,7 @@ set(SOURCES
     "source/type/IntegerType.cpp"
     "source/type/VoidType.cpp"
     "source/type/FunctionType.cpp"
+    "source/type/BooleanType.cpp"
 
     "source/diagnostic/Diagnostic.cpp"
 )
@@ -44,6 +46,7 @@ set(HEADERS
     "include/parser/ast/global/Function.h"
     "include/parser/ast/statement/ReturnStatement.h"
     "include/parser/ast/statement/VariableDeclaration.h"
+    "include/parser/ast/statement/IfStatement.h"
     "include/parser/ast/expression/BinaryExpression.h"
     "include/parser/ast/expression/IntegerLiteral.h"
     "include/parser/ast/expression/UnaryExpression.h"
@@ -54,6 +57,7 @@ set(HEADERS
     "include/type/IntegerType.h"
     "include/type/VoidType.h"
     "include/type/FunctionType.h"
+    "include/type/BooleanType.h"
 
     "include/diagnostic/Diagnostic.h"
 )

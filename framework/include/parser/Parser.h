@@ -9,6 +9,7 @@
 
 #include "parser/ast/statement/ReturnStatement.h"
 #include "parser/ast/statement/VariableDeclaration.h"
+#include "parser/ast/statement/IfStatement.h"
 
 #include "parser/ast/expression/BinaryExpression.h"
 #include "parser/ast/expression/IntegerLiteral.h"
@@ -61,6 +62,7 @@ namespace parser
 
         ReturnStatementPtr parseReturnStatement();
         VariableDeclarationPtr parseVariableDeclaration();
+        IfStatementPtr parseIfStatement();
 
         IntegerLiteralPtr parseIntegerLiteral();
         VariableExpressionPtr parseVariableExpression();

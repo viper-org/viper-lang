@@ -16,19 +16,33 @@ namespace lexer
         ReturnKeyword,
         TypeKeyword,
         LetKeyword,
+        IfKeyword,
+        ElseKeyword,
 
         // Symbols
         Plus,
         Minus,
         Star,
         Slash,
+
+        DoubleEqual,
+        BangEqual,
+        LessThan,
+        GreaterThan,
+        LessEqual,
+        GreaterEqual,
+
         RightArrow,
+
         LeftParen,
         RightParen,
+
         LeftBrace,
         RightBrace,
+
         Semicolon,
         Colon,
+
         Equal,
 
         // Literals
