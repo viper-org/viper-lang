@@ -37,14 +37,8 @@ namespace parser
         mType = symbol->type;
     }
 
-    bool VariableExpression::implicitCast(diagnostic::Diagnostics& diag, Type* destType)
-    {
-        return triviallyImplicitCast(diag, destType);
-    }
-
     bool VariableExpression::triviallyImplicitCast(diagnostic::Diagnostics& diag, Type* destType)
     {
-        // TODO: Implement
         return false;
     }
 }

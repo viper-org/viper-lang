@@ -42,7 +42,11 @@ namespace parser
 
             if (mInitValue->getType() != mType)
             {
-                if (!mInitValue->implicitCast(diag, mType))
+                if (mInitValue->implicitCast(diag, mType))
+                {
+                    mInitValue = Cast(mInitValue, mType);
+                }
+                else
                 {
                     diag.reportCompilerError(
                         mInitValue->getErrorToken().getStartLocation(),
@@ -55,11 +59,6 @@ namespace parser
                 }
             }
         }
-    }
-
-    bool VariableDeclaration::implicitCast(diagnostic::Diagnostics&, Type*)
-    {
-        return false;
     }
 
     bool VariableDeclaration::triviallyImplicitCast(diagnostic::Diagnostics&, Type*)

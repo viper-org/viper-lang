@@ -12,8 +12,9 @@ public:
 
     Type* getReturnType() const;
 
-    int getSize() const override;
-    vipir::Type* getVipirType() const override;
+    virtual int getSize() const override;
+    virtual vipir::Type* getVipirType() const override;
+    virtual CastLevel castTo(Type* destType) const override;
 
     bool isFunctionType() const override;
 

@@ -20,6 +20,8 @@ namespace parser
     class ASTNode
     {
     public:
+        using ASTNodePtr = std::unique_ptr<ASTNode>;
+
         ASTNode(Scope* scope, lexer::Token errorToken) : mScope(scope), mErrorToken(errorToken) { }
         ASTNode(Scope* scope, Type* type, lexer::Token errorToken) : mScope(scope), mType(type), mErrorToken(errorToken) { }
         virtual ~ASTNode() { }
@@ -31,8 +33,10 @@ namespace parser
         virtual vipir::Value* codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag) = 0;
 
         virtual void typeCheck(diagnostic::Diagnostics& diag, bool& exit) = 0;
-        virtual bool implicitCast(diagnostic::Diagnostics& diag, Type* destType) = 0;
         virtual bool triviallyImplicitCast(diagnostic::Diagnostics& diag, Type* destType) = 0;
+        bool implicitCast(diagnostic::Diagnostics& diag, Type* destType);
+
+        static ASTNodePtr Cast(ASTNodePtr& node, Type* destType);
 
     protected:
         Scope* mScope;
@@ -41,6 +45,7 @@ namespace parser
         lexer::Token mErrorToken;
     };
     using ASTNodePtr = std::unique_ptr<ASTNode>;
+
 }
 
 #endif // VIPER_FRAMEWORK_PARSER_AST_AST_NODE_H

@@ -1,7 +1,7 @@
 // Copyright 2024 solar-mist
 
-#ifndef VIPER_FRAMEWORK_PARSER_AST_EXPRESSION_VARIABLE_EXPRESSION_H
-#define VIPER_FRAMEWORK_PARSER_AST_EXPRESSION_VARIABLE_EXPRESSION_H 1
+#ifndef VIPER_FRAMEWORK_PARSER_AST_EXPRESSION_CAST_EXPRESSION_H
+#define VIPER_FRAMEWORK_PARSER_AST_EXPRESSION_CAST_EXPRESSION_H 1
 
 #include "parser/ast/ASTNode.h"
 
@@ -10,10 +10,10 @@
 
 namespace parser
 {
-    class VariableExpression : public ASTNode
+    class CastExpression : public ASTNode
     {
     public:
-        VariableExpression(Scope* scope, std::string name, lexer::Token token);
+        CastExpression(Scope* scope, ASTNodePtr value, Type* destType);
 
         virtual vipir::Value* codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag) override;
 
@@ -21,9 +21,9 @@ namespace parser
         virtual bool triviallyImplicitCast(diagnostic::Diagnostics& diag, Type* destType) override;
 
     private:
-        std::string mName;
+        ASTNodePtr mValue;
     };
-    using VariableExpressionPtr = std::unique_ptr<VariableExpression>;
+    using CastExpressionPtr = std::unique_ptr<CastExpression>;
 }
 
-#endif // VIPER_FRAMEWORK_PARSER_AST_EXPRESSION_VARIABLE_EXPRESSION_H
+#endif // VIPER_FRAMEWORK_PARSER_AST_EXPRESSION_CAST_EXPRESSION_H
