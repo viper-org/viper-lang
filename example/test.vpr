@@ -1,4 +1,6 @@
 func main() -> i32 {
-    let test: i32 = 34 + 35;
+    let test2: i16 = 3;
+    let test3: i8 = 12;
+    let test: i32 = test2 + test3;
     return -test;
 }

@@ -1,3 +1,5 @@
+// Copyright 2024 solar-mist
+
 #include "parser/ast/expression/BinaryExpression.h"
 
 #include "type/IntegerType.h"
@@ -30,6 +32,8 @@ namespace parser
                 mOperator = Operator::Div;
                 mType = mLeft->getType();
                 break;
+            default:
+                break; // Unreachable
 		}
 	}
 
@@ -44,6 +48,7 @@ namespace parser
                 return builder.CreateAdd(left, right);
             case parser::BinaryExpression::Operator::Sub:
                 return builder.CreateSub(left, right);
+
             case parser::BinaryExpression::Operator::Mul:
                 if (mType->isIntegerType())
                 {
@@ -54,7 +59,9 @@ namespace parser
                 }
 
                 diag.reportCompilerError(mErrorToken.getStartLocation(), mErrorToken.getEndLocation(), "Can't multiply a non-integer type");
+                std::exit(1);
                 break;
+
             case parser::BinaryExpression::Operator::Div:
                 if (mType->isIntegerType())
                 {
@@ -65,10 +72,12 @@ namespace parser
                 }
 
                 diag.reportCompilerError(mErrorToken.getStartLocation(), mErrorToken.getEndLocation(), "Can't divide a non-integer type");
+                std::exit(1);
                 break;
             default:
                 break;
         }
+        return nullptr; // Unreachable
     }
 
     void BinaryExpression::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
@@ -82,11 +91,32 @@ namespace parser
             case parser::BinaryExpression::Operator::Sub:
             case parser::BinaryExpression::Operator::Mul:
             case parser::BinaryExpression::Operator::Div:
-                if (mLeft->getType() != mRight->getType() || !mLeft->getType()->isIntegerType()) {
+                if (mLeft->getType() != mRight->getType() && mLeft->getType()->isIntegerType() && mRight->getType()->isIntegerType())
+                {
+                    if (mLeft->getType()->getSize() > mRight->getType()->getSize()) // lhs > rhs
+                    {
+                        if (mRight->implicitCast(diag, mLeft->getType()))
+                        {
+                            mRight = Cast(mRight, mLeft->getType());
+                        }
+                        mType = mLeft->getType();
+                    }
+                    else // rhs > lhs
+                    {
+                        if (mLeft->implicitCast(diag, mRight->getType()))
+                        {
+                            mLeft = Cast(mLeft, mRight->getType());
+                        }
+                        mType = mRight->getType();
+                    }
+                }
+                if (mLeft->getType() != mRight->getType() || !mLeft->getType()->isIntegerType())
+                {
                     diag.reportCompilerError(mErrorToken.getStartLocation(), mErrorToken.getEndLocation(), std::format("No match for '{}operator{}{} with types '{}{}{}' and '{}{}{}'",
                         fmt::bold, mErrorToken.getName(), fmt::defaults,
                         fmt::bold, mLeft->getType()->getName(), fmt::defaults,
                         fmt::bold, mRight->getType()->getName(), fmt::defaults));
+                    exit = true;
                 }
                 break;
 
@@ -95,14 +125,8 @@ namespace parser
         }
     }
 
-
-    bool BinaryExpression::implicitCast(diagnostic::Diagnostics& diag, Type* destType)
-    {
-        return false; //TODO: good luck solar
-    }
-
     bool BinaryExpression::triviallyImplicitCast(diagnostic::Diagnostics& diag, Type* destType) 
     {
-        return false; //TODO: good luck solar
+        return false;
     }
 }

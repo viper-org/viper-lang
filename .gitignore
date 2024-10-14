@@ -9,10 +9,9 @@ CMakeFiles/
 build/
 _deps/
 .cache/
+.vs/
 
 viper
 compile_commands.json
+CMakeSettings.json
 a.out
-/.vs/viper-lang/FileContentIndex
-/.vs
-/CMakeSettings.json

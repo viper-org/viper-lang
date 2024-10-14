@@ -1,3 +1,5 @@
+// Copyright 2024 solar-mist
+
 #include "parser/ast/expression/UnaryExpression.h"
 
 #include <vipir/IR/Instruction/UnaryInst.h>
@@ -15,6 +17,9 @@ namespace parser
                 mOperator = Operator::Negate;
                 mType = mOperand->getType();
                 break;
+            
+            default:
+                break; // Unreachable
         }
 	}
 
@@ -26,9 +31,11 @@ namespace parser
         {
             case parser::UnaryExpression::Operator::Negate:
                 return builder.CreateNeg(operand);
+
             default:
                 break;
         }
+        return nullptr; // Unreachable
     }
 
     void UnaryExpression::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
@@ -38,26 +45,21 @@ namespace parser
         switch (mOperator) 
         {
             case Operator::Negate:
-                if (!mOperand->getType()->isIntegerType()) {
+                if (!mOperand->getType()->isIntegerType())
+                {
                     diag.reportCompilerError(mErrorToken.getStartLocation(), mErrorToken.getEndLocation(),
                         std::format("No match for '{}operator{}{} with type '{}{}{}'",
                             fmt::bold, mErrorToken.getName(), fmt::defaults,
                             fmt::bold, mOperand->getType()->getName(), fmt::defaults));
+                    exit = true;
                 }
+                mType = mOperand->getType();
                 break;
         }
-
-        mType = mOperand->getType(); //TODO: something that aint this
-    }
-
-
-    bool UnaryExpression::implicitCast(diagnostic::Diagnostics& diag, Type* destType)
-    {
-        return false; //TODO: good luck solar
     }
 
     bool UnaryExpression::triviallyImplicitCast(diagnostic::Diagnostics& diag, Type* destType) 
     {
-        return false; //TODO: good luck solar
+        return false;
     }
 }
