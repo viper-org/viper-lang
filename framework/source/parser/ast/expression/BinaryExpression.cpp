@@ -4,7 +4,10 @@
 
 #include "type/IntegerType.h"
 
+#include <vipir/Module.h>
+
 #include <vipir/IR/Instruction/BinaryInst.h>
+#include <vipir/IR/Instruction/StoreInst.h>
 
 namespace parser
 {
@@ -17,20 +20,19 @@ namespace parser
 		{
             case lexer::TokenType::Plus:
                 mOperator = Operator::Add;
-                mType = mLeft->getType();
                 break;
             case lexer::TokenType::Minus:
                 mOperator = Operator::Sub;
-                mType = mLeft->getType();
                 break;
-
             case lexer::TokenType::Star:
                 mOperator = Operator::Mul;
-                mType = mLeft->getType();
                 break;
             case lexer::TokenType::Slash:
                 mOperator = Operator::Div;
-                mType = mLeft->getType();
+                break;
+
+            case lexer::TokenType::Equal:
+                mOperator = Operator::Assign;
                 break;
             default:
                 break; // Unreachable
@@ -44,12 +46,12 @@ namespace parser
 
         switch (mOperator) 
         {
-            case parser::BinaryExpression::Operator::Add:
+            case Operator::Add:
                 return builder.CreateAdd(left, right);
-            case parser::BinaryExpression::Operator::Sub:
+            case Operator::Sub:
                 return builder.CreateSub(left, right);
 
-            case parser::BinaryExpression::Operator::Mul:
+            case Operator::Mul:
                 if (mType->isIntegerType())
                 {
                     if (static_cast<IntegerType*>(mType)->isSigned())
@@ -62,7 +64,7 @@ namespace parser
                 std::exit(1);
                 break;
 
-            case parser::BinaryExpression::Operator::Div:
+            case Operator::Div:
                 if (mType->isIntegerType())
                 {
                     if (static_cast<IntegerType*>(mType)->isSigned())
@@ -74,6 +76,17 @@ namespace parser
                 diag.reportCompilerError(mErrorToken.getStartLocation(), mErrorToken.getEndLocation(), "Can't divide a non-integer type");
                 std::exit(1);
                 break;
+
+            case Operator::Assign:
+            {
+                vipir::Value* pointerOperand = vipir::getPointerOperand(left);
+
+                vipir::Instruction* instruction = static_cast<vipir::Instruction*>(left);
+                instruction->eraseFromParent();
+                
+                return builder.CreateStore(pointerOperand, right);
+            }
+
             default:
                 break;
         }
@@ -117,6 +130,24 @@ namespace parser
                         fmt::bold, mLeft->getType()->getName(), fmt::defaults,
                         fmt::bold, mRight->getType()->getName(), fmt::defaults));
                     exit = true;
+                }
+                break;
+
+            case Operator::Assign:
+                if (mLeft->getType() != mRight->getType())
+                {
+                    if (mRight->implicitCast(diag, mLeft->getType()))
+                    {
+                        mRight = Cast(mRight, mLeft->getType());
+                    }
+                    else
+                    {
+                        diag.reportCompilerError(mErrorToken.getStartLocation(), mErrorToken.getEndLocation(), std::format("No match for '{}operator{}{} with types '{}{}{}' and '{}{}{}'",
+                            fmt::bold, mErrorToken.getName(), fmt::defaults,
+                            fmt::bold, mLeft->getType()->getName(), fmt::defaults,
+                            fmt::bold, mRight->getType()->getName(), fmt::defaults));
+                        exit = true;
+                    }
                 }
                 break;
 

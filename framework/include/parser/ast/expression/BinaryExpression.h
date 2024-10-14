@@ -14,10 +14,14 @@ namespace parser
     public:
         enum class Operator 
         {
+            // Mathematical
             Add,
             Sub,
             Mul,
             Div,
+
+            // Assignment
+            Assign,
         };
 
         BinaryExpression(Scope* scope, ASTNodePtr left, lexer::TokenType operatorToken, ASTNodePtr right, lexer::Token token);

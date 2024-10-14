@@ -24,6 +24,10 @@ namespace lexer
         { "i16",    TokenType::TypeKeyword },
         { "i32",    TokenType::TypeKeyword },
         { "i64",    TokenType::TypeKeyword },
+        { "u8",     TokenType::TypeKeyword },
+        { "u16",    TokenType::TypeKeyword },
+        { "u32",    TokenType::TypeKeyword },
+        { "u64",    TokenType::TypeKeyword },
         { "void",   TokenType::TypeKeyword },
     };
 

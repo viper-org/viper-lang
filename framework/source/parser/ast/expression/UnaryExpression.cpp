@@ -15,7 +15,6 @@ namespace parser
 		{
             case lexer::TokenType::Minus:
                 mOperator = Operator::Negate;
-                mType = mOperand->getType();
                 break;
             
             default:
