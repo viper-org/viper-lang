@@ -58,6 +58,37 @@ namespace parser
         }
     }
 
+    int Parser::getBinaryOperatorPrecedence(lexer::TokenType tokenType) 
+    {
+        switch (tokenType) 
+        {
+            case lexer::TokenType::Star:
+            case lexer::TokenType::Slash:
+                return 75;
+            case lexer::TokenType::Plus:
+            case lexer::TokenType::Minus:
+                return 70;
+            default:
+                return 0;
+        }
+    }
+
+    int Parser::getPrefixUnaryOperatorPrecedence(lexer::TokenType tokenType) 
+    {
+        switch (tokenType) 
+        {
+            case lexer::TokenType::Minus:
+                return 85;
+            default:
+                return 0;
+        }
+    }
+
+    int Parser::getPostfixUnaryOperatorPrecedence(lexer::TokenType tokenType) 
+    {
+        return 0;
+    }
+
     Type* Parser::parseType()
     {
         expectToken(lexer::TokenType::TypeKeyword);
@@ -83,10 +114,49 @@ namespace parser
         }
     }
 
-    ASTNodePtr Parser::parseExpression()
+    ASTNodePtr Parser::parseExpression(int precedence)
     {
-        // TODO: Binary and unary expression parsing
-        return parsePrimary();
+        ASTNodePtr left;
+        int prefixOperatorPrecedence = getPrefixUnaryOperatorPrecedence(current().getTokenType());
+
+        if (prefixOperatorPrecedence >= precedence)
+        {
+            lexer::Token operatorToken = consume();
+            left = std::make_unique<UnaryExpression>(mActiveScope, parseExpression(prefixOperatorPrecedence), operatorToken.getTokenType(), false, std::move(operatorToken));
+        }
+        else
+        {
+            left = parsePrimary();
+        }
+
+        while (true)
+        {
+            int postfixOperatorPrecedence = getPostfixUnaryOperatorPrecedence(current().getTokenType());
+            if (postfixOperatorPrecedence < precedence) 
+            {
+                break;
+            }
+
+            lexer::Token operatorToken = consume();
+
+            left = std::make_unique<UnaryExpression>(mActiveScope, std::move(left), operatorToken.getTokenType(), true, std::move(operatorToken));
+        }
+
+        while (true) 
+        {
+            int binaryOperatorPrecedence = getBinaryOperatorPrecedence(current().getTokenType());
+            if (binaryOperatorPrecedence < precedence) 
+            {
+                break;
+            }
+
+            lexer::Token operatorToken = consume();
+
+            ASTNodePtr right = parseExpression(binaryOperatorPrecedence);
+            left = std::make_unique<BinaryExpression>(mActiveScope, std::move(left), operatorToken.getTokenType(), std::move(right), std::move(operatorToken));
+        }
+
+        return left;
     }
 
     ASTNodePtr Parser::parsePrimary()

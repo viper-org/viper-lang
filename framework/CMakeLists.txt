@@ -18,7 +18,9 @@ set(SOURCES
     "source/parser/ast/global/Function.cpp"
     "source/parser/ast/statement/ReturnStatement.cpp"
     "source/parser/ast/statement/VariableDeclaration.cpp"
+    "source/parser/ast/expression/BinaryExpression.cpp" 
     "source/parser/ast/expression/IntegerLiteral.cpp"
+    "source/parser/ast/expression/UnaryExpression.cpp"
     "source/parser/ast/expression/VariableExpression.cpp"
     "source/parser/ast/expression/CastExpression.cpp"
 
@@ -42,7 +44,9 @@ set(HEADERS
     "include/parser/ast/global/Function.h"
     "include/parser/ast/statement/ReturnStatement.h"
     "include/parser/ast/statement/VariableDeclaration.h"
+    "include/parser/ast/expression/BinaryExpression.h"
     "include/parser/ast/expression/IntegerLiteral.h"
+    "include/parser/ast/expression/UnaryExpression.h"
     "include/parser/ast/expression/VariableExpression.h"
     "include/parser/ast/expression/CastExpression.h"
 

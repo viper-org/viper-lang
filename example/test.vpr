@@ -1,4 +1,4 @@
-func main() -> i8 {
-    let test: i32 = 257;
-    return test;
+func main() -> i32 {
+    let test: i32 = 34 + 35;
+    return -test;
 }

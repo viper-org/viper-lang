@@ -183,13 +183,44 @@ namespace lexer
 
         switch (current())
         {
+            case '+':
+                return Token("+", TokenType::Plus, start, mSourceLocation);
+
             case '-':
                 if (peek(1) == '>')
                 {
                     consume();
                     return Token("->", TokenType::RightArrow, start, mSourceLocation);
                 }
-                return Token(std::string(1, current()), TokenType::Error, start, mSourceLocation);
+                return Token("-", TokenType::Minus, start, mSourceLocation);
+
+            case '*':
+                return Token("*", TokenType::Star, start, mSourceLocation);
+
+            case '/':
+                if (peek(1) == '/') 
+                {
+                    while (current() != '\n')
+                    {
+                        consume();
+                    }
+
+                    return std::nullopt;
+                }
+                else if (peek(1) == '*')
+                {
+                    consume();
+                    consume();
+
+                    while (current() != '*' && peek(1) != '/')
+                    {
+                        consume();
+                    }
+                    consume();
+                    
+                    return std::nullopt;
+                }
+                return Token("/", TokenType::Slash, start, mSourceLocation);
 
             case '(':
                 return Token("(", TokenType::LeftParen, start, mSourceLocation);

@@ -13,3 +13,6 @@ _deps/
 viper
 compile_commands.json
 a.out
+/.vs/viper-lang/FileContentIndex
+/.vs
+/CMakeSettings.json

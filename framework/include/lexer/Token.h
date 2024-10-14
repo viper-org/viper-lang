@@ -18,6 +18,10 @@ namespace lexer
         LetKeyword,
 
         // Symbols
+        Plus,
+        Minus,
+        Star,
+        Slash,
         RightArrow,
         LeftParen,
         RightParen,
