@@ -14,7 +14,12 @@ namespace parser
     public:
         enum class Operator 
         {
+            // Mathematical
             Negate,
+
+            // Special
+            AddressOf,
+            Indirection
         };
 
         UnaryExpression(Scope* scope, ASTNodePtr operand, lexer::TokenType operatorToken, bool postfix, lexer::Token token);

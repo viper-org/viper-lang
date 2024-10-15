@@ -34,9 +34,13 @@ namespace parser
                 std::format("undeclared identifier '{}{}{}'",
                     fmt::bold, mName, fmt::defaults)
             );
-            std::exit(EXIT_FAILURE);
+            exit = true;
+            mType = Type::Get("error-type");
         }
-        mType = symbol->type;
+        else
+        {
+            mType = symbol->type;
+        }
     }
 
     bool VariableExpression::triviallyImplicitCast(diagnostic::Diagnostics& diag, Type* destType)

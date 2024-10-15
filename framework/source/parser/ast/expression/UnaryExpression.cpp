@@ -2,7 +2,13 @@
 
 #include "parser/ast/expression/UnaryExpression.h"
 
+#include "type/PointerType.h"
+
+#include <vipir/Module.h>
 #include <vipir/IR/Instruction/UnaryInst.h>
+#include <vipir/IR/Instruction/LoadInst.h>
+#include <vipir/IR/Instruction/GEPInst.h>
+#include <vipir/IR/Instruction/AddrInst.h>
 
 namespace parser
 {
@@ -15,6 +21,14 @@ namespace parser
 		{
             case lexer::TokenType::Minus:
                 mOperator = Operator::Negate;
+                break;
+
+            case lexer::TokenType::Star:
+                mOperator = Operator::Indirection;
+                break;
+
+            case lexer::TokenType::Ampersand:
+                mOperator = Operator::AddressOf;
                 break;
             
             default:
@@ -30,6 +44,23 @@ namespace parser
         {
             case parser::UnaryExpression::Operator::Negate:
                 return builder.CreateNeg(operand);
+
+            case parser::UnaryExpression::Operator::Indirection:
+                return builder.CreateLoad(operand);
+
+            case parser::UnaryExpression::Operator::AddressOf:
+            {
+                auto pointerOperand = vipir::getPointerOperand(operand);
+                auto instruction = static_cast<vipir::Instruction*>(operand);
+                instruction->eraseFromParent();
+
+                if (dynamic_cast<vipir::GEPInst*>(pointerOperand))
+                {
+                    return pointerOperand;
+                }
+
+                return builder.CreateAddrOf(pointerOperand);
+            }
 
             default:
                 break;
@@ -51,8 +82,32 @@ namespace parser
                             fmt::bold, mErrorToken.getName(), fmt::defaults,
                             fmt::bold, mOperand->getType()->getName(), fmt::defaults));
                     exit = true;
+                    mType = Type::Get("error-type");
                 }
-                mType = mOperand->getType();
+                else
+                {
+                    mType = mOperand->getType();
+                }
+                break;
+
+            case Operator::Indirection:
+                if (!mOperand->getType()->isPointerType())
+                {
+                    diag.reportCompilerError(mErrorToken.getStartLocation(), mErrorToken.getEndLocation(),
+                        std::format("No match for '{}operator{}{} with type '{}{}{}'",
+                            fmt::bold, mErrorToken.getName(), fmt::defaults,
+                            fmt::bold, mOperand->getType()->getName(), fmt::defaults));
+                    exit = true;
+                    mType = Type::Get("error-type");
+                }
+                else
+                {
+                    mType = static_cast<PointerType*>(mOperand->getType())->getPointeeType();
+                }
+                break;
+
+            case Operator::AddressOf:
+                mType = PointerType::Get(mOperand->getType());
                 break;
         }
     }

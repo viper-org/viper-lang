@@ -4,6 +4,8 @@
 
 #include "parser/ast/expression/BooleanLiteral.h"
 
+#include "type/PointerType.h"
+
 #include <cinttypes>
 #include <format>
 
@@ -97,6 +99,8 @@ namespace parser
         switch (tokenType) 
         {
             case lexer::TokenType::Minus:
+            case lexer::TokenType::Ampersand:
+            case lexer::TokenType::Star:
                 return 85;
             default:
                 return 0;
@@ -111,7 +115,15 @@ namespace parser
     Type* Parser::parseType()
     {
         expectToken(lexer::TokenType::TypeKeyword);
-        return Type::Get(std::string(consume().getText()));
+        auto type = Type::Get(std::string(consume().getText()));
+
+        while (current().getTokenType() == lexer::TokenType::Star)
+        {
+            consume();
+            type = PointerType::Get(type);
+        }
+
+        return type;
     }
 
 

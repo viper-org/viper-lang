@@ -46,6 +46,8 @@ namespace lexer
         Colon,
         Comma,
 
+        Ampersand,
+
         Equal,
 
         // Literals

@@ -279,6 +279,9 @@ namespace lexer
                     return Token("==", TokenType::DoubleEqual, start, mSourceLocation);
                 }
                 return Token("=", TokenType::Equal, start, mSourceLocation);
+            
+            case '&':
+                return Token("&", TokenType::Ampersand, start, mSourceLocation);
 
             default:
                 return Token(std::string(1, current()), TokenType::Error, start, mSourceLocation);

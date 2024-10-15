@@ -86,6 +86,7 @@ namespace parser
     {
         Symbol* symbol;
         int score;
+        bool disallowed;
     };
 
     Symbol* CallExpression::getBestViableFunction(diagnostic::Diagnostics& diag)
@@ -108,7 +109,29 @@ namespace parser
                 }
             }
 
-            if (candidateFunctions.empty())
+            std::vector<ViableFunction> viableFunctions;
+            for (auto& candidate : candidateFunctions)
+            {
+                auto functionType = static_cast<FunctionType*>(candidate->type);
+                int score = 0;
+                bool disallowed = false;
+                for (size_t i = 0; i < mParameters.size(); ++i)
+                {
+                    auto castLevel = mParameters[i]->getType()->castTo(functionType->getArgumentTypes()[i]);
+                    int multiplier = 0;
+                    if (mParameters[i]->getType() == functionType->getArgumentTypes()[i]) multiplier = 0;
+                    else if (castLevel == Type::CastLevel::Implicit) multiplier = 1;
+                    else if (castLevel == Type::CastLevel::ImplicitWarning) multiplier = 2;
+                    else disallowed = true;
+                    score += multiplier * (mParameters.size() - i); // Weight earlier scores more
+                }
+                if (!disallowed)
+                {
+                    viableFunctions.push_back({candidate, score});
+                }
+            }
+
+            if (viableFunctions.empty())
             {
                 diag.reportCompilerError(
                     mErrorToken.getStartLocation(),
@@ -118,24 +141,7 @@ namespace parser
                 );
                 return nullptr;
             }
-
-            std::vector<ViableFunction> viableFunctions;
-            for (auto& candidate : candidateFunctions)
-            {
-                auto functionType = static_cast<FunctionType*>(candidate->type);
-                int score = 0;
-                for (size_t i = 0; i < mParameters.size(); ++i)
-                {
-                    auto castLevel = mParameters[i]->getType()->castTo(functionType->getArgumentTypes()[i]);
-                    int multiplier = 0;
-                    if (mParameters[i]->getType() == functionType->getArgumentTypes()[i]) multiplier = 0;
-                    else if (castLevel == Type::CastLevel::Implicit) multiplier = 1;
-                    else if (castLevel == Type::CastLevel::ImplicitWarning) multiplier = 2;
-                    else multiplier = 10000;
-                    score += multiplier * (mParameters.size() - i); // Weight earlier scores more
-                }
-                viableFunctions.push_back({candidate, score});
-            }
+            
             std::sort(viableFunctions.begin(), viableFunctions.end(), [](const auto& lhs, const auto& rhs){
                 return lhs.score < rhs.score;
             });
