@@ -5,6 +5,8 @@
 #include "type/PointerType.h"
 
 #include <vipir/Module.h>
+
+#include <vipir/IR/Function.h>
 #include <vipir/IR/Instruction/UnaryInst.h>
 #include <vipir/IR/Instruction/LoadInst.h>
 #include <vipir/IR/Instruction/GEPInst.h>
@@ -50,6 +52,7 @@ namespace parser
 
             case parser::UnaryExpression::Operator::AddressOf:
             {
+                if (dynamic_cast<vipir::Function*>(operand)) return builder.CreateAddrOf(operand);
                 auto pointerOperand = vipir::getPointerOperand(operand);
                 auto instruction = static_cast<vipir::Instruction*>(operand);
                 instruction->eraseFromParent();

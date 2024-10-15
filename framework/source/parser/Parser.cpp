@@ -114,6 +114,41 @@ namespace parser
 
     Type* Parser::parseType()
     {
+        if (current().getTokenType() == lexer::TokenType::LeftParen) // function pointer
+        {
+            consume();
+            std::vector<Type*> argumentTypes;
+            while (current().getTokenType() != lexer::TokenType::RightParen)
+            {
+                argumentTypes.push_back(parseType());
+                if (current().getTokenType() != lexer::TokenType::RightParen)
+                {
+                    expectToken(lexer::TokenType::Comma);
+                    consume();
+                }
+            }
+            consume();
+
+            int pointerLevels = 0;
+            expectToken(lexer::TokenType::Star);
+            while (current().getTokenType() == lexer::TokenType::Star)
+            {
+                ++pointerLevels;
+                consume();
+            }
+
+            expectToken(lexer::TokenType::RightArrow);
+            consume();
+
+            Type* returnType = parseType();
+            Type* type = FunctionType::Create(returnType, std::move(argumentTypes));
+            while(pointerLevels--)
+            {
+                type = PointerType::Get(type);
+            }
+            return type;
+        }
+
         expectToken(lexer::TokenType::TypeKeyword);
         auto type = Type::Get(std::string(consume().getText()));
 

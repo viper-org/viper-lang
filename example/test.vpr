@@ -10,6 +10,7 @@ func main() -> i32 {
     let test2: i16 = 3;
     let test3: i8 = 12;
     test3 = 2;
+
     let test: i32 = thing(test2);
     if (false)
         test = test2 + test3;

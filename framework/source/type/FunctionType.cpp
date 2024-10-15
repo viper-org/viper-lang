@@ -58,7 +58,14 @@ Type::CastLevel FunctionType::castTo(Type* destType) const
 
 std::string FunctionType::getMangleId() const
 {
-    return "Unimplemented function type mangling"; // TODO: implement
+    std::string ret = "f";
+    ret += mReturnType->getMangleId();
+    ret += std::to_string(mArgumentTypes.size());
+    for (auto& argument : mArgumentTypes)
+    {
+        ret += argument->getMangleId();
+    }
+    return ret;
 }
 
 bool FunctionType::isFunctionType() const

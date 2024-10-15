@@ -4,11 +4,13 @@
 #include "parser/ast/expression/VariableExpression.h"
 
 #include "type/FunctionType.h"
+#include "type/PointerType.h"
 
 #include <vipir/Module.h>
 
 #include <vipir/IR/Function.h>
 #include <vipir/IR/Instruction/CallInst.h>
+#include <vipir/IR/Instruction/LoadInst.h>
 
 #include <algorithm>
 
@@ -18,12 +20,18 @@ namespace parser
         : ASTNode(scope, callee->getErrorToken())
         , mCallee(std::move(callee))
         , mParameters(std::move(parameters))
+        , mFakeFunction({{},{}})
     {
     }
 
     vipir::Value* CallExpression::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
     {
         auto callee = mBestViableFunction->value;
+        if (mBestViableFunction == &mFakeFunction)
+        {
+            callee = mCallee->codegen(builder, module, diag);
+        }
+
         std::vector<vipir::Value*> parameters;
         for (auto& parameter : mParameters)
         {
@@ -93,6 +101,25 @@ namespace parser
     {
         if (auto var = dynamic_cast<VariableExpression*>(mCallee.get()))
         {
+            if (var->getType()->isPointerType())
+            {
+                auto pointerType = static_cast<PointerType*>(var->getType());
+                if (!pointerType->getPointeeType()->isFunctionType())
+                {
+                    diag.reportCompilerError(
+                        mErrorToken.getStartLocation(),
+                        mErrorToken.getEndLocation(),
+                        std::format("'{}{}{}' cannot be used as a function",
+                            fmt::bold, var->getName(), fmt::defaults)
+                    );
+                    return nullptr;
+                }
+                mBestViableFunction = &mFakeFunction;
+                mFakeFunction.type = pointerType->getPointeeType();
+                mFakeFunction.name = var->getName();
+                return mBestViableFunction;
+            }
+
             auto candidateFunctions = mScope->getCandidateFunctions(var->getName());
             
             // Find all viable functions

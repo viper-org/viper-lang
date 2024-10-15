@@ -25,6 +25,7 @@ namespace parser
         ASTNodePtr mCallee;
         std::vector<ASTNodePtr> mParameters;
         Symbol* mBestViableFunction;
+        Symbol mFakeFunction;
 
         Symbol* getBestViableFunction(diagnostic::Diagnostics& diag);
     };

@@ -48,7 +48,7 @@ Type::CastLevel PointerType::castTo(Type* destType) const
 
 std::string PointerType::getMangleId() const
 {
-    return "Unimplemented function type mangling"; // TODO: implement
+    return "p" + mPointeeType->getMangleId();
 }
 
 bool PointerType::isPointerType() const
