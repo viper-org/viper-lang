@@ -2,8 +2,6 @@
 
 #include "type/VoidType.h"
 
-#include <format>
-
 VoidType::VoidType()
     : Type("void")
 {
@@ -22,6 +20,11 @@ Type::CastLevel VoidType::castTo(Type* destType) const
 vipir::Type* VoidType::getVipirType() const
 {
     return vipir::Type::GetVoidType();
+}
+
+std::string VoidType::getMangleId() const
+{
+    return "v";
 }
 
 bool VoidType::isVoidType() const

@@ -23,6 +23,11 @@ Type::CastLevel BooleanType::castTo(Type* destType) const
     return Type::CastLevel::Disallowed;
 }
 
+std::string BooleanType::getMangleId() const
+{
+    return "B";
+}
+
 vipir::Type* BooleanType::getVipirType() const
 {
     return vipir::Type::GetBooleanType();

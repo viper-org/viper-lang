@@ -2,6 +2,8 @@
 
 #include "parser/ast/global/Function.h"
 
+#include "symbol/Mangle.h"
+
 #include <vipir/IR/Function.h>
 #include <vipir/IR/Instruction/AllocaInst.h>
 
@@ -21,7 +23,7 @@ namespace parser
         , mBody(std::move(body))
         , mOwnScope(std::move(scope))
     {
-        mScope->symbols.emplace_back(mName, mType);
+        mSymbolId = mScope->symbols.emplace_back(mName, mType).id;
         for (auto& argument : mArguments)
         {
             mOwnScope->symbols.emplace_back(argument.name, argument.type);
@@ -30,13 +32,15 @@ namespace parser
 
     vipir::Value* Function::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
     {
+        auto mangledName = mangle::MangleFunction(mName, static_cast<FunctionType*>(mType));
+
         auto functionType = static_cast<vipir::FunctionType*>(mType->getVipirType());
-        auto function = vipir::Function::Create(functionType, module, mName);
+        auto function = vipir::Function::Create(functionType, module, mangledName);
 
         auto entryBB = vipir::BasicBlock::Create("", function);
         builder.setInsertPoint(entryBB);
 
-        mScope->resolveSymbol(mName)->value = function;
+        mScope->getSymbol(mSymbolId)->value = function;
 
         unsigned int index = 0;
         for (auto& argument : mArguments)

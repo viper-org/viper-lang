@@ -43,4 +43,9 @@ namespace parser
     {
         return false;
     }
+
+    std::string VariableExpression::getName()
+    {
+        return mName;
+    }
 }

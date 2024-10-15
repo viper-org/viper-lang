@@ -13,6 +13,7 @@ public:
     virtual int getSize() const override;
     virtual vipir::Type* getVipirType() const override;
     virtual CastLevel castTo(Type* destType) const override;
+    virtual std::string getMangleId() const override;
 
     bool isBooleanType() const override;
 };

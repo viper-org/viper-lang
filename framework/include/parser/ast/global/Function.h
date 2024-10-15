@@ -34,6 +34,7 @@ namespace parser
         std::string mName;
         std::vector<FunctionArgument> mArguments;
         std::vector<ASTNodePtr> mBody;
+        unsigned long mSymbolId;
 
         ScopePtr mOwnScope;
     };

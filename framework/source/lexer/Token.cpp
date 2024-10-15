@@ -71,6 +71,8 @@ namespace lexer
                 return ";";
             case TokenType::Colon:
                 return ":";
+            case TokenType::Comma:
+                return ",";
             case TokenType::Equal:
                 return "=";
             case TokenType::IntegerLiteral:

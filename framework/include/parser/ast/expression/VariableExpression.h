@@ -20,6 +20,8 @@ namespace parser
         virtual void typeCheck(diagnostic::Diagnostics& diag, bool& exit) override;
         virtual bool triviallyImplicitCast(diagnostic::Diagnostics& diag, Type* destType) override;
 
+        std::string getName();
+
     private:
         std::string mName;
     };

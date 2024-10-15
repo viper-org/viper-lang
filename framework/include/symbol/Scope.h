@@ -18,6 +18,7 @@ struct Symbol
     std::string name;
     Type* type;
     vipir::Value* value;
+    unsigned long id;
 };
 
 struct Scope
@@ -26,7 +27,9 @@ struct Scope
 
     std::vector<std::string> getNamespaces();
 
+    Symbol* getSymbol(unsigned long id);
     Symbol* resolveSymbol(std::string name);
+    std::vector<Symbol*> getCandidateFunctions(std::string name);
 
     Scope* parent;
 

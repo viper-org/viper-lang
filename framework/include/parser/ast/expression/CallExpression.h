@@ -14,7 +14,7 @@ namespace parser
     class CallExpression : public ASTNode
     {
     public:
-        CallExpression(Scope* scope, ASTNodePtr callee);
+        CallExpression(Scope* scope, ASTNodePtr callee, std::vector<ASTNodePtr> parameters);
 
         virtual vipir::Value* codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag) override;
 
@@ -23,6 +23,10 @@ namespace parser
 
     private:
         ASTNodePtr mCallee;
+        std::vector<ASTNodePtr> mParameters;
+        Symbol* mBestViableFunction;
+
+        Symbol* getBestViableFunction(diagnostic::Diagnostics& diag);
     };
     using CallExpressionPtr = std::unique_ptr<CallExpression>;
 }

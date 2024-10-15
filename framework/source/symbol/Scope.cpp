@@ -4,10 +4,12 @@
 
 #include <algorithm>
 
+static unsigned long nextSymbolId = 0;
 Symbol::Symbol(std::string name, Type* type)
     : name(name)
     , type(type)
     , value(nullptr)
+    , id(nextSymbolId++)
 {
 }
 
@@ -31,6 +33,16 @@ std::vector<std::string> Scope::getNamespaces()
     return namespaces;
 }
 
+Symbol* Scope::getSymbol(unsigned long id)
+{
+    auto it = std::find_if(symbols.begin(), symbols.end(), [id](const auto& symbol){
+        return symbol.id == id;
+    });
+
+    if (it != symbols.end()) return &*it;
+    return nullptr;
+}
+
 Symbol* Scope::resolveSymbol(std::string name)
 {
     // TODO: Namespace lookups
@@ -45,4 +57,28 @@ Symbol* Scope::resolveSymbol(std::string name)
         current = current->parent;
     }
     return nullptr;
+}
+
+std::vector<Symbol*> Scope::getCandidateFunctions(std::string name)
+{
+    // TODO: Namespace lookups
+    std::vector<Symbol*> candidateFunctions;
+    Scope* current = this;
+    std::vector<Symbol*>::iterator prev;
+    while (current)
+    {
+        auto it = std::find_if(current->symbols.begin(), current->symbols.end(), [&name](const auto& symbol){
+            return symbol.name == name;
+        });
+
+        while (it != current->symbols.end())
+        {
+            candidateFunctions.push_back(&*it);
+            it = std::find_if(it+1, current->symbols.end(), [&name](const auto& symbol){
+                return symbol.name == name;
+            });
+        }
+        current = current->parent;
+    }
+    return candidateFunctions;
 }

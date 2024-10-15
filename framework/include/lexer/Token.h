@@ -44,6 +44,7 @@ namespace lexer
 
         Semicolon,
         Colon,
+        Comma,
 
         Equal,
 

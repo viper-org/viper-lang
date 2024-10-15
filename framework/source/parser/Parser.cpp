@@ -355,9 +355,18 @@ namespace parser
 
     CallExpressionPtr Parser::parseCallExpression(ASTNodePtr callee)
     {
-        expectToken(lexer::TokenType::RightParen);
+        std::vector<ASTNodePtr> parameters;
+        while (current().getTokenType() != lexer::TokenType::RightParen)
+        {
+            parameters.push_back(parseExpression());
+            if (current().getTokenType() != lexer::TokenType::RightParen)
+            {
+                expectToken(lexer::TokenType::Comma);
+                consume();
+            }
+        }
         consume();
 
-        return std::make_unique<CallExpression>(mActiveScope, std::move(callee));
+        return std::make_unique<CallExpression>(mActiveScope, std::move(callee), std::move(parameters));
     }
 }

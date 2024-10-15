@@ -14,6 +14,7 @@ public:
     virtual vipir::Type* getVipirType() const override;
     virtual CastLevel castTo(Type* destType) const override;
     virtual std::string getImplicitCastWarning(Type* destType) const override;
+    virtual std::string getMangleId() const override;
 
     bool isIntegerType() const override;
 

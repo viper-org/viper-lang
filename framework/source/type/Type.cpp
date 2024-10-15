@@ -4,6 +4,7 @@
 #include "type/IntegerType.h"
 #include "type/VoidType.h"
 #include "type/BooleanType.h"
+#include "type/ErrorType.h"
 
 #include <unordered_map>
 
@@ -22,6 +23,7 @@ void Type::Init()
 
     types["void"] = std::make_unique<VoidType>();
     types["bool"] = std::make_unique<BooleanType>();
+    types["error-type"] = std::make_unique<ErrorType>();
 }
 
 bool Type::Exists(const std::string& name)

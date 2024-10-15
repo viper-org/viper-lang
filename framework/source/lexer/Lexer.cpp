@@ -267,9 +267,10 @@ namespace lexer
 
             case ';':
                 return Token(";", TokenType::Semicolon, start, mSourceLocation);
-
             case ':':
                 return Token(":", TokenType::Colon, start, mSourceLocation);
+            case ',':
+                return Token(":", TokenType::Comma, start, mSourceLocation);
 
             case '=':
                 if (peek(1) == '=')

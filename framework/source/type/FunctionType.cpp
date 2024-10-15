@@ -56,6 +56,11 @@ Type::CastLevel FunctionType::castTo(Type* destType) const
     return CastLevel::Disallowed;
 }
 
+std::string FunctionType::getMangleId() const
+{
+    return "Unimplemented function type mangling"; // TODO: implement
+}
+
 bool FunctionType::isFunctionType() const
 {
     return true;

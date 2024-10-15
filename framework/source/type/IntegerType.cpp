@@ -40,6 +40,22 @@ Type::CastLevel IntegerType::castTo(Type* destType) const
     return Type::CastLevel::Disallowed;
 }
 
+std::string IntegerType::getMangleId() const
+{
+    switch(mBits)
+    {
+        case 64:
+            return "q";
+        case 32:
+            return "d";
+        case 16:
+            return "w";
+        case 8:
+            return "b";
+    }
+    return "Unknown integer type size";
+}
+
 std::string IntegerType::getImplicitCastWarning(Type* destType) const
 {
     return std::format("potential loss of data casting '{}{}{}' to '{}{}{}'",

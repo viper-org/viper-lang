@@ -25,6 +25,7 @@ public:
     virtual int getSize() const = 0;
     virtual vipir::Type* getVipirType() const = 0;
     virtual CastLevel castTo(Type* destType) const = 0;
+    virtual std::string getMangleId() const = 0;
     virtual std::string getImplicitCastWarning(Type* destType) const { return ""; }
 
     virtual bool isIntegerType()  const { return false; }

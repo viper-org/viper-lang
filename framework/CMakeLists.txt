@@ -12,6 +12,7 @@ set(SOURCES
     "source/lexer/Token.cpp"
 
     "source/symbol/Scope.cpp"
+    "source/symbol/Mangle.cpp"
 
     "source/parser/Parser.cpp"
     "source/parser/ast/ASTNode.cpp"
@@ -32,6 +33,7 @@ set(SOURCES
     "source/type/VoidType.cpp"
     "source/type/FunctionType.cpp"
     "source/type/BooleanType.cpp"
+    "source/type/ErrorType.cpp"
 
     "source/diagnostic/Diagnostic.cpp"
 )
@@ -42,6 +44,7 @@ set(HEADERS
     "include/lexer/Token.h"
 
     "include/symbol/Scope.h"
+    "include/symbol/Mangle.h"
 
     "include/parser/Parser.h"
     "include/parser/ast/ASTNode.h"
@@ -62,6 +65,7 @@ set(HEADERS
     "include/type/VoidType.h"
     "include/type/FunctionType.h"
     "include/type/BooleanType.h"
+    "include/type/ErrorType.h"
 
     "include/diagnostic/Diagnostic.h"
 )
