@@ -33,6 +33,10 @@ namespace lexer
                 return "if";
             case TokenType::ElseKeyword:
                 return "else";
+            case TokenType::TrueKeyword:
+                return "true";
+            case TokenType::FalseKeyword:
+                return "false";
             case TokenType::Plus:
                 return "+";
             case TokenType::Minus:

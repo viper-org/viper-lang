@@ -18,6 +18,8 @@ namespace lexer
         LetKeyword,
         IfKeyword,
         ElseKeyword,
+        TrueKeyword,
+        FalseKeyword,
 
         // Symbols
         Plus,

@@ -2,6 +2,8 @@
 
 #include "parser/Parser.h"
 
+#include "parser/ast/expression/BooleanLiteral.h"
+
 #include <cinttypes>
 #include <format>
 
@@ -201,6 +203,11 @@ namespace parser
 
             case lexer::TokenType::Identifier:
                 return parseVariableExpression();
+
+            case lexer::TokenType::TrueKeyword:
+                return std::make_unique<BooleanLiteral>(mActiveScope, true, consume());
+            case lexer::TokenType::FalseKeyword:
+                return std::make_unique<BooleanLiteral>(mActiveScope, false, consume());
 
             default:
                 mDiag.reportCompilerError(

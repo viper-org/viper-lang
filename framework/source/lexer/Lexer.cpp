@@ -22,6 +22,8 @@ namespace lexer
         { "let",    TokenType::LetKeyword },
         { "if",     TokenType::IfKeyword },
         { "else",   TokenType::ElseKeyword },
+        { "true",   TokenType::TrueKeyword },
+        { "false",  TokenType::FalseKeyword },
         { "i8",     TokenType::TypeKeyword },
         { "i16",    TokenType::TypeKeyword },
         { "i32",    TokenType::TypeKeyword },

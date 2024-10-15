@@ -7,7 +7,7 @@ func main() -> i32 {
     let test3: i8 = 12;
     test3 = 2;
     let test: i32 = thing();
-    if (test == 0)
+    if (false)
         test = test2 + test3;
     return -test;
 }
