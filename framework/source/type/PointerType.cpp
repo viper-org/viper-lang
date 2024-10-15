@@ -28,7 +28,22 @@ vipir::Type* PointerType::getVipirType() const
 
 Type::CastLevel PointerType::castTo(Type* destType) const
 {
-    return CastLevel::Disallowed;
+    if (destType->isPointerType())
+    {
+        if (destType == this)
+        {
+            return Type::CastLevel::Implicit;
+        }
+        return Type::CastLevel::Explicit;
+    }
+    if (destType->isIntegerType())
+    {
+        if (destType->getSize() == getSize())
+        {
+            return Type::CastLevel::Explicit;
+        }
+    }
+    return Type::CastLevel::Disallowed;
 }
 
 std::string PointerType::getMangleId() const
