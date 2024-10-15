@@ -24,7 +24,13 @@ namespace parser
     vipir::Value* CallExpression::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
     {
         auto callee = mBestViableFunction->value;
-        return builder.CreateCall(static_cast<vipir::Function*>(callee), {});
+        std::vector<vipir::Value*> parameters;
+        for (auto& parameter : mParameters)
+        {
+            parameters.push_back(parameter->codegen(builder, module, diag));
+        }
+
+        return builder.CreateCall(static_cast<vipir::Function*>(callee), std::move(parameters));
     }
 
     void CallExpression::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
@@ -43,7 +49,31 @@ namespace parser
         }
         else
         {
-            mType = static_cast<FunctionType*>(mBestViableFunction->type)->getReturnType();
+            auto functionType = static_cast<FunctionType*>(mBestViableFunction->type);
+            mType = functionType->getReturnType();
+            unsigned int index = 0;
+            for (auto& parameter : mParameters)
+            {
+                auto argumentType = functionType->getArgumentTypes()[index];
+                if (parameter->getType() != argumentType)
+                {
+                    if (parameter->implicitCast(diag, argumentType))
+                    {
+                        parameter = Cast(parameter, argumentType);
+                    }
+                    else
+                    {
+                        diag.reportCompilerError(
+                            mErrorToken.getStartLocation(),
+                            mErrorToken.getEndLocation(),
+                            std::format("no matching function for call to '{}{}(){}'",
+                                fmt::bold, mBestViableFunction->name, fmt::defaults)
+                        );
+                        exit = true;
+                        mType = Type::Get("error-type");
+                    }
+                }
+            }
         }
     }
 
@@ -109,6 +139,19 @@ namespace parser
             std::sort(viableFunctions.begin(), viableFunctions.end(), [](const auto& lhs, const auto& rhs){
                 return lhs.score < rhs.score;
             });
+            if (viableFunctions.size() >= 2)
+            {
+                if (viableFunctions[0].score == viableFunctions[1].score)
+                {
+                    diag.reportCompilerError(
+                        mErrorToken.getStartLocation(),
+                        mErrorToken.getEndLocation(),
+                        std::format("call to '{}{}(){}' is ambiguous",
+                            fmt::bold, var->getName(), fmt::defaults)
+                    );
+                    return nullptr;
+                }
+            }
             return viableFunctions.front().symbol;
         }
         return nullptr;
