@@ -1,0 +1,3 @@
+func main(argc: i32) -> i8 {
+    return argc - 1;
+}

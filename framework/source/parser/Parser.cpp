@@ -227,17 +227,29 @@ namespace parser
         expectToken(lexer::TokenType::Identifier);
         std::string name = std::string(consume().getText());
 
+        std::vector<FunctionArgument> arguments;
+        std::vector<Type*> argumentTypes;
         expectToken(lexer::TokenType::LeftParen);
         consume();
-        // TODO: Parse arguments
-        expectToken(lexer::TokenType::RightParen);
+        while (current().getTokenType() != lexer::TokenType::RightParen)
+        {
+            expectToken(lexer::TokenType::Identifier);
+            auto name = std::string(consume().getText());
+            
+            expectToken(lexer::TokenType::Colon);
+            consume();
+
+            auto type = parseType();
+            arguments.emplace_back(type, std::move(name));
+            argumentTypes.push_back(type);
+        }
         consume();
 
         expectToken(lexer::TokenType::RightArrow);
         consume();
         Type* returnType = parseType();
 
-        FunctionType* functionType = FunctionType::Create(returnType);
+        FunctionType* functionType = FunctionType::Create(returnType, std::move(argumentTypes));
 
         ScopePtr scope = std::make_unique<Scope>(mActiveScope, "", false, returnType);
         mActiveScope = scope.get();
@@ -256,7 +268,7 @@ namespace parser
 
         mActiveScope = scope->parent;
 
-        return std::make_unique<Function>(std::move(name), functionType, std::move(body), std::move(scope), std::move(token));
+        return std::make_unique<Function>(std::move(name), functionType, std::move(arguments), std::move(body), std::move(scope), std::move(token));
     }
 
 

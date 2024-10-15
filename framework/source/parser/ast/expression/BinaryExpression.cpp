@@ -163,6 +163,7 @@ namespace parser
                         fmt::bold, mRight->getType()->getName(), fmt::defaults));
                     exit = true;
                 }
+                mType = mLeft->getType(); // Types are the same
                 break;
             
             case Operator::Equal:
