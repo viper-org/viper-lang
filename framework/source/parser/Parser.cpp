@@ -25,7 +25,11 @@ namespace parser
 
         while (mPosition < mTokens.size())
         {
-            ast.push_back(parseGlobal());
+            auto global = parseGlobal();
+            if (global)
+            {
+                ast.push_back(std::move(global));
+            }
         }
 
         return ast;
@@ -169,6 +173,10 @@ namespace parser
             case lexer::TokenType::FuncKeyword:
                 return parseFunction();
 
+            case lexer::TokenType::EndOfFile:
+                consume();
+                return nullptr;
+
             default:
                 mDiag.reportCompilerError(
                     current().getStartLocation(),
@@ -300,6 +308,13 @@ namespace parser
 
         ScopePtr scope = std::make_unique<Scope>(mActiveScope, "", false, returnType);
         mActiveScope = scope.get();
+
+        if (current().getTokenType() == lexer::TokenType::Semicolon)
+        {
+            consume();
+            mActiveScope = scope->parent;
+            return std::make_unique<Function>(std::move(name), functionType, std::move(arguments), std::vector<ASTNodePtr>(), std::move(scope), std::move(token));
+        }
 
         std::vector<ASTNodePtr> body;
         expectToken(lexer::TokenType::LeftBrace);

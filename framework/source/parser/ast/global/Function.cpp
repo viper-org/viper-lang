@@ -37,10 +37,15 @@ namespace parser
         auto functionType = static_cast<vipir::FunctionType*>(mType->getVipirType());
         auto function = vipir::Function::Create(functionType, module, mangledName);
 
+        mScope->getSymbol(mSymbolId)->value = function;
+
+        if (mBody.empty())
+        {
+            return function;
+        }
+
         auto entryBB = vipir::BasicBlock::Create("", function);
         builder.setInsertPoint(entryBB);
-
-        mScope->getSymbol(mSymbolId)->value = function;
 
         unsigned int index = 0;
         for (auto& argument : mArguments)
@@ -57,7 +62,7 @@ namespace parser
             node->codegen(builder, module, diag);
         }
 
-        return nullptr;
+        return function;
     }
     
     void Function::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
