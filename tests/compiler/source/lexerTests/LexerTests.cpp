@@ -1,3 +1,5 @@
+// Copyright 2024 solar-mist
+
 #include "Test.h"
 
 #include <lexer/Lexer.h>

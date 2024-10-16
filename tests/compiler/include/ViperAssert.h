@@ -1,3 +1,5 @@
+// Copyright 2024 solar-mist
+
 #ifndef VIPER_TESTS_COMPILER_VIPER_ASSERT_H
 #define VIPER_TESTS_COMPILER_VIPER_ASSERT_H 1
 

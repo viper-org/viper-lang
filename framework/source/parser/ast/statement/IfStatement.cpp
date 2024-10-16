@@ -6,11 +6,12 @@
 
 namespace parser
 {
-    IfStatement::IfStatement(Scope* scope, ASTNodePtr&& condition, ASTNodePtr&& body, ASTNodePtr&& elseBody, lexer::Token token)
-        : ASTNode(scope, Type::Get("void"), token)
+    IfStatement::IfStatement(ASTNodePtr&& condition, ASTNodePtr&& body, ASTNodePtr&& elseBody, ScopePtr scope, lexer::Token token)
+        : ASTNode(scope->parent, Type::Get("void"), token)
         , mCondition(std::move(condition))
         , mBody(std::move(body))
         , mElseBody(std::move(elseBody))
+        , mOwnScope(std::move(scope))
     {
     }
 

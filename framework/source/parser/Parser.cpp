@@ -370,6 +370,9 @@ namespace parser
         auto body = parseExpression();
         ASTNodePtr elseBody = nullptr;
 
+        ScopePtr scope = std::make_unique<Scope>(mActiveScope, "", false);
+        mActiveScope = scope.get();
+
         if (peek(1).getTokenType() == lexer::TokenType::ElseKeyword)
         {
             expectToken(lexer::TokenType::Semicolon);
@@ -380,7 +383,9 @@ namespace parser
             elseBody = parseExpression();
         }
 
-        return std::make_unique<IfStatement>(mActiveScope, std::move(condition), std::move(body), std::move(elseBody), std::move(token));
+        mActiveScope = scope->parent;
+
+        return std::make_unique<IfStatement>(std::move(condition), std::move(body), std::move(elseBody), std::move(scope), std::move(token));
     }
 
 

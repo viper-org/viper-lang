@@ -13,7 +13,7 @@ namespace parser
     {
     friend class ::ASTNodeIntrospector;
     public:
-        IfStatement(Scope* scope, ASTNodePtr&& condition, ASTNodePtr&& body, ASTNodePtr&& elseBody, lexer::Token token);
+        IfStatement(ASTNodePtr&& condition, ASTNodePtr&& body, ASTNodePtr&& elseBody, ScopePtr scope, lexer::Token token);
 
         virtual vipir::Value* codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag) override;
 
@@ -24,6 +24,8 @@ namespace parser
         ASTNodePtr mCondition;
         ASTNodePtr mBody;
         ASTNodePtr mElseBody;
+
+        ScopePtr mOwnScope;
     };
     using IfStatementPtr = std::unique_ptr<IfStatement>;
 }
