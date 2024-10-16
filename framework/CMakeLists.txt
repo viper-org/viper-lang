@@ -28,6 +28,7 @@ set(SOURCES
     "source/parser/ast/expression/VariableExpression.cpp"
     "source/parser/ast/expression/CastExpression.cpp"
     "source/parser/ast/expression/CallExpression.cpp"
+    "source/parser/ast/expression/StringLiteral.cpp"
 
     "source/type/Type.cpp"
     "source/type/IntegerType.cpp"
@@ -61,6 +62,7 @@ set(HEADERS
     "include/parser/ast/expression/VariableExpression.h"
     "include/parser/ast/expression/CastExpression.h"
     "include/parser/ast/expression/CallExpression.h"
+    "include/parser/ast/expression/StringLiteral.h"
 
     "include/type/Type.h"
     "include/type/IntegerType.h"

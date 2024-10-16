@@ -259,6 +259,9 @@ namespace parser
             case lexer::TokenType::Identifier:
                 return parseVariableExpression();
 
+            case lexer::TokenType::StringLiteral:
+                return parseStringLiteral();
+
             case lexer::TokenType::TrueKeyword:
                 return std::make_unique<BooleanLiteral>(mActiveScope, true, consume());
             case lexer::TokenType::FalseKeyword:
@@ -435,5 +438,16 @@ namespace parser
         consume();
 
         return std::make_unique<CallExpression>(mActiveScope, std::move(callee), std::move(parameters));
+    }
+
+    StringLiteralPtr Parser::parseStringLiteral()
+    {
+        auto token = consume();
+        std::string text = std::string(token.getText());
+        // Remove quotes
+        text = text.substr(1);
+        text.pop_back();
+
+        return std::make_unique<StringLiteral>(mActiveScope, std::move(text), std::move(token));
     }
 }

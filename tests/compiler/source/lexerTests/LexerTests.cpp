@@ -332,11 +332,6 @@ namespace LexerTests
                 .setExpectedStrings({ "!" }),
 
             TestCase()
-                .setInput("\"")
-                .setExpectedTokens({ lexer::TokenType::Error })
-                .setExpectedStrings({ "\"" }),
-
-            TestCase()
                 .setInput("$")
                 .setExpectedTokens({ lexer::TokenType::Error })
                 .setExpectedStrings({ "$" }),

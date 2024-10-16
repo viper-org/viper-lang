@@ -83,6 +83,7 @@ namespace lexer
 
     char Lexer::consume()
     {
+        char c = current();
         mSourceLocation.col += 1;
         if (mText[mPosition++] == '\n')
         {
@@ -90,7 +91,7 @@ namespace lexer
             mSourceLocation.line += 1;
         }
         mSourceLocation.position += 1;
-        return current();
+        return c;
     }
 
     char Lexer::peek(int offset)
@@ -283,6 +284,45 @@ namespace lexer
             
             case '&':
                 return Token("&", TokenType::Ampersand, start, mSourceLocation);
+
+            case '"':
+            {
+                std::string value = std::string(1, consume());
+                while(current() != '"')
+                {
+                    switch(current())
+                    {
+                        case '\\':
+                        {
+                            consume();
+                            switch(current())
+                            {
+                                case 'n':
+                                    value += '\n';
+                                    break;
+                                case '\'':
+                                    value += '\'';
+                                    break;
+                                case '\"':
+                                    value += '\"';
+                                    break;
+                                case '\\':
+                                    value += '\\';
+                                    break;
+                                case '0':
+                                    value += '\0';
+                                    break;
+                            }
+                            break;
+                        }
+                        default:
+                            value += current();
+                    }
+                    consume();
+                }
+                value += current();
+                return Token(value, TokenType::StringLiteral, start, mSourceLocation);
+            }
 
             default:
                 return Token(std::string(1, current()), TokenType::Error, start, mSourceLocation);

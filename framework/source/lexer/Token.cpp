@@ -79,6 +79,8 @@ namespace lexer
                 return "&";
             case TokenType::IntegerLiteral:
                 return "integer literal";
+            case TokenType::StringLiteral:
+                return "string literal";
             case TokenType::Identifier:
                 return "an identifier";
             case TokenType::Error:

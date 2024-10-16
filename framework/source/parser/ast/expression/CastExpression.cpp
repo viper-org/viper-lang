@@ -4,6 +4,8 @@
 
 #include <vipir/IR/Instruction/TruncInst.h>
 #include <vipir/IR/Instruction/SExtInst.h>
+#include <vipir/IR/Instruction/BinaryInst.h>
+#include <vipir/IR/Constant/ConstantInt.h>
 
 #include <cmath>
 
@@ -28,6 +30,11 @@ namespace parser
             {
                 return builder.CreateSExt(value, mType->getVipirType());
             }
+        }
+        if (mType->isBooleanType() && mValue->getType()->isIntegerType())
+        {
+            auto constantInt = vipir::ConstantInt::Get(module, 0, mValue->getType()->getVipirType());
+            return builder.CreateCmpNE(value, constantInt);
         }
         return nullptr; // Should be unreachable
     }

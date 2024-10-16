@@ -1,4 +1,4 @@
-int _F5test2b(char arg)
+int _F4putspb(char* str)
 {
-    return arg - 1;
+    return puts(str);
 }

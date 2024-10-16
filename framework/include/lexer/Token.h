@@ -52,6 +52,7 @@ namespace lexer
 
         // Literals
         IntegerLiteral,
+        StringLiteral,
 
         // Misc
         Identifier,
