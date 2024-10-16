@@ -5,3 +5,5 @@ project (viper)
 add_subdirectory(framework)
 
 add_subdirectory(compiler)
+
+add_subdirectory(tests)

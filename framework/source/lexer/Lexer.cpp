@@ -270,7 +270,7 @@ namespace lexer
             case ':':
                 return Token(":", TokenType::Colon, start, mSourceLocation);
             case ',':
-                return Token(":", TokenType::Comma, start, mSourceLocation);
+                return Token(",", TokenType::Comma, start, mSourceLocation);
 
             case '=':
                 if (peek(1) == '=')

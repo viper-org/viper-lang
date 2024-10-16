@@ -12,6 +12,7 @@ _deps/
 .vs/
 
 viper
+viper-compiler-tests
 compile_commands.json
 CMakeSettings.json
 a.out
