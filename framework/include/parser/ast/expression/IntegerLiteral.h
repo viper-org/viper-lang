@@ -12,6 +12,7 @@ namespace parser
 {
     class IntegerLiteral : public ASTNode
     {
+    friend class ::ASTNodeIntrospector;
     public:
         IntegerLiteral(Scope* scope, std::uintmax_t value, lexer::Token token);
 

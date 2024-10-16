@@ -22,6 +22,7 @@ namespace parser
 
     class Function : public ASTNode
     {
+    friend struct ::ASTNodeIntrospector;
     public:
         Function(std::string name, FunctionType* type, std::vector<FunctionArgument> arguments, std::vector<ASTNodePtr> body, ScopePtr scope, lexer::Token token);
 

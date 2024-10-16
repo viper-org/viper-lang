@@ -10,6 +10,7 @@ FetchContent_MakeAvailable(vipir)
 set(SOURCES
     "source/lexer/Lexer.cpp"
     "source/lexer/Token.cpp"
+    "source/lexer/SourceLocation.cpp"
 
     "source/symbol/Scope.cpp"
     "source/symbol/Mangle.cpp"

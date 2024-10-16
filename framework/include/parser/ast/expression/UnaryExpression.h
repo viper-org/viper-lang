@@ -11,6 +11,7 @@ namespace parser
 {
     class UnaryExpression : public ASTNode
     {
+    friend class ::ASTNodeIntrospector;
     public:
         enum class Operator 
         {

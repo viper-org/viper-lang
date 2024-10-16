@@ -11,6 +11,7 @@ namespace parser
 {
     class VariableDeclaration : public ASTNode
     {
+    friend class ::ASTNodeIntrospector;
     public:
         VariableDeclaration(Scope* scope, std::string name, Type* type, ASTNodePtr initValue, lexer::Token token);
 

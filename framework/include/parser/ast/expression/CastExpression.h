@@ -12,6 +12,7 @@ namespace parser
 {
     class CastExpression : public ASTNode
     {
+    friend class ::ASTNodeIntrospector;
     public:
         CastExpression(Scope* scope, ASTNodePtr value, Type* destType);
 

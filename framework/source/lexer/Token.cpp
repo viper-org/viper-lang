@@ -83,6 +83,8 @@ namespace lexer
                 return "an identifier";
             case TokenType::Error:
                 return "Error";
+            case TokenType::EndOfFile:
+                return "eof";
         }
         return "forgot to add new token to Token::getName()";
     }

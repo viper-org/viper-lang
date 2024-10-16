@@ -12,6 +12,7 @@ namespace parser
 {
     class VariableExpression : public ASTNode
     {
+    friend class ::ASTNodeIntrospector;
     public:
         VariableExpression(Scope* scope, std::string name, lexer::Token token);
 

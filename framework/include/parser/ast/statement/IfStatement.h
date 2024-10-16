@@ -11,6 +11,7 @@ namespace parser
 {
     class IfStatement : public ASTNode
     {
+    friend class ::ASTNodeIntrospector;
     public:
         IfStatement(Scope* scope, ASTNodePtr&& condition, ASTNodePtr&& body, ASTNodePtr&& elseBody, lexer::Token token);
 

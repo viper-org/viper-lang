@@ -9,6 +9,9 @@ namespace lexer
 {
     struct SourceLocation
     {
+        SourceLocation() = default;
+        SourceLocation(std::string_view file, unsigned int line, unsigned int col, unsigned int position);
+
         std::string_view file;
 
         unsigned int line;

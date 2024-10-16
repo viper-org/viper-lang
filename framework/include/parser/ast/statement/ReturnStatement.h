@@ -11,6 +11,7 @@ namespace parser
 {
     class ReturnStatement : public ASTNode
     {
+    friend class ::ASTNodeIntrospector;
     public:
         ReturnStatement(Scope* scope, ASTNodePtr returnValue, lexer::Token token);
 

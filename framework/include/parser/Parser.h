@@ -29,6 +29,7 @@ namespace parser
 {
     class Parser
     {
+    friend class ::ASTNodeIntrospector;
     public:
         Parser(std::vector<lexer::Token>& tokens, diagnostic::Diagnostics& diag, Scope* globalScope);
 

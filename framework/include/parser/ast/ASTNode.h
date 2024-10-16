@@ -15,10 +15,13 @@
 
 #include <memory>
 
+struct ASTNodeIntrospector;
+
 namespace parser
 {
     class ASTNode
     {
+    friend struct ::ASTNodeIntrospector;
     public:
         using ASTNodePtr = std::unique_ptr<ASTNode>;
 

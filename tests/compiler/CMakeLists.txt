@@ -7,6 +7,8 @@ set(SOURCES
     "source/Test.cpp"
 
     "source/lexerTests/LexerTests.cpp"
+
+    "source/parserTests/ParserTests.cpp"
 )
 
 set(HEADERS

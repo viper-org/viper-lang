@@ -56,6 +56,7 @@ namespace lexer
         // Misc
         Identifier,
         Error,
+        EndOfFile,
     };
 
     class Token

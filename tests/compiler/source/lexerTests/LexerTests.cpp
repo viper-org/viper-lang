@@ -27,14 +27,14 @@ namespace LexerTests
             lexer::Lexer lexer(testCase.inputText, "");
             const auto tokens = lexer.lex();
 
-            REQUIRE(tokens.size() == testCase.expectedTokenTypes.size());
+            REQUIRE(tokens.size() == testCase.expectedTokenTypes.size() + 1); // eof
 
-            size_t i = 0;
-            for (const auto& token : tokens)
+            for (size_t i = 0; i < tokens.size()-1; ++i)
             {
-                REQUIRE(token.getTokenType() == testCase.expectedTokenTypes[i]);
-                REQUIRE(token.getText() == testCase.expectedTexts[i++]);
+                REQUIRE(tokens[i].getTokenType() == testCase.expectedTokenTypes[i]);
+                REQUIRE(tokens[i].getText() == testCase.expectedTexts[i]);
             }
+            REQUIRE(tokens.back().getTokenType() == lexer::TokenType::EndOfFile);
         }
     }
 

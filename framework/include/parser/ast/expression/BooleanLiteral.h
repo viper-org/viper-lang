@@ -12,6 +12,7 @@ namespace parser
 {
     class BooleanLiteral : public ASTNode
     {
+    friend class ::ASTNodeIntrospector;
     public:
         BooleanLiteral(Scope* scope, bool value, lexer::Token token);
 

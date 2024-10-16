@@ -10,9 +10,9 @@
 
 namespace parser
 {
-    // TODO: Add parameters
     class CallExpression : public ASTNode
     {
+    friend class ::ASTNodeIntrospector;
     public:
         CallExpression(Scope* scope, ASTNodePtr callee, std::vector<ASTNodePtr> parameters);
 

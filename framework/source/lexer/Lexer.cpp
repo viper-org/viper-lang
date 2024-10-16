@@ -11,7 +11,7 @@ namespace lexer
     Lexer::Lexer(std::string_view text, std::string_view fileName)
         : mText(text)
         , mFileName(fileName)
-        , mSourceLocation({fileName, 1, 1, 0})
+        , mSourceLocation(fileName, 1, 1, 0)
         , mPosition(0)
     {
     }
@@ -50,6 +50,7 @@ namespace lexer
             }
             consume();
         }
+        ret.push_back(Token("", TokenType::EndOfFile, mSourceLocation, mSourceLocation));
 
         return ret;
     }
