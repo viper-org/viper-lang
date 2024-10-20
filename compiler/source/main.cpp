@@ -60,7 +60,10 @@ int main(int argc, char** argv)
 
     vipir::Module module(argv[1]);
     module.setABI<vipir::abi::SysV>();
+    
+    // TODO: Add flags to enable optimizations
     module.addPass(vipir::Pass::DeadCodeElimination);
+    module.addPass(vipir::Pass::PeepholeOptimization);
     
     vipir::IRBuilder builder;
     for (auto& node : ast)
