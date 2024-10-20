@@ -20,7 +20,7 @@ namespace parser
     {
         vipir::Value* condition = mCondition->codegen(builder, module, diag);
 
-        vipir::BasicBlock* starting = builder.getInsertPoint();
+        vipir::BasicBlock* startBasicBlock = builder.getInsertPoint();
 
         vipir::BasicBlock* trueBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
         vipir::BasicBlock* falseBasicBlock;
@@ -52,6 +52,11 @@ namespace parser
         }
 
         builder.setInsertPoint(mergeBasicBlock);
+
+        if (!mElseBody)
+        {
+            falseBasicBlock = startBasicBlock; // In case of no else body, we should create Phi nodes with the true block and the start block
+        }
         for (auto& symbol : mScope->symbols)
         {
             auto trueBasicBlockValue = symbol.getLatestValue(trueBasicBlock);
@@ -60,17 +65,17 @@ namespace parser
             {
                 if (trueBasicBlockValue == nullptr)
                 {
-                    trueBasicBlockValue = symbol.getLatestValue(starting);
+                    trueBasicBlockValue = symbol.getLatestValue(startBasicBlock);
                 }
                 else if (falseBasicBlockValue == nullptr)
                 {
-                    falseBasicBlockValue = symbol.getLatestValue(starting);
+                    falseBasicBlockValue = symbol.getLatestValue(startBasicBlock);
                 }
 
                 auto phi = builder.CreatePhi(symbol.type->getVipirType());
                 phi->addIncoming(trueBasicBlockValue, trueBasicBlock);
                 phi->addIncoming(falseBasicBlockValue, falseBasicBlock);
-                
+
                 symbol.values.push_back(std::make_pair(mergeBasicBlock, phi));
             }
         }
