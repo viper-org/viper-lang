@@ -6,6 +6,7 @@
 #include "type/Type.h"
 
 #include <vipir/IR/Value.h>
+#include <vipir/IR/BasicBlock.h>
 
 #include <memory>
 #include <string>
@@ -15,9 +16,11 @@ struct Symbol
 {
     Symbol(std::string name, Type* type);
 
+    vipir::Value* getLatestValue(vipir::BasicBlock* basicBlock = nullptr);
+
     std::string name;
     Type* type;
-    vipir::Value* value;
+    std::vector<std::pair<vipir::BasicBlock*, vipir::Value*> > values;
     unsigned long id;
 };
 

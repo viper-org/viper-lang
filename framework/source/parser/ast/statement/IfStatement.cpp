@@ -3,6 +3,7 @@
 #include "parser/ast/statement/IfStatement.h"
 
 #include <vipir/IR/BasicBlock.h>
+#include <vipir/IR/Instruction/PhiInst.h>
 
 namespace parser
 {
@@ -18,6 +19,8 @@ namespace parser
     vipir::Value* IfStatement::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
     {
         vipir::Value* condition = mCondition->codegen(builder, module, diag);
+
+        vipir::BasicBlock* starting = builder.getInsertPoint();
 
         vipir::BasicBlock* trueBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
         vipir::BasicBlock* falseBasicBlock;
@@ -49,6 +52,28 @@ namespace parser
         }
 
         builder.setInsertPoint(mergeBasicBlock);
+        for (auto& symbol : mScope->symbols)
+        {
+            auto trueBasicBlockValue = symbol.getLatestValue(trueBasicBlock);
+            auto falseBasicBlockValue = symbol.getLatestValue(falseBasicBlock);
+            if (trueBasicBlockValue != falseBasicBlockValue)
+            {
+                if (trueBasicBlockValue == nullptr)
+                {
+                    trueBasicBlockValue = symbol.getLatestValue(starting);
+                }
+                else if (falseBasicBlockValue == nullptr)
+                {
+                    falseBasicBlockValue = symbol.getLatestValue(starting);
+                }
+
+                auto phi = builder.CreatePhi(symbol.type->getVipirType());
+                phi->addIncoming(trueBasicBlockValue, trueBasicBlock);
+                phi->addIncoming(falseBasicBlockValue, falseBasicBlock);
+                
+                symbol.values.push_back(std::make_pair(mergeBasicBlock, phi));
+            }
+        }
 
         return nullptr;
     }

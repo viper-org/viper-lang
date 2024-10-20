@@ -1,7 +1,3 @@
-func test(arg: i8) -> i32 {
-    return arg - 1;
-}
-
 func puts(arg: i8*) -> i32;
 
 func main(argc: i32) -> i8 {

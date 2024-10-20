@@ -8,9 +8,23 @@ static unsigned long nextSymbolId = 0;
 Symbol::Symbol(std::string name, Type* type)
     : name(name)
     , type(type)
-    , value(nullptr)
     , id(nextSymbolId++)
 {
+}
+
+vipir::Value* Symbol::getLatestValue(vipir::BasicBlock* basicBlock)
+{
+    if (!basicBlock)
+    {
+        return values.back().second;
+    }
+
+    auto it = std::find_if(values.rbegin(), values.rend(), [basicBlock](const auto& value){
+        return value.first == basicBlock;
+    });
+    if (it != values.rend()) return it->second;
+    
+    return nullptr;
 }
 
 Scope::Scope(Scope* parent, std::string namespaceName, bool isGlobalScope, Type* currentReturnType)

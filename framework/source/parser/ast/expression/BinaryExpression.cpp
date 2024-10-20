@@ -1,6 +1,7 @@
 // Copyright 2024 solar-mist
 
 #include "parser/ast/expression/BinaryExpression.h"
+#include "parser/ast/expression/VariableExpression.h"
 
 #include "type/IntegerType.h"
 
@@ -111,12 +112,19 @@ namespace parser
 
             case Operator::Assign:
             {
-                vipir::Value* pointerOperand = vipir::getPointerOperand(left);
+                //vipir::Value* pointerOperand = vipir::getPointerOperand(left);
 
-                vipir::Instruction* instruction = static_cast<vipir::Instruction*>(left);
-                instruction->eraseFromParent();
+                //vipir::Instruction* instruction = static_cast<vipir::Instruction*>(left);
+                //instruction->eraseFromParent();
                 
-                return builder.CreateStore(pointerOperand, right);
+                //return builder.CreateStore(pointerOperand, right);
+                if (auto variableExpression = dynamic_cast<VariableExpression*>(mLeft.get()))
+                {
+                    auto symbol = mScope->resolveSymbol(variableExpression->getName());
+                    symbol->values.push_back(std::make_pair(builder.getInsertPoint(), right));
+                    return nullptr;
+                }
+                // TODO: Implement
             }
 
             default:

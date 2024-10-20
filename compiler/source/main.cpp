@@ -60,11 +60,15 @@ int main(int argc, char** argv)
 
     vipir::Module module(argv[1]);
     module.setABI<vipir::abi::SysV>();
+    module.addPass(vipir::Pass::DeadCodeElimination);
+    
     vipir::IRBuilder builder;
     for (auto& node : ast)
     {
         node->codegen(builder, module, diag);
     }
+
+    module.print(std::cout);
 
     std::ofstream outputFile(argv[1] + ".o"s);
     module.emit(outputFile, vipir::OutputFormat::ELF);

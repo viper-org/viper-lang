@@ -2,8 +2,6 @@
 
 #include "parser/ast/statement/VariableDeclaration.h"
 
-#include <vipir/IR/Instruction/AllocaInst.h>
-
 #include <algorithm>
 
 namespace parser
@@ -18,18 +16,14 @@ namespace parser
 
     vipir::Value* VariableDeclaration::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
     {
-        vipir::AllocaInst* alloca = builder.CreateAlloca(mType->getVipirType());
-
         if (mInitValue)
         {
             vipir::Value* initValue = mInitValue->codegen(builder, module, diag);
-            builder.CreateStore(alloca, initValue);
+            auto it = std::find_if(mScope->symbols.begin(), mScope->symbols.end(), [this](const auto& symbol){
+                return symbol.name == mName;
+            });
+            it->values.push_back(std::make_pair(builder.getInsertPoint(), initValue));
         }
-
-        auto it = std::find_if(mScope->symbols.begin(), mScope->symbols.end(), [this](const auto& symbol){
-            return symbol.name == mName;
-        });
-        it->value = alloca;
 
         return nullptr;
     }

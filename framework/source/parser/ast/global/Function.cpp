@@ -37,7 +37,7 @@ namespace parser
         auto functionType = static_cast<vipir::FunctionType*>(mType->getVipirType());
         auto function = vipir::Function::Create(functionType, module, mangledName);
 
-        mScope->getSymbol(mSymbolId)->value = function;
+        mScope->getSymbol(mSymbolId)->values.push_back(std::make_pair(nullptr, function));
 
         if (mBody.empty())
         {
@@ -50,11 +50,9 @@ namespace parser
         unsigned int index = 0;
         for (auto& argument : mArguments)
         {
-            auto alloca = builder.CreateAlloca(argument.type->getVipirType());
             auto arg = function->getArgument(index);
-            builder.CreateStore(alloca, arg);
 
-            mOwnScope->resolveSymbol(argument.name)->value = alloca;
+            mOwnScope->resolveSymbol(argument.name)->values.push_back(std::make_pair(entryBB, arg));
         }
 
         for (auto& node : mBody)

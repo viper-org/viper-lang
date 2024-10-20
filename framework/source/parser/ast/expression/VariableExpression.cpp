@@ -18,9 +18,8 @@ namespace parser
     vipir::Value* VariableExpression::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
     {
         auto symbol = mScope->resolveSymbol(mName);
-        if (dynamic_cast<vipir::Function*>(symbol->value)) return symbol->value;
         
-        return builder.CreateLoad(symbol->value);
+        return symbol->getLatestValue();
     }
     
     void VariableExpression::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
