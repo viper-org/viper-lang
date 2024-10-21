@@ -31,8 +31,10 @@ namespace parser
 
         vipir::BasicBlock* mergeBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
 
+        trueBasicBlock->loopEnd() = mergeBasicBlock;
         if (mElseBody)
         {
+            falseBasicBlock->loopEnd() = mergeBasicBlock;
             builder.CreateCondBr(condition, trueBasicBlock, falseBasicBlock);
         }
         else
@@ -55,28 +57,43 @@ namespace parser
 
         if (!mElseBody)
         {
-            falseBasicBlock = startBasicBlock; // In case of no else body, we should create Phi nodes with the true block and the start block
-        }
-        for (auto& symbol : mScope->symbols)
-        {
-            auto trueBasicBlockValue = symbol.getLatestValue(trueBasicBlock);
-            auto falseBasicBlockValue = symbol.getLatestValue(falseBasicBlock);
-            if (trueBasicBlockValue != falseBasicBlockValue)
+            for (auto& symbol : mScope->symbols)
             {
-                if (trueBasicBlockValue == nullptr)
+                auto trueBasicBlockValue = symbol.getLatestValue(trueBasicBlock);
+                auto startBasicBlockValue = symbol.getLatestValue(startBasicBlock);
+                if (trueBasicBlockValue && trueBasicBlockValue != startBasicBlockValue)
                 {
-                    trueBasicBlockValue = symbol.getLatestValue(startBasicBlock);
+                    auto phi = builder.CreatePhi(symbol.type->getVipirType());
+                    phi->addIncoming(trueBasicBlockValue, trueBasicBlock);
+                    phi->addIncoming(startBasicBlockValue, startBasicBlock);
+
+                    symbol.values.push_back(std::make_pair(mergeBasicBlock, phi));
                 }
-                else if (falseBasicBlockValue == nullptr)
+            }
+        }
+        else
+        {
+            for (auto& symbol : mScope->symbols)
+            {
+                auto trueBasicBlockValue = symbol.getLatestValue(trueBasicBlock);
+                auto falseBasicBlockValue = symbol.getLatestValue(falseBasicBlock);
+                if (trueBasicBlockValue != falseBasicBlockValue)
                 {
-                    falseBasicBlockValue = symbol.getLatestValue(startBasicBlock);
+                    if (trueBasicBlockValue == nullptr)
+                    {
+                        trueBasicBlockValue = symbol.getLatestValue(startBasicBlock);
+                    }
+                    else if (falseBasicBlockValue == nullptr)
+                    {
+                        falseBasicBlockValue = symbol.getLatestValue(startBasicBlock);
+                    }
+
+                    auto phi = builder.CreatePhi(symbol.type->getVipirType());
+                    phi->addIncoming(trueBasicBlockValue, trueBasicBlock);
+                    phi->addIncoming(falseBasicBlockValue, falseBasicBlock);
+
+                    symbol.values.push_back(std::make_pair(mergeBasicBlock, phi));
                 }
-
-                auto phi = builder.CreatePhi(symbol.type->getVipirType());
-                phi->addIncoming(trueBasicBlockValue, trueBasicBlock);
-                phi->addIncoming(falseBasicBlockValue, falseBasicBlock);
-
-                symbol.values.push_back(std::make_pair(mergeBasicBlock, phi));
             }
         }
 
