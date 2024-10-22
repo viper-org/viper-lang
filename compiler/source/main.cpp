@@ -55,7 +55,7 @@ int main(int argc, char** argv)
 
     Type::Init();
 
-    lexer::Lexer lexer(text, argv[1]);
+    lexer::Lexer lexer(text, inputFilePath);
     auto tokens = lexer.lex();
     lexer.scanInvalidTokens(tokens, diag);
 
@@ -75,19 +75,16 @@ int main(int argc, char** argv)
 
     vipir::Module module(argv[1]);
     module.setABI<vipir::abi::SysV>();
-    
-    // TODO: Add flags to enable optimizations
-    module.addPass(vipir::Pass::DeadCodeElimination);
-    module.addPass(vipir::Pass::PeepholeOptimization);
-    module.addPass(vipir::Pass::ConstantFolding);
-    
+
+    Option::ParseOptimizingFlags(options, module, diag);
+     
     vipir::IRBuilder builder;
     for (auto& node : ast)
     {
         node->codegen(builder, module, diag);
     }
 
-    std::ofstream outputFile(argv[1] + ".o"s);
+    std::ofstream outputFile(inputFilePath + ".o"s);
     module.emit(outputFile, vipir::OutputFormat::ELF);
 
     return 0;
