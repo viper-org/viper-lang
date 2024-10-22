@@ -1,9 +1,9 @@
 func main(argc: i32) -> i32 {
-    let x: i32 = argc;
+    let x: i32 = 2;
     let y: i32 = x + 5;
-    if (x == 2)
+    if (x == argc)
         argc = y;
     else
-        argc = argc;
+        argc = 12;
     return argc;
 }

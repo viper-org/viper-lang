@@ -64,6 +64,7 @@ int main(int argc, char** argv)
     // TODO: Add flags to enable optimizations
     module.addPass(vipir::Pass::DeadCodeElimination);
     module.addPass(vipir::Pass::PeepholeOptimization);
+    module.addPass(vipir::Pass::ConstantFolding);
     
     vipir::IRBuilder builder;
     for (auto& node : ast)
