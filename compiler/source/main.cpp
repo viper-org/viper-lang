@@ -85,7 +85,8 @@ int main(int argc, char** argv)
     }
 
     std::ofstream outputFile(inputFilePath + ".o"s);
-    module.emit(outputFile, vipir::OutputFormat::ELF);
+    module.setOutputFormat(vipir::OutputFormat::ELF);
+    module.emit(outputFile);
 
     return 0;
 }

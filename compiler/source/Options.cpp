@@ -2,8 +2,11 @@
 
 #include "Options.h"
 
+#include "vipir/Optimizer/Peephole/PeepholeV2.h"
+#include "vipir/Pass/DefaultPass.h"
+
 #include <algorithm>
-#include <unordered_map>
+#include <array>
 
 std::vector<Option> Option::ParseOptions(int argc, char **argv)
 {
@@ -45,13 +48,26 @@ std::string Option::GetInputFile(const std::vector<Option>& options)
     return "";
 }
 
-static std::unordered_map<std::string, vipir::Pass> passes = {
-    { "dead-code-elimination", vipir::Pass::DeadCodeElimination },
-    { "dce", vipir::Pass::DeadCodeElimination },
-    { "peephole", vipir::Pass::PeepholeOptimization },
-    { "constant-folding", vipir::Pass::ConstantFolding },
+struct FlagPass
+{
+    std::string_view id;
+    vipir::PassType insertBefore;
+    std::unique_ptr<vipir::Pass>(*build)();
 };
-   
+
+static std::array passes = {
+    FlagPass{ "dce", vipir::PassType::LIREmission, []()->std::unique_ptr<vipir::Pass>{ return std::make_unique<vipir::opt::DCEPass>(); } },
+    FlagPass{ "dead-code-elimination", vipir::PassType::LIREmission, []()->std::unique_ptr<vipir::Pass>{ return std::make_unique<vipir::opt::DCEPass>(); } },
+    FlagPass{ "peephole", vipir::PassType::LIRCodegen, []()->std::unique_ptr<vipir::Pass>{ return std::make_unique<vipir::opt::PeepholePass>(); } },
+    FlagPass{ "constant-folding", vipir::PassType::DeadCodeElimination, []()->std::unique_ptr<vipir::Pass>{ return std::make_unique<vipir::ConstantFoldingPass>(); } },
+};
+static auto FindPass(std::string_view name)
+{
+    return std::find_if(passes.begin(), passes.end(), [name](const auto& pass){
+        return pass.id == name;
+    });
+}
+
 void Option::ParseOptimizingFlags(const std::vector<Option>& options, vipir::Module& module, diagnostic::Diagnostics& diag) 
 {
     for (const auto& option : options)
@@ -60,15 +76,17 @@ void Option::ParseOptimizingFlags(const std::vector<Option>& options, vipir::Mod
         {
             if (option.value.starts_with("no-"))
             {
-                auto it = passes.find(option.value.substr(3));
+                auto it = FindPass(option.value.substr(3));
                 if (it != passes.end());
                     // TODO: module.removePass(it->second);
             }
             else
             {
-                auto it = passes.find(option.value);
+                auto it = FindPass(option.value);
                 if (it != passes.end())
-                    module.addPass(it->second);
+                {
+                    module.getPassManager().insertBefore(it->insertBefore, it->build());
+                }
             }
         }
         else if (option.type == OptionType::OptimizationLevelSpec)
@@ -86,9 +104,9 @@ void Option::ParseOptimizingFlags(const std::vector<Option>& options, vipir::Mod
                 case '2':
                 case 's': // size, should do everything except size increasing optimizations
                 case '1':
-                    module.addPass(vipir::Pass::PeepholeOptimization);
-                    module.addPass(vipir::Pass::DeadCodeElimination);
-                    module.addPass(vipir::Pass::ConstantFolding);
+                    module.getPassManager().insertBefore(vipir::PassType::LIREmission, std::make_unique<vipir::opt::DCEPass>());
+                    module.getPassManager().insertBefore(vipir::PassType::DeadCodeElimination, std::make_unique<vipir::ConstantFoldingPass>());
+                    module.getPassManager().insertBefore(vipir::PassType::LIRCodegen, std::make_unique<vipir::opt::PeepholePass>());
                     break;
 
                 default:
@@ -96,5 +114,4 @@ void Option::ParseOptimizingFlags(const std::vector<Option>& options, vipir::Mod
             }
         }
     }
-
 }
