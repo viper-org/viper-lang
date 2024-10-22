@@ -2,9 +2,12 @@ cmake_minimum_required(VERSION 3.8)
 
 set(SOURCES
     "source/main.cpp"
+
+    "source/Options.cpp"
 )
 
 set(HEADERS
+    "include/Options.h"
 )
 
 source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${SOURCES} ${HEADERS})

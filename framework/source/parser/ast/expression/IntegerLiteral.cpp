@@ -30,6 +30,7 @@ namespace parser
             if (mValue >= std::pow(2, destType->getSize()))
             {
                 diag.compilerWarning(
+                    "implicit",
                     mErrorToken.getStartLocation(),
                     mErrorToken.getEndLocation(),
                     std::format("integer literal with value '{}{}{}' is being narrowed to '{}{}{}'",

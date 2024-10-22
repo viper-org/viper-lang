@@ -1,3 +1,5 @@
+#include "Options.h"
+
 #include <lexer/Lexer.h>
 #include <lexer/Token.h>
 
@@ -24,10 +26,13 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    std::ifstream inputFile(argv[1]);
+    auto options = Option::ParseOptions(argc, argv);
+    auto inputFilePath = Option::GetInputFile(options);
+
+    std::ifstream inputFile(inputFilePath);
     if (!inputFile.is_open())
     {
-        std::cerr << "viper: could not find file '" << argv[1] << "'\n";
+        std::cerr << "viper: could not find file '" << inputFilePath << "'\n";
         return 1;
     }
 
@@ -37,6 +42,16 @@ int main(int argc, char** argv)
 
     diagnostic::Diagnostics diag;
     diag.setText(text);
+    for (const auto& option : options)
+    {
+        if (option.type == OptionType::WarningSpec)
+        {
+            if (option.value.starts_with("no-"))
+                diag.setWarning(false, option.value.substr(3));
+            else
+                diag.setWarning(true, option.value);
+        }
+    }
 
     Type::Init();
 
@@ -71,8 +86,6 @@ int main(int argc, char** argv)
     {
         node->codegen(builder, module, diag);
     }
-
-    module.print(std::cout);
 
     std::ofstream outputFile(argv[1] + ".o"s);
     module.emit(outputFile, vipir::OutputFormat::ELF);

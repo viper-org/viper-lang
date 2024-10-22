@@ -5,21 +5,46 @@
 
 #include "lexer/SourceLocation.h"
 
+#include <algorithm>
 #include <format>
 #include <iostream>
 #include <sstream>
 
 namespace diagnostic
 {
+    constexpr std::array knownWarnings = {
+        "implicit"
+    };
+
+    Diagnostics::Diagnostics()
+    {
+        mWarnings = {
+            "implicit"
+        };
+    }
+
     void Diagnostics::setText(std::string_view text)
     {
         mText = text;
     }
 
+    void Diagnostics::setWarning(bool enable, std::string_view warning)
+    {
+        auto warningIt = std::find(knownWarnings.begin(), knownWarnings.end(), warning);
+        if (warningIt == knownWarnings.end())
+        {
+            fatalError(std::format("unknown warning: -W{}{}", enable?"":"no-", warning));
+        }
+
+        auto it = std::find(mWarnings.begin(), mWarnings.end(), warning);
+        if (enable && it == mWarnings.end()) mWarnings.push_back(warning);
+        if (!enable && it != mWarnings.end()) mWarnings.erase(it);
+    }
+
 
     void Diagnostics::fatalError(std::string_view message)
     {
-        std::cerr << std::format("{}viper: {}fatal error: {}{}\n\n", fmt::bold, fmt::red, fmt::defaults, message);
+        std::cerr << std::format("{}viper: {}fatal error: {}{}\n", fmt::bold, fmt::red, fmt::defaults, message);
 
         std::exit(EXIT_FAILURE);
     }
@@ -41,8 +66,11 @@ namespace diagnostic
         std::cerr << std::format("    {} | {}{}{}^{}{}\n", spacesBefore, spacesAfter, fmt::bold, fmt::red, std::string(error.length()-1, '~'), fmt::defaults);
     }
 
-    void Diagnostics::compilerWarning(lexer::SourceLocation start, lexer::SourceLocation end, std::string_view message)
+    void Diagnostics::compilerWarning(std::string_view type, lexer::SourceLocation start, lexer::SourceLocation end, std::string_view message)
     {
+        auto it = std::find(mWarnings.begin(), mWarnings.end(), type);
+        if (it == mWarnings.end()) return;
+
         int lineStart = getLinePosition(start.line-1);
         int lineEnd = getLinePosition(end.line)-1;
 

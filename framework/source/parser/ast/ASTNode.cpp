@@ -19,6 +19,7 @@ namespace parser
             if (cast == Type::CastLevel::ImplicitWarning)
             {
                 diag.compilerWarning(
+                    "implicit",
                     mErrorToken.getStartLocation(),
                     mErrorToken.getEndLocation(),
                     mType->getImplicitCastWarning(destType)

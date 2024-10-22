@@ -4,6 +4,7 @@
 #define VIPER_FRAMEWORK_DIAGNOSTIC_DIAGNOSTIC_H 1
 
 #include <string>
+#include <vector>
 
 namespace lexer
 {
@@ -23,15 +24,19 @@ namespace diagnostic
     class Diagnostics
     {
     public:
+        Diagnostics();
+
         void setText(std::string_view text);
+        void setWarning(bool enable, std::string_view warning);
 
         [[noreturn]] void fatalError(std::string_view message);
 
         void reportCompilerError(lexer::SourceLocation start, lexer::SourceLocation end, std::string_view message);
-        void compilerWarning(lexer::SourceLocation start, lexer::SourceLocation end, std::string_view message);
+        void compilerWarning(std::string_view type, lexer::SourceLocation start, lexer::SourceLocation end, std::string_view message);
 
     private:
         std::string_view mText;
+        std::vector<std::string_view> mWarnings;
 
         int getLinePosition(int lineNumber);
     };
