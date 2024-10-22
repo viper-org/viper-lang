@@ -22,12 +22,12 @@ namespace parser
 
         vipir::BasicBlock* startBasicBlock = builder.getInsertPoint();
 
-        vipir::BasicBlock* trueBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
         vipir::BasicBlock* falseBasicBlock;
         if (mElseBody)
         {
             falseBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
         }
+        vipir::BasicBlock* trueBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
 
         vipir::BasicBlock* mergeBasicBlock = vipir::BasicBlock::Create("", builder.getInsertPoint()->getParent());
 
