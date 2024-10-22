@@ -23,6 +23,11 @@ vipir::Value* Symbol::getLatestValue(vipir::BasicBlock* basicBlock)
         return value.first == basicBlock;
     });
     if (it != values.rend()) return it->second;
+
+    for (auto predecessor : basicBlock->predecessors())
+    {
+        if (auto value = getLatestValue(predecessor)) return value;
+    }
     
     return nullptr;
 }

@@ -12,11 +12,14 @@
 #include <string>
 #include <vector>
 
+struct Scope;
+
 struct Symbol
 {
     Symbol(std::string name, Type* type);
 
     vipir::Value* getLatestValue(vipir::BasicBlock* basicBlock = nullptr);
+    vipir::Value* getLatestValue(Scope* scope, vipir::BasicBlock* basicBlock = nullptr);
 
     std::string name;
     Type* type;
@@ -35,7 +38,7 @@ struct Scope
     std::vector<Symbol*> getCandidateFunctions(std::string name);
 
     Scope* parent;
-
+    
     std::string namespaceName;
     bool isGlobalScope;
 

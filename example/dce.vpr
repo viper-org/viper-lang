@@ -3,5 +3,7 @@ func main(argc: i32) -> i32 {
     let y: i32 = x + 5;
     if (x == 2)
         argc = y;
+    else
+        argc = argc;
     return argc;
 }

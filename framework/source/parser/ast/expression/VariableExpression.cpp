@@ -19,7 +19,7 @@ namespace parser
     {
         auto symbol = mScope->resolveSymbol(mName);
         
-        return symbol->getLatestValue();
+        return symbol->getLatestValue(builder.getInsertPoint());
     }
     
     void VariableExpression::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
