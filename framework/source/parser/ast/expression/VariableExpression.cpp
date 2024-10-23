@@ -18,6 +18,7 @@ namespace parser
     vipir::Value* VariableExpression::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
     {
         auto symbol = mScope->resolveSymbol(mName);
+        if (symbol->type->isFunctionType()) return symbol->getLatestValue();
         
         return symbol->getLatestValue(builder.getInsertPoint());
     }

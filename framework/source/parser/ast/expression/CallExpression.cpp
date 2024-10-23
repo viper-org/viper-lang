@@ -26,10 +26,14 @@ namespace parser
 
     vipir::Value* CallExpression::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
     {
-        auto callee = mBestViableFunction->getLatestValue();
+        vipir::Value* callee;
         if (mBestViableFunction == &mFakeFunction)
         {
             callee = mCallee->codegen(builder, module, diag);
+        }
+        else
+        {
+            callee = mBestViableFunction->getLatestValue();
         }
 
         std::vector<vipir::Value*> parameters;
