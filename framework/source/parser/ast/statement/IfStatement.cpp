@@ -100,6 +100,23 @@ namespace parser
         return nullptr;
     }
 
+    void IfStatement::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)
+    {
+        mCondition->semanticCheck(diag, exit, true);
+        mBody->semanticCheck(diag, exit, false);
+        if (mElseBody) mElseBody->semanticCheck(diag, exit, false);
+
+        if (!statement)
+        {
+            diag.reportCompilerError(
+                mErrorToken.getStartLocation(),
+                mErrorToken.getEndLocation(),
+                std::format("'{}if{}' statement used as an expression",
+                    fmt::bold, fmt::defaults)
+            );
+        }
+    }
+
     void IfStatement::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
     {
         mCondition->typeCheck(diag, exit);

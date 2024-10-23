@@ -25,6 +25,7 @@ struct Symbol
     Type* type;
     std::vector<std::pair<vipir::BasicBlock*, vipir::Value*> > values;
     unsigned long id;
+    bool pure{ false };
 };
 
 struct Scope

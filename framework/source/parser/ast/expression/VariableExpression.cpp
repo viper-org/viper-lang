@@ -21,6 +21,10 @@ namespace parser
         
         return symbol->getLatestValue(builder.getInsertPoint());
     }
+
+    void VariableExpression::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)
+    {
+    }
     
     void VariableExpression::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
     {

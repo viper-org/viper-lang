@@ -38,6 +38,11 @@ namespace parser
         }
         return nullptr; // Should be unreachable
     }
+
+    void CastExpression::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)
+    {
+        mValue->semanticCheck(diag, exit, false);
+    }
     
     void CastExpression::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
     {

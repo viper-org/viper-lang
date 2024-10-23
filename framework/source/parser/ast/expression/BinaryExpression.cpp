@@ -133,6 +133,12 @@ namespace parser
         return nullptr; // Unreachable
     }
 
+    void BinaryExpression::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)
+    {
+        mLeft->semanticCheck(diag, exit, false);
+        mRight->semanticCheck(diag, exit, false);
+    }
+
     void BinaryExpression::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
     {
         mLeft->typeCheck(diag, exit);

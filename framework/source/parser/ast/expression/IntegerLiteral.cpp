@@ -23,6 +23,10 @@ namespace parser
     {
     }
 
+    void IntegerLiteral::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)
+    {
+    }
+
     bool IntegerLiteral::triviallyImplicitCast(diagnostic::Diagnostics& diag, Type* destType)
     {
         if (destType->isIntegerType())

@@ -35,6 +35,8 @@ namespace parser
 
         virtual vipir::Value* codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag) = 0;
 
+        virtual void semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement) = 0;
+
         virtual void typeCheck(diagnostic::Diagnostics& diag, bool& exit) = 0;
         virtual bool triviallyImplicitCast(diagnostic::Diagnostics& diag, Type* destType) = 0;
         bool implicitCast(diagnostic::Diagnostics& diag, Type* destType);

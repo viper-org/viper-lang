@@ -27,6 +27,21 @@ namespace parser
 
         return nullptr;
     }
+
+    void VariableDeclaration::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)
+    {
+        if (mInitValue) mInitValue->semanticCheck(diag, exit, false);
+
+        if (!statement)
+        {
+            diag.reportCompilerError(
+                mErrorToken.getStartLocation(),
+                mErrorToken.getEndLocation(),
+                std::format("'{}return{}' statement used as an expression",
+                    fmt::bold, fmt::defaults)
+            );
+        }
+    }
     
     void VariableDeclaration::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
     {

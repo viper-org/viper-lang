@@ -13,13 +13,15 @@
 namespace diagnostic
 {
     constexpr std::array knownWarnings = {
-        "implicit"
+        "implicit",
+        "unused"
     };
 
     Diagnostics::Diagnostics()
     {
         mWarnings = {
-            "implicit"
+            "implicit",
+            "unused"
         };
     }
 

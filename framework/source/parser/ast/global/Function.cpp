@@ -25,6 +25,7 @@ namespace parser
         , mOwnScope(std::move(scope))
     {
         mSymbolId = mScope->symbols.emplace_back(mName, mType).id;
+        mScope->getSymbol(mSymbolId)->pure = mPure;
         for (auto& argument : mArguments)
         {
             mOwnScope->symbols.emplace_back(argument.name, argument.type);
@@ -63,6 +64,14 @@ namespace parser
         }
 
         return function;
+    }
+
+    void Function::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)
+    {
+        for (auto& value : mBody)
+        {
+            value->semanticCheck(diag, exit, true);
+        }
     }
     
     void Function::typeCheck(diagnostic::Diagnostics& diag, bool& exit)

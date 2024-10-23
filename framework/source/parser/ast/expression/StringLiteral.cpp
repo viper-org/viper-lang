@@ -22,6 +22,10 @@ namespace parser
 
         return builder.CreateAddrOf(string);
     }
+
+    void StringLiteral::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)
+    {
+    }
     
     void StringLiteral::typeCheck(diagnostic::Diagnostics&, bool&)
     {

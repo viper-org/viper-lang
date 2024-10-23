@@ -71,6 +71,11 @@ namespace parser
         return nullptr; // Unreachable
     }
 
+    void UnaryExpression::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)
+    {
+        mOperand->semanticCheck(diag, exit, false);
+    }
+
     void UnaryExpression::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
     {
         mOperand->typeCheck(diag, exit);

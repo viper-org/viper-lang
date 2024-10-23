@@ -23,6 +23,21 @@ namespace parser
         return builder.CreateRet(returnValue);
     }
 
+    void ReturnStatement::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)
+    {
+        if (mReturnValue) mReturnValue->semanticCheck(diag, exit, false);
+
+        if (!statement)
+        {
+            diag.reportCompilerError(
+                mErrorToken.getStartLocation(),
+                mErrorToken.getEndLocation(),
+                std::format("'{}return{}' statement used as an expression",
+                    fmt::bold, fmt::defaults)
+            );
+        }
+    }
+
     void ReturnStatement::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
     {
         if (mReturnValue)

@@ -41,6 +41,27 @@ namespace parser
         return builder.CreateCall(static_cast<vipir::Function*>(callee), std::move(parameters));
     }
 
+    void CallExpression::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)
+    {
+        mCallee->semanticCheck(diag, exit, false);
+        for (auto& parameter : mParameters)
+        {
+            parameter->semanticCheck(diag, exit, false);
+        }
+        if (statement)
+        {
+            if (mBestViableFunction->pure)
+            {
+                diag.compilerWarning(
+                    "unused",
+                    mErrorToken.getStartLocation(),
+                    mErrorToken.getEndLocation(),
+                    std::format("statement has no effect")
+                );
+            }
+        }
+    }
+
     void CallExpression::typeCheck(diagnostic::Diagnostics& diag, bool& exit)
     {
         mCallee->typeCheck(diag, exit);

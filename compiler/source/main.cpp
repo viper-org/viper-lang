@@ -63,15 +63,19 @@ int main(int argc, char** argv)
     parser::Parser parser(tokens, diag, &globalScope);
     auto ast = parser.parse();
 
-    bool hadTypeCheckerErrors = false;
+    bool hadErrors = false;
     for (auto& node : ast)
     {
-        node->typeCheck(diag, hadTypeCheckerErrors);
+        node->typeCheck(diag, hadErrors);
     }
-    if (hadTypeCheckerErrors)
+    if (hadErrors) return EXIT_FAILURE;
+
+    hadErrors = false;
+    for (auto& node : ast)
     {
-        return EXIT_FAILURE;
+        node->semanticCheck(diag, hadErrors, true);
     }
+    if (hadErrors) return EXIT_FAILURE;
 
     vipir::Module module(argv[1]);
     module.setABI<vipir::abi::SysV>();

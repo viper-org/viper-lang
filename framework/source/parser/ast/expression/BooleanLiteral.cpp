@@ -23,6 +23,10 @@ namespace parser
         }
         return vipir::ConstantInt::Get(module, mValue, mType->getVipirType());
     }
+
+    void BooleanLiteral::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)
+    {
+    }
     
     void BooleanLiteral::typeCheck(diagnostic::Diagnostics&, bool&)
     {
