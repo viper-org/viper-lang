@@ -24,6 +24,7 @@ namespace lexer
         { "else",   TokenType::ElseKeyword },
         { "true",   TokenType::TrueKeyword },
         { "false",  TokenType::FalseKeyword },
+        { "pure",   TokenType::PureKeyword },
         { "i8",     TokenType::TypeKeyword },
         { "i16",    TokenType::TypeKeyword },
         { "i32",    TokenType::TypeKeyword },

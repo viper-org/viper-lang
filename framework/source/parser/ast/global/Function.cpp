@@ -16,8 +16,9 @@ namespace parser
     }
     
     
-    Function::Function(std::string name, FunctionType* type, std::vector<FunctionArgument> arguments, std::vector<ASTNodePtr> body, ScopePtr scope, lexer::Token token)
+    Function::Function(bool pure, std::string name, FunctionType* type, std::vector<FunctionArgument> arguments, std::vector<ASTNodePtr> body, ScopePtr scope, lexer::Token token)
         : ASTNode(scope->parent, type, token)
+        , mPure(pure)
         , mName(std::move(name))
         , mArguments(std::move(arguments))
         , mBody(std::move(body))
@@ -28,6 +29,7 @@ namespace parser
         {
             mOwnScope->symbols.emplace_back(argument.name, argument.type);
         }
+        mOwnScope->isPureScope = mPure;
     }
 
     vipir::Value* Function::codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag)
@@ -35,7 +37,7 @@ namespace parser
         auto mangledName = mangle::MangleFunction(mName, static_cast<FunctionType*>(mType));
 
         auto functionType = static_cast<vipir::FunctionType*>(mType->getVipirType());
-        auto function = vipir::Function::Create(functionType, module, mangledName);
+        auto function = vipir::Function::Create(functionType, module, mangledName, mPure);
 
         mScope->getSymbol(mSymbolId)->values.push_back(std::make_pair(nullptr, function));
 

@@ -170,8 +170,12 @@ namespace parser
     {
         switch (current().getTokenType())
         {
+            case lexer::TokenType::PureKeyword:
+                consume();
+                expectToken(lexer::TokenType::FuncKeyword);
+                return parseFunction(true);
             case lexer::TokenType::FuncKeyword:
-                return parseFunction();
+                return parseFunction(false);
 
             case lexer::TokenType::EndOfFile:
                 consume();
@@ -278,7 +282,7 @@ namespace parser
     }
 
 
-    FunctionPtr Parser::parseFunction()
+    FunctionPtr Parser::parseFunction(bool pure)
     {
         auto token = consume(); // FuncKeyword
 
@@ -316,7 +320,7 @@ namespace parser
         {
             consume();
             mActiveScope = scope->parent;
-            return std::make_unique<Function>(std::move(name), functionType, std::move(arguments), std::vector<ASTNodePtr>(), std::move(scope), std::move(token));
+            return std::make_unique<Function>(pure, std::move(name), functionType, std::move(arguments), std::vector<ASTNodePtr>(), std::move(scope), std::move(token));
         }
 
         std::vector<ASTNodePtr> body;
@@ -333,7 +337,7 @@ namespace parser
 
         mActiveScope = scope->parent;
 
-        return std::make_unique<Function>(std::move(name), functionType, std::move(arguments), std::move(body), std::move(scope), std::move(token));
+        return std::make_unique<Function>(pure, std::move(name), functionType, std::move(arguments), std::move(body), std::move(scope), std::move(token));
     }
 
 

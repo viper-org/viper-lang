@@ -24,7 +24,7 @@ namespace parser
     {
     friend struct ::ASTNodeIntrospector;
     public:
-        Function(std::string name, FunctionType* type, std::vector<FunctionArgument> arguments, std::vector<ASTNodePtr> body, ScopePtr scope, lexer::Token token);
+        Function(bool pure, std::string name, FunctionType* type, std::vector<FunctionArgument> arguments, std::vector<ASTNodePtr> body, ScopePtr scope, lexer::Token token);
 
         virtual vipir::Value* codegen(vipir::IRBuilder& builder, vipir::Module& module, diagnostic::Diagnostics& diag) override;
 
@@ -32,6 +32,7 @@ namespace parser
         virtual bool triviallyImplicitCast(diagnostic::Diagnostics& diag, Type* destType) override;
 
     private:
+        bool mPure;
         std::string mName;
         std::vector<FunctionArgument> mArguments;
         std::vector<ASTNodePtr> mBody;

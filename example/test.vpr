@@ -1,21 +1,6 @@
-func thing(test: i32) -> i32 {
-    return test;
-}
-
-func thing(test: i8) -> i32 {
-    return test;
-}
+pure func x(a: i32) -> i32;
 
 func main() -> i32 {
-    let test2: i16 = 3;
-    let test3: i8 = 12;
-    test3 = 2;
-
-    let test: i32 = thing(test2);
-    if (false)
-        test = test2 + test3;
-        
-    let ptr: i32* = &test;
-
-    return -*ptr;
+    x(2);
+    return x(1) + 2;
 }

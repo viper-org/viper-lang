@@ -20,6 +20,7 @@ namespace lexer
         ElseKeyword,
         TrueKeyword,
         FalseKeyword,
+        PureKeyword,
 
         // Symbols
         Plus,

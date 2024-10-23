@@ -37,6 +37,8 @@ namespace lexer
                 return "true";
             case TokenType::FalseKeyword:
                 return "false";
+            case TokenType::PureKeyword:
+                return "pure";
             case TokenType::Plus:
                 return "+";
             case TokenType::Minus:

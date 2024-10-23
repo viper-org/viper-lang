@@ -61,7 +61,7 @@ namespace parser
         ASTNodePtr parseExpression(int precedence = 1);
         ASTNodePtr parsePrimary();
 
-        FunctionPtr parseFunction();
+        FunctionPtr parseFunction(bool pure);
 
         ReturnStatementPtr parseReturnStatement();
         VariableDeclarationPtr parseVariableDeclaration();

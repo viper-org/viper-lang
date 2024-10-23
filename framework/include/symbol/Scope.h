@@ -41,6 +41,7 @@ struct Scope
     
     std::string namespaceName;
     bool isGlobalScope;
+    bool isPureScope;
 
     Type* currentReturnType;
     std::vector<Symbol> symbols;
