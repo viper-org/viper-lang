@@ -4,6 +4,7 @@
 
 #include <vipir/IR/Function.h>
 #include <vipir/IR/Instruction/LoadInst.h>
+#include <vipir/IR/Instruction/AllocaInst.h>
 
 #include <cmath>
 
@@ -20,7 +21,9 @@ namespace parser
         auto symbol = mScope->resolveSymbol(mName);
         if (symbol->type->isFunctionType()) return symbol->getLatestValue();
         
-        return symbol->getLatestValue(builder.getInsertPoint());
+        auto latestValue = symbol->getLatestValue(builder.getInsertPoint());
+        if (dynamic_cast<vipir::AllocaInst*>(latestValue)) return builder.CreateLoad(latestValue);
+        return latestValue;
     }
 
     void VariableExpression::semanticCheck(diagnostic::Diagnostics& diag, bool& exit, bool statement)

@@ -9,6 +9,8 @@
 
 #include <vipir/IR/Instruction/BinaryInst.h>
 #include <vipir/IR/Instruction/StoreInst.h>
+#include <vipir/IR/Instruction/AllocaInst.h>
+#include <vipir/IR/Instruction/LoadInst.h>
 
 namespace parser
 {
@@ -112,17 +114,26 @@ namespace parser
 
             case Operator::Assign:
             {
-                //vipir::Value* pointerOperand = vipir::getPointerOperand(left);
-
-                //vipir::Instruction* instruction = static_cast<vipir::Instruction*>(left);
-                //instruction->eraseFromParent();
-                
-                //return builder.CreateStore(pointerOperand, right);
                 if (auto variableExpression = dynamic_cast<VariableExpression*>(mLeft.get()))
                 {
                     auto symbol = mScope->resolveSymbol(variableExpression->getName());
-                    symbol->values.push_back(std::make_pair(builder.getInsertPoint(), right));
+                    if (dynamic_cast<vipir::AllocaInst*>(symbol->getLatestValue()))
+                    {
+                        builder.CreateStore(symbol->getLatestValue(), right);
+                    }
+                    else
+                    {
+                        symbol->values.push_back(std::make_pair(builder.getInsertPoint(), right));
+                    }
                     return nullptr;
+                }
+                if (auto load = dynamic_cast<vipir::LoadInst*>(left))
+                {
+                    auto pointerOperand = vipir::getPointerOperand(load);
+                    auto instruction = static_cast<vipir::Instruction*>(left);
+                    instruction->eraseFromParent();
+
+                    builder.CreateStore(pointerOperand, right);
                 }
                 // TODO: Implement
             }

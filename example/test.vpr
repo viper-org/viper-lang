@@ -1,6 +1,10 @@
-pure func x(a: i32) -> i32;
+pure func f(a: i32) -> i32 {
+    return a;
+}
 
 func main() -> i32 {
-    x(2);
-    return x(1) + 2;
+    let x: i32 = f(2);
+    let p: i32* = &x;
+    *p = 12;
+    return f(*p) + 2;
 }

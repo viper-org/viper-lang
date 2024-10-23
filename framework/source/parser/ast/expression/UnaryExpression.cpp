@@ -1,6 +1,7 @@
 // Copyright 2024 solar-mist
 
 #include "parser/ast/expression/UnaryExpression.h"
+#include "parser/ast/expression/VariableExpression.h"
 
 #include "type/PointerType.h"
 
@@ -11,6 +12,7 @@
 #include <vipir/IR/Instruction/LoadInst.h>
 #include <vipir/IR/Instruction/GEPInst.h>
 #include <vipir/IR/Instruction/AddrInst.h>
+#include <vipir/IR/Instruction/AllocaInst.h>
 
 namespace parser
 {
@@ -53,6 +55,21 @@ namespace parser
             case parser::UnaryExpression::Operator::AddressOf:
             {
                 if (dynamic_cast<vipir::Function*>(operand)) return builder.CreateAddrOf(operand);
+                if (auto var = dynamic_cast<VariableExpression*>(mOperand.get()))
+                {
+                    auto symbol = mScope->resolveSymbol(var->getName());
+
+                    builder.insertAfter(operand);
+                    auto alloca = builder.CreateAlloca(symbol->type->getVipirType());
+                    builder.insertAfter(alloca);
+                    builder.CreateStore(alloca, operand);
+                    builder.insertAfter(nullptr);
+
+                    symbol->values.push_back(std::make_pair(builder.getInsertPoint(), alloca));
+
+                    return builder.CreateAddrOf(alloca);
+                }
+
                 auto pointerOperand = vipir::getPointerOperand(operand);
                 auto instruction = static_cast<vipir::Instruction*>(operand);
                 instruction->eraseFromParent();
