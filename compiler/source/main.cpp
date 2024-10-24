@@ -88,6 +88,8 @@ int main(int argc, char** argv)
         node->codegen(builder, module, diag);
     }
 
+    module.print(std::cout);
+
     std::ofstream outputFile(inputFilePath + ".o"s);
     module.setOutputFormat(vipir::OutputFormat::ELF);
     module.emit(outputFile);

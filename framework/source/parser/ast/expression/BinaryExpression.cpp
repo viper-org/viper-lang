@@ -119,6 +119,9 @@ namespace parser
                     auto symbol = mScope->resolveSymbol(variableExpression->getName());
                     if (dynamic_cast<vipir::AllocaInst*>(symbol->getLatestValue()))
                     {
+                        auto instruction = static_cast<vipir::Instruction*>(left);
+                        instruction->eraseFromParent();
+                        
                         builder.CreateStore(symbol->getLatestValue(), right);
                     }
                     else

@@ -60,6 +60,7 @@ static std::array passes = {
     FlagPass{ "dead-code-elimination", vipir::PassType::LIREmission, []()->std::unique_ptr<vipir::Pass>{ return std::make_unique<vipir::opt::DCEPass>(); } },
     FlagPass{ "peephole", vipir::PassType::LIRCodegen, []()->std::unique_ptr<vipir::Pass>{ return std::make_unique<vipir::opt::PeepholePass>(); } },
     FlagPass{ "constant-folding", vipir::PassType::DeadCodeElimination, []()->std::unique_ptr<vipir::Pass>{ return std::make_unique<vipir::ConstantFoldingPass>(); } },
+    FlagPass{ "mem2reg", vipir::PassType::DeadCodeElimination, []()->std::unique_ptr<vipir::Pass>{ return std::make_unique<vipir::opt::Mem2RegPass>(); } },
 };
 static auto FindPass(std::string_view name)
 {
@@ -106,6 +107,7 @@ void Option::ParseOptimizingFlags(const std::vector<Option>& options, vipir::Mod
                 case '1':
                     module.getPassManager().insertBefore(vipir::PassType::LIREmission, std::make_unique<vipir::opt::DCEPass>());
                     module.getPassManager().insertBefore(vipir::PassType::DeadCodeElimination, std::make_unique<vipir::ConstantFoldingPass>());
+                    module.getPassManager().insertBefore(vipir::PassType::DeadCodeElimination, std::make_unique<vipir::opt::Mem2RegPass>());
                     module.getPassManager().insertBefore(vipir::PassType::LIRCodegen, std::make_unique<vipir::opt::PeepholePass>());
                     break;
 
