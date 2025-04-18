@@ -88,7 +88,7 @@ namespace parser
         else if (auto pending = dynamic_cast<PendingStructType*>(scopeOwner))
             structType = pending->get();
 
-        if (structType)
+        if (structType && !isQualified())
         {
             auto structField = structType->getField(mNames.back());
             if (structField)
